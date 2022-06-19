@@ -29,7 +29,7 @@ func TestClientExecute(t *testing.T) {
 			assert.Equal(t, "/bot1234:secret/getMe", r.URL.Path)
 
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"ok":true,"result":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot","can_join_groups":true,"can_read_all_group_messages":false,"supports_inline_queries":false}}`))
+			_, _ = w.Write([]byte(`{"ok":true,"result":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot","can_join_groups":true,"can_read_all_group_messages":false,"supports_inline_queries":false}}`))
 		}))
 
 		defer ts.Close()
@@ -54,7 +54,7 @@ func TestClientExecute(t *testing.T) {
 			assert.True(t, strings.HasPrefix(r.Header.Get("Content-Type"), "multipart/form-data;"))
 
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"ok":true,"result":{"message_id":4,"from":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot"},"chat":{"id":103980787,"first_name":"Sasha","username":"MrLinch","type":"private"},"date":1655488910,"document":{"file_name":"types.go","file_id":"BQACAgIAAxkDAAMEYqzBjtP0VieRu8CCjHeNxnEetlsAAiIbAALAuWFJgQyZP4JcwDkkBA","file_unique_id":"AgADIhsAAsC5YUk","file_size":30}}}`))
+			_, _ = w.Write([]byte(`{"ok":true,"result":{"message_id":4,"from":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot"},"chat":{"id":103980787,"first_name":"Sasha","username":"MrLinch","type":"private"},"date":1655488910,"document":{"file_name":"types.go","file_id":"BQACAgIAAxkDAAMEYqzBjtP0VieRu8CCjHeNxnEetlsAAiIbAALAuWFJgQyZP4JcwDkkBA","file_unique_id":"AgADIhsAAsC5YUk","file_size":30}}}`))
 		}))
 
 		defer ts.Close()
@@ -75,6 +75,7 @@ func TestClientExecute(t *testing.T) {
 				json.RawMessage(`{"message_id":4,"from":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot"},"chat":{"id":103980787,"first_name":"Sasha","username":"MrLinch","type":"private"},"date":1655488910,"document":{"file_name":"types.go","file_id":"BQACAgIAAxkDAAMEYqzBjtP0VieRu8CCjHeNxnEetlsAAiIbAALAuWFJgQyZP4JcwDkkBA","file_unique_id":"AgADIhsAAsC5YUk","file_size":30}}`),
 				res.Result,
 			)
+
 		}
 	})
 
@@ -85,7 +86,7 @@ func TestClientExecute(t *testing.T) {
 			assert.True(t, strings.HasPrefix(r.Header.Get("Content-Type"), "multipart/form-data;"))
 
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(`{"ok":false,"error_code":400,"description":"Bad Request: chat not found"}`))
+			_, _ = w.Write([]byte(`{"ok":false,"error_code":400,"description":"Bad Request: chat not found"}`))
 		}))
 
 		defer ts.Close()
