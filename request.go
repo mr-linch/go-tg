@@ -1,14 +1,18 @@
 package tg
 
 import (
+	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
 // Request is Telegram Bot API request structure.
 type Request struct {
 	Method string
-	args   map[string]string
-	files  map[string]InputFile
+
+	json  map[string]any
+	args  map[string]string
+	files map[string]InputFile
 }
 
 func NewRequest(method string) *Request {
@@ -19,7 +23,12 @@ func NewRequest(method string) *Request {
 	}
 }
 
-func (r *Request) File(name string, file InputFile) *Request {
+func (r *Request) JSON(name string, v any) *Request {
+	r.json[name] = v
+	return r
+}
+
+func (r *Request) InputFile(name string, file InputFile) *Request {
 	r.files[name] = file
 	return r
 }
@@ -41,8 +50,28 @@ func (r *Request) Int(name string, value int) *Request {
 	return r.String(name, strconv.Itoa(value))
 }
 
+func (r *Request) Int64(name string, value int64) *Request {
+	return r.String(name, strconv.FormatInt(value, 10))
+}
+
+func (r *Request) Float64(name string, value float64) *Request {
+	return r.String(name, strconv.FormatFloat(value, 'f', -1, 64))
+}
+
+func (r *Request) ChatID(name string, v ChatID) *Request {
+	return r.Int64(name, int64(v))
+}
+
 // Encode request using encoder.
 func (r *Request) Encode(encoder Encoder) error {
+
+	for k, jn := range r.json {
+		v, err := json.Marshal(jn)
+		if err != nil {
+			return fmt.Errorf("failed to marshal %s: %w", k, err)
+		}
+		r.args[k] = string(v)
+	}
 
 	// add files
 	for k, v := range r.files {

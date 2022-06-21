@@ -66,7 +66,7 @@ func TestClientExecute(t *testing.T) {
 
 		res, err := client.execute(ctx,
 			NewRequest("sendDocument").
-				File("document", file).
+				InputFile("document", file).
 				String("chat_id", "1234567"),
 		)
 
@@ -98,7 +98,7 @@ func TestClientExecute(t *testing.T) {
 
 		res, err := client.execute(ctx,
 			NewRequest("sendDocument").
-				File("document", file).
+				InputFile("document", file).
 				String("chat_id", "1234567"),
 		)
 
