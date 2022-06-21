@@ -7,13 +7,13 @@ package tg
 // Use this method to receive incoming updates using long polling (wiki)
 // An Array of Update objects is returned.
 type GetUpdatesCall struct {
-	Call[[]*Update]
+	Call[[]Update]
 }
 
 // NewGetUpdatesCall constructs a new GetUpdatesCall with required parameters.
 func NewGetUpdatesCall() *GetUpdatesCall {
 	return &GetUpdatesCall{
-		Call[[]*Update]{
+		Call[[]Update]{
 			request: NewRequest("getUpdates"),
 		},
 	}
@@ -158,13 +158,13 @@ func (call *DeleteWebhookCall) DropPendingUpdates(dropPendingUpdates bool) *Dele
 // On success, returns a WebhookInfo object
 // If the bot is using getUpdates, will return an object with the url field empty.
 type GetWebhookInfoCall struct {
-	Call[*WebhookInfo]
+	Call[WebhookInfo]
 }
 
 // NewGetWebhookInfoCall constructs a new GetWebhookInfoCall with required parameters.
 func NewGetWebhookInfoCall() *GetWebhookInfoCall {
 	return &GetWebhookInfoCall{
-		Call[*WebhookInfo]{
+		Call[WebhookInfo]{
 			request: NewRequest("getWebhookInfo"),
 		},
 	}
@@ -183,13 +183,13 @@ func (client *Client) GetWebhookInfo() *GetWebhookInfoCall {
 // Requires no parameters
 // Returns basic information about the bot in form of a User object.
 type GetMeCall struct {
-	Call[*User]
+	Call[User]
 }
 
 // NewGetMeCall constructs a new GetMeCall with required parameters.
 func NewGetMeCall() *GetMeCall {
 	return &GetMeCall{
-		Call[*User]{
+		Call[User]{
 			request: NewRequest("getMe"),
 		},
 	}
@@ -259,7 +259,7 @@ func (client *Client) Close() *CloseCall {
 // Use this method to send text messages
 // On success, the sent Message is returned.
 type SendMessageCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendMessageCall constructs a new SendMessageCall with required parameters.
@@ -269,7 +269,7 @@ type SendMessageCall struct {
 // text - Text of the message to be sent, 1-4096 characters after entities parsing
 func NewSendMessageCall(chatId PeerID, text string) *SendMessageCall {
 	return &SendMessageCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendMessage").
 				PeerID("chat_id", chatId).
 				String("text", text),
@@ -350,7 +350,7 @@ func (call *SendMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendMessageCa
 // Service messages can't be forwarded
 // On success, the sent Message is returned.
 type ForwardMessageCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewForwardMessageCall constructs a new ForwardMessageCall with required parameters.
@@ -362,7 +362,7 @@ type ForwardMessageCall struct {
 // messageId - Message identifier in the chat specified in from_chat_id
 func NewForwardMessageCall(chatId PeerID, fromChatId PeerID, messageId int) *ForwardMessageCall {
 	return &ForwardMessageCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("forwardMessage").
 				PeerID("chat_id", chatId).
 				PeerID("from_chat_id", fromChatId).
@@ -415,7 +415,7 @@ func (call *ForwardMessageCall) MessageId(messageId int) *ForwardMessageCall {
 // The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message
 // Returns the MessageId of the sent message on success.
 type CopyMessageCall struct {
-	Call[*MessageId]
+	Call[MessageId]
 }
 
 // NewCopyMessageCall constructs a new CopyMessageCall with required parameters.
@@ -427,7 +427,7 @@ type CopyMessageCall struct {
 // messageId - Message identifier in the chat specified in from_chat_id
 func NewCopyMessageCall(chatId PeerID, fromChatId PeerID, messageId int) *CopyMessageCall {
 	return &CopyMessageCall{
-		Call[*MessageId]{
+		Call[MessageId]{
 			request: NewRequest("copyMessage").
 				PeerID("chat_id", chatId).
 				PeerID("from_chat_id", fromChatId).
@@ -514,7 +514,7 @@ func (call *CopyMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *CopyMessageCa
 // Use this method to send photos
 // On success, the sent Message is returned.
 type SendPhotoCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendPhotoCall constructs a new SendPhotoCall with required parameters.
@@ -524,7 +524,7 @@ type SendPhotoCall struct {
 // photo - Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More information on Sending Files »
 func NewSendPhotoCall(chatId PeerID, photo InputFile) *SendPhotoCall {
 	return &SendPhotoCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendPhoto").
 				PeerID("chat_id", chatId).
 				JSON("photo", photo),
@@ -607,7 +607,7 @@ func (call *SendPhotoCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPhotoCall {
 // Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future.
 // For sending voice messages, use the sendVoice method instead.
 type SendAudioCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendAudioCall constructs a new SendAudioCall with required parameters.
@@ -617,7 +617,7 @@ type SendAudioCall struct {
 // audio - Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func NewSendAudioCall(chatId PeerID, audio InputFile) *SendAudioCall {
 	return &SendAudioCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendAudio").
 				PeerID("chat_id", chatId).
 				JSON("audio", audio),
@@ -722,7 +722,7 @@ func (call *SendAudioCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAudioCall {
 // On success, the sent Message is returned
 // Bots can currently send files of any type of up to 50 MB in size, this limit may be changed in the future.
 type SendDocumentCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendDocumentCall constructs a new SendDocumentCall with required parameters.
@@ -732,7 +732,7 @@ type SendDocumentCall struct {
 // document - File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func NewSendDocumentCall(chatId PeerID, document InputFile) *SendDocumentCall {
 	return &SendDocumentCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendDocument").
 				PeerID("chat_id", chatId).
 				JSON("document", document),
@@ -825,7 +825,7 @@ func (call *SendDocumentCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendDocument
 // On success, the sent Message is returned
 // Bots can currently send video files of up to 50 MB in size, this limit may be changed in the future.
 type SendVideoCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendVideoCall constructs a new SendVideoCall with required parameters.
@@ -835,7 +835,7 @@ type SendVideoCall struct {
 // video - Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More information on Sending Files »
 func NewSendVideoCall(chatId PeerID, video InputFile) *SendVideoCall {
 	return &SendVideoCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendVideo").
 				PeerID("chat_id", chatId).
 				JSON("video", video),
@@ -946,7 +946,7 @@ func (call *SendVideoCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVideoCall {
 // On success, the sent Message is returned
 // Bots can currently send animation files of up to 50 MB in size, this limit may be changed in the future.
 type SendAnimationCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendAnimationCall constructs a new SendAnimationCall with required parameters.
@@ -956,7 +956,7 @@ type SendAnimationCall struct {
 // animation - Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More information on Sending Files »
 func NewSendAnimationCall(chatId PeerID, animation InputFile) *SendAnimationCall {
 	return &SendAnimationCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendAnimation").
 				PeerID("chat_id", chatId).
 				JSON("animation", animation),
@@ -1062,7 +1062,7 @@ func (call *SendAnimationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAnimati
 // On success, the sent Message is returned
 // Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.
 type SendVoiceCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendVoiceCall constructs a new SendVoiceCall with required parameters.
@@ -1072,7 +1072,7 @@ type SendVoiceCall struct {
 // voice - Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func NewSendVoiceCall(chatId PeerID, voice InputFile) *SendVoiceCall {
 	return &SendVoiceCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendVoice").
 				PeerID("chat_id", chatId).
 				JSON("voice", voice),
@@ -1159,7 +1159,7 @@ func (call *SendVoiceCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVoiceCall {
 // Use this method to send video messages
 // On success, the sent Message is returned.
 type SendVideoNoteCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendVideoNoteCall constructs a new SendVideoNoteCall with required parameters.
@@ -1169,7 +1169,7 @@ type SendVideoNoteCall struct {
 // videoNote - Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending video notes by a URL is currently unsupported
 func NewSendVideoNoteCall(chatId PeerID, videoNote InputFile) *SendVideoNoteCall {
 	return &SendVideoNoteCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendVideoNote").
 				PeerID("chat_id", chatId).
 				JSON("video_note", videoNote),
@@ -1249,7 +1249,7 @@ func (call *SendVideoNoteCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVideoNo
 // Use this method to send point on the map
 // On success, the sent Message is returned.
 type SendLocationCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendLocationCall constructs a new SendLocationCall with required parameters.
@@ -1261,7 +1261,7 @@ type SendLocationCall struct {
 // longitude - Longitude of the location
 func NewSendLocationCall(chatId PeerID, latitude float64, longitude float64) *SendLocationCall {
 	return &SendLocationCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendLocation").
 				PeerID("chat_id", chatId).
 				Float64("latitude", latitude).
@@ -1355,7 +1355,7 @@ func (call *SendLocationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendLocation
 // A location can be edited until its live_period expires or editing is explicitly disabled by a call to stopMessageLiveLocation
 // On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
 type EditMessageLiveLocationCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
@@ -1365,7 +1365,7 @@ type EditMessageLiveLocationCall struct {
 // messageId - Required if inline_message_id is not specified. Identifier of the message to edit
 func NewEditMessageLiveLocationCall(chatId PeerID, messageId int) *EditMessageLiveLocationCall {
 	return &EditMessageLiveLocationCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("editMessageLiveLocation").
 				PeerID("chat_id", chatId).
 				Int("message_id", messageId),
@@ -1378,7 +1378,7 @@ func NewEditMessageLiveLocationCall(chatId PeerID, messageId int) *EditMessageLi
 // inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
 func NewEditMessageLiveLocationInlineCall(inlineMessageId string) *EditMessageLiveLocationCall {
 	return &EditMessageLiveLocationCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("editMessageLiveLocation").
 				String("inline_message_id", inlineMessageId),
 		},
@@ -1459,7 +1459,7 @@ func (call *EditMessageLiveLocationCall) ReplyMarkup(replyMarkup InlineKeyboardM
 // Use this method to stop updating a live location message before live_period expires
 // On success, if the message is not an inline message, the edited Message is returned, otherwise True is returned.
 type StopMessageLiveLocationCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
@@ -1469,7 +1469,7 @@ type StopMessageLiveLocationCall struct {
 // messageId - Required if inline_message_id is not specified. Identifier of the message with live location to stop
 func NewStopMessageLiveLocationCall(chatId PeerID, messageId int) *StopMessageLiveLocationCall {
 	return &StopMessageLiveLocationCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("stopMessageLiveLocation").
 				PeerID("chat_id", chatId).
 				Int("message_id", messageId),
@@ -1482,7 +1482,7 @@ func NewStopMessageLiveLocationCall(chatId PeerID, messageId int) *StopMessageLi
 // inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
 func NewStopMessageLiveLocationInlineCall(inlineMessageId string) *StopMessageLiveLocationCall {
 	return &StopMessageLiveLocationCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("stopMessageLiveLocation").
 				String("inline_message_id", inlineMessageId),
 		},
@@ -1533,7 +1533,7 @@ func (call *StopMessageLiveLocationCall) ReplyMarkup(replyMarkup InlineKeyboardM
 // Use this method to send information about a venue
 // On success, the sent Message is returned.
 type SendVenueCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendVenueCall constructs a new SendVenueCall with required parameters.
@@ -1549,7 +1549,7 @@ type SendVenueCall struct {
 // address - Address of the venue
 func NewSendVenueCall(chatId PeerID, latitude float64, longitude float64, title string, address string) *SendVenueCall {
 	return &SendVenueCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendVenue").
 				PeerID("chat_id", chatId).
 				Float64("latitude", latitude).
@@ -1656,7 +1656,7 @@ func (call *SendVenueCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVenueCall {
 // Use this method to send phone contacts
 // On success, the sent Message is returned.
 type SendContactCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendContactCall constructs a new SendContactCall with required parameters.
@@ -1668,7 +1668,7 @@ type SendContactCall struct {
 // firstName - Contact's first name
 func NewSendContactCall(chatId PeerID, phoneNumber string, firstName string) *SendContactCall {
 	return &SendContactCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendContact").
 				PeerID("chat_id", chatId).
 				String("phone_number", phoneNumber).
@@ -1749,7 +1749,7 @@ func (call *SendContactCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendContactCa
 // Use this method to send a native poll
 // On success, the sent Message is returned.
 type SendPollCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendPollCall constructs a new SendPollCall with required parameters.
@@ -1761,7 +1761,7 @@ type SendPollCall struct {
 // options - A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
 func NewSendPollCall(chatId PeerID, question string, options []string) *SendPollCall {
 	return &SendPollCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendPoll").
 				PeerID("chat_id", chatId).
 				String("question", question).
@@ -1890,7 +1890,7 @@ func (call *SendPollCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPollCall {
 // Use this method to send an animated emoji that will display a random value
 // On success, the sent Message is returned.
 type SendDiceCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendDiceCall constructs a new SendDiceCall with required parameters.
@@ -1898,7 +1898,7 @@ type SendDiceCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewSendDiceCall(chatId PeerID) *SendDiceCall {
 	return &SendDiceCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendDice").
 				PeerID("chat_id", chatId),
 		},
@@ -2005,7 +2005,7 @@ func (call *SendChatActionCall) Action(action string) *SendChatActionCall {
 // Use this method to get a list of profile pictures for a user
 // Returns a UserProfilePhotos object.
 type GetUserProfilePhotosCall struct {
-	Call[*UserProfilePhotos]
+	Call[UserProfilePhotos]
 }
 
 // NewGetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall with required parameters.
@@ -2013,7 +2013,7 @@ type GetUserProfilePhotosCall struct {
 // userId - Unique identifier of the target user
 func NewGetUserProfilePhotosCall(userId int) *GetUserProfilePhotosCall {
 	return &GetUserProfilePhotosCall{
-		Call[*UserProfilePhotos]{
+		Call[UserProfilePhotos]{
 			request: NewRequest("getUserProfilePhotos").
 				Int("user_id", userId),
 		},
@@ -2054,7 +2054,7 @@ func (call *GetUserProfilePhotosCall) Limit(limit int) *GetUserProfilePhotosCall
 // It is guaranteed that the link will be valid for at least 1 hour
 // When the link expires, a new one can be requested by calling getFile again.
 type GetFileCall struct {
-	Call[*File]
+	Call[File]
 }
 
 // NewGetFileCall constructs a new GetFileCall with required parameters.
@@ -2062,7 +2062,7 @@ type GetFileCall struct {
 // fileId - File identifier to get information about
 func NewGetFileCall(fileId string) *GetFileCall {
 	return &GetFileCall{
-		Call[*File]{
+		Call[File]{
 			request: NewRequest("getFile").
 				String("file_id", fileId),
 		},
@@ -2574,7 +2574,7 @@ func (call *ExportChatInviteLinkCall) ChatId(chatId PeerID) *ExportChatInviteLin
 // The link can be revoked using the method revokeChatInviteLink
 // Returns the new invite link as ChatInviteLink object.
 type CreateChatInviteLinkCall struct {
-	Call[*ChatInviteLink]
+	Call[ChatInviteLink]
 }
 
 // NewCreateChatInviteLinkCall constructs a new CreateChatInviteLinkCall with required parameters.
@@ -2582,7 +2582,7 @@ type CreateChatInviteLinkCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewCreateChatInviteLinkCall(chatId PeerID) *CreateChatInviteLinkCall {
 	return &CreateChatInviteLinkCall{
-		Call[*ChatInviteLink]{
+		Call[ChatInviteLink]{
 			request: NewRequest("createChatInviteLink").
 				PeerID("chat_id", chatId),
 		},
@@ -2632,7 +2632,7 @@ func (call *CreateChatInviteLinkCall) CreatesJoinRequest(createsJoinRequest bool
 // The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights
 // Returns the edited invite link as a ChatInviteLink object.
 type EditChatInviteLinkCall struct {
-	Call[*ChatInviteLink]
+	Call[ChatInviteLink]
 }
 
 // NewEditChatInviteLinkCall constructs a new EditChatInviteLinkCall with required parameters.
@@ -2642,7 +2642,7 @@ type EditChatInviteLinkCall struct {
 // inviteLink - The invite link to edit
 func NewEditChatInviteLinkCall(chatId PeerID, inviteLink string) *EditChatInviteLinkCall {
 	return &EditChatInviteLinkCall{
-		Call[*ChatInviteLink]{
+		Call[ChatInviteLink]{
 			request: NewRequest("editChatInviteLink").
 				PeerID("chat_id", chatId).
 				String("invite_link", inviteLink),
@@ -2700,7 +2700,7 @@ func (call *EditChatInviteLinkCall) CreatesJoinRequest(createsJoinRequest bool) 
 // The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights
 // Returns the revoked invite link as ChatInviteLink object.
 type RevokeChatInviteLinkCall struct {
-	Call[*ChatInviteLink]
+	Call[ChatInviteLink]
 }
 
 // NewRevokeChatInviteLinkCall constructs a new RevokeChatInviteLinkCall with required parameters.
@@ -2710,7 +2710,7 @@ type RevokeChatInviteLinkCall struct {
 // inviteLink - The invite link to revoke
 func NewRevokeChatInviteLinkCall(chatId PeerID, inviteLink string) *RevokeChatInviteLinkCall {
 	return &RevokeChatInviteLinkCall{
-		Call[*ChatInviteLink]{
+		Call[ChatInviteLink]{
 			request: NewRequest("revokeChatInviteLink").
 				PeerID("chat_id", chatId).
 				String("invite_link", inviteLink),
@@ -3137,7 +3137,7 @@ func (call *LeaveChatCall) ChatId(chatId PeerID) *LeaveChatCall {
 // Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.)
 // Returns a Chat object on success.
 type GetChatCall struct {
-	Call[*Chat]
+	Call[Chat]
 }
 
 // NewGetChatCall constructs a new GetChatCall with required parameters.
@@ -3145,7 +3145,7 @@ type GetChatCall struct {
 // chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 func NewGetChatCall(chatId PeerID) *GetChatCall {
 	return &GetChatCall{
-		Call[*Chat]{
+		Call[Chat]{
 			request: NewRequest("getChat").
 				PeerID("chat_id", chatId),
 		},
@@ -3171,7 +3171,7 @@ func (call *GetChatCall) ChatId(chatId PeerID) *GetChatCall {
 // On success, returns an Array of ChatMember objects that contains information about all chat administrators except other bots
 // If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
 type GetChatAdministratorsCall struct {
-	Call[[]*ChatMember]
+	Call[[]ChatMember]
 }
 
 // NewGetChatAdministratorsCall constructs a new GetChatAdministratorsCall with required parameters.
@@ -3179,7 +3179,7 @@ type GetChatAdministratorsCall struct {
 // chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 func NewGetChatAdministratorsCall(chatId PeerID) *GetChatAdministratorsCall {
 	return &GetChatAdministratorsCall{
-		Call[[]*ChatMember]{
+		Call[[]ChatMember]{
 			request: NewRequest("getChatAdministrators").
 				PeerID("chat_id", chatId),
 		},
@@ -3237,7 +3237,7 @@ func (call *GetChatMemberCountCall) ChatId(chatId PeerID) *GetChatMemberCountCal
 // Use this method to get information about a member of a chat
 // Returns a ChatMember object on success.
 type GetChatMemberCall struct {
-	Call[*ChatMember]
+	Call[ChatMember]
 }
 
 // NewGetChatMemberCall constructs a new GetChatMemberCall with required parameters.
@@ -3247,7 +3247,7 @@ type GetChatMemberCall struct {
 // userId - Unique identifier of the target user
 func NewGetChatMemberCall(chatId PeerID, userId int) *GetChatMemberCall {
 	return &GetChatMemberCall{
-		Call[*ChatMember]{
+		Call[ChatMember]{
 			request: NewRequest("getChatMember").
 				PeerID("chat_id", chatId).
 				Int("user_id", userId),
@@ -3499,13 +3499,13 @@ func (call *DeleteMyCommandsCall) LanguageCode(languageCode string) *DeleteMyCom
 // Returns Array of BotCommand on success
 // If commands aren't set, an empty list is returned.
 type GetMyCommandsCall struct {
-	Call[[]*BotCommand]
+	Call[[]BotCommand]
 }
 
 // NewGetMyCommandsCall constructs a new GetMyCommandsCall with required parameters.
 func NewGetMyCommandsCall() *GetMyCommandsCall {
 	return &GetMyCommandsCall{
-		Call[[]*BotCommand]{
+		Call[[]BotCommand]{
 			request: NewRequest("getMyCommands"),
 		},
 	}
@@ -3570,13 +3570,13 @@ func (call *SetChatMenuButtonCall) MenuButton(menuButton MenuButton) *SetChatMen
 // Use this method to get the current value of the bot's menu button in a private chat, or the default menu button
 // Returns MenuButton on success.
 type GetChatMenuButtonCall struct {
-	Call[*MenuButton]
+	Call[MenuButton]
 }
 
 // NewGetChatMenuButtonCall constructs a new GetChatMenuButtonCall with required parameters.
 func NewGetChatMenuButtonCall() *GetChatMenuButtonCall {
 	return &GetChatMenuButtonCall{
-		Call[*MenuButton]{
+		Call[MenuButton]{
 			request: NewRequest("getChatMenuButton"),
 		},
 	}
@@ -3636,13 +3636,13 @@ func (call *SetMyDefaultAdministratorRightsCall) ForChannels(forChannels bool) *
 // Use this method to get the current default administrator rights of the bot
 // Returns ChatAdministratorRights on success.
 type GetMyDefaultAdministratorRightsCall struct {
-	Call[*ChatAdministratorRights]
+	Call[ChatAdministratorRights]
 }
 
 // NewGetMyDefaultAdministratorRightsCall constructs a new GetMyDefaultAdministratorRightsCall with required parameters.
 func NewGetMyDefaultAdministratorRightsCall() *GetMyDefaultAdministratorRightsCall {
 	return &GetMyDefaultAdministratorRightsCall{
-		Call[*ChatAdministratorRights]{
+		Call[ChatAdministratorRights]{
 			request: NewRequest("getMyDefaultAdministratorRights"),
 		},
 	}
@@ -3666,7 +3666,7 @@ func (call *GetMyDefaultAdministratorRightsCall) ForChannels(forChannels bool) *
 // Use this method to edit text and game messages
 // On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
 type EditMessageTextCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewEditMessageTextCall constructs a new EditMessageTextCall with required parameters.
@@ -3674,7 +3674,7 @@ type EditMessageTextCall struct {
 // text - New text of the message, 1-4096 characters after entities parsing
 func NewEditMessageTextCall(text string) *EditMessageTextCall {
 	return &EditMessageTextCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("editMessageText").
 				String("text", text),
 		},
@@ -3741,13 +3741,13 @@ func (call *EditMessageTextCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *
 // Use this method to edit captions of messages
 // On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
 type EditMessageCaptionCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewEditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
 func NewEditMessageCaptionCall() *EditMessageCaptionCall {
 	return &EditMessageCaptionCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("editMessageCaption"),
 		},
 	}
@@ -3809,7 +3809,7 @@ func (call *EditMessageCaptionCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup
 // When an inline message is edited, a new file can't be uploaded; use a previously uploaded file via its file_id or specify a URL
 // On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
 type EditMessageMediaCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewEditMessageMediaCall constructs a new EditMessageMediaCall with required parameters.
@@ -3817,7 +3817,7 @@ type EditMessageMediaCall struct {
 // media - A JSON-serialized object for a new media content of the message
 func NewEditMessageMediaCall(media InputMedia) *EditMessageMediaCall {
 	return &EditMessageMediaCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("editMessageMedia").
 				JSON("media", media),
 		},
@@ -3866,13 +3866,13 @@ func (call *EditMessageMediaCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) 
 // Use this method to edit only the reply markup of messages
 // On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
 type EditMessageReplyMarkupCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewEditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
 func NewEditMessageReplyMarkupCall() *EditMessageReplyMarkupCall {
 	return &EditMessageReplyMarkupCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("editMessageReplyMarkup"),
 		},
 	}
@@ -3914,7 +3914,7 @@ func (call *EditMessageReplyMarkupCall) ReplyMarkup(replyMarkup InlineKeyboardMa
 // Use this method to stop a poll which was sent by the bot
 // On success, the stopped Poll is returned.
 type StopPollCall struct {
-	Call[*Poll]
+	Call[Poll]
 }
 
 // NewStopPollCall constructs a new StopPollCall with required parameters.
@@ -3924,7 +3924,7 @@ type StopPollCall struct {
 // messageId - Identifier of the original message with the poll
 func NewStopPollCall(chatId PeerID, messageId int) *StopPollCall {
 	return &StopPollCall{
-		Call[*Poll]{
+		Call[Poll]{
 			request: NewRequest("stopPoll").
 				PeerID("chat_id", chatId).
 				Int("message_id", messageId),
@@ -4002,7 +4002,7 @@ func (call *DeleteMessageCall) MessageId(messageId int) *DeleteMessageCall {
 // Use this method to send static .WEBP, animated .TGS, or video .WEBM stickers
 // On success, the sent Message is returned.
 type SendStickerCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendStickerCall constructs a new SendStickerCall with required parameters.
@@ -4012,7 +4012,7 @@ type SendStickerCall struct {
 // sticker - Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func NewSendStickerCall(chatId PeerID, sticker InputFile) *SendStickerCall {
 	return &SendStickerCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendSticker").
 				PeerID("chat_id", chatId).
 				JSON("sticker", sticker),
@@ -4074,7 +4074,7 @@ func (call *SendStickerCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendStickerCa
 // Use this method to get a sticker set
 // On success, a StickerSet object is returned.
 type GetStickerSetCall struct {
-	Call[*StickerSet]
+	Call[StickerSet]
 }
 
 // NewGetStickerSetCall constructs a new GetStickerSetCall with required parameters.
@@ -4082,7 +4082,7 @@ type GetStickerSetCall struct {
 // name - Name of the sticker set
 func NewGetStickerSetCall(name string) *GetStickerSetCall {
 	return &GetStickerSetCall{
-		Call[*StickerSet]{
+		Call[StickerSet]{
 			request: NewRequest("getStickerSet").
 				String("name", name),
 		},
@@ -4107,7 +4107,7 @@ func (call *GetStickerSetCall) Name(name string) *GetStickerSetCall {
 // Use this method to upload a .PNG file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times)
 // Returns the uploaded File on success.
 type UploadStickerFileCall struct {
-	Call[*File]
+	Call[File]
 }
 
 // NewUploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
@@ -4117,7 +4117,7 @@ type UploadStickerFileCall struct {
 // pngSticker - PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More information on Sending Files »
 func NewUploadStickerFileCall(userId int, pngSticker InputFile) *UploadStickerFileCall {
 	return &UploadStickerFileCall{
-		Call[*File]{
+		Call[File]{
 			request: NewRequest("uploadStickerFile").
 				Int("user_id", userId).
 				JSON("png_sticker", pngSticker),
@@ -4512,7 +4512,7 @@ func (call *AnswerInlineQueryCall) SwitchPmParameter(switchPmParameter string) *
 // Use this method to set the result of an interaction with a Web App and send a corresponding message on behalf of the user to the chat from which the query originated
 // On success, a SentWebAppMessage object is returned.
 type AnswerWebAppQueryCall struct {
-	Call[*SentWebAppMessage]
+	Call[SentWebAppMessage]
 }
 
 // NewAnswerWebAppQueryCall constructs a new AnswerWebAppQueryCall with required parameters.
@@ -4522,7 +4522,7 @@ type AnswerWebAppQueryCall struct {
 // result - A JSON-serialized object describing the message to be sent
 func NewAnswerWebAppQueryCall(webAppQueryId string, result InlineQueryResult) *AnswerWebAppQueryCall {
 	return &AnswerWebAppQueryCall{
-		Call[*SentWebAppMessage]{
+		Call[SentWebAppMessage]{
 			request: NewRequest("answerWebAppQuery").
 				String("web_app_query_id", webAppQueryId).
 				JSON("result", result),
@@ -4554,7 +4554,7 @@ func (call *AnswerWebAppQueryCall) Result(result InlineQueryResult) *AnswerWebAp
 // Use this method to send invoices
 // On success, the sent Message is returned.
 type SendInvoiceCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendInvoiceCall constructs a new SendInvoiceCall with required parameters.
@@ -4574,7 +4574,7 @@ type SendInvoiceCall struct {
 // prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
 func NewSendInvoiceCall(chatId PeerID, title string, description string, payload string, providerToken string, currency string, prices LabeledPrice) *SendInvoiceCall {
 	return &SendInvoiceCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendInvoice").
 				PeerID("chat_id", chatId).
 				String("title", title).
@@ -4924,7 +4924,7 @@ func (call *CreateInvoiceLinkCall) IsFlexible(isFlexible bool) *CreateInvoiceLin
 // Use this method to reply to shipping queries
 // On success, True is returned.
 type AnswerShippingQueryCall struct {
-	Call[*Update]
+	Call[Update]
 }
 
 // NewAnswerShippingQueryCall constructs a new AnswerShippingQueryCall with required parameters.
@@ -4934,7 +4934,7 @@ type AnswerShippingQueryCall struct {
 // ok - Specify True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
 func NewAnswerShippingQueryCall(shippingQueryId string, ok bool) *AnswerShippingQueryCall {
 	return &AnswerShippingQueryCall{
-		Call[*Update]{
+		Call[Update]{
 			request: NewRequest("answerShippingQuery").
 				String("shipping_query_id", shippingQueryId).
 				Bool("ok", ok),
@@ -4980,7 +4980,7 @@ func (call *AnswerShippingQueryCall) ErrorMessage(errorMessage string) *AnswerSh
 // On success, True is returned
 // Note: The Bot API must receive an answer within 10 seconds after the pre-checkout query was sent.
 type AnswerPreCheckoutQueryCall struct {
-	Call[*Update]
+	Call[Update]
 }
 
 // NewAnswerPreCheckoutQueryCall constructs a new AnswerPreCheckoutQueryCall with required parameters.
@@ -4990,7 +4990,7 @@ type AnswerPreCheckoutQueryCall struct {
 // ok - Specify True if everything is alright (goods are available, etc.) and the bot is ready to proceed with the order. Use False if there are any problems.
 func NewAnswerPreCheckoutQueryCall(preCheckoutQueryId string, ok bool) *AnswerPreCheckoutQueryCall {
 	return &AnswerPreCheckoutQueryCall{
-		Call[*Update]{
+		Call[Update]{
 			request: NewRequest("answerPreCheckoutQuery").
 				String("pre_checkout_query_id", preCheckoutQueryId).
 				Bool("ok", ok),
@@ -5073,7 +5073,7 @@ func (call *SetPassportDataErrorsCall) Errors(errors PassportElementError) *SetP
 // Use this method to send a game
 // On success, the sent Message is returned.
 type SendGameCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSendGameCall constructs a new SendGameCall with required parameters.
@@ -5083,7 +5083,7 @@ type SendGameCall struct {
 // gameShortName - Short name of the game, serves as the unique identifier for the game. Set up your games via @BotFather.
 func NewSendGameCall(chatId ChatID, gameShortName string) *SendGameCall {
 	return &SendGameCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("sendGame").
 				ChatID("chat_id", chatId).
 				String("game_short_name", gameShortName),
@@ -5146,7 +5146,7 @@ func (call *SendGameCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *SendGam
 // On success, if the message is not an inline message, the Message is returned, otherwise True is returned
 // Returns an error, if the new score is not greater than the user's current score in the chat and force is False.
 type SetGameScoreCall struct {
-	Call[*Message]
+	Call[Message]
 }
 
 // NewSetGameScoreCall constructs a new SetGameScoreCall with required parameters.
@@ -5156,7 +5156,7 @@ type SetGameScoreCall struct {
 // score - New score, must be non-negative
 func NewSetGameScoreCall(userId int, score int) *SetGameScoreCall {
 	return &SetGameScoreCall{
-		Call[*Message]{
+		Call[Message]{
 			request: NewRequest("setGameScore").
 				Int("user_id", userId).
 				Int("score", score),
@@ -5222,7 +5222,7 @@ func (call *SetGameScoreCall) InlineMessageId(inlineMessageId string) *SetGameSc
 // Will also return the top three users if the user and their neighbors are not among them
 // Please note that this behavior is subject to change.
 type GetGameHighScoresCall struct {
-	Call[*GameHighScore]
+	Call[GameHighScore]
 }
 
 // NewGetGameHighScoresCall constructs a new GetGameHighScoresCall with required parameters.
@@ -5230,7 +5230,7 @@ type GetGameHighScoresCall struct {
 // userId - Target user id
 func NewGetGameHighScoresCall(userId int) *GetGameHighScoresCall {
 	return &GetGameHighScoresCall{
-		Call[*GameHighScore]{
+		Call[GameHighScore]{
 			request: NewRequest("getGameHighScores").
 				Int("user_id", userId),
 		},

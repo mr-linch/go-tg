@@ -107,5 +107,4 @@ func TestClientExecute(t *testing.T) {
 			assert.Equal(t, res.StatusCode, http.StatusBadRequest)
 		}
 	})
-
 }

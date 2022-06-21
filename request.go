@@ -18,6 +18,7 @@ type Request struct {
 func NewRequest(method string) *Request {
 	return &Request{
 		Method: method,
+		json:   make(map[string]any),
 		args:   make(map[string]string),
 		files:  make(map[string]InputFile),
 	}

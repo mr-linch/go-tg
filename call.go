@@ -14,9 +14,9 @@ func (call *Call[T]) Bind(client *Client) {
 	call.client = client
 }
 
-func (call *Call[T]) Do(ctx context.Context) (result *T, err error) {
+func (call *Call[T]) Do(ctx context.Context) (result T, err error) {
 	if err := call.client.Invoke(ctx, call.request, &result); err != nil {
-		return nil, err
+		return result, err
 	}
 
 	return
