@@ -2,6 +2,7 @@ package tgb
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -56,10 +57,16 @@ func WithMaxConnections(maxConnections int) WebhookOption {
 }
 
 func NewWebhook(url string, handler Handler, client *tg.Client, options ...WebhookOption) *Webhook {
+	securityToken := sha256.Sum256([]byte(client.Token()))
+	token := fmt.Sprintf("%x", securityToken)
+
 	webhook := &Webhook{
 		url:     url,
 		handler: handler,
 		client:  client,
+
+		securitySubnets: DefaultSubnets,
+		securityToken:   token,
 	}
 
 	for _, option := range options {
