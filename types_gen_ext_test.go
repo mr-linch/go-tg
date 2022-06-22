@@ -41,7 +41,7 @@ func TestPeerIDImpl(t *testing.T) {
 	}{
 		{UserID(1), "1"},
 		{ChatID(1), "1"},
-		// {&User{ID: UserID(1)}, "1"},
+		{&Chat{ID: ChatID(1)}, "1"},
 	} {
 		assert.Equal(t, test.Want, test.PeerID.PeerID())
 	}

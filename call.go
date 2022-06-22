@@ -35,6 +35,10 @@ func (call *Call[T]) Do(ctx context.Context) (result T, err error) {
 	return
 }
 
+func (call *Call[T]) DoNoResult(ctx context.Context) (err error) {
+	return call.client.Invoke(ctx, call.request, nil)
+}
+
 func callWithClient[B interface {
 	Bind(client *Client)
 }](
@@ -73,4 +77,8 @@ func (call *CallNoResult) Do(ctx context.Context) (err error) {
 	}
 
 	return
+}
+
+func (call *CallNoResult) DoNoResult(ctx context.Context) (err error) {
+	return call.client.Invoke(ctx, call.request, nil)
 }

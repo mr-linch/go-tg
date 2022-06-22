@@ -1,8 +1,75 @@
 package tg
 
-import "encoding/json"
+import (
+	"context"
+	"encoding/json"
+	"strconv"
+)
+
+type ChatID int64
+
+var _ PeerID = (ChatID)(0)
+
+func (id ChatID) PeerID() string {
+	return strconv.FormatInt(int64(id), 10)
+}
+
+// UserID it's unique identifier for Telegram user or bot.
+type UserID int64
+
+var _ PeerID = (UserID)(0)
+
+func (id UserID) PeerID() string {
+	return strconv.FormatInt(int64(id), 10)
+}
+
+type Username string
+
+func (un Username) PeerID() string {
+	return "@" + string(un)
+}
+
+type PeerID interface {
+	PeerID() string
+}
+
+// ParseMode for parsing entities in the message text. See formatting options for more details.
+type ParseMode int8
+
+const (
+	ParseModeHTML ParseMode = iota + 1
+	ParseModeMarkdown
+	ParseModeMarkdownV2
+)
+
+func (mode ParseMode) String() string {
+	switch mode {
+	case ParseModeHTML:
+		return "HTML"
+	case ParseModeMarkdown:
+		return "Markdown"
+	case ParseModeMarkdownV2:
+		return "MarkdownV2"
+	default:
+		return ""
+	}
+}
+
+// MessageID it's unique identifier for a message in a chat.
+type MessageID int
+
+type FileID string
+
+type FileArg struct {
+	FileID FileID
+	Upload InputFile
+}
 
 //go:generate go run github.com/mr-linch/go-tg-gen@latest -types-output types_gen.go
+
+func (chat Chat) PeerID() string {
+	return chat.ID.PeerID()
+}
 
 func (update *Update) Client() *Client {
 	return update.client
@@ -12,9 +79,28 @@ func (update *Update) Bind(client *Client) {
 	update.client = client
 }
 
-func (update *Update) Respond(v json.Marshaler) {
-	// TODO: add fallback to direct call if update is long polling
-	update.response = v
+type UpdateRespond interface {
+	json.Marshaler
+	DoNoResult(ctx context.Context) error
+	Bind(client *Client)
+}
+
+func NewUpdateWebhook(client *Client) *Update {
+	return &Update{
+		client:    client,
+		isWebhook: true,
+	}
+}
+
+func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
+	if update.isWebhook && update.response == nil {
+		update.response = v
+		return nil
+	}
+
+	v.Bind(update.client)
+
+	return v.DoNoResult(ctx)
 }
 
 func (update *Update) Response() json.Marshaler {

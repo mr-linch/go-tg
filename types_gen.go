@@ -57,6 +57,8 @@ type Update struct {
 	client *Client
 
 	response json.Marshaler
+
+	isWebhook bool
 }
 
 // WebhookInfo describes the current status of a webhook.

@@ -162,13 +162,11 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// parse body
-	update := &tg.Update{}
+	update := tg.NewUpdateWebhook(webhook.client)
 	if err := json.Unmarshal(body, update); err != nil {
 		http.Error(w, "failed to parse body", http.StatusBadRequest)
 		return
 	}
-
-	update.Bind(webhook.client)
 
 	// handle update
 	if err := webhook.handler.Handle(r.Context(), update); err != nil {
@@ -183,10 +181,11 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if response != nil {
 		body, err := json.Marshal(response)
-		log.Printf("response %s", string(body))
+
 		if err != nil {
 			log.Printf("failed to marshal response: %s", err)
 		}
+
 		_, err = w.Write(body)
 		if err != nil {
 			log.Printf("failed to write response: %s", err)
