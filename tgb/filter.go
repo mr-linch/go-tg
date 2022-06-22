@@ -188,11 +188,11 @@ func Regexp(re *regexp.Regexp) Filter {
 		case update.Message != nil:
 			text = update.Message.Text
 
-			if text == "" {
+			if text == "" && update.Message.Caption != "" {
 				text = update.Message.Caption
 			}
 
-			if text == "" {
+			if text == "" && update.Message.Poll != nil {
 				text = update.Message.Poll.Question
 			}
 		case update.CallbackQuery != nil && update.CallbackQuery.Data != "":
