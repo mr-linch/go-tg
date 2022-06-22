@@ -2,12 +2,25 @@ package tg
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+
+	"golang.org/x/exp/maps"
 )
 
 type Call[T any] struct {
 	client  *Client
 	request *Request
+}
+
+func (call *Call[T]) MarshalJSON() ([]byte, error) {
+	args := make(map[string]string, len(call.request.args)+1)
+
+	args["method"] = call.request.Method
+
+	maps.Copy(args, call.request.args)
+
+	return json.Marshal(args)
 }
 
 func (call *Call[T]) Bind(client *Client) {
@@ -35,6 +48,13 @@ func callWithClient[B interface {
 type CallNoResult struct {
 	client  *Client
 	request *Request
+}
+
+func (call *CallNoResult) MarshalJSON() ([]byte, error) {
+	args := make(map[string]string, len(call.request.args)+1)
+	args["method"] = call.request.Method
+	maps.Copy(args, call.request.args)
+	return json.Marshal(args)
 }
 
 func (call *CallNoResult) Bind(client *Client) {
