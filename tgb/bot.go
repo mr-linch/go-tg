@@ -13,6 +13,7 @@ type registeredHandler struct {
 }
 
 type Bot struct {
+	chain                     chain
 	messageHandler            []*registeredHandler
 	editedMessageHandler      []*registeredHandler
 	channelPostHandler        []*registeredHandler
@@ -30,7 +31,9 @@ type Bot struct {
 }
 
 func New() *Bot {
-	return &Bot{}
+	return &Bot{
+		chain: chain{},
+	}
 }
 
 func compactFilter(filters ...Filter) Filter {
@@ -42,9 +45,14 @@ func compactFilter(filters ...Filter) Filter {
 	return nil
 }
 
+func (bot *Bot) Use(mws ...Middleware) *Bot {
+	bot.chain = bot.chain.Append(mws...)
+	return bot
+}
+
 func (bot *Bot) Message(handler Handler, filters ...Filter) *Bot {
 	bot.messageHandler = append(bot.messageHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -52,7 +60,7 @@ func (bot *Bot) Message(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) EditedMessage(handler Handler, filters ...Filter) *Bot {
 	bot.editedMessageHandler = append(bot.editedMessageHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -60,7 +68,7 @@ func (bot *Bot) EditedMessage(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) ChannelPost(handler Handler, filters ...Filter) *Bot {
 	bot.channelPostHandler = append(bot.channelPostHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -68,7 +76,7 @@ func (bot *Bot) ChannelPost(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) EditedChannelPost(handler Handler, filters ...Filter) *Bot {
 	bot.editedChannelPostHandler = append(bot.editedChannelPostHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -76,7 +84,7 @@ func (bot *Bot) EditedChannelPost(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) InlineQuery(handler Handler, filters ...Filter) *Bot {
 	bot.inlineQueryHandler = append(bot.inlineQueryHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -84,7 +92,7 @@ func (bot *Bot) InlineQuery(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) ChosenInlineResult(handler Handler, filters ...Filter) *Bot {
 	bot.chosenInlineResultHandler = append(bot.chosenInlineResultHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -92,7 +100,7 @@ func (bot *Bot) ChosenInlineResult(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) CallbackQuery(handler Handler, filters ...Filter) *Bot {
 	bot.callbackQueryHandler = append(bot.callbackQueryHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -100,7 +108,7 @@ func (bot *Bot) CallbackQuery(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) ShippingQuery(handler Handler, filters ...Filter) *Bot {
 	bot.shippingQueryHandler = append(bot.shippingQueryHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -108,7 +116,7 @@ func (bot *Bot) ShippingQuery(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) PreCheckoutQuery(handler Handler, filters ...Filter) *Bot {
 	bot.preCheckoutQueryHandler = append(bot.preCheckoutQueryHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -116,7 +124,7 @@ func (bot *Bot) PreCheckoutQuery(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) Poll(handler Handler, filters ...Filter) *Bot {
 	bot.pollHandler = append(bot.pollHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -124,7 +132,7 @@ func (bot *Bot) Poll(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) PollAnswer(handler Handler, filters ...Filter) *Bot {
 	bot.pollAnswerHandler = append(bot.pollAnswerHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -132,7 +140,7 @@ func (bot *Bot) PollAnswer(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) MyChatMember(handler Handler, filters ...Filter) *Bot {
 	bot.myChatMemberHandler = append(bot.myChatMemberHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -140,7 +148,7 @@ func (bot *Bot) MyChatMember(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) ChatMember(handler Handler, filters ...Filter) *Bot {
 	bot.chatMemberHandler = append(bot.chatMemberHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
@@ -148,7 +156,7 @@ func (bot *Bot) ChatMember(handler Handler, filters ...Filter) *Bot {
 
 func (bot *Bot) ChatJoinRequest(handler Handler, filters ...Filter) *Bot {
 	bot.chatJoinRequestHandler = append(bot.chatJoinRequestHandler, &registeredHandler{
-		Handler: handler,
+		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
 	})
 	return bot
