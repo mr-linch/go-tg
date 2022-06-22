@@ -4,10 +4,6 @@ type Middleware func(Handler) Handler
 
 type chain []Middleware
 
-func newChain(mws ...Middleware) chain {
-	return append((chain)(nil), mws...)
-}
-
 // Append extends a chain, adding the specified middleware
 // as the last ones in the request flow.
 func (c chain) Append(mws ...Middleware) chain {

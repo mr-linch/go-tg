@@ -2,10 +2,7 @@ package tg
 
 import (
 	"context"
-	"net/http"
-	"net/http/httptest"
 	"os"
-	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +10,7 @@ import (
 
 const (
 	testTokenEnv = "GO_TG_TEST_TOKEN"
-	testChatEnv  = "GO_TG_TEST_CHAT"
+	// testChatEnv  = "GO_TG_TEST_CHAT"
 )
 
 func getEnv(t *testing.T, k string) string {
@@ -28,42 +25,42 @@ func getEnv(t *testing.T, k string) string {
 	return v
 }
 
-func getInt64Env(t *testing.T, k string) int64 {
-	t.Helper()
+// func getInt64Env(t *testing.T, k string) int64 {
+// 	t.Helper()
 
-	v := getEnv(t, k)
+// 	v := getEnv(t, k)
 
-	i, err := strconv.ParseInt(v, 10, 64)
-	if err != nil {
-		t.Fatal("env var " + k + " is not an integer")
-	}
+// 	i, err := strconv.ParseInt(v, 10, 64)
+// 	if err != nil {
+// 		t.Fatal("env var " + k + " is not an integer")
+// 	}
 
-	return i
-}
+// 	return i
+// }
 
-func testWithClientLocal(
-	t *testing.T,
-	do func(t *testing.T, ctx context.Context, client *Client),
-	handler http.HandlerFunc,
-) {
-	t.Helper()
+// func testWithClientLocal(
+// 	t *testing.T,
+// 	do func(t *testing.T, ctx context.Context, client *Client),
+// 	handler http.HandlerFunc,
+// ) {
+// 	t.Helper()
 
-	if testing.Short() {
-		t.Skip("skipping test in short mode")
-	}
+// 	if testing.Short() {
+// 		t.Skip("skipping test in short mode")
+// 	}
 
-	server := httptest.NewServer(handler)
-	defer server.Close()
+// 	server := httptest.NewServer(handler)
+// 	defer server.Close()
 
-	client := New(getEnv(t, testTokenEnv),
-		WithServer(server.URL),
-		WithDoer(http.DefaultClient),
-	)
+// 	client := New(getEnv(t, testTokenEnv),
+// 		WithServer(server.URL),
+// 		WithDoer(http.DefaultClient),
+// 	)
 
-	ctx := context.Background()
+// 	ctx := context.Background()
 
-	do(t, ctx, client)
-}
+// 	do(t, ctx, client)
+// }
 
 func testWithClient(t *testing.T, do func(t *testing.T, ctx context.Context, client *Client)) {
 	t.Helper()
