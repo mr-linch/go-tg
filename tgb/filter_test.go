@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"testing"
 
 	tg "github.com/mr-linch/go-tg"
@@ -240,6 +241,94 @@ func TestCommandFilter(t *testing.T) {
 					}
 				}`))
 			})
+		})
+	}
+}
+
+func TestRegexp(t *testing.T) {
+	t.Parallel()
+
+	for _, test := range []struct {
+		Name   string
+		Filter Filter
+		Update *tg.Update
+		Allow  bool
+	}{
+		{
+			Name:   "Message.Text",
+			Filter: Regexp(regexp.MustCompile(`go`)),
+			Update: &tg.Update{
+				Message: &tg.Message{
+					Text: "golang",
+				},
+			},
+			Allow: true,
+		},
+		{
+			Name:   "Message.Caption",
+			Filter: Regexp(regexp.MustCompile(`go`)),
+			Update: &tg.Update{
+				Message: &tg.Message{
+					Caption: "golang",
+				},
+			},
+			Allow: true,
+		},
+		{
+			Name:   "Message.Poll.Question",
+			Filter: Regexp(regexp.MustCompile(`go`)),
+			Update: &tg.Update{
+				Message: &tg.Message{
+					Poll: &tg.Poll{Question: "golang"},
+				},
+			},
+			Allow: true,
+		},
+		{
+			Name:   "Message.CallbackQuery.Data",
+			Filter: Regexp(regexp.MustCompile(`go`)),
+			Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{Data: "golang"},
+			},
+			Allow: true,
+		},
+		{
+			Name:   "Message.InlineQuery.Query",
+			Filter: Regexp(regexp.MustCompile(`go`)),
+			Update: &tg.Update{
+				InlineQuery: &tg.InlineQuery{Query: "golang"},
+			},
+			Allow: true,
+		},
+		{
+			Name:   "Message.ChosenInlineResult.Query",
+			Filter: Regexp(regexp.MustCompile(`go`)),
+			Update: &tg.Update{
+				ChosenInlineResult: &tg.ChosenInlineResult{Query: "golang"},
+			},
+			Allow: true,
+		},
+		{
+			Name:   "Message.Poll.Question",
+			Filter: Regexp(regexp.MustCompile(`go`)),
+			Update: &tg.Update{
+				Poll: &tg.Poll{Question: "golang"},
+			},
+			Allow: true,
+		},
+		{
+			Name:   "Message.Poll.Question",
+			Filter: Regexp(regexp.MustCompile(`go`)),
+			Update: &tg.Update{
+				PollAnswer: &tg.PollAnswer{},
+			},
+			Allow: true,
+		},
+	} {
+		t.Run(test.Name, func(t *testing.T) {
+			allow, err := test.Filter.Allow(context.Background(), test.Update)
+			assert.Equal(t, test.Allow, allow)
+			assert.NoError(t, err)
 		})
 	}
 }
