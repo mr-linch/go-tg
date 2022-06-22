@@ -27,6 +27,9 @@ type Client struct {
 	// http client,
 	// default values is http.DefaultClient
 	doer doer
+
+	// contains cached bot info
+	me *User
 }
 
 // ClientOption is a function that sets some option for Client.
@@ -59,6 +62,10 @@ func New(token string, options ...ClientOption) *Client {
 	}
 
 	return c
+}
+
+func (client *Client) Token() string {
+	return client.token
 }
 
 // Execute request at low-level
