@@ -70,7 +70,7 @@ func run(ctx context.Context) error {
 	if flagWebhookURL != "" {
 		return runWebhook(ctx, client, bot, flagWebhookURL, flagWebhookListen)
 	} else {
-		return fmt.Errorf("long poll is not implimented")
+		return runPolling(ctx, client, bot)
 	}
 }
 
@@ -113,6 +113,20 @@ func newBot() *tgb.Bot {
 			))
 		}))
 
+}
+
+func runPolling(ctx context.Context, client *tg.Client, bot *tgb.Bot) error {
+	poller := tgb.NewPoller(
+		bot,
+		client,
+	)
+
+	log.Printf("start poller")
+	if err := poller.Run(ctx); err != nil {
+		return fmt.Errorf("start polling: %w", err)
+	}
+
+	return nil
 }
 
 func runWebhook(ctx context.Context, client *tg.Client, bot *tgb.Bot, url, listen string) error {

@@ -10,7 +10,7 @@ import (
 // Update this object represents an incoming update.At most one of the optional parameters can be present in any given update.
 type Update struct {
 	// The update's unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you're using webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. If there are no new updates for at least a week, then identifier of the next update will be chosen randomly instead of sequentially.
-	ID int64 `json:"update_id"`
+	ID int `json:"update_id"`
 
 	// Optional. New incoming message of any kind - text, photo, sticker, etc.
 	Message *Message `json:"message,omitempty"`
