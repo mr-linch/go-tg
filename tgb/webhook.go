@@ -102,6 +102,10 @@ func (webhook *Webhook) Setup(ctx context.Context, dropPendingUpdates bool) erro
 		setWebhookCall = setWebhookCall.SecretToken(webhook.securityToken)
 	}
 
+	if dropPendingUpdates {
+		setWebhookCall = setWebhookCall.DropPendingUpdates(true)
+	}
+
 	return setWebhookCall.Do(ctx)
 }
 
@@ -170,7 +174,7 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// handle update
 	if err := webhook.handler.Handle(r.Context(), update); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("failed to handle update: %v", err)
 		return
 	}
 
