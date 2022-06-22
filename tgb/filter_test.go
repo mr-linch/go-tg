@@ -310,7 +310,7 @@ func TestRegexp(t *testing.T) {
 			Allow: true,
 		},
 		{
-			Name:   "Message.Poll.Question",
+			Name:   "Poll.Question",
 			Filter: Regexp(regexp.MustCompile(`go`)),
 			Update: &tg.Update{
 				Poll: &tg.Poll{Question: "golang"},
@@ -318,12 +318,12 @@ func TestRegexp(t *testing.T) {
 			Allow: true,
 		},
 		{
-			Name:   "Message.Poll.Question",
+			Name:   "PollAnswer.Question",
 			Filter: Regexp(regexp.MustCompile(`go`)),
 			Update: &tg.Update{
 				PollAnswer: &tg.PollAnswer{},
 			},
-			Allow: true,
+			Allow: false,
 		},
 	} {
 		t.Run(test.Name, func(t *testing.T) {
