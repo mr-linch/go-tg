@@ -81,6 +81,7 @@ func TestAll(t *testing.T) {
 
 	allow, err = All(filterYes, filterErr).Allow(context.Background(), &tg.Update{})
 	assert.Error(t, err)
+	assert.False(t, allow)
 }
 
 func TestCommandFilter(t *testing.T) {
@@ -228,7 +229,7 @@ func TestCommandFilter(t *testing.T) {
 
 				w.WriteHeader(http.StatusOK)
 
-				w.Write([]byte(`{
+				_, _ = w.Write([]byte(`{
 					"ok": true,
 					"result": {
 						"id": 5433024556,
