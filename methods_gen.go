@@ -522,18 +522,18 @@ type SendPhotoCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 
 // photo - Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More information on Sending Files »
-func NewSendPhotoCall(chatId PeerID, photo InputFile) *SendPhotoCall {
+func NewSendPhotoCall(chatId PeerID, photo FileArg) *SendPhotoCall {
 	return &SendPhotoCall{
 		Call[Message]{
 			request: NewRequest("sendPhoto").
 				PeerID("chat_id", chatId).
-				JSON("photo", photo),
+				File("photo", photo),
 		},
 	}
 }
 
 // SendPhotoCall constructs a new SendPhotoCall with required parameters.
-func (client *Client) SendPhoto(chatId PeerID, photo InputFile) *SendPhotoCall {
+func (client *Client) SendPhoto(chatId PeerID, photo FileArg) *SendPhotoCall {
 	return callWithClient(
 		client,
 		NewSendPhotoCall(chatId, photo),
@@ -547,8 +547,8 @@ func (call *SendPhotoCall) ChatId(chatId PeerID) *SendPhotoCall {
 }
 
 // Photo Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More information on Sending Files »
-func (call *SendPhotoCall) Photo(photo InputFile) *SendPhotoCall {
-	call.request.JSON("photo", photo)
+func (call *SendPhotoCall) Photo(photo FileArg) *SendPhotoCall {
+	call.request.File("photo", photo)
 	return call
 }
 
@@ -615,18 +615,18 @@ type SendAudioCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 
 // audio - Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func NewSendAudioCall(chatId PeerID, audio InputFile) *SendAudioCall {
+func NewSendAudioCall(chatId PeerID, audio FileArg) *SendAudioCall {
 	return &SendAudioCall{
 		Call[Message]{
 			request: NewRequest("sendAudio").
 				PeerID("chat_id", chatId).
-				JSON("audio", audio),
+				File("audio", audio),
 		},
 	}
 }
 
 // SendAudioCall constructs a new SendAudioCall with required parameters.
-func (client *Client) SendAudio(chatId PeerID, audio InputFile) *SendAudioCall {
+func (client *Client) SendAudio(chatId PeerID, audio FileArg) *SendAudioCall {
 	return callWithClient(
 		client,
 		NewSendAudioCall(chatId, audio),
@@ -640,8 +640,8 @@ func (call *SendAudioCall) ChatId(chatId PeerID) *SendAudioCall {
 }
 
 // Audio Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *SendAudioCall) Audio(audio InputFile) *SendAudioCall {
-	call.request.JSON("audio", audio)
+func (call *SendAudioCall) Audio(audio FileArg) *SendAudioCall {
+	call.request.File("audio", audio)
 	return call
 }
 
@@ -682,8 +682,8 @@ func (call *SendAudioCall) Title(title string) *SendAudioCall {
 }
 
 // Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendAudioCall) Thumb(thumb InputFile) *SendAudioCall {
-	call.request.JSON("thumb", thumb)
+func (call *SendAudioCall) Thumb(thumb FileArg) *SendAudioCall {
+	call.request.File("thumb", thumb)
 	return call
 }
 
@@ -730,18 +730,18 @@ type SendDocumentCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 
 // document - File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func NewSendDocumentCall(chatId PeerID, document InputFile) *SendDocumentCall {
+func NewSendDocumentCall(chatId PeerID, document FileArg) *SendDocumentCall {
 	return &SendDocumentCall{
 		Call[Message]{
 			request: NewRequest("sendDocument").
 				PeerID("chat_id", chatId).
-				JSON("document", document),
+				File("document", document),
 		},
 	}
 }
 
 // SendDocumentCall constructs a new SendDocumentCall with required parameters.
-func (client *Client) SendDocument(chatId PeerID, document InputFile) *SendDocumentCall {
+func (client *Client) SendDocument(chatId PeerID, document FileArg) *SendDocumentCall {
 	return callWithClient(
 		client,
 		NewSendDocumentCall(chatId, document),
@@ -755,14 +755,14 @@ func (call *SendDocumentCall) ChatId(chatId PeerID) *SendDocumentCall {
 }
 
 // Document File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *SendDocumentCall) Document(document InputFile) *SendDocumentCall {
-	call.request.JSON("document", document)
+func (call *SendDocumentCall) Document(document FileArg) *SendDocumentCall {
+	call.request.File("document", document)
 	return call
 }
 
 // Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendDocumentCall) Thumb(thumb InputFile) *SendDocumentCall {
-	call.request.JSON("thumb", thumb)
+func (call *SendDocumentCall) Thumb(thumb FileArg) *SendDocumentCall {
+	call.request.File("thumb", thumb)
 	return call
 }
 
@@ -833,18 +833,18 @@ type SendVideoCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 
 // video - Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More information on Sending Files »
-func NewSendVideoCall(chatId PeerID, video InputFile) *SendVideoCall {
+func NewSendVideoCall(chatId PeerID, video FileArg) *SendVideoCall {
 	return &SendVideoCall{
 		Call[Message]{
 			request: NewRequest("sendVideo").
 				PeerID("chat_id", chatId).
-				JSON("video", video),
+				File("video", video),
 		},
 	}
 }
 
 // SendVideoCall constructs a new SendVideoCall with required parameters.
-func (client *Client) SendVideo(chatId PeerID, video InputFile) *SendVideoCall {
+func (client *Client) SendVideo(chatId PeerID, video FileArg) *SendVideoCall {
 	return callWithClient(
 		client,
 		NewSendVideoCall(chatId, video),
@@ -858,8 +858,8 @@ func (call *SendVideoCall) ChatId(chatId PeerID) *SendVideoCall {
 }
 
 // Video Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More information on Sending Files »
-func (call *SendVideoCall) Video(video InputFile) *SendVideoCall {
-	call.request.JSON("video", video)
+func (call *SendVideoCall) Video(video FileArg) *SendVideoCall {
+	call.request.File("video", video)
 	return call
 }
 
@@ -882,8 +882,8 @@ func (call *SendVideoCall) Height(height int) *SendVideoCall {
 }
 
 // Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendVideoCall) Thumb(thumb InputFile) *SendVideoCall {
-	call.request.JSON("thumb", thumb)
+func (call *SendVideoCall) Thumb(thumb FileArg) *SendVideoCall {
+	call.request.File("thumb", thumb)
 	return call
 }
 
@@ -954,18 +954,18 @@ type SendAnimationCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 
 // animation - Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More information on Sending Files »
-func NewSendAnimationCall(chatId PeerID, animation InputFile) *SendAnimationCall {
+func NewSendAnimationCall(chatId PeerID, animation FileArg) *SendAnimationCall {
 	return &SendAnimationCall{
 		Call[Message]{
 			request: NewRequest("sendAnimation").
 				PeerID("chat_id", chatId).
-				JSON("animation", animation),
+				File("animation", animation),
 		},
 	}
 }
 
 // SendAnimationCall constructs a new SendAnimationCall with required parameters.
-func (client *Client) SendAnimation(chatId PeerID, animation InputFile) *SendAnimationCall {
+func (client *Client) SendAnimation(chatId PeerID, animation FileArg) *SendAnimationCall {
 	return callWithClient(
 		client,
 		NewSendAnimationCall(chatId, animation),
@@ -979,8 +979,8 @@ func (call *SendAnimationCall) ChatId(chatId PeerID) *SendAnimationCall {
 }
 
 // Animation Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More information on Sending Files »
-func (call *SendAnimationCall) Animation(animation InputFile) *SendAnimationCall {
-	call.request.JSON("animation", animation)
+func (call *SendAnimationCall) Animation(animation FileArg) *SendAnimationCall {
+	call.request.File("animation", animation)
 	return call
 }
 
@@ -1003,8 +1003,8 @@ func (call *SendAnimationCall) Height(height int) *SendAnimationCall {
 }
 
 // Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendAnimationCall) Thumb(thumb InputFile) *SendAnimationCall {
-	call.request.JSON("thumb", thumb)
+func (call *SendAnimationCall) Thumb(thumb FileArg) *SendAnimationCall {
+	call.request.File("thumb", thumb)
 	return call
 }
 
@@ -1070,18 +1070,18 @@ type SendVoiceCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 
 // voice - Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func NewSendVoiceCall(chatId PeerID, voice InputFile) *SendVoiceCall {
+func NewSendVoiceCall(chatId PeerID, voice FileArg) *SendVoiceCall {
 	return &SendVoiceCall{
 		Call[Message]{
 			request: NewRequest("sendVoice").
 				PeerID("chat_id", chatId).
-				JSON("voice", voice),
+				File("voice", voice),
 		},
 	}
 }
 
 // SendVoiceCall constructs a new SendVoiceCall with required parameters.
-func (client *Client) SendVoice(chatId PeerID, voice InputFile) *SendVoiceCall {
+func (client *Client) SendVoice(chatId PeerID, voice FileArg) *SendVoiceCall {
 	return callWithClient(
 		client,
 		NewSendVoiceCall(chatId, voice),
@@ -1095,8 +1095,8 @@ func (call *SendVoiceCall) ChatId(chatId PeerID) *SendVoiceCall {
 }
 
 // Voice Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *SendVoiceCall) Voice(voice InputFile) *SendVoiceCall {
-	call.request.JSON("voice", voice)
+func (call *SendVoiceCall) Voice(voice FileArg) *SendVoiceCall {
+	call.request.File("voice", voice)
 	return call
 }
 
@@ -1167,18 +1167,18 @@ type SendVideoNoteCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 
 // videoNote - Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending video notes by a URL is currently unsupported
-func NewSendVideoNoteCall(chatId PeerID, videoNote InputFile) *SendVideoNoteCall {
+func NewSendVideoNoteCall(chatId PeerID, videoNote FileArg) *SendVideoNoteCall {
 	return &SendVideoNoteCall{
 		Call[Message]{
 			request: NewRequest("sendVideoNote").
 				PeerID("chat_id", chatId).
-				JSON("video_note", videoNote),
+				File("video_note", videoNote),
 		},
 	}
 }
 
 // SendVideoNoteCall constructs a new SendVideoNoteCall with required parameters.
-func (client *Client) SendVideoNote(chatId PeerID, videoNote InputFile) *SendVideoNoteCall {
+func (client *Client) SendVideoNote(chatId PeerID, videoNote FileArg) *SendVideoNoteCall {
 	return callWithClient(
 		client,
 		NewSendVideoNoteCall(chatId, videoNote),
@@ -1192,8 +1192,8 @@ func (call *SendVideoNoteCall) ChatId(chatId PeerID) *SendVideoNoteCall {
 }
 
 // VideoNote Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending video notes by a URL is currently unsupported
-func (call *SendVideoNoteCall) VideoNote(videoNote InputFile) *SendVideoNoteCall {
-	call.request.JSON("video_note", videoNote)
+func (call *SendVideoNoteCall) VideoNote(videoNote FileArg) *SendVideoNoteCall {
+	call.request.File("video_note", videoNote)
 	return call
 }
 
@@ -1210,8 +1210,8 @@ func (call *SendVideoNoteCall) Length(length int) *SendVideoNoteCall {
 }
 
 // Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendVideoNoteCall) Thumb(thumb InputFile) *SendVideoNoteCall {
-	call.request.JSON("thumb", thumb)
+func (call *SendVideoNoteCall) Thumb(thumb FileArg) *SendVideoNoteCall {
+	call.request.File("thumb", thumb)
 	return call
 }
 
@@ -4010,18 +4010,18 @@ type SendStickerCall struct {
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 
 // sticker - Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func NewSendStickerCall(chatId PeerID, sticker InputFile) *SendStickerCall {
+func NewSendStickerCall(chatId PeerID, sticker FileArg) *SendStickerCall {
 	return &SendStickerCall{
 		Call[Message]{
 			request: NewRequest("sendSticker").
 				PeerID("chat_id", chatId).
-				JSON("sticker", sticker),
+				File("sticker", sticker),
 		},
 	}
 }
 
 // SendStickerCall constructs a new SendStickerCall with required parameters.
-func (client *Client) SendSticker(chatId PeerID, sticker InputFile) *SendStickerCall {
+func (client *Client) SendSticker(chatId PeerID, sticker FileArg) *SendStickerCall {
 	return callWithClient(
 		client,
 		NewSendStickerCall(chatId, sticker),
@@ -4035,8 +4035,8 @@ func (call *SendStickerCall) ChatId(chatId PeerID) *SendStickerCall {
 }
 
 // Sticker Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *SendStickerCall) Sticker(sticker InputFile) *SendStickerCall {
-	call.request.JSON("sticker", sticker)
+func (call *SendStickerCall) Sticker(sticker FileArg) *SendStickerCall {
+	call.request.File("sticker", sticker)
 	return call
 }
 
@@ -4201,8 +4201,8 @@ func (call *CreateNewStickerSetCall) Title(title string) *CreateNewStickerSetCal
 }
 
 // PngSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *CreateNewStickerSetCall) PngSticker(pngSticker InputFile) *CreateNewStickerSetCall {
-	call.request.JSON("png_sticker", pngSticker)
+func (call *CreateNewStickerSetCall) PngSticker(pngSticker FileArg) *CreateNewStickerSetCall {
+	call.request.File("png_sticker", pngSticker)
 	return call
 }
 
@@ -4285,8 +4285,8 @@ func (call *AddStickerToSetCall) Name(name string) *AddStickerToSetCall {
 }
 
 // PngSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *AddStickerToSetCall) PngSticker(pngSticker InputFile) *AddStickerToSetCall {
-	call.request.JSON("png_sticker", pngSticker)
+func (call *AddStickerToSetCall) PngSticker(pngSticker FileArg) *AddStickerToSetCall {
+	call.request.File("png_sticker", pngSticker)
 	return call
 }
 
@@ -4431,8 +4431,8 @@ func (call *SetStickerSetThumbCall) UserId(userId int) *SetStickerSetThumbCall {
 }
 
 // Thumb A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/stickers#animated-sticker-requirements for animated sticker technical requirements, or a WEBM video with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/stickers#video-sticker-requirements for video sticker technical requirements. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files ». Animated sticker set thumbnails can't be uploaded via HTTP URL.
-func (call *SetStickerSetThumbCall) Thumb(thumb InputFile) *SetStickerSetThumbCall {
-	call.request.JSON("thumb", thumb)
+func (call *SetStickerSetThumbCall) Thumb(thumb FileArg) *SetStickerSetThumbCall {
+	call.request.File("thumb", thumb)
 	return call
 }
 
