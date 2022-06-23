@@ -63,6 +63,10 @@ func (r *Request) ChatID(name string, v ChatID) *Request {
 	return r.Int64(name, int64(v))
 }
 
+func (r *Request) ParseMode(name string, v ParseMode) *Request {
+	return r.String(name, v.Name())
+}
+
 func (r *Request) File(name string, arg FileArg) *Request {
 	if arg.FileID != "" {
 		return r.String(name, string(arg.FileID))

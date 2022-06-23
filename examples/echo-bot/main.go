@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/signal"
 	"regexp"
-	"strings"
 	"syscall"
 	"time"
 
@@ -81,12 +80,13 @@ func newBot() *tgb.Bot {
 		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
 			return update.Respond(ctx, tg.NewSendMessageCall(
 				update.Message.Chat,
-				strings.Join([]string{
-					`👋 Hi, I'm echo bot!`,
-					``,
-					`<i>🚀Powered by <a href="github.com/mr-linch/go-tg">go-tg</a></i>`,
-				}, "\n"),
-			).ParseMode("HTML"))
+				tg.HTML.Text(
+					tg.HTML.Bold("👋 Hi, I'm echo bot!"),
+					"",
+					tg.HTML.Italic("🚀 Powered by", tg.HTML.Spoiler(tg.HTML.Link("go-tg", "github.com/mr-linch/go-tg"))),
+				),
+			).ParseMode(tg.HTML))
+
 		}), tgb.Command("start", tgb.WithCommandAlias("help"))).
 		// handles gopher image
 		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
