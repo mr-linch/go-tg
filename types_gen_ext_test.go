@@ -87,7 +87,7 @@ func TestChatType_UnmarshalJSON(t *testing.T) {
 
 func TestInlineReplyMarkup(t *testing.T) {
 	actual := NewInlineKeyboardMarkup(
-		NewInlineKeyboardRow(
+		NewButtonRow(
 			NewInlineKeyboardButtonURL("text", "https://google.com"),
 			NewInlineKeyboardButtonCallback("text", "data"),
 			NewInlineKeyboardButtonWebApp("text", WebAppInfo{}),
@@ -121,7 +121,7 @@ func TestInlineReplyMarkup(t *testing.T) {
 
 func TestReplyKeyboardMarkup(t *testing.T) {
 	actual := NewReplyKeyboardMarkup(
-		NewReplyKeyboardRow(
+		NewButtonRow(
 			NewKeyboardButton("text"),
 			NewKeyboardButtonRequestContact("text"),
 			NewKeyboardButtonRequestLocation("text"),
@@ -173,4 +173,152 @@ func TestForceReplay(t *testing.T) {
 		Selective:             true,
 		InputFieldPlaceholder: "test",
 	}, actual)
+}
+
+func TestNewButtonLayout(t *testing.T) {
+	keyboard := NewButtonLayout(1,
+		NewInlineKeyboardButtonCallback("1", "1"),
+		NewInlineKeyboardButtonCallback("2", "2"),
+		NewInlineKeyboardButtonCallback("3", "3"),
+	).Keyboard()
+
+	assert.Equal(t, [][]InlineKeyboardButton{
+		{{Text: "1", CallbackData: "1"}},
+		{{Text: "2", CallbackData: "2"}},
+		{{Text: "3", CallbackData: "3"}},
+	}, keyboard)
+}
+func TestButtonLayout_Add(t *testing.T) {
+	for _, test := range []struct {
+		Layout *ButtonLayout[KeyboardButton]
+		Want   [][]KeyboardButton
+	}{
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Add(NewKeyboardButton("text")),
+			Want: [][]KeyboardButton{
+				{{Text: "text"}},
+			},
+		},
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Add(NewKeyboardButton("text"), NewKeyboardButton("text"), NewKeyboardButton("text")),
+			Want: [][]KeyboardButton{
+				{{Text: "text"}, {Text: "text"}, {Text: "text"}},
+			},
+		},
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Add(NewKeyboardButton("text"), NewKeyboardButton("text"), NewKeyboardButton("text"), NewKeyboardButton("text")),
+			Want: [][]KeyboardButton{
+				{{Text: "text"}, {Text: "text"}, {Text: "text"}},
+				{{Text: "text"}},
+			},
+		},
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Add(NewKeyboardButton("text"), NewKeyboardButton("text"), NewKeyboardButton("text"), NewKeyboardButton("text")).
+				Add(NewKeyboardButton("text")),
+			Want: [][]KeyboardButton{
+				{{Text: "text"}, {Text: "text"}, {Text: "text"}},
+				{{Text: "text"}},
+				{{Text: "text"}},
+			},
+		},
+	} {
+		assert.EqualValues(t, test.Want, test.Layout.Keyboard())
+	}
+}
+
+func TestButtonLayout_Row(t *testing.T) {
+	keyboard := NewButtonLayout(1,
+		NewKeyboardButton("1"),
+		NewKeyboardButton("2"),
+		NewKeyboardButton("3"),
+	).Row(
+		NewKeyboardButton("4"),
+		NewKeyboardButton("5"),
+		NewKeyboardButton("6"),
+		NewKeyboardButton("7"),
+	).Keyboard()
+
+	assert.Equal(t, [][]KeyboardButton{
+		{{Text: "1"}},
+		{{Text: "2"}},
+		{{Text: "3"}},
+		{{Text: "4"}, {Text: "5"}, {Text: "6"}, {Text: "7"}},
+	}, keyboard)
+}
+
+func TestButtonLayout_Insert(t *testing.T) {
+	for _, test := range []struct {
+		Layout *ButtonLayout[KeyboardButton]
+		Want   [][]KeyboardButton
+	}{
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Insert(NewKeyboardButton("text")),
+			Want: [][]KeyboardButton{
+				{{Text: "text"}},
+			},
+		},
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Insert(NewKeyboardButton("text"), NewKeyboardButton("text"), NewKeyboardButton("text")),
+			Want: [][]KeyboardButton{
+				{{Text: "text"}, {Text: "text"}, {Text: "text"}},
+			},
+		},
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Insert(NewKeyboardButton("text"), NewKeyboardButton("text"), NewKeyboardButton("text"), NewKeyboardButton("text")),
+			Want: [][]KeyboardButton{
+				{{Text: "text"}, {Text: "text"}, {Text: "text"}},
+				{{Text: "text"}},
+			},
+		},
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Insert(NewKeyboardButton("1"), NewKeyboardButton("2")).
+				Insert(NewKeyboardButton("3")),
+			Want: [][]KeyboardButton{
+				{{Text: "1"}, {Text: "2"}, {Text: "3"}},
+			},
+		},
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Insert(NewKeyboardButton("1"), NewKeyboardButton("2")).
+				Insert(NewKeyboardButton("3")),
+			Want: [][]KeyboardButton{
+				{{Text: "1"}, {Text: "2"}, {Text: "3"}},
+			},
+		},
+		{
+			Layout: NewButtonLayout[KeyboardButton](3).
+				Add(NewKeyboardButton("1"), NewKeyboardButton("2"), NewKeyboardButton("3")).
+				Insert(NewKeyboardButton("4")).
+				Add(NewKeyboardButton("5")),
+			Want: [][]KeyboardButton{
+				{{Text: "1"}, {Text: "2"}, {Text: "3"}},
+				{{Text: "4"}},
+				{{Text: "5"}},
+			},
+		},
+	} {
+		assert.EqualValues(t, test.Want, test.Layout.Keyboard())
+	}
+}
+
+func TestNewButtonColumn(t *testing.T) {
+	keyboard := NewButtonColumn(
+		NewInlineKeyboardButtonCallback("1", "1"),
+		NewInlineKeyboardButtonCallback("2", "2"),
+		NewInlineKeyboardButtonCallback("3", "3"),
+	)
+
+	assert.Equal(t, [][]InlineKeyboardButton{
+		{{Text: "1", CallbackData: "1"}},
+		{{Text: "2", CallbackData: "2"}},
+		{{Text: "3", CallbackData: "3"}},
+	}, keyboard)
 }

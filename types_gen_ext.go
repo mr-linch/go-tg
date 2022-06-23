@@ -163,11 +163,6 @@ func NewInlineKeyboardMarkup(rows ...[]InlineKeyboardButton) *InlineKeyboardMark
 	}
 }
 
-// NewInlineKeyboardButtonRow creates a new InlineKeyboardButtonRow.
-func NewInlineKeyboardRow(buttons ...InlineKeyboardButton) []InlineKeyboardButton {
-	return buttons
-}
-
 // NewInlineButtonURL create inline button
 // with http(s):// or tg:// URL to be opened when the button is pressed.
 func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
@@ -248,11 +243,6 @@ func NewReplyKeyboardMarkup(rows ...[]KeyboardButton) *ReplyKeyboardMarkup {
 }
 
 var _ ReplyMarkup = (*ReplyKeyboardMarkup)(nil)
-
-// NewReplyKeyboardRow creates a new row of ReplyKeyboard.
-func NewReplyKeyboardRow(buttons ...KeyboardButton) []KeyboardButton {
-	return buttons
-}
 
 // WithResizeKeyboard requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons).
 // Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.
@@ -368,3 +358,92 @@ func (markup *ForceReply) WithInputFieldPlaceholder(placeholder string) *ForceRe
 }
 
 func (markup ForceReply) isReplyMarkup() {}
+
+// NewButtonRow it's generic helper for create keyboards in functional way.
+func NewButtonRow[T Button](buttons ...T) []T {
+	return buttons
+}
+
+// Button define generic button interface
+type Button interface {
+	InlineKeyboardButton | KeyboardButton
+}
+
+// ButtonLayout it's build for fixed width keyboards.
+type ButtonLayout[T Button] struct {
+	buttons  [][]T
+	rowWidth int
+}
+
+// NewButtonColumn returns keyboard from a single column of Button.
+func NewButtonColumn[T Button](buttons ...T) [][]T {
+	result := make([][]T, 0, len(buttons))
+
+	for _, button := range buttons {
+		result = append(result, []T{button})
+	}
+
+	return result
+}
+
+// NewButtonLayout creates layout with specified width.
+// Buttons will be added via Insert method.
+func NewButtonLayout[T Button](rowWidth int, buttons ...T) *ButtonLayout[T] {
+	layout := &ButtonLayout[T]{
+		rowWidth: rowWidth,
+		buttons:  make([][]T, 0),
+	}
+
+	return layout.Insert(buttons...)
+}
+
+// Keyboard returns result of building.
+func (layout *ButtonLayout[T]) Keyboard() [][]T {
+	return layout.buttons
+}
+
+// Insert buttons to last row if possible, or create new and insert.
+func (layout *ButtonLayout[T]) Insert(buttons ...T) *ButtonLayout[T] {
+	for _, button := range buttons {
+		layout.insert(button)
+	}
+
+	return layout
+}
+
+func (layout *ButtonLayout[T]) insert(button T) *ButtonLayout[T] {
+	if len(layout.buttons) > 0 && len(layout.buttons[len(layout.buttons)-1]) < layout.rowWidth {
+		layout.buttons[len(layout.buttons)-1] = append(layout.buttons[len(layout.buttons)-1], button)
+	} else {
+		layout.buttons = append(layout.buttons, []T{button})
+	}
+	return layout
+}
+
+// Add accepts any number of buttons,
+// always starts adding from a new row
+// and adds a row when it reaches the set width.
+func (layout *ButtonLayout[T]) Add(buttons ...T) *ButtonLayout[T] {
+	row := make([]T, 0, layout.rowWidth)
+
+	for _, button := range buttons {
+		if len(row) == layout.rowWidth {
+			layout.buttons = append(layout.buttons, row)
+			row = make([]T, 0, layout.rowWidth)
+		}
+
+		row = append(row, button)
+	}
+
+	if len(row) > 0 {
+		layout.buttons = append(layout.buttons, row)
+	}
+
+	return layout
+}
+
+// Row add new row with no respect for row width
+func (layout *ButtonLayout[T]) Row(buttons ...T) *ButtonLayout[T] {
+	layout.buttons = append(layout.buttons, buttons)
+	return layout
+}
