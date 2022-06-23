@@ -15,13 +15,19 @@ func (id ChatID) PeerID() string {
 	return strconv.FormatInt(int64(id), 10)
 }
 
+// ChatType represents enum of possible chat types.
 type ChatType int8
 
 const (
+	// ChatTypePrivate represents one-to-one chat.
 	ChatTypePrivate ChatType = iota + 1
+	// ChatTypeGroup represents group chats.
 	ChatTypeGroup
+	// ChatTypeSupergroup supergroup chats.
 	ChatTypeSupergroup
+	// ChatTypeChannel represents channels
 	ChatTypeChannel
+	// ChatTypeSender for a private chat with the inline query sender
 	ChatTypeSender
 )
 
