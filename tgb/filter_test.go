@@ -333,3 +333,129 @@ func TestRegexp(t *testing.T) {
 		})
 	}
 }
+
+func TestChatType(t *testing.T) {
+	for _, test := range []struct {
+		Name   string
+		Filter Filter
+		Update *tg.Update
+		Allow  bool
+	}{
+		{
+			"Message",
+			ChatType(tg.ChatTypePrivate),
+			&tg.Update{
+				Message: &tg.Message{
+					Chat: tg.Chat{Type: tg.ChatTypePrivate},
+				},
+			},
+			true,
+		},
+		{
+			"EditedMessage",
+			ChatType(tg.ChatTypePrivate),
+			&tg.Update{
+				EditedMessage: &tg.Message{
+					Chat: tg.Chat{Type: tg.ChatTypePrivate},
+				},
+			},
+			true,
+		},
+		{
+			"ChannelPost",
+			ChatType(tg.ChatTypeChannel),
+			&tg.Update{
+				ChannelPost: &tg.Message{
+					Chat: tg.Chat{Type: tg.ChatTypeChannel},
+				},
+			},
+			true,
+		},
+		{
+			"EditedChannelPost",
+			ChatType(tg.ChatTypeChannel),
+			&tg.Update{
+				EditedChannelPost: &tg.Message{
+					Chat: tg.Chat{Type: tg.ChatTypeChannel},
+				},
+			},
+			true,
+		},
+		{
+			"CallbackQuery",
+			ChatType(tg.ChatTypePrivate),
+			&tg.Update{
+				CallbackQuery: &tg.CallbackQuery{
+					Message: &tg.Message{
+						Chat: tg.Chat{Type: tg.ChatTypePrivate},
+					},
+				},
+			},
+			true,
+		},
+		{
+			"CallbackQueryNoChat",
+			ChatType(tg.ChatTypePrivate),
+			&tg.Update{
+				CallbackQuery: &tg.CallbackQuery{
+					Message: nil,
+				},
+			},
+			false,
+		},
+		{
+			"InlineQuery",
+			ChatType(tg.ChatTypeSender),
+			&tg.Update{
+				InlineQuery: &tg.InlineQuery{
+					ChatType: tg.ChatTypeSender,
+				},
+			},
+			true,
+		},
+		{
+			"MyChatMember",
+			ChatType(tg.ChatTypeSupergroup),
+			&tg.Update{
+				MyChatMember: &tg.ChatMemberUpdated{
+					Chat: tg.Chat{Type: tg.ChatTypeSupergroup},
+				},
+			},
+			true,
+		},
+		{
+			"ChatMember",
+			ChatType(tg.ChatTypeSupergroup),
+			&tg.Update{
+				ChatMember: &tg.ChatMemberUpdated{
+					Chat: tg.Chat{Type: tg.ChatTypeSupergroup},
+				},
+			},
+			true,
+		},
+		{
+			"ChatJoinRequest",
+			ChatType(tg.ChatTypeSupergroup),
+			&tg.Update{
+				ChatJoinRequest: &tg.ChatJoinRequest{
+					Chat: tg.Chat{Type: tg.ChatTypeSupergroup},
+				},
+			},
+			true,
+		},
+		{
+			"ShippingQuery",
+			ChatType(tg.ChatTypeSupergroup),
+			&tg.Update{
+				ShippingQuery: &tg.ShippingQuery{},
+			},
+			false,
+		},
+	} {
+		t.Run(test.Name, func(t *testing.T) {
+			allow, err := test.Filter.Allow(context.Background(), test.Update)
+			assert.Equal(t, test.Allow, allow)
+			assert.NoError(t, err)
+		})
+	}
+}

@@ -210,3 +210,34 @@ func Regexp(re *regexp.Regexp) Filter {
 		return re.MatchString(text), nil
 	})
 }
+
+func ChatType(types ...tg.ChatType) Filter {
+	return FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+		var typ tg.ChatType
+
+		switch {
+		case update.Message != nil:
+			typ = update.Message.Chat.Type
+		case update.EditedMessage != nil:
+			typ = update.EditedMessage.Chat.Type
+		case update.ChannelPost != nil:
+			typ = update.ChannelPost.Chat.Type
+		case update.EditedChannelPost != nil:
+			typ = update.EditedChannelPost.Chat.Type
+		case update.CallbackQuery != nil && update.CallbackQuery.Message != nil:
+			typ = update.CallbackQuery.Message.Chat.Type
+		case update.InlineQuery != nil:
+			typ = update.InlineQuery.ChatType
+		case update.MyChatMember != nil:
+			typ = update.MyChatMember.Chat.Type
+		case update.ChatMember != nil:
+			typ = update.ChatMember.Chat.Type
+		case update.ChatJoinRequest != nil:
+			typ = update.ChatJoinRequest.Chat.Type
+		default:
+			return false, nil
+		}
+
+		return slices.Contains(types, typ), nil
+	})
+}
