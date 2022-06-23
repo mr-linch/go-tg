@@ -133,7 +133,7 @@ type Chat struct {
 	ID ChatID `json:"id"`
 
 	// Type of chat, can be either “private”, “group”, “supergroup” or “channel”
-	Type string `json:"type"`
+	Type ChatType `json:"type"`
 
 	// Optional. Title, for supergroups, channels and group chats
 	Title string `json:"title,omitempty"`
@@ -1558,7 +1558,7 @@ type InlineQuery struct {
 	Offset string `json:"offset"`
 
 	// Optional. Type of the chat from which the inline query was sent. Can be either “sender” for a private chat with the inline query sender, “private”, “group”, “supergroup”, or “channel”. The chat type should be always known for requests sent from official clients and most third-party clients, unless the request was sent from a secret chat
-	ChatType string `json:"chat_type,omitempty"`
+	ChatType ChatType `json:"chat_type,omitempty"`
 
 	// Optional. Sender location, only for bots that request user location
 	Location *Location `json:"location,omitempty"`
