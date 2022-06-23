@@ -101,6 +101,8 @@ func TestInlineReplyMarkup(t *testing.T) {
 		),
 	)
 
+	actual.isReplyMarkup()
+
 	assert.EqualValues(t, &InlineKeyboardMarkup{
 		InlineKeyboard: [][]InlineKeyboardButton{
 			{
@@ -115,6 +117,37 @@ func TestInlineReplyMarkup(t *testing.T) {
 			},
 		},
 	}, actual)
+}
+
+func TestReplyKeyboardMarkup(t *testing.T) {
+	actual := NewReplyKeyboardMarkup(
+		NewReplyKeyboardRow(
+			NewKeyboardButton("text"),
+			NewKeyboardButtonRequestContact("text"),
+			NewKeyboardButtonRequestLocation("text"),
+			NewKeyboardButtonRequestPoll("text", KeyboardButtonPollType{}),
+			NewKeyboardButtonWebApp("text", WebAppInfo{}),
+		),
+	).WithResizeKeyboardMarkup().
+		WithOneTimeKeyboardMarkup().
+		WithInputFieldPlaceholder("text").
+		WithSelective()
 
 	actual.isReplyMarkup()
+
+	assert.EqualValues(t, &ReplyKeyboardMarkup{
+		Keyboard: [][]KeyboardButton{
+			{
+				{Text: "text"},
+				{Text: "text", RequestContact: true},
+				{Text: "text", RequestLocation: true},
+				{Text: "text", RequestPoll: &KeyboardButtonPollType{}},
+				{Text: "text", WebApp: &WebAppInfo{}},
+			},
+		},
+		ResizeKeyboard:        true,
+		OneTimeKeyboard:       true,
+		InputFieldPlaceholder: "text",
+		Selective:             true,
+	}, actual)
 }
