@@ -22,14 +22,15 @@ const (
 	ChatTypeGroup
 	ChatTypeSupergroup
 	ChatTypeChannel
+	ChatTypeSender
 )
 
 func (chatType ChatType) String() string {
-	if chatType < ChatTypePrivate || chatType > ChatTypeChannel {
+	if chatType < ChatTypePrivate || chatType > ChatTypeSender {
 		return "unknown"
 	}
 
-	return [...]string{"private", "group", "supergroup", "channel"}[chatType-1]
+	return [...]string{"private", "group", "supergroup", "channel", "sender"}[chatType-1]
 }
 
 func (chatType ChatType) MarshalJSON() ([]byte, error) {
@@ -51,6 +52,8 @@ func (chatType *ChatType) UnmarshalJSON(b []byte) error {
 		*chatType = ChatTypeSupergroup
 	case "channel":
 		*chatType = ChatTypeChannel
+	case "sender":
+		*chatType = ChatTypeSender
 	default:
 		return fmt.Errorf("unknown chat type: %s", s)
 	}

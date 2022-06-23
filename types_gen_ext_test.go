@@ -29,6 +29,7 @@ func TestChatType_String(t *testing.T) {
 		{ChatTypeGroup, "group"},
 		{ChatTypeSupergroup, "supergroup"},
 		{ChatTypeChannel, "channel"},
+		{ChatTypeSender, "sender"},
 		{ChatType(-1), "unknown"},
 	} {
 		assert.Equal(t, test.Want, test.ChatType.String())
@@ -47,7 +48,8 @@ func TestChatType_MarshalJSON(t *testing.T) {
 		{sample{ChatTypeGroup}, `{"type":"group"}`},
 		{sample{ChatTypeSupergroup}, `{"type":"supergroup"}`},
 		{sample{ChatTypeChannel}, `{"type":"channel"}`},
-		{sample{ChatType(-1)}, `"{"type":"unknown"}"`},
+		{sample{ChatTypeSender}, `{"type":"sender"}`},
+		{sample{ChatType(-1)}, `{"type":"unknown"}`},
 	} {
 		actual, err := json.Marshal(test.Sample)
 		assert.NoError(t, err)
@@ -71,6 +73,7 @@ func TestChatType_UnmarshalJSON(t *testing.T) {
 		{`{"type": "supergroup"}`, sample{}, ChatTypeSupergroup, false},
 		{`{"type": "channel"}`, sample{}, ChatTypeChannel, false},
 		{`{"type": "test"}`, sample{}, ChatType(-1), true},
+		{`{"type": "sender"}`, sample{}, ChatTypeSender, false},
 		{`{"type": {}}`, sample{}, ChatType(-1), true},
 	} {
 		if test.Err {
