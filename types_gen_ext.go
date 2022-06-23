@@ -3,6 +3,7 @@ package tg
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -12,6 +13,58 @@ var _ PeerID = (ChatID)(0)
 
 func (id ChatID) PeerID() string {
 	return strconv.FormatInt(int64(id), 10)
+}
+
+// ChatType represents enum of possible chat types.
+type ChatType int8
+
+const (
+	// ChatTypePrivate represents one-to-one chat.
+	ChatTypePrivate ChatType = iota + 1
+	// ChatTypeGroup represents group chats.
+	ChatTypeGroup
+	// ChatTypeSupergroup supergroup chats.
+	ChatTypeSupergroup
+	// ChatTypeChannel represents channels
+	ChatTypeChannel
+	// ChatTypeSender for a private chat with the inline query sender
+	ChatTypeSender
+)
+
+func (chatType ChatType) String() string {
+	if chatType < ChatTypePrivate || chatType > ChatTypeSender {
+		return "unknown"
+	}
+
+	return [...]string{"private", "group", "supergroup", "channel", "sender"}[chatType-1]
+}
+
+func (chatType ChatType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(chatType.String())
+}
+
+func (chatType *ChatType) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+
+	switch s {
+	case "private":
+		*chatType = ChatTypePrivate
+	case "group":
+		*chatType = ChatTypeGroup
+	case "supergroup":
+		*chatType = ChatTypeSupergroup
+	case "channel":
+		*chatType = ChatTypeChannel
+	case "sender":
+		*chatType = ChatTypeSender
+	default:
+		return fmt.Errorf("unknown chat type: %s", s)
+	}
+
+	return nil
 }
 
 // UserID it's unique identifier for Telegram user or bot.

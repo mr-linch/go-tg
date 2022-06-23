@@ -1,3 +1,4 @@
+// Package contains simple echo bot, that demonstrates how to use handlers, filters and file uploads.
 package main
 
 import (

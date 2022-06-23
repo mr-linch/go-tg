@@ -1,0 +1,64 @@
+// Package contains example of using tgb.ChatType filter.
+package main
+
+import (
+	"context"
+	"flag"
+	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/mr-linch/go-tg"
+	"github.com/mr-linch/go-tg/tgb"
+)
+
+var (
+	flagToken string
+)
+
+func main() {
+	flag.StringVar(&flagToken, "token", "", "Telegram Bot API token")
+	flag.Parse()
+
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGTERM)
+	defer cancel()
+
+	if err := run(ctx); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run(ctx context.Context) error {
+	if flagToken == "" {
+		return fmt.Errorf("token is required")
+	}
+
+	client := tg.New(flagToken)
+
+	me, err := client.Me(ctx)
+	if err != nil {
+		return fmt.Errorf("get me: %w", err)
+	}
+	log.Printf("auth as https://t.me/%s", me.Username)
+
+	bot := tgb.New().
+		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
+			return update.Respond(ctx, tg.NewSendMessageCall(
+				update.Message.Chat,
+				"this is private chat response",
+			))
+		}), tgb.ChatType(tg.ChatTypePrivate)).
+		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
+			return update.Respond(ctx, tg.NewSendMessageCall(
+				update.Message.Chat,
+				"this is group chat response",
+			))
+		}), tgb.ChatType(tg.ChatTypeGroup, tg.ChatTypeSupergroup))
+
+	return tgb.NewPoller(
+		bot,
+		client,
+	).Run(ctx)
+}
