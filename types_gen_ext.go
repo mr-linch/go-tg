@@ -147,4 +147,107 @@ type InlineQueryResult struct {
 type BotCommandScope struct {
 }
 
-type ReplyMarkup struct{}
+type CallbackGame struct{}
+
+// ReplyMarkup represents a custom keyboard.
+type ReplyMarkup interface {
+	isReplyMarkup()
+}
+
+var _ ReplyMarkup = (*InlineKeyboardMarkup)(nil)
+
+// NewInlineKeyboardMarkup creates a new InlineKeyboardMarkup.
+func NewInlineKeyboardMarkup(rows ...[]InlineKeyboardButton) *InlineKeyboardMarkup {
+	return &InlineKeyboardMarkup{
+		InlineKeyboard: rows,
+	}
+}
+
+// NewInlineKeyboardButtonRow creates a new InlineKeyboardButtonRow.
+func NewInlineKeyboardRow(buttons ...InlineKeyboardButton) []InlineKeyboardButton {
+	return buttons
+}
+
+// NewInlineButtonURL create inline button
+// with http(s):// or tg:// URL to be opened when the button is pressed.
+func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text: text,
+		URL:  url,
+	}
+}
+
+// NewInlineKeyboardButtonCallback creates a new InlineKeyboardButton with specified callback data.
+// Query should have length 1-64 bytes.
+func NewInlineKeyboardButtonCallback(text string, query string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:         text,
+		CallbackData: query,
+	}
+}
+
+// NewInlineKeyboardButtonWebApp creates a button that open a web app.
+func NewInlineKeyboardButtonWebApp(text string, webApp WebAppInfo) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:   text,
+		WebApp: &webApp,
+	}
+}
+
+// InlineKeyboardMarkup represents button that open web page with auth data.
+func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginUrl) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:     text,
+		LoginURL: &loginURL,
+	}
+}
+
+// NewInlineKeyboardButtonSwitchInlineQuery represents button that
+//  will prompt the user to select one of their chats,
+// open that chat and insert the bot's username and the specified inline query in the input field.
+func NewInlineKeyboardButtonSwitchInlineQuery(text string, query string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:              text,
+		SwitchInlineQuery: query,
+	}
+}
+
+// NewInlineKeyboardButtonSwitchInlineQueryCurrentChat represents button that
+// will insert the bot's username and the specified inline query in the current chat's input field
+func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text string, query string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:                         text,
+		SwitchInlineQueryCurrentChat: query,
+	}
+}
+
+// NewInlineKeyboardButtonCallbackGame represents the button which open a game.
+func NewInlineKeyboardButtonCallbackGame(text string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:         text,
+		CallbackGame: &CallbackGame{},
+	}
+}
+
+// NewInlineKeyboardButtonPay represents a Pay button.
+// NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages
+func NewInlineKeyboardButtonPay(text string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text: text,
+		Pay:  true,
+	}
+}
+
+func (markup InlineKeyboardMarkup) isReplyMarkup() {}
+
+var _ ReplyMarkup = (*ReplyKeyboardMarkup)(nil)
+
+func (markup ReplyKeyboardMarkup) isReplyMarkup() {}
+
+var _ ReplyMarkup = (*ReplyKeyboardRemove)(nil)
+
+func (markup ReplyKeyboardRemove) isReplyMarkup() {}
+
+var _ ReplyMarkup = (*ForceReply)(nil)
+
+func (markup ForceReply) isReplyMarkup() {}

@@ -84,3 +84,37 @@ func TestChatType_UnmarshalJSON(t *testing.T) {
 		}
 	}
 }
+
+func TestInlineReplyMarkup(t *testing.T) {
+	actual := NewInlineKeyboardMarkup(
+		NewInlineKeyboardRow(
+			NewInlineKeyboardButtonURL("text", "https://google.com"),
+			NewInlineKeyboardButtonCallback("text", "data"),
+			NewInlineKeyboardButtonWebApp("text", WebAppInfo{}),
+			NewInlineKeyboardButtonLoginURL("text", LoginUrl{
+				URL: "https://google.com",
+			}),
+			NewInlineKeyboardButtonSwitchInlineQuery("text", "query"),
+			NewInlineKeyboardButtonSwitchInlineQueryCurrentChat("text", "query"),
+			NewInlineKeyboardButtonCallbackGame("text"),
+			NewInlineKeyboardButtonPay("text"),
+		),
+	)
+
+	assert.EqualValues(t, &InlineKeyboardMarkup{
+		InlineKeyboard: [][]InlineKeyboardButton{
+			{
+				{Text: "text", URL: "https://google.com"},
+				{Text: "text", CallbackData: "data"},
+				{Text: "text", WebApp: &WebAppInfo{}},
+				{Text: "text", LoginURL: &LoginUrl{URL: "https://google.com"}},
+				{Text: "text", SwitchInlineQuery: "query"},
+				{Text: "text", SwitchInlineQueryCurrentChat: "query"},
+				{Text: "text", CallbackGame: &CallbackGame{}},
+				{Text: "text", Pay: true},
+			},
+		},
+	}, actual)
+
+	actual.isReplyMarkup()
+}

@@ -2761,30 +2761,6 @@ type Game struct {
 	Animation *Animation `json:"animation,omitempty"`
 }
 
-// CallbackGame a placeholder, currently holds no information. Use BotFather to set up your game.
-type CallbackGame struct {
-	// Yes
-	UserID int `json:"user_id"`
-
-	// Yes
-	Score int `json:"score"`
-
-	// Optional
-	Force bool `json:"force"`
-
-	// Optional
-	DisableEditMessage bool `json:"disable_edit_message"`
-
-	// Optional
-	ChatID int `json:"chat_id"`
-
-	// Optional
-	MessageID int `json:"message_id"`
-
-	// Optional
-	InlineMessageID string `json:"inline_message_id"`
-}
-
 // GameHighScore this object represents one row of the high scores table for a game.
 type GameHighScore struct {
 	// Position in high score table for the game
