@@ -240,6 +240,90 @@ func NewInlineKeyboardButtonPay(text string) InlineKeyboardButton {
 
 func (markup InlineKeyboardMarkup) isReplyMarkup() {}
 
+// NewReplyKeyboardMarkup creates a new ReplyKeyboardMarkup.
+func NewReplyKeyboardMarkup(rows ...[]KeyboardButton) *ReplyKeyboardMarkup {
+	return &ReplyKeyboardMarkup{
+		Keyboard: rows,
+	}
+}
+
+// NewReplyKeyboardRow creates a new row of ReplyKeyboard.
+func NewReplyKeyboardRow(buttons ...KeyboardButton) []KeyboardButton {
+	return buttons
+}
+
+// WithResizeKeyboard requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons).
+// Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.
+func (markup *ReplyKeyboardMarkup) WithResizeKeyboardMarkup() *ReplyKeyboardMarkup {
+	markup.ResizeKeyboard = true
+	return markup
+}
+
+// WithOneTimeKeyboard  requests clients to hide the keyboard as soon as it's been used.
+// The keyboard will still be available, but clients will automatically display the
+// usual letter-keyboard in the chat - the user can press a special button in
+// the input field to see the custom keyboard again.
+// Defaults to false.
+func (markup *ReplyKeyboardMarkup) WithOneTimeKeyboardMarkup() *ReplyKeyboardMarkup {
+	markup.OneTimeKeyboard = true
+	return markup
+}
+
+// WithInputFieldPlaceholder sets the placeholder to be shown in the input field when the keyboard is active;
+// 1-64 characters
+func (markup *ReplyKeyboardMarkup) WithInputFieldPlaceholder(placeholder string) *ReplyKeyboardMarkup {
+	markup.InputFieldPlaceholder = placeholder
+	return markup
+}
+
+// Use this parameter if you want to show the keyboard to specific users only.
+func (markup *ReplyKeyboardMarkup) WithSelective() *ReplyKeyboardMarkup {
+	markup.Selective = true
+	return markup
+}
+
+// NewKeyboardButton creates a plain reply keyboard button.
+func NewKeyboardButton(text string) KeyboardButton {
+	return KeyboardButton{
+		Text: text,
+	}
+}
+
+// NewKeyboardButtonRequestContact creates a reply keyboard button that request a contact from user.
+// Available in private chats only.
+func NewKeyboardButtonRequestContact(text string) KeyboardButton {
+	return KeyboardButton{
+		Text:           text,
+		RequestContact: true,
+	}
+}
+
+// NewKeyboardButtonRequestLocation creates a reply keyboard button that request a location from user.
+// Available in private chats only.
+func NewKeyboardButtonRequestLocation(text string) KeyboardButton {
+	return KeyboardButton{
+		Text:            text,
+		RequestLocation: true,
+	}
+}
+
+// NewKeyboardButtonRequestPoll creates a reply keyboard button that request a poll from user.
+// Available in private chats only.
+func NewKeyboardButtonRequestPoll(text string, poll KeyboardButtonPollType) KeyboardButton {
+	return KeyboardButton{
+		Text:        text,
+		RequestPoll: &poll,
+	}
+}
+
+// NewKeyboardButtonWebApp create a reply keyboard button that open a web app.
+func NewKeyboardButtonWebApp(text string, webApp WebAppInfo) KeyboardButton {
+	return KeyboardButton{
+		Text:   text,
+		WebApp: &webApp,
+	}
+}
+
 var _ ReplyMarkup = (*ReplyKeyboardMarkup)(nil)
 
 func (markup ReplyKeyboardMarkup) isReplyMarkup() {}
