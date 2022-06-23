@@ -151,3 +151,26 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 		Selective:             true,
 	}, actual)
 }
+
+func TestReplyKeyboardRemove(t *testing.T) {
+	actual := NewReplyKeyboardRemove().WithSelective()
+
+	actual.isReplyMarkup()
+
+	assert.EqualValues(t, &ReplyKeyboardRemove{
+		RemoveKeyboard: true,
+		Selective:      true,
+	}, actual)
+}
+
+func TestForceReplay(t *testing.T) {
+	actual := NewForceReply().WithSelective().WithInputFieldPlaceholder("test")
+
+	actual.isReplyMarkup()
+
+	assert.EqualValues(t, &ForceReply{
+		ForceReply:            true,
+		Selective:             true,
+		InputFieldPlaceholder: "test",
+	}, actual)
+}

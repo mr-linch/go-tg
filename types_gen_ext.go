@@ -247,6 +247,8 @@ func NewReplyKeyboardMarkup(rows ...[]KeyboardButton) *ReplyKeyboardMarkup {
 	}
 }
 
+var _ ReplyMarkup = (*ReplyKeyboardMarkup)(nil)
+
 // NewReplyKeyboardRow creates a new row of ReplyKeyboard.
 func NewReplyKeyboardRow(buttons ...KeyboardButton) []KeyboardButton {
 	return buttons
@@ -324,14 +326,45 @@ func NewKeyboardButtonWebApp(text string, webApp WebAppInfo) KeyboardButton {
 	}
 }
 
-var _ ReplyMarkup = (*ReplyKeyboardMarkup)(nil)
-
 func (markup ReplyKeyboardMarkup) isReplyMarkup() {}
 
 var _ ReplyMarkup = (*ReplyKeyboardRemove)(nil)
 
+// NewReplyKeyboardRemove creates a new ReplyKeyboardRemove.
+func NewReplyKeyboardRemove() *ReplyKeyboardRemove {
+	return &ReplyKeyboardRemove{
+		RemoveKeyboard: true,
+	}
+}
+
+// WithSelective set it if you want to remove the keyboard for specific users only.
+func (markup *ReplyKeyboardRemove) WithSelective() *ReplyKeyboardRemove {
+	markup.Selective = true
+	return markup
+}
+
 func (markup ReplyKeyboardRemove) isReplyMarkup() {}
 
 var _ ReplyMarkup = (*ForceReply)(nil)
+
+// NewForceReply creates a new ForceReply.
+func NewForceReply() *ForceReply {
+	return &ForceReply{
+		ForceReply: true,
+	}
+}
+
+// WithSelective set it if you want to force reply for specific users only.
+func (markup *ForceReply) WithSelective() *ForceReply {
+	markup.Selective = true
+	return markup
+}
+
+// WithInputFieldPlaceholder sets the placeholder to be shown in the input field when the reply is active;
+// 1-64 characters
+func (markup *ForceReply) WithInputFieldPlaceholder(placeholder string) *ForceReply {
+	markup.InputFieldPlaceholder = placeholder
+	return markup
+}
 
 func (markup ForceReply) isReplyMarkup() {}
