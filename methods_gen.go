@@ -298,8 +298,8 @@ func (call *SendMessageCall) Text(text string) *SendMessageCall {
 }
 
 // ParseMode Mode for parsing entities in the message text. See formatting options for more details.
-func (call *SendMessageCall) ParseMode(parseMode string) *SendMessageCall {
-	call.request.String("parse_mode", parseMode)
+func (call *SendMessageCall) ParseMode(parseMode ParseMode) *SendMessageCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -469,8 +469,8 @@ func (call *CopyMessageCall) Caption(caption string) *CopyMessageCall {
 }
 
 // ParseMode Mode for parsing entities in the new caption. See formatting options for more details.
-func (call *CopyMessageCall) ParseMode(parseMode string) *CopyMessageCall {
-	call.request.String("parse_mode", parseMode)
+func (call *CopyMessageCall) ParseMode(parseMode ParseMode) *CopyMessageCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -559,8 +559,8 @@ func (call *SendPhotoCall) Caption(caption string) *SendPhotoCall {
 }
 
 // ParseMode Mode for parsing entities in the photo caption. See formatting options for more details.
-func (call *SendPhotoCall) ParseMode(parseMode string) *SendPhotoCall {
-	call.request.String("parse_mode", parseMode)
+func (call *SendPhotoCall) ParseMode(parseMode ParseMode) *SendPhotoCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -652,8 +652,8 @@ func (call *SendAudioCall) Caption(caption string) *SendAudioCall {
 }
 
 // ParseMode Mode for parsing entities in the audio caption. See formatting options for more details.
-func (call *SendAudioCall) ParseMode(parseMode string) *SendAudioCall {
-	call.request.String("parse_mode", parseMode)
+func (call *SendAudioCall) ParseMode(parseMode ParseMode) *SendAudioCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -773,8 +773,8 @@ func (call *SendDocumentCall) Caption(caption string) *SendDocumentCall {
 }
 
 // ParseMode Mode for parsing entities in the document caption. See formatting options for more details.
-func (call *SendDocumentCall) ParseMode(parseMode string) *SendDocumentCall {
-	call.request.String("parse_mode", parseMode)
+func (call *SendDocumentCall) ParseMode(parseMode ParseMode) *SendDocumentCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -894,8 +894,8 @@ func (call *SendVideoCall) Caption(caption string) *SendVideoCall {
 }
 
 // ParseMode Mode for parsing entities in the video caption. See formatting options for more details.
-func (call *SendVideoCall) ParseMode(parseMode string) *SendVideoCall {
-	call.request.String("parse_mode", parseMode)
+func (call *SendVideoCall) ParseMode(parseMode ParseMode) *SendVideoCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -1015,8 +1015,8 @@ func (call *SendAnimationCall) Caption(caption string) *SendAnimationCall {
 }
 
 // ParseMode Mode for parsing entities in the animation caption. See formatting options for more details.
-func (call *SendAnimationCall) ParseMode(parseMode string) *SendAnimationCall {
-	call.request.String("parse_mode", parseMode)
+func (call *SendAnimationCall) ParseMode(parseMode ParseMode) *SendAnimationCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -1107,8 +1107,8 @@ func (call *SendVoiceCall) Caption(caption string) *SendVoiceCall {
 }
 
 // ParseMode Mode for parsing entities in the voice message caption. See formatting options for more details.
-func (call *SendVoiceCall) ParseMode(parseMode string) *SendVoiceCall {
-	call.request.String("parse_mode", parseMode)
+func (call *SendVoiceCall) ParseMode(parseMode ParseMode) *SendVoiceCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -3714,8 +3714,8 @@ func (call *EditMessageTextCall) Text(text string) *EditMessageTextCall {
 }
 
 // ParseMode Mode for parsing entities in the message text. See formatting options for more details.
-func (call *EditMessageTextCall) ParseMode(parseMode string) *EditMessageTextCall {
-	call.request.String("parse_mode", parseMode)
+func (call *EditMessageTextCall) ParseMode(parseMode ParseMode) *EditMessageTextCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 
@@ -3786,8 +3786,8 @@ func (call *EditMessageCaptionCall) Caption(caption string) *EditMessageCaptionC
 }
 
 // ParseMode Mode for parsing entities in the message caption. See formatting options for more details.
-func (call *EditMessageCaptionCall) ParseMode(parseMode string) *EditMessageCaptionCall {
-	call.request.String("parse_mode", parseMode)
+func (call *EditMessageCaptionCall) ParseMode(parseMode ParseMode) *EditMessageCaptionCall {
+	call.request.ParseMode("parse_mode", parseMode)
 	return call
 }
 

@@ -33,28 +33,6 @@ type PeerID interface {
 	PeerID() string
 }
 
-// ParseMode for parsing entities in the message text. See formatting options for more details.
-type ParseMode int8
-
-const (
-	ParseModeHTML ParseMode = iota + 1
-	ParseModeMarkdown
-	ParseModeMarkdownV2
-)
-
-func (mode ParseMode) String() string {
-	switch mode {
-	case ParseModeHTML:
-		return "HTML"
-	case ParseModeMarkdown:
-		return "Markdown"
-	case ParseModeMarkdownV2:
-		return "MarkdownV2"
-	default:
-		return ""
-	}
-}
-
 // MessageID it's unique identifier for a message in a chat.
 type MessageID int
 
