@@ -157,8 +157,8 @@ type ReplyMarkup interface {
 var _ ReplyMarkup = (*InlineKeyboardMarkup)(nil)
 
 // NewInlineKeyboardMarkup creates a new InlineKeyboardMarkup.
-func NewInlineKeyboardMarkup(rows ...[]InlineKeyboardButton) *InlineKeyboardMarkup {
-	return &InlineKeyboardMarkup{
+func NewInlineKeyboardMarkup(rows ...[]InlineKeyboardButton) InlineKeyboardMarkup {
+	return InlineKeyboardMarkup{
 		InlineKeyboard: rows,
 	}
 }

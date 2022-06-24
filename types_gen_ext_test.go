@@ -103,7 +103,7 @@ func TestInlineReplyMarkup(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, &InlineKeyboardMarkup{
+	assert.EqualValues(t, InlineKeyboardMarkup{
 		InlineKeyboard: [][]InlineKeyboardButton{
 			{
 				{Text: "text", URL: "https://google.com"},

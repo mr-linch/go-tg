@@ -3671,21 +3671,50 @@ type EditMessageTextCall struct {
 
 // NewEditMessageTextCall constructs a new EditMessageTextCall with required parameters.
 //
+// chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+
+// messageId - Required if inline_message_id is not specified. Identifier of the message to edit
+
 // text - New text of the message, 1-4096 characters after entities parsing
-func NewEditMessageTextCall(text string) *EditMessageTextCall {
+func NewEditMessageTextCall(chatId PeerID, messageId int, text string) *EditMessageTextCall {
 	return &EditMessageTextCall{
 		Call[Message]{
 			request: NewRequest("editMessageText").
+				PeerID("chat_id", chatId).
+				Int("message_id", messageId).
+				String("text", text),
+		},
+	}
+}
+
+// NewEditMessageTextCall constructs a new EditMessageTextCall with required parameters.
+//
+// inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
+
+// text - New text of the message, 1-4096 characters after entities parsing
+func NewEditMessageTextInlineCall(inlineMessageId string, text string) *EditMessageTextCall {
+	return &EditMessageTextCall{
+		Call[Message]{
+			request: NewRequest("editMessageText").
+				String("inline_message_id", inlineMessageId).
 				String("text", text),
 		},
 	}
 }
 
 // EditMessageTextCall constructs a new EditMessageTextCall with required parameters.
-func (client *Client) EditMessageText(text string) *EditMessageTextCall {
+func (client *Client) EditMessageText(chatId PeerID, messageId int, text string) *EditMessageTextCall {
 	return callWithClient(
 		client,
-		NewEditMessageTextCall(text),
+		NewEditMessageTextCall(chatId, messageId, text),
+	)
+}
+
+// EditMessageTextCall constructs a new EditMessageTextCall with required parameters.
+func (client *Client) EditMessageTextInline(inlineMessageId string, text string) *EditMessageTextCall {
+	return callWithClient(
+		client,
+		NewEditMessageTextInlineCall(inlineMessageId, text),
 	)
 }
 
