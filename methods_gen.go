@@ -62,7 +62,6 @@ type SetWebhookCall struct {
 }
 
 // NewSetWebhookCall constructs a new SetWebhookCall with required parameters.
-//
 // url - HTTPS URL to send updates to. Use an empty string to remove webhook integration
 func NewSetWebhookCall(url string) *SetWebhookCall {
 	return &SetWebhookCall{
@@ -263,9 +262,7 @@ type SendMessageCall struct {
 }
 
 // NewSendMessageCall constructs a new SendMessageCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // text - Text of the message to be sent, 1-4096 characters after entities parsing
 func NewSendMessageCall(chatId PeerID, text string) *SendMessageCall {
 	return &SendMessageCall{
@@ -354,11 +351,8 @@ type ForwardMessageCall struct {
 }
 
 // NewForwardMessageCall constructs a new ForwardMessageCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // fromChatId - Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
-
 // messageId - Message identifier in the chat specified in from_chat_id
 func NewForwardMessageCall(chatId PeerID, fromChatId PeerID, messageId int) *ForwardMessageCall {
 	return &ForwardMessageCall{
@@ -419,11 +413,8 @@ type CopyMessageCall struct {
 }
 
 // NewCopyMessageCall constructs a new CopyMessageCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // fromChatId - Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
-
 // messageId - Message identifier in the chat specified in from_chat_id
 func NewCopyMessageCall(chatId PeerID, fromChatId PeerID, messageId int) *CopyMessageCall {
 	return &CopyMessageCall{
@@ -518,9 +509,7 @@ type SendPhotoCall struct {
 }
 
 // NewSendPhotoCall constructs a new SendPhotoCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // photo - Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More information on Sending Files »
 func NewSendPhotoCall(chatId PeerID, photo FileArg) *SendPhotoCall {
 	return &SendPhotoCall{
@@ -611,9 +600,7 @@ type SendAudioCall struct {
 }
 
 // NewSendAudioCall constructs a new SendAudioCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // audio - Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func NewSendAudioCall(chatId PeerID, audio FileArg) *SendAudioCall {
 	return &SendAudioCall{
@@ -726,9 +713,7 @@ type SendDocumentCall struct {
 }
 
 // NewSendDocumentCall constructs a new SendDocumentCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // document - File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func NewSendDocumentCall(chatId PeerID, document FileArg) *SendDocumentCall {
 	return &SendDocumentCall{
@@ -829,9 +814,7 @@ type SendVideoCall struct {
 }
 
 // NewSendVideoCall constructs a new SendVideoCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // video - Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More information on Sending Files »
 func NewSendVideoCall(chatId PeerID, video FileArg) *SendVideoCall {
 	return &SendVideoCall{
@@ -950,9 +933,7 @@ type SendAnimationCall struct {
 }
 
 // NewSendAnimationCall constructs a new SendAnimationCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // animation - Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More information on Sending Files »
 func NewSendAnimationCall(chatId PeerID, animation FileArg) *SendAnimationCall {
 	return &SendAnimationCall{
@@ -1066,9 +1047,7 @@ type SendVoiceCall struct {
 }
 
 // NewSendVoiceCall constructs a new SendVoiceCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // voice - Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func NewSendVoiceCall(chatId PeerID, voice FileArg) *SendVoiceCall {
 	return &SendVoiceCall{
@@ -1163,9 +1142,7 @@ type SendVideoNoteCall struct {
 }
 
 // NewSendVideoNoteCall constructs a new SendVideoNoteCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // videoNote - Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending video notes by a URL is currently unsupported
 func NewSendVideoNoteCall(chatId PeerID, videoNote FileArg) *SendVideoNoteCall {
 	return &SendVideoNoteCall{
@@ -1253,11 +1230,8 @@ type SendLocationCall struct {
 }
 
 // NewSendLocationCall constructs a new SendLocationCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // latitude - Latitude of the location
-
 // longitude - Longitude of the location
 func NewSendLocationCall(chatId PeerID, latitude float64, longitude float64) *SendLocationCall {
 	return &SendLocationCall{
@@ -1359,9 +1333,7 @@ type EditMessageLiveLocationCall struct {
 }
 
 // NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-//
 // chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // messageId - Required if inline_message_id is not specified. Identifier of the message to edit
 func NewEditMessageLiveLocationCall(chatId PeerID, messageId int) *EditMessageLiveLocationCall {
 	return &EditMessageLiveLocationCall{
@@ -1374,7 +1346,6 @@ func NewEditMessageLiveLocationCall(chatId PeerID, messageId int) *EditMessageLi
 }
 
 // NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-//
 // inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
 func NewEditMessageLiveLocationInlineCall(inlineMessageId string) *EditMessageLiveLocationCall {
 	return &EditMessageLiveLocationCall{
@@ -1463,9 +1434,7 @@ type StopMessageLiveLocationCall struct {
 }
 
 // NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-//
 // chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // messageId - Required if inline_message_id is not specified. Identifier of the message with live location to stop
 func NewStopMessageLiveLocationCall(chatId PeerID, messageId int) *StopMessageLiveLocationCall {
 	return &StopMessageLiveLocationCall{
@@ -1478,7 +1447,6 @@ func NewStopMessageLiveLocationCall(chatId PeerID, messageId int) *StopMessageLi
 }
 
 // NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-//
 // inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
 func NewStopMessageLiveLocationInlineCall(inlineMessageId string) *StopMessageLiveLocationCall {
 	return &StopMessageLiveLocationCall{
@@ -1537,15 +1505,10 @@ type SendVenueCall struct {
 }
 
 // NewSendVenueCall constructs a new SendVenueCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // latitude - Latitude of the venue
-
 // longitude - Longitude of the venue
-
 // title - Name of the venue
-
 // address - Address of the venue
 func NewSendVenueCall(chatId PeerID, latitude float64, longitude float64, title string, address string) *SendVenueCall {
 	return &SendVenueCall{
@@ -1660,11 +1623,8 @@ type SendContactCall struct {
 }
 
 // NewSendContactCall constructs a new SendContactCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // phoneNumber - Contact's phone number
-
 // firstName - Contact's first name
 func NewSendContactCall(chatId PeerID, phoneNumber string, firstName string) *SendContactCall {
 	return &SendContactCall{
@@ -1753,11 +1713,8 @@ type SendPollCall struct {
 }
 
 // NewSendPollCall constructs a new SendPollCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // question - Poll question, 1-300 characters
-
 // options - A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
 func NewSendPollCall(chatId PeerID, question string, options []string) *SendPollCall {
 	return &SendPollCall{
@@ -1894,7 +1851,6 @@ type SendDiceCall struct {
 }
 
 // NewSendDiceCall constructs a new SendDiceCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewSendDiceCall(chatId PeerID) *SendDiceCall {
 	return &SendDiceCall{
@@ -1967,9 +1923,7 @@ type SendChatActionCall struct {
 }
 
 // NewSendChatActionCall constructs a new SendChatActionCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // action - Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes.
 func NewSendChatActionCall(chatId PeerID, action string) *SendChatActionCall {
 	return &SendChatActionCall{
@@ -2009,7 +1963,6 @@ type GetUserProfilePhotosCall struct {
 }
 
 // NewGetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall with required parameters.
-//
 // userId - Unique identifier of the target user
 func NewGetUserProfilePhotosCall(userId int) *GetUserProfilePhotosCall {
 	return &GetUserProfilePhotosCall{
@@ -2058,7 +2011,6 @@ type GetFileCall struct {
 }
 
 // NewGetFileCall constructs a new GetFileCall with required parameters.
-//
 // fileId - File identifier to get information about
 func NewGetFileCall(fileId string) *GetFileCall {
 	return &GetFileCall{
@@ -2092,9 +2044,7 @@ type BanChatMemberCall struct {
 }
 
 // NewBanChatMemberCall constructs a new BanChatMemberCall with required parameters.
-//
 // chatId - Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
-
 // userId - Unique identifier of the target user
 func NewBanChatMemberCall(chatId PeerID, userId int) *BanChatMemberCall {
 	return &BanChatMemberCall{
@@ -2150,9 +2100,7 @@ type UnbanChatMemberCall struct {
 }
 
 // NewUnbanChatMemberCall constructs a new UnbanChatMemberCall with required parameters.
-//
 // chatId - Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
-
 // userId - Unique identifier of the target user
 func NewUnbanChatMemberCall(chatId PeerID, userId int) *UnbanChatMemberCall {
 	return &UnbanChatMemberCall{
@@ -2199,11 +2147,8 @@ type RestrictChatMemberCall struct {
 }
 
 // NewRestrictChatMemberCall constructs a new RestrictChatMemberCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-
 // userId - Unique identifier of the target user
-
 // permissions - A JSON-serialized object for new user permissions
 func NewRestrictChatMemberCall(chatId PeerID, userId int, permissions ChatPermissions) *RestrictChatMemberCall {
 	return &RestrictChatMemberCall{
@@ -2257,9 +2202,7 @@ type PromoteChatMemberCall struct {
 }
 
 // NewPromoteChatMemberCall constructs a new PromoteChatMemberCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // userId - Unique identifier of the target user
 func NewPromoteChatMemberCall(chatId PeerID, userId int) *PromoteChatMemberCall {
 	return &PromoteChatMemberCall{
@@ -2364,11 +2307,8 @@ type SetChatAdministratorCustomTitleCall struct {
 }
 
 // NewSetChatAdministratorCustomTitleCall constructs a new SetChatAdministratorCustomTitleCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-
 // userId - Unique identifier of the target user
-
 // customTitle - New custom title for the administrator; 0-16 characters, emoji are not allowed
 func NewSetChatAdministratorCustomTitleCall(chatId PeerID, userId int, customTitle string) *SetChatAdministratorCustomTitleCall {
 	return &SetChatAdministratorCustomTitleCall{
@@ -2416,9 +2356,7 @@ type BanChatSenderChatCall struct {
 }
 
 // NewBanChatSenderChatCall constructs a new BanChatSenderChatCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // senderChatId - Unique identifier of the target sender chat
 func NewBanChatSenderChatCall(chatId PeerID, senderChatId int) *BanChatSenderChatCall {
 	return &BanChatSenderChatCall{
@@ -2458,9 +2396,7 @@ type UnbanChatSenderChatCall struct {
 }
 
 // NewUnbanChatSenderChatCall constructs a new UnbanChatSenderChatCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // senderChatId - Unique identifier of the target sender chat
 func NewUnbanChatSenderChatCall(chatId PeerID, senderChatId int) *UnbanChatSenderChatCall {
 	return &UnbanChatSenderChatCall{
@@ -2500,9 +2436,7 @@ type SetChatPermissionsCall struct {
 }
 
 // NewSetChatPermissionsCall constructs a new SetChatPermissionsCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-
 // permissions - A JSON-serialized object for new default chat permissions
 func NewSetChatPermissionsCall(chatId PeerID, permissions ChatPermissions) *SetChatPermissionsCall {
 	return &SetChatPermissionsCall{
@@ -2543,7 +2477,6 @@ type ExportChatInviteLinkCall struct {
 }
 
 // NewExportChatInviteLinkCall constructs a new ExportChatInviteLinkCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewExportChatInviteLinkCall(chatId PeerID) *ExportChatInviteLinkCall {
 	return &ExportChatInviteLinkCall{
@@ -2578,7 +2511,6 @@ type CreateChatInviteLinkCall struct {
 }
 
 // NewCreateChatInviteLinkCall constructs a new CreateChatInviteLinkCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewCreateChatInviteLinkCall(chatId PeerID) *CreateChatInviteLinkCall {
 	return &CreateChatInviteLinkCall{
@@ -2636,9 +2568,7 @@ type EditChatInviteLinkCall struct {
 }
 
 // NewEditChatInviteLinkCall constructs a new EditChatInviteLinkCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // inviteLink - The invite link to edit
 func NewEditChatInviteLinkCall(chatId PeerID, inviteLink string) *EditChatInviteLinkCall {
 	return &EditChatInviteLinkCall{
@@ -2704,9 +2634,7 @@ type RevokeChatInviteLinkCall struct {
 }
 
 // NewRevokeChatInviteLinkCall constructs a new RevokeChatInviteLinkCall with required parameters.
-//
 // chatId - Unique identifier of the target chat or username of the target channel (in the format @channelusername)
-
 // inviteLink - The invite link to revoke
 func NewRevokeChatInviteLinkCall(chatId PeerID, inviteLink string) *RevokeChatInviteLinkCall {
 	return &RevokeChatInviteLinkCall{
@@ -2746,9 +2674,7 @@ type ApproveChatJoinRequestCall struct {
 }
 
 // NewApproveChatJoinRequestCall constructs a new ApproveChatJoinRequestCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // userId - Unique identifier of the target user
 func NewApproveChatJoinRequestCall(chatId PeerID, userId int) *ApproveChatJoinRequestCall {
 	return &ApproveChatJoinRequestCall{
@@ -2788,9 +2714,7 @@ type DeclineChatJoinRequestCall struct {
 }
 
 // NewDeclineChatJoinRequestCall constructs a new DeclineChatJoinRequestCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // userId - Unique identifier of the target user
 func NewDeclineChatJoinRequestCall(chatId PeerID, userId int) *DeclineChatJoinRequestCall {
 	return &DeclineChatJoinRequestCall{
@@ -2831,9 +2755,7 @@ type SetChatPhotoCall struct {
 }
 
 // NewSetChatPhotoCall constructs a new SetChatPhotoCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // photo - New chat photo, uploaded using multipart/form-data
 func NewSetChatPhotoCall(chatId PeerID, photo InputFile) *SetChatPhotoCall {
 	return &SetChatPhotoCall{
@@ -2874,7 +2796,6 @@ type DeleteChatPhotoCall struct {
 }
 
 // NewDeleteChatPhotoCall constructs a new DeleteChatPhotoCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewDeleteChatPhotoCall(chatId PeerID) *DeleteChatPhotoCall {
 	return &DeleteChatPhotoCall{
@@ -2908,9 +2829,7 @@ type SetChatTitleCall struct {
 }
 
 // NewSetChatTitleCall constructs a new SetChatTitleCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // title - New chat title, 1-255 characters
 func NewSetChatTitleCall(chatId PeerID, title string) *SetChatTitleCall {
 	return &SetChatTitleCall{
@@ -2950,7 +2869,6 @@ type SetChatDescriptionCall struct {
 }
 
 // NewSetChatDescriptionCall constructs a new SetChatDescriptionCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewSetChatDescriptionCall(chatId PeerID) *SetChatDescriptionCall {
 	return &SetChatDescriptionCall{
@@ -2989,9 +2907,7 @@ type PinChatMessageCall struct {
 }
 
 // NewPinChatMessageCall constructs a new PinChatMessageCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // messageId - Identifier of a message to pin
 func NewPinChatMessageCall(chatId PeerID, messageId int) *PinChatMessageCall {
 	return &PinChatMessageCall{
@@ -3037,7 +2953,6 @@ type UnpinChatMessageCall struct {
 }
 
 // NewUnpinChatMessageCall constructs a new UnpinChatMessageCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewUnpinChatMessageCall(chatId PeerID) *UnpinChatMessageCall {
 	return &UnpinChatMessageCall{
@@ -3076,7 +2991,6 @@ type UnpinAllChatMessagesCall struct {
 }
 
 // NewUnpinAllChatMessagesCall constructs a new UnpinAllChatMessagesCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func NewUnpinAllChatMessagesCall(chatId PeerID) *UnpinAllChatMessagesCall {
 	return &UnpinAllChatMessagesCall{
@@ -3108,7 +3022,6 @@ type LeaveChatCall struct {
 }
 
 // NewLeaveChatCall constructs a new LeaveChatCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 func NewLeaveChatCall(chatId PeerID) *LeaveChatCall {
 	return &LeaveChatCall{
@@ -3141,7 +3054,6 @@ type GetChatCall struct {
 }
 
 // NewGetChatCall constructs a new GetChatCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 func NewGetChatCall(chatId PeerID) *GetChatCall {
 	return &GetChatCall{
@@ -3175,7 +3087,6 @@ type GetChatAdministratorsCall struct {
 }
 
 // NewGetChatAdministratorsCall constructs a new GetChatAdministratorsCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 func NewGetChatAdministratorsCall(chatId PeerID) *GetChatAdministratorsCall {
 	return &GetChatAdministratorsCall{
@@ -3208,7 +3119,6 @@ type GetChatMemberCountCall struct {
 }
 
 // NewGetChatMemberCountCall constructs a new GetChatMemberCountCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 func NewGetChatMemberCountCall(chatId PeerID) *GetChatMemberCountCall {
 	return &GetChatMemberCountCall{
@@ -3241,9 +3151,7 @@ type GetChatMemberCall struct {
 }
 
 // NewGetChatMemberCall constructs a new GetChatMemberCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-
 // userId - Unique identifier of the target user
 func NewGetChatMemberCall(chatId PeerID, userId int) *GetChatMemberCall {
 	return &GetChatMemberCall{
@@ -3284,9 +3192,7 @@ type SetChatStickerSetCall struct {
 }
 
 // NewSetChatStickerSetCall constructs a new SetChatStickerSetCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-
 // stickerSetName - Name of the sticker set to be set as the group sticker set
 func NewSetChatStickerSetCall(chatId PeerID, stickerSetName string) *SetChatStickerSetCall {
 	return &SetChatStickerSetCall{
@@ -3327,7 +3233,6 @@ type DeleteChatStickerSetCall struct {
 }
 
 // NewDeleteChatStickerSetCall constructs a new DeleteChatStickerSetCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
 func NewDeleteChatStickerSetCall(chatId PeerID) *DeleteChatStickerSetCall {
 	return &DeleteChatStickerSetCall{
@@ -3364,7 +3269,6 @@ type AnswerCallbackQueryCall struct {
 }
 
 // NewAnswerCallbackQueryCall constructs a new AnswerCallbackQueryCall with required parameters.
-//
 // callbackQueryId - Unique identifier for the query to be answered
 func NewAnswerCallbackQueryCall(callbackQueryId string) *AnswerCallbackQueryCall {
 	return &AnswerCallbackQueryCall{
@@ -3421,7 +3325,6 @@ type SetMyCommandsCall struct {
 }
 
 // NewSetMyCommandsCall constructs a new SetMyCommandsCall with required parameters.
-//
 // commands - A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
 func NewSetMyCommandsCall(commands BotCommand) *SetMyCommandsCall {
 	return &SetMyCommandsCall{
@@ -3670,11 +3573,8 @@ type EditMessageTextCall struct {
 }
 
 // NewEditMessageTextCall constructs a new EditMessageTextCall with required parameters.
-//
 // chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // messageId - Required if inline_message_id is not specified. Identifier of the message to edit
-
 // text - New text of the message, 1-4096 characters after entities parsing
 func NewEditMessageTextCall(chatId PeerID, messageId int, text string) *EditMessageTextCall {
 	return &EditMessageTextCall{
@@ -3688,9 +3588,7 @@ func NewEditMessageTextCall(chatId PeerID, messageId int, text string) *EditMess
 }
 
 // NewEditMessageTextCall constructs a new EditMessageTextCall with required parameters.
-//
 // inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
-
 // text - New text of the message, 1-4096 characters after entities parsing
 func NewEditMessageTextInlineCall(inlineMessageId string, text string) *EditMessageTextCall {
 	return &EditMessageTextCall{
@@ -3842,7 +3740,6 @@ type EditMessageMediaCall struct {
 }
 
 // NewEditMessageMediaCall constructs a new EditMessageMediaCall with required parameters.
-//
 // media - A JSON-serialized object for a new media content of the message
 func NewEditMessageMediaCall(media InputMedia) *EditMessageMediaCall {
 	return &EditMessageMediaCall{
@@ -3947,9 +3844,7 @@ type StopPollCall struct {
 }
 
 // NewStopPollCall constructs a new StopPollCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // messageId - Identifier of the original message with the poll
 func NewStopPollCall(chatId PeerID, messageId int) *StopPollCall {
 	return &StopPollCall{
@@ -3993,9 +3888,7 @@ type DeleteMessageCall struct {
 }
 
 // NewDeleteMessageCall constructs a new DeleteMessageCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // messageId - Identifier of the message to delete
 func NewDeleteMessageCall(chatId PeerID, messageId int) *DeleteMessageCall {
 	return &DeleteMessageCall{
@@ -4035,9 +3928,7 @@ type SendStickerCall struct {
 }
 
 // NewSendStickerCall constructs a new SendStickerCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // sticker - Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func NewSendStickerCall(chatId PeerID, sticker FileArg) *SendStickerCall {
 	return &SendStickerCall{
@@ -4107,7 +3998,6 @@ type GetStickerSetCall struct {
 }
 
 // NewGetStickerSetCall constructs a new GetStickerSetCall with required parameters.
-//
 // name - Name of the sticker set
 func NewGetStickerSetCall(name string) *GetStickerSetCall {
 	return &GetStickerSetCall{
@@ -4140,9 +4030,7 @@ type UploadStickerFileCall struct {
 }
 
 // NewUploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
-//
 // userId - User identifier of sticker file owner
-
 // pngSticker - PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More information on Sending Files »
 func NewUploadStickerFileCall(userId int, pngSticker InputFile) *UploadStickerFileCall {
 	return &UploadStickerFileCall{
@@ -4183,13 +4071,9 @@ type CreateNewStickerSetCall struct {
 }
 
 // NewCreateNewStickerSetCall constructs a new CreateNewStickerSetCall with required parameters.
-//
 // userId - User identifier of created sticker set owner
-
 // name - Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
-
 // title - Sticker set title, 1-64 characters
-
 // emojis - One or more emoji corresponding to the sticker
 func NewCreateNewStickerSetCall(userId int, name string, title string, emojis string) *CreateNewStickerSetCall {
 	return &CreateNewStickerSetCall{
@@ -4276,11 +4160,8 @@ type AddStickerToSetCall struct {
 }
 
 // NewAddStickerToSetCall constructs a new AddStickerToSetCall with required parameters.
-//
 // userId - User identifier of sticker set owner
-
 // name - Sticker set name
-
 // emojis - One or more emoji corresponding to the sticker
 func NewAddStickerToSetCall(userId int, name string, emojis string) *AddStickerToSetCall {
 	return &AddStickerToSetCall{
@@ -4350,9 +4231,7 @@ type SetStickerPositionInSetCall struct {
 }
 
 // NewSetStickerPositionInSetCall constructs a new SetStickerPositionInSetCall with required parameters.
-//
 // sticker - File identifier of the sticker
-
 // position - New sticker position in the set, zero-based
 func NewSetStickerPositionInSetCall(sticker string, position int) *SetStickerPositionInSetCall {
 	return &SetStickerPositionInSetCall{
@@ -4391,7 +4270,6 @@ type DeleteStickerFromSetCall struct {
 }
 
 // NewDeleteStickerFromSetCall constructs a new DeleteStickerFromSetCall with required parameters.
-//
 // sticker - File identifier of the sticker
 func NewDeleteStickerFromSetCall(sticker string) *DeleteStickerFromSetCall {
 	return &DeleteStickerFromSetCall{
@@ -4425,9 +4303,7 @@ type SetStickerSetThumbCall struct {
 }
 
 // NewSetStickerSetThumbCall constructs a new SetStickerSetThumbCall with required parameters.
-//
 // name - Sticker set name
-
 // userId - User identifier of the sticker set owner
 func NewSetStickerSetThumbCall(name string, userId int) *SetStickerSetThumbCall {
 	return &SetStickerSetThumbCall{
@@ -4473,9 +4349,7 @@ type AnswerInlineQueryCall struct {
 }
 
 // NewAnswerInlineQueryCall constructs a new AnswerInlineQueryCall with required parameters.
-//
 // inlineQueryId - Unique identifier for the answered query
-
 // results - A JSON-serialized array of results for the inline query
 func NewAnswerInlineQueryCall(inlineQueryId string, results InlineQueryResult) *AnswerInlineQueryCall {
 	return &AnswerInlineQueryCall{
@@ -4545,9 +4419,7 @@ type AnswerWebAppQueryCall struct {
 }
 
 // NewAnswerWebAppQueryCall constructs a new AnswerWebAppQueryCall with required parameters.
-//
 // webAppQueryId - Unique identifier for the query to be answered
-
 // result - A JSON-serialized object describing the message to be sent
 func NewAnswerWebAppQueryCall(webAppQueryId string, result InlineQueryResult) *AnswerWebAppQueryCall {
 	return &AnswerWebAppQueryCall{
@@ -4587,19 +4459,12 @@ type SendInvoiceCall struct {
 }
 
 // NewSendInvoiceCall constructs a new SendInvoiceCall with required parameters.
-//
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-
 // title - Product name, 1-32 characters
-
 // description - Product description, 1-255 characters
-
 // payload - Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
-
 // providerToken - Payment provider token, obtained via @BotFather
-
 // currency - Three-letter ISO 4217 currency code, see more on currencies
-
 // prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
 func NewSendInvoiceCall(chatId PeerID, title string, description string, payload string, providerToken string, currency string, prices LabeledPrice) *SendInvoiceCall {
 	return &SendInvoiceCall{
@@ -4794,17 +4659,11 @@ type CreateInvoiceLinkCall struct {
 }
 
 // NewCreateInvoiceLinkCall constructs a new CreateInvoiceLinkCall with required parameters.
-//
 // title - Product name, 1-32 characters
-
 // description - Product description, 1-255 characters
-
 // payload - Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
-
 // providerToken - Payment provider token, obtained via BotFather
-
 // currency - Three-letter ISO 4217 currency code, see more on currencies
-
 // prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
 func NewCreateInvoiceLinkCall(title string, description string, payload string, providerToken string, currency string, prices LabeledPrice) *CreateInvoiceLinkCall {
 	return &CreateInvoiceLinkCall{
@@ -4957,9 +4816,7 @@ type AnswerShippingQueryCall struct {
 }
 
 // NewAnswerShippingQueryCall constructs a new AnswerShippingQueryCall with required parameters.
-//
 // shippingQueryId - Unique identifier for the query to be answered
-
 // ok - Specify True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
 func NewAnswerShippingQueryCall(shippingQueryId string, ok bool) *AnswerShippingQueryCall {
 	return &AnswerShippingQueryCall{
@@ -5013,9 +4870,7 @@ type AnswerPreCheckoutQueryCall struct {
 }
 
 // NewAnswerPreCheckoutQueryCall constructs a new AnswerPreCheckoutQueryCall with required parameters.
-//
 // preCheckoutQueryId - Unique identifier for the query to be answered
-
 // ok - Specify True if everything is alright (goods are available, etc.) and the bot is ready to proceed with the order. Use False if there are any problems.
 func NewAnswerPreCheckoutQueryCall(preCheckoutQueryId string, ok bool) *AnswerPreCheckoutQueryCall {
 	return &AnswerPreCheckoutQueryCall{
@@ -5064,9 +4919,7 @@ type SetPassportDataErrorsCall struct {
 }
 
 // NewSetPassportDataErrorsCall constructs a new SetPassportDataErrorsCall with required parameters.
-//
 // userId - User identifier
-
 // errors - A JSON-serialized array describing the errors
 func NewSetPassportDataErrorsCall(userId int, errors PassportElementError) *SetPassportDataErrorsCall {
 	return &SetPassportDataErrorsCall{
@@ -5106,9 +4959,7 @@ type SendGameCall struct {
 }
 
 // NewSendGameCall constructs a new SendGameCall with required parameters.
-//
 // chatId - Unique identifier for the target chat
-
 // gameShortName - Short name of the game, serves as the unique identifier for the game. Set up your games via @BotFather.
 func NewSendGameCall(chatId ChatID, gameShortName string) *SendGameCall {
 	return &SendGameCall{
@@ -5179,9 +5030,7 @@ type SetGameScoreCall struct {
 }
 
 // NewSetGameScoreCall constructs a new SetGameScoreCall with required parameters.
-//
 // userId - User identifier
-
 // score - New score, must be non-negative
 func NewSetGameScoreCall(userId int, score int) *SetGameScoreCall {
 	return &SetGameScoreCall{
@@ -5255,7 +5104,6 @@ type GetGameHighScoresCall struct {
 }
 
 // NewGetGameHighScoresCall constructs a new GetGameHighScoresCall with required parameters.
-//
 // userId - Target user id
 func NewGetGameHighScoresCall(userId int) *GetGameHighScoresCall {
 	return &GetGameHighScoresCall{
