@@ -143,7 +143,7 @@ func (webhook *Webhook) Setup(ctx context.Context) error {
 			setWebhookCall = setWebhookCall.DropPendingUpdates(true)
 		}
 
-		if len(webhook.allowedUpdates) > 0 {
+		if webhook.allowedUpdates != nil {
 			setWebhookCall = setWebhookCall.AllowedUpdates(webhook.allowedUpdates)
 		}
 

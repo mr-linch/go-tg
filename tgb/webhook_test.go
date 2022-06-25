@@ -288,6 +288,7 @@ func TestWebhook_Setup(t *testing.T) {
 					"secret_token":         []string{"973b4c22458364768284928867d93c992e2b2db94e81f7dbca28e171390a0363"},
 					"url":                  []string{"https://google.com"},
 					"ip_address":           []string{"1.1.1.1"},
+					"allowed_updates":      []string{"[]"},
 				}, vs)
 			default:
 				t.Fatalf("unexcepted call '%s'", r.URL.Path)
