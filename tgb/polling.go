@@ -18,6 +18,8 @@ type Poller struct {
 	handlerTimeout time.Duration
 	timeout        time.Duration
 	retryAfter     time.Duration
+	limit          int
+	allowedUpdates []string
 
 	wg sync.WaitGroup
 }
@@ -45,6 +47,22 @@ func WithPollerRetryAfter(retryAfter time.Duration) PollerOption {
 	}
 }
 
+// WithPollerLimit sets the limit for batch size.
+func WithPollerLimit(limit int) PollerOption {
+	return func(poller *Poller) {
+		poller.limit = limit
+	}
+}
+
+// WithPollerAllowedUpdates sets the allowed updates.
+func WithPollerAllowedUpdates(allowedUpdates []string) PollerOption {
+	return func(poller *Poller) {
+		poller.allowedUpdates = allowedUpdates
+	}
+}
+
+const defaultPollerLimit = 100
+
 func NewPoller(handler Handler, client *tg.Client, opts ...PollerOption) *Poller {
 	poller := &Poller{
 		client:  client,
@@ -52,6 +70,10 @@ func NewPoller(handler Handler, client *tg.Client, opts ...PollerOption) *Poller
 
 		timeout:    time.Second * 5,
 		retryAfter: time.Second * 5,
+
+		allowedUpdates: []string{},
+
+		limit: defaultPollerLimit,
 	}
 
 	for _, opt := range opts {
@@ -110,12 +132,18 @@ func (poller *Poller) Run(ctx context.Context) error {
 			poller.wg.Wait()
 			return nil
 		default:
-			updates, err := poller.client.
+
+			call := poller.client.
 				GetUpdates().
 				Offset(offset).
-				Limit(100).
 				Timeout(int(poller.timeout.Seconds())).
-				Do(ctx)
+				AllowedUpdates(poller.allowedUpdates)
+
+			if poller.limit != defaultPollerLimit {
+				call = call.Limit(poller.limit)
+			}
+
+			updates, err := call.Do(ctx)
 
 			if err != nil && !errors.Is(err, context.Canceled) {
 				if poller.retryAfter > 0 {
