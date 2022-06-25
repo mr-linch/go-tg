@@ -104,7 +104,7 @@ func newBot() *tgb.Bot {
 				Upload: tg.NewInputFileBytes("gopher.png", gopherPNG),
 			}))
 
-		}), tgb.Regexp(regexp.MustCompile(`(go|golang|gopher)[$\s+]?`))).
+		}), tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
 		// handle other messages
 		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
 			return update.Respond(ctx, tg.NewCopyMessageCall(
