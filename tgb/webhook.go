@@ -33,35 +33,57 @@ var defaultSubnets = []netip.Prefix{
 	netip.MustParsePrefix("91.108.4.0/22"),
 }
 
+// WebhookOption used to configure the Webhook
 type WebhookOption func(*Webhook)
 
+// WithDropPendingUpdates drop pending updates (if pending > 0 only)
 func WithDropPendingUpdates(dropPendingUpdates bool) WebhookOption {
 	return func(webhook *Webhook) {
 		webhook.dropPendingUpdates = dropPendingUpdates
 	}
 }
 
-func WithIP(ip string) WebhookOption {
+// WithWebhookIP the fixed IP address which will be used to
+// send webhook requests instead of the IP address resolved through DNS
+func WithWebhookIP(ip string) WebhookOption {
 	return func(webhook *Webhook) {
 		webhook.ip = ip
 	}
 }
 
+// WithWebhookSecuritySubnets sets list of subnets which are allowed to send webhook requests.
 func WithWebhookSecuritySubnets(subnets ...netip.Prefix) WebhookOption {
 	return func(webhook *Webhook) {
 		webhook.securitySubnets = subnets
 	}
 }
 
+// WithWebhookSecurityToken sets the security token which is used to validate the webhook requests.
+// By default the token is generated from the client token via sha256.
+// 1-256 characters. Only characters A-Z, a-z, 0-9, _ and - are allowed.
+// The header is useful to ensure that the request comes from a webhook set by you.
 func WithWebhookSecurityToken(token string) WebhookOption {
 	return func(webhook *Webhook) {
 		webhook.securityToken = token
 	}
 }
 
-func WithMaxConnections(maxConnections int) WebhookOption {
+// WithWebhookMaxConnections sets the maximum number of concurrent connections.
+// By default is 40
+func WithWebhookMaxConnections(maxConnections int) WebhookOption {
 	return func(webhook *Webhook) {
 		webhook.maxConnections = maxConnections
+	}
+}
+
+// WithWebhookAllowedUpdates sets the list of allowed updates.
+// By default all update types except chat_member (default).
+// If not specified, the previous setting will be used.
+// Please note that this parameter doesn't affect updates created before the call to the setWebhook,
+// so unwanted updates may be received for a short period of time.
+func WithWebhookAllowedUpdates(updates ...string) WebhookOption {
+	return func(webhook *Webhook) {
+		webhook.allowedUpdates = updates
 	}
 }
 
@@ -119,6 +141,10 @@ func (webhook *Webhook) Setup(ctx context.Context, dropPendingUpdates bool) erro
 
 		if webhook.dropPendingUpdates {
 			setWebhookCall = setWebhookCall.DropPendingUpdates(true)
+		}
+
+		if len(webhook.allowedUpdates) > 0 {
+			setWebhookCall = setWebhookCall.AllowedUpdates(webhook.allowedUpdates)
 		}
 
 		return setWebhookCall.Do(ctx)

@@ -33,10 +33,10 @@ func TestNewWebhook(t *testing.T) {
 			"https://example.com/webhook",
 			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
 			&tg.Client{},
-			WithIP("1.1.1.1"),
+			WithWebhookIP("1.1.1.1"),
 			WithWebhookSecuritySubnets(netip.MustParsePrefix("1.1.1.1/24")),
 			WithWebhookSecurityToken("12345"),
-			WithMaxConnections(10),
+			WithWebhookMaxConnections(10),
 		)
 
 		assert.Equal(t, "https://example.com/webhook", webhook.url)
@@ -301,7 +301,49 @@ func TestWebhook_Setup(t *testing.T) {
 			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
 			tg.New("1234:secret", tg.WithServer(server.URL), tg.WithDoer(server.Client())),
 			WithDropPendingUpdates(true),
-			WithIP("1.1.1.1"),
+			WithWebhookIP("1.1.1.1"),
+		)
+
+		err := webhook.Setup(context.Background(), true)
+		assert.NoError(t, err)
+	})
+
+	t.Run("ShouldUpdateBecouseAllowedUpdatesChanged", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			switch r.URL.Path {
+			case "/bot1234:secret/getWebhookInfo":
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(`{"ok":true,"result":{"url":"https://google.com","has_custom_certificate":false,"pending_update_count":3,"last_error_date":1656177074,"last_error_message":"Wrong response from the webhook: 405 Method Not Allowed","max_connections":40,"ip_address":"216.58.208.110"}}`))
+			case "/bot1234:secret/setWebhook":
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(`{"ok":true,"result": true}`))
+
+				body, err := io.ReadAll(r.Body)
+				assert.NoError(t, err)
+
+				vs, err := url.ParseQuery(string(body))
+				assert.NoError(t, err)
+				assert.EqualValues(t, url.Values{
+					"secret_token":    []string{"973b4c22458364768284928867d93c992e2b2db94e81f7dbca28e171390a0363"},
+					"url":             []string{"https://google.com"},
+					"ip_address":      []string{"1.1.1.1"},
+					"allowed_updates": []string{"[\"message\"]"},
+					"max_connections": []string{"40"},
+				}, vs)
+
+			default:
+				t.Fatalf("unexcepted call '%s'", r.URL.Path)
+			}
+		}))
+
+		defer server.Close()
+
+		webhook := NewWebhook(
+			"https://google.com",
+			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			tg.New("1234:secret", tg.WithServer(server.URL), tg.WithDoer(server.Client())),
+			WithWebhookAllowedUpdates("message"),
+			WithWebhookIP("1.1.1.1"),
 		)
 
 		err := webhook.Setup(context.Background(), true)
