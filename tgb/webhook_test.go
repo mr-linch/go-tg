@@ -263,7 +263,7 @@ func TestWebhook_Setup(t *testing.T) {
 			tg.New("1234:secret", tg.WithServer(server.URL), tg.WithDoer(server.Client())),
 		)
 
-		err := webhook.Setup(context.Background(), true)
+		err := webhook.Setup(context.Background())
 		assert.NoError(t, err)
 	})
 
@@ -304,7 +304,7 @@ func TestWebhook_Setup(t *testing.T) {
 			WithWebhookIP("1.1.1.1"),
 		)
 
-		err := webhook.Setup(context.Background(), true)
+		err := webhook.Setup(context.Background())
 		assert.NoError(t, err)
 	})
 
@@ -346,7 +346,7 @@ func TestWebhook_Setup(t *testing.T) {
 			WithWebhookIP("1.1.1.1"),
 		)
 
-		err := webhook.Setup(context.Background(), true)
+		err := webhook.Setup(context.Background())
 		assert.NoError(t, err)
 	})
 

@@ -135,9 +135,10 @@ func runWebhook(ctx context.Context, client *tg.Client, bot *tgb.Bot, url, liste
 		url,
 		bot,
 		client,
+		tgb.WithDropPendingUpdates(true),
 	)
 
-	if err := webhook.Setup(ctx, true); err != nil {
+	if err := webhook.Setup(ctx); err != nil {
 		return fmt.Errorf("webhook: %w", err)
 	}
 

@@ -113,7 +113,7 @@ func NewWebhook(url string, handler Handler, client *tg.Client, options ...Webho
 
 const defaultMaxConnections = 40
 
-func (webhook *Webhook) Setup(ctx context.Context, dropPendingUpdates bool) error {
+func (webhook *Webhook) Setup(ctx context.Context) error {
 	info, err := webhook.client.GetWebhookInfo().Do(ctx)
 	if err != nil {
 		return fmt.Errorf("get webhook info: %w", err)
