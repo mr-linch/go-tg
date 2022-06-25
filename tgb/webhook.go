@@ -12,25 +12,34 @@ import (
 
 	tg "github.com/mr-linch/go-tg"
 	"github.com/tomasen/realip"
+	"golang.org/x/exp/slices"
 )
 
 type Webhook struct {
-	url            string
-	handler        Handler
-	client         *tg.Client
-	ip             string
-	maxConnections int
+	url                string
+	handler            Handler
+	client             *tg.Client
+	ip                 string
+	maxConnections     int
+	dropPendingUpdates bool
+	allowedUpdates     []string
 
 	securitySubnets []netip.Prefix
 	securityToken   string
 }
 
-var DefaultSubnets = []netip.Prefix{
+var defaultSubnets = []netip.Prefix{
 	netip.MustParsePrefix("149.154.160.0/20"),
 	netip.MustParsePrefix("91.108.4.0/22"),
 }
 
 type WebhookOption func(*Webhook)
+
+func WithDropPendingUpdates(dropPendingUpdates bool) WebhookOption {
+	return func(webhook *Webhook) {
+		webhook.dropPendingUpdates = dropPendingUpdates
+	}
+}
 
 func WithIP(ip string) WebhookOption {
 	return func(webhook *Webhook) {
@@ -61,11 +70,15 @@ func NewWebhook(url string, handler Handler, client *tg.Client, options ...Webho
 	token := fmt.Sprintf("%x", securityToken)
 
 	webhook := &Webhook{
-		url:     url,
-		handler: handler,
-		client:  client,
+		url:            url,
+		handler:        handler,
+		client:         client,
+		maxConnections: defaultMaxConnections,
 
-		securitySubnets: DefaultSubnets,
+		dropPendingUpdates: false,
+
+		allowedUpdates:  []string{},
+		securitySubnets: defaultSubnets,
 		securityToken:   token,
 	}
 
@@ -76,37 +89,43 @@ func NewWebhook(url string, handler Handler, client *tg.Client, options ...Webho
 	return webhook
 }
 
+const defaultMaxConnections = 40
+
 func (webhook *Webhook) Setup(ctx context.Context, dropPendingUpdates bool) error {
 	info, err := webhook.client.GetWebhookInfo().Do(ctx)
 	if err != nil {
 		return fmt.Errorf("get webhook info: %w", err)
 	}
 
-	if info.URL == webhook.url &&
-		info.MaxConnections == webhook.maxConnections &&
-		(webhook.ip == "" || info.IPAddress == webhook.ip) {
-		return nil
+	if info.URL != webhook.url ||
+		info.MaxConnections != webhook.maxConnections ||
+		(len(info.AllowedUpdates) > 0 && !slices.Equal(info.AllowedUpdates, webhook.allowedUpdates)) ||
+		(webhook.ip != "" && info.IPAddress != webhook.ip) ||
+		(info.PendingUpdateCount > 0 && webhook.dropPendingUpdates) {
+
+		setWebhookCall := webhook.client.SetWebhook(webhook.url)
+
+		if webhook.maxConnections > 0 {
+			setWebhookCall = setWebhookCall.MaxConnections(webhook.maxConnections)
+		}
+
+		if webhook.ip != "" {
+			setWebhookCall = setWebhookCall.IpAddress(webhook.ip)
+		}
+
+		if webhook.securityToken != "" {
+			setWebhookCall = setWebhookCall.SecretToken(webhook.securityToken)
+		}
+
+		if webhook.dropPendingUpdates {
+			setWebhookCall = setWebhookCall.DropPendingUpdates(true)
+		}
+
+		return setWebhookCall.Do(ctx)
 	}
 
-	setWebhookCall := webhook.client.SetWebhook(webhook.url)
+	return nil
 
-	if webhook.maxConnections > 0 {
-		setWebhookCall = setWebhookCall.MaxConnections(webhook.maxConnections)
-	}
-
-	if webhook.ip != "" {
-		setWebhookCall = setWebhookCall.IpAddress(webhook.ip)
-	}
-
-	if webhook.securityToken != "" {
-		setWebhookCall = setWebhookCall.SecretToken(webhook.securityToken)
-	}
-
-	if dropPendingUpdates {
-		setWebhookCall = setWebhookCall.DropPendingUpdates(true)
-	}
-
-	return setWebhookCall.Do(ctx)
 }
 
 func (webhook *Webhook) isAllowedIP(ip netip.Addr) bool {
@@ -188,11 +207,13 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			log.Printf("failed to marshal response: %s", err)
+			return
 		}
 
 		_, err = w.Write(body)
 		if err != nil {
 			log.Printf("failed to write response: %s", err)
+			return
 		}
 	}
 }
