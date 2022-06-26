@@ -50,7 +50,7 @@ func (bot *Bot) Use(mws ...Middleware) *Bot {
 	return bot
 }
 
-func (bot *Bot) Message(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) Message(handler MessageHandler, filters ...Filter) *Bot {
 	bot.messageHandler = append(bot.messageHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -58,7 +58,7 @@ func (bot *Bot) Message(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) EditedMessage(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) EditedMessage(handler MessageHandler, filters ...Filter) *Bot {
 	bot.editedMessageHandler = append(bot.editedMessageHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -66,7 +66,7 @@ func (bot *Bot) EditedMessage(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) ChannelPost(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) ChannelPost(handler MessageHandler, filters ...Filter) *Bot {
 	bot.channelPostHandler = append(bot.channelPostHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -74,7 +74,7 @@ func (bot *Bot) ChannelPost(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) EditedChannelPost(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) EditedChannelPost(handler MessageHandler, filters ...Filter) *Bot {
 	bot.editedChannelPostHandler = append(bot.editedChannelPostHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -82,7 +82,7 @@ func (bot *Bot) EditedChannelPost(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) InlineQuery(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) InlineQuery(handler InlineQueryHandler, filters ...Filter) *Bot {
 	bot.inlineQueryHandler = append(bot.inlineQueryHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -90,7 +90,7 @@ func (bot *Bot) InlineQuery(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) ChosenInlineResult(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) ChosenInlineResult(handler ChosenInlineResultHandler, filters ...Filter) *Bot {
 	bot.chosenInlineResultHandler = append(bot.chosenInlineResultHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -98,7 +98,7 @@ func (bot *Bot) ChosenInlineResult(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) CallbackQuery(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) CallbackQuery(handler CallbackQueryHandler, filters ...Filter) *Bot {
 	bot.callbackQueryHandler = append(bot.callbackQueryHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -106,7 +106,7 @@ func (bot *Bot) CallbackQuery(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) ShippingQuery(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) ShippingQuery(handler ShippingQueryHandler, filters ...Filter) *Bot {
 	bot.shippingQueryHandler = append(bot.shippingQueryHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -114,7 +114,7 @@ func (bot *Bot) ShippingQuery(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) PreCheckoutQuery(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) PreCheckoutQuery(handler PreCheckoutQueryHandler, filters ...Filter) *Bot {
 	bot.preCheckoutQueryHandler = append(bot.preCheckoutQueryHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -138,7 +138,7 @@ func (bot *Bot) PollAnswer(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) MyChatMember(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) MyChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) *Bot {
 	bot.myChatMemberHandler = append(bot.myChatMemberHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -146,7 +146,7 @@ func (bot *Bot) MyChatMember(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) ChatMember(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) ChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) *Bot {
 	bot.chatMemberHandler = append(bot.chatMemberHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -154,7 +154,7 @@ func (bot *Bot) ChatMember(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) ChatJoinRequest(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) ChatJoinRequest(handler ChatJoinRequestHandler, filters ...Filter) *Bot {
 	bot.chatJoinRequestHandler = append(bot.chatJoinRequestHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),

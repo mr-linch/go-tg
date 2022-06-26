@@ -78,41 +78,30 @@ func newBot() *tgb.Bot {
 
 	return tgb.New().
 		// handles /start and /help
-		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
-			return update.Respond(ctx, tg.NewSendMessageCall(
-				update.Message.Chat,
+		Message(func(ctx context.Context, msg *tg.Message) error {
+			return msg.Answer(
 				tg.HTML.Text(
 					tg.HTML.Bold("👋 Hi, I'm echo bot!"),
 					"",
 					tg.HTML.Italic("🚀 Powered by", tg.HTML.Spoiler(tg.HTML.Link("go-tg", "github.com/mr-linch/go-tg"))),
 				),
-			).ParseMode(tg.HTML))
-
-		}), tgb.Command("start", tgb.WithCommandAlias("help"))).
+			).ParseMode(tg.HTML).DoVoid(ctx)
+		}, tgb.Command("start", tgb.WithCommandAlias("help"))).
 		// handles gopher image
-		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
-			// if update is from webhook we will answer to it here
-			if err := update.Respond(ctx, tg.NewSendChatActionCall(
-				update.Message.Chat,
-				"upload_photo",
-			)); err != nil {
-				return fmt.Errorf("send chat action: %w", err)
+		Message(func(ctx context.Context, msg *tg.Message) error {
+			if err := msg.AnswerChatAction("upload_photo").DoVoid(ctx); err != nil {
+				return fmt.Errorf("answer chat action: %w", err)
 			}
 
-			// second call was send as call to api
-			return update.Respond(ctx, tg.NewSendPhotoCall(update.Message.Chat, tg.FileArg{
+			return msg.AnswerPhoto(tg.FileArg{
 				Upload: tg.NewInputFileBytes("gopher.png", gopherPNG),
-			}))
+			}).DoVoid(ctx)
 
-		}), tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
+		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
 		// handle other messages
-		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
-			return update.Respond(ctx, tg.NewCopyMessageCall(
-				update.Message.Chat,
-				update.Message.Chat,
-				update.Message.ID,
-			))
-		}))
+		Message(func(ctx context.Context, msg *tg.Message) error {
+			return msg.Update().Respond(ctx, msg.Copy(msg.Chat))
+		})
 
 }
 

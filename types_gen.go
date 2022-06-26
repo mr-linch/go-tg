@@ -374,6 +374,8 @@ type Message struct {
 
 	// Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
+
+	update *Update
 }
 
 // MessageId this object represents a unique message identifier.
@@ -617,6 +619,8 @@ type PollAnswer struct {
 
 	// 0-based identifiers of answer options, chosen by the user. May be empty if the user retracted their vote.
 	OptionaIDs []int `json:"option_ids"`
+
+	update *Update
 }
 
 // Poll this object contains information about a poll.
@@ -659,6 +663,8 @@ type Poll struct {
 
 	// Optional. Point in time (Unix timestamp) when the poll will be automatically closed
 	CloseDate int `json:"close_date,omitempty"`
+
+	update *Update
 }
 
 // Location this object represents a point on the map.
@@ -911,6 +917,8 @@ type CallbackQuery struct {
 
 	// Optional. Short name of a Game to be returned, serves as the unique identifier for the game
 	GameShortName string `json:"game_short_name,omitempty"`
+
+	update *Update
 }
 
 // ForceReply upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
@@ -1172,6 +1180,8 @@ type ChatMemberUpdated struct {
 
 	// Optional. Chat invite link, which was used by the user to join the chat; for joining by invite link events only.
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
+
+	update *Update
 }
 
 // ChatJoinRequest represents a join request sent to a chat.
@@ -1190,6 +1200,8 @@ type ChatJoinRequest struct {
 
 	// Optional. Chat invite link that was used by the user to send the join request
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
+
+	update *Update
 }
 
 // ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
@@ -1562,6 +1574,8 @@ type InlineQuery struct {
 
 	// Optional. Sender location, only for bots that request user location
 	Location *Location `json:"location,omitempty"`
+
+	update *Update
 }
 
 // InlineQueryResultArticle represents a link to an article or web page.
@@ -2369,6 +2383,8 @@ type ChosenInlineResult struct {
 
 	// The query that was used to obtain the result
 	Query string `json:"query"`
+
+	update *Update
 }
 
 // SentWebAppMessage describes an inline message sent by a Web App on behalf of a user.
@@ -2489,6 +2505,8 @@ type ShippingQuery struct {
 
 	// User specified shipping address
 	ShippingAddress ShippingAddress `json:"shipping_address"`
+
+	update *Update
 }
 
 // PreCheckoutQuery this object contains information about an incoming pre-checkout query.
@@ -2513,6 +2531,8 @@ type PreCheckoutQuery struct {
 
 	// Optional. Order information provided by the user
 	OrderInfo *OrderInfo `json:"order_info,omitempty"`
+
+	update *Update
 }
 
 // PassportData describes Telegram Passport data shared with the bot by the user.
