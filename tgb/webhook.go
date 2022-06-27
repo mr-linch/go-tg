@@ -217,35 +217,46 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	responseChan := make(chan json.Marshaler)
+
 	update := &Update{
-		isWebhook: true,
-		Update:    baseUpdate,
-		Client:    webhook.client,
+		webhookResponse: responseChan,
+		Update:          baseUpdate,
+		Client:          webhook.client,
 	}
 
-	// handle update
-	if err := webhook.handler.Handle(r.Context(), update); err != nil {
-		log.Printf("failed to handle update: %v", err)
+	handlerDoneChan := make(chan struct{})
+
+	go func() {
+		// handle update
+		if err := webhook.handler.Handle(context.Background(), update); err != nil {
+			log.Printf("failed to handle update: %v", err)
+		}
+		handlerDoneChan <- struct{}{}
+	}()
+
+	select {
+	case <-r.Context().Done():
 		return
-	}
+	case response := <-responseChan:
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		if response != nil {
+			body, err := json.Marshal(response)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+			if err != nil {
+				log.Printf("failed to marshal response: %s", err)
+				return
+			}
 
-	response := update.Response()
-
-	if response != nil {
-		body, err := json.Marshal(response)
-
-		if err != nil {
-			log.Printf("failed to marshal response: %s", err)
-			return
+			_, err = w.Write(body)
+			if err != nil {
+				log.Printf("failed to write response: %s", err)
+				return
+			}
 		}
-
-		_, err = w.Write(body)
-		if err != nil {
-			log.Printf("failed to write response: %s", err)
-			return
-		}
+		return
+	case <-handlerDoneChan:
+		w.WriteHeader(http.StatusOK)
 	}
 }
