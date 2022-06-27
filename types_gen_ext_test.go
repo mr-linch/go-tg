@@ -378,5 +378,6 @@ func TestInputMessageContent(t *testing.T) {
 		InputInvoiceMessageContent{},
 	} {
 		assert.Implements(t, (*InputMessageContent)(nil), test)
+		test.isInputMessageContent()
 	}
 }
