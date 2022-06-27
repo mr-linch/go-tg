@@ -3,8 +3,6 @@ package tgb
 import (
 	"context"
 	"fmt"
-
-	tg "github.com/mr-linch/go-tg"
 )
 
 type registeredHandler struct {
@@ -122,7 +120,7 @@ func (bot *Bot) PreCheckoutQuery(handler PreCheckoutQueryHandler, filters ...Fil
 	return bot
 }
 
-func (bot *Bot) Poll(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) Poll(handler PollHandler, filters ...Filter) *Bot {
 	bot.pollHandler = append(bot.pollHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -130,7 +128,7 @@ func (bot *Bot) Poll(handler Handler, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) PollAnswer(handler Handler, filters ...Filter) *Bot {
+func (bot *Bot) PollAnswer(handler PollAnswerHandler, filters ...Filter) *Bot {
 	bot.pollAnswerHandler = append(bot.pollAnswerHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -162,7 +160,7 @@ func (bot *Bot) ChatJoinRequest(handler ChatJoinRequestHandler, filters ...Filte
 	return bot
 }
 
-func (bot *Bot) pickAndHandle(ctx context.Context, update *tg.Update, group []*registeredHandler) error {
+func (bot *Bot) pickAndHandle(ctx context.Context, update *Update, group []*registeredHandler) error {
 	for _, item := range group {
 		if item.Filter != nil {
 			allow, err := item.Filter.Allow(ctx, update)
@@ -180,7 +178,7 @@ func (bot *Bot) pickAndHandle(ctx context.Context, update *tg.Update, group []*r
 	return nil
 }
 
-func (bot *Bot) Handle(ctx context.Context, update *tg.Update) error {
+func (bot *Bot) Handle(ctx context.Context, update *Update) error {
 	var group []*registeredHandler
 
 	switch {

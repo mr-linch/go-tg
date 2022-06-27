@@ -44,10 +44,10 @@ func run(ctx context.Context) error {
 	log.Printf("auth as https://t.me/%s", me.Username)
 
 	bot := tgb.New().
-		Message(func(ctx context.Context, msg *tg.Message) error {
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer("this is private chat response").DoVoid(ctx)
 		}, tgb.ChatType(tg.ChatTypePrivate)).
-		Message(func(ctx context.Context, msg *tg.Message) error {
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer("this is group chat response").DoVoid(ctx)
 		}, tgb.ChatType(tg.ChatTypeGroup, tg.ChatTypeSupergroup))
 

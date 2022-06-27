@@ -211,13 +211,17 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// parse body
-	update := tg.NewUpdateWebhook()
-	if err := json.Unmarshal(body, update); err != nil {
+	baseUpdate := &tg.Update{}
+	if err := json.Unmarshal(body, &baseUpdate); err != nil {
 		http.Error(w, "failed to parse body", http.StatusBadRequest)
 		return
 	}
 
-	update.Bind(webhook.client)
+	update := &Update{
+		isWebhook: true,
+		Update:    baseUpdate,
+		Client:    webhook.client,
+	}
 
 	// handle update
 	if err := webhook.handler.Handle(r.Context(), update); err != nil {

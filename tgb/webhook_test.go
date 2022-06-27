@@ -19,7 +19,7 @@ func TestNewWebhook(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		webhook := NewWebhook(
 			"https://example.com/webhook",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 		)
 
@@ -31,7 +31,7 @@ func TestNewWebhook(t *testing.T) {
 	t.Run("Custom", func(t *testing.T) {
 		webhook := NewWebhook(
 			"https://example.com/webhook",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 			WithWebhookIP("1.1.1.1"),
 			WithWebhookSecuritySubnets(netip.MustParsePrefix("1.1.1.1/24")),
@@ -57,7 +57,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 		)
 
@@ -76,7 +76,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 		)
 
@@ -95,7 +95,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 		)
 
@@ -115,7 +115,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 			WithWebhookSecuritySubnets(), // disable ip check
 		)
@@ -136,7 +136,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 			WithWebhookSecuritySubnets(),
 			WithWebhookSecurityToken(""),
@@ -158,7 +158,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 			WithWebhookSecuritySubnets(),
 			WithWebhookSecurityToken(""),
@@ -180,7 +180,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return errors.New("something goes wrong") }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return errors.New("something goes wrong") }),
 			&tg.Client{},
 			WithWebhookSecuritySubnets(),
 			WithWebhookSecurityToken(""),
@@ -202,7 +202,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			&tg.Client{},
 			// WithWebhookSecuritySubnets(),
 			WithWebhookSecurityToken(""),
@@ -224,7 +224,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook := NewWebhook(
 			"http://test.io/",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error {
+			HandlerFunc(func(ctx context.Context, update *Update) error {
 				return update.Respond(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
 			}),
 			&tg.Client{},
@@ -259,7 +259,7 @@ func TestWebhook_Setup(t *testing.T) {
 
 		webhook := NewWebhook(
 			"https://google.com",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			tg.New("1234:secret", tg.WithServer(server.URL), tg.WithDoer(server.Client())),
 		)
 
@@ -299,7 +299,7 @@ func TestWebhook_Setup(t *testing.T) {
 
 		webhook := NewWebhook(
 			"https://google.com",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			tg.New("1234:secret", tg.WithServer(server.URL), tg.WithDoer(server.Client())),
 			WithDropPendingUpdates(true),
 			WithWebhookIP("1.1.1.1"),
@@ -341,7 +341,7 @@ func TestWebhook_Setup(t *testing.T) {
 
 		webhook := NewWebhook(
 			"https://google.com",
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error { return nil }),
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			tg.New("1234:secret", tg.WithServer(server.URL), tg.WithDoer(server.Client())),
 			WithWebhookAllowedUpdates("message"),
 			WithWebhookIP("1.1.1.1"),

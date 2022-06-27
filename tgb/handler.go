@@ -2,127 +2,137 @@ package tgb
 
 import (
 	"context"
-	"errors"
-
-	tg "github.com/mr-linch/go-tg"
 )
 
+// Handler define generic Update handler.
 type Handler interface {
-	Handle(ctx context.Context, update *tg.Update) error
+	Handle(ctx context.Context, update *Update) error
 }
 
-type HandlerFunc func(ctx context.Context, update *tg.Update) error
+// HandlerFunc define functional handler.
+type HandlerFunc func(ctx context.Context, update *Update) error
 
-func (handler HandlerFunc) Handle(ctx context.Context, update *tg.Update) error {
+// Handle implements Handler interface.
+func (handler HandlerFunc) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, update)
 }
 
-type MessageHandler func(context.Context, *tg.Message) error
+// MessageHandler it's typed handler for Message.
+// Impliment Handler interface.
+type MessageHandler func(context.Context, *MessageUpdate) error
 
-func (handler MessageHandler) Handle(ctx context.Context, update *tg.Update) error {
+func (handler MessageHandler) Handle(ctx context.Context, update *Update) error {
 	if msg := firstNotNil(
 		update.Message,
 		update.EditedMessage,
 		update.ChannelPost,
 		update.EditedChannelPost,
 	); msg != nil {
-		return handler(ctx, msg)
+		return handler(ctx, &MessageUpdate{
+			Message: msg,
+			Update:  update,
+			Client:  update.Client,
+		})
 	}
 
-	return errors.New("no message in Update")
+	return nil
 }
 
-type InlineQueryHandler func(context.Context, *tg.InlineQuery) error
+type InlineQueryHandler func(context.Context, *InlineQueryUpdate) error
 
-func (handler InlineQueryHandler) Handle(ctx context.Context, update *tg.Update) error {
-	if update.InlineQuery != nil {
-		return handler(ctx, update.InlineQuery)
-	}
-
-	return errors.New("no inline query in Update")
+func (handler InlineQueryHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &InlineQueryUpdate{
+		InlineQuery: update.InlineQuery,
+		Update:      update,
+		Client:      update.Client,
+	})
 }
 
-type ChosenInlineResultHandler func(context.Context, *tg.ChosenInlineResult) error
+type ChosenInlineResultHandler func(context.Context, *ChosenInlineResultUpdate) error
 
-func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *tg.Update) error {
-	if update.ChosenInlineResult != nil {
-		return handler(ctx, update.ChosenInlineResult)
-	}
-
-	return errors.New("no chosen inline query in Update")
+func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &ChosenInlineResultUpdate{
+		ChosenInlineResult: update.ChosenInlineResult,
+		Update:             update,
+		Client:             update.Client,
+	})
 }
 
-type CallbackQueryHandler func(context.Context, *tg.CallbackQuery) error
+type CallbackQueryHandler func(context.Context, *CallbackQueryUpdate) error
 
-func (handler CallbackQueryHandler) Handle(ctx context.Context, update *tg.Update) error {
-	if update.CallbackQuery != nil {
-		return handler(ctx, update.CallbackQuery)
-	}
-
-	return errors.New("no callback query in Update")
+func (handler CallbackQueryHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &CallbackQueryUpdate{
+		CallbackQuery: update.CallbackQuery,
+		Update:        update,
+		Client:        update.Client,
+	})
 }
 
-type ShippingQueryHandler func(context.Context, *tg.ShippingQuery) error
+type ShippingQueryHandler func(context.Context, *ShippingQueryUpdate) error
 
-func (handler ShippingQueryHandler) Handle(ctx context.Context, update *tg.Update) error {
-	if update.ShippingQuery != nil {
-		return handler(ctx, update.ShippingQuery)
-	}
-
-	return errors.New("no shipping query in Update")
+func (handler ShippingQueryHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &ShippingQueryUpdate{
+		ShippingQuery: update.ShippingQuery,
+		Update:        update,
+		Client:        update.Client,
+	})
 }
 
-type PreCheckoutQueryHandler func(context.Context, *tg.PreCheckoutQuery) error
+type PreCheckoutQueryHandler func(context.Context, *PreCheckoutQueryUpdate) error
 
-func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *tg.Update) error {
-	if update.PreCheckoutQuery != nil {
-		return handler(ctx, update.PreCheckoutQuery)
-	}
-
-	return errors.New("no precheckout query in Update")
+func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &PreCheckoutQueryUpdate{
+		PreCheckoutQuery: update.PreCheckoutQuery,
+		Update:           update,
+		Client:           update.Client,
+	})
 }
 
-type PollHandler func(context.Context, *tg.Poll) error
+type PollHandler func(context.Context, *PollUpdate) error
 
-func (handler PollHandler) Handle(ctx context.Context, update *tg.Update) error {
-	if update.Poll != nil {
-		return handler(ctx, update.Poll)
-	}
-
-	return errors.New("no poll in Update")
+func (handler PollHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &PollUpdate{
+		Poll:   update.Poll,
+		Update: update,
+		Client: update.Client,
+	})
 }
 
-type PollAnswerHandler func(context.Context, *tg.PollAnswer) error
+type PollAnswerHandler func(context.Context, *PollAnswerUpdate) error
 
-func (handler PollAnswerHandler) Handle(ctx context.Context, update *tg.Update) error {
-	if update.PollAnswer != nil {
-		return handler(ctx, update.PollAnswer)
-	}
-
-	return errors.New("no poll answer in Update")
+func (handler PollAnswerHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &PollAnswerUpdate{
+		PollAnswer: update.PollAnswer,
+		Update:     update,
+		Client:     update.Client,
+	})
 }
 
-type ChatMemberUpdatedHandler func(context.Context, *tg.ChatMemberUpdated) error
+type ChatMemberUpdatedHandler func(context.Context, *ChatMemberUpdatedUpdate) error
 
-func (handler ChatMemberUpdatedHandler) Handle(ctx context.Context, update *tg.Update) error {
+func (handler ChatMemberUpdatedHandler) Handle(ctx context.Context, update *Update) error {
 	if updated := firstNotNil(
 		update.MyChatMember,
 		update.ChatMember,
 	); updated != nil {
-		return handler(ctx, updated)
+		return handler(ctx, &ChatMemberUpdatedUpdate{
+			ChatMemberUpdated: updated,
+			Update:            update,
+			Client:            update.Client,
+		})
 	}
 
-	return errors.New("no ChatMemberUpdated in Update")
+	return nil
 }
 
-type ChatJoinRequestHandler func(context.Context, *tg.ChatJoinRequest) error
+type ChatJoinRequestHandler func(context.Context, *ChatJoinRequestUpdate) error
 
-func (handler ChatJoinRequestHandler) Handle(ctx context.Context, update *tg.Update) error {
-	if update.ChatJoinRequest != nil {
-		return handler(ctx, update.ChatJoinRequest)
-	}
-
-	return errors.New("no chat join request in Update")
+func (handler ChatJoinRequestHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &ChatJoinRequestUpdate{
+		ChatJoinRequest: update.ChatJoinRequest,
+		Update:          update,
+		Client:          update.Client,
+	})
 }
 
 func firstNotNil[T any](fields ...*T) *T {

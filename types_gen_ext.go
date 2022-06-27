@@ -1,7 +1,6 @@
 package tg
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -100,72 +99,6 @@ type FileArg struct {
 
 func (chat Chat) PeerID() string {
 	return chat.ID.PeerID()
-}
-
-func (update *Update) Client() *Client {
-	return update.client
-}
-
-func (update *Update) Bind(client *Client) {
-	update.client = client
-
-	switch {
-	case update.Message != nil:
-		update.Message.update = update
-	case update.EditedMessage != nil:
-		update.EditedMessage.update = update
-	case update.ChannelPost != nil:
-		update.ChannelPost.update = update
-	case update.EditedChannelPost != nil:
-		update.EditedChannelPost.update = update
-	case update.InlineQuery != nil:
-		update.InlineQuery.update = update
-	case update.ChosenInlineResult != nil:
-		update.ChosenInlineResult.update = update
-	case update.CallbackQuery != nil:
-		update.CallbackQuery.update = update
-	case update.ShippingQuery != nil:
-		update.ShippingQuery.update = update
-	case update.PreCheckoutQuery != nil:
-		update.PreCheckoutQuery.update = update
-	case update.Poll != nil:
-		update.Poll.update = update
-	case update.PollAnswer != nil:
-		update.PollAnswer.update = update
-	case update.MyChatMember != nil:
-		update.MyChatMember.update = update
-	case update.ChatMember != nil:
-		update.ChatMember.update = update
-	case update.ChatJoinRequest != nil:
-		update.ChatJoinRequest.update = update
-	}
-}
-
-type UpdateRespond interface {
-	json.Marshaler
-	DoVoid(ctx context.Context) error
-	Bind(client *Client)
-}
-
-func NewUpdateWebhook() *Update {
-	return &Update{
-		isWebhook: true,
-	}
-}
-
-func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
-	if update.isWebhook && update.response == nil {
-		update.response = v
-		return nil
-	}
-
-	v.Bind(update.client)
-
-	return v.DoVoid(ctx)
-}
-
-func (update *Update) Response() json.Marshaler {
-	return update.response
 }
 
 type InputMedia struct {
@@ -476,76 +409,4 @@ func (layout *ButtonLayout[T]) Add(buttons ...T) *ButtonLayout[T] {
 func (layout *ButtonLayout[T]) Row(buttons ...T) *ButtonLayout[T] {
 	layout.buttons = append(layout.buttons, buttons)
 	return layout
-}
-
-func (msg *Message) Update() *Update {
-	return msg.update
-}
-
-func (msg *Message) Answer(text string) *SendMessageCall {
-	return msg.update.client.SendMessage(msg.Chat, text)
-}
-
-func (msg *Message) AnswerPhoto(photo FileArg) *SendPhotoCall {
-	return msg.update.client.SendPhoto(msg.Chat, photo)
-}
-
-func (msg *Message) AnswerAudio(audio FileArg) *SendAudioCall {
-	return msg.update.client.SendAudio(msg.Chat, audio)
-}
-
-func (msg *Message) AnswerAnimation(animation FileArg) *SendAnimationCall {
-	return msg.update.client.SendAnimation(msg.Chat, animation)
-}
-
-func (msg *Message) AnswerDocument(document FileArg) *SendDocumentCall {
-	return msg.update.client.SendDocument(msg.Chat, document)
-}
-
-func (msg *Message) AnswerVideo(video FileArg) *SendVideoCall {
-	return msg.update.client.SendVideo(msg.Chat, video)
-}
-
-func (msg *Message) AnswerVoice(voice FileArg) *SendVoiceCall {
-	return msg.update.client.SendVoice(msg.Chat, voice)
-}
-
-func (msg *Message) AnswerVideoNote(videoNote FileArg) *SendVideoNoteCall {
-	return msg.update.client.SendVideoNote(msg.Chat, videoNote)
-}
-
-func (msg *Message) AnswerLocation(latitude float64, longitude float64) *SendLocationCall {
-	return msg.update.client.SendLocation(msg.Chat, latitude, longitude)
-}
-
-func (msg *Message) AnswerVenue(latitude float64, longitude float64, title string, address string) *SendVenueCall {
-	return msg.update.client.SendVenue(msg.Chat, latitude, longitude, title, address)
-}
-
-func (msg *Message) AnswerContact(phoneNumber string, firstName string) *SendContactCall {
-	return msg.update.client.SendContact(msg.Chat, phoneNumber, firstName)
-}
-
-func (msg *Message) AnswerSticker(sticker FileArg) *SendStickerCall {
-	return msg.update.client.SendSticker(msg.Chat, sticker)
-}
-
-func (msg *Message) AnswerPoll(question string, options []string) *SendPollCall {
-	return msg.update.client.SendPoll(msg.Chat, question, options)
-}
-
-func (msg *Message) AnswerDice(emoji string) *SendDiceCall {
-	return msg.update.client.SendDice(msg.Chat).Emoji(emoji)
-}
-
-func (msg *Message) AnswerChatAction(action string) *SendChatActionCall {
-	return msg.update.client.SendChatAction(msg.Chat, action)
-}
-
-func (msg *Message) Forward(to PeerID) *ForwardMessageCall {
-	return msg.update.client.ForwardMessage(to, msg.Chat, msg.ID)
-}
-
-func (msg *Message) Copy(to PeerID) *CopyMessageCall {
-	return msg.update.client.CopyMessage(to, msg.Chat, msg.ID)
 }

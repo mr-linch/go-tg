@@ -301,7 +301,7 @@ func (call *SendMessageCall) ParseMode(parseMode ParseMode) *SendMessageCall {
 }
 
 // Entities A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
-func (call *SendMessageCall) Entities(entities MessageEntity) *SendMessageCall {
+func (call *SendMessageCall) Entities(entities []MessageEntity) *SendMessageCall {
 	call.request.JSON("entities", entities)
 	return call
 }
@@ -466,7 +466,7 @@ func (call *CopyMessageCall) ParseMode(parseMode ParseMode) *CopyMessageCall {
 }
 
 // CaptionEntities A JSON-serialized list of special entities that appear in the new caption, which can be specified instead of parse_mode
-func (call *CopyMessageCall) CaptionEntities(captionEntities MessageEntity) *CopyMessageCall {
+func (call *CopyMessageCall) CaptionEntities(captionEntities []MessageEntity) *CopyMessageCall {
 	call.request.JSON("caption_entities", captionEntities)
 	return call
 }
@@ -554,7 +554,7 @@ func (call *SendPhotoCall) ParseMode(parseMode ParseMode) *SendPhotoCall {
 }
 
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
-func (call *SendPhotoCall) CaptionEntities(captionEntities MessageEntity) *SendPhotoCall {
+func (call *SendPhotoCall) CaptionEntities(captionEntities []MessageEntity) *SendPhotoCall {
 	call.request.JSON("caption_entities", captionEntities)
 	return call
 }
@@ -645,7 +645,7 @@ func (call *SendAudioCall) ParseMode(parseMode ParseMode) *SendAudioCall {
 }
 
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
-func (call *SendAudioCall) CaptionEntities(captionEntities MessageEntity) *SendAudioCall {
+func (call *SendAudioCall) CaptionEntities(captionEntities []MessageEntity) *SendAudioCall {
 	call.request.JSON("caption_entities", captionEntities)
 	return call
 }
@@ -764,7 +764,7 @@ func (call *SendDocumentCall) ParseMode(parseMode ParseMode) *SendDocumentCall {
 }
 
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
-func (call *SendDocumentCall) CaptionEntities(captionEntities MessageEntity) *SendDocumentCall {
+func (call *SendDocumentCall) CaptionEntities(captionEntities []MessageEntity) *SendDocumentCall {
 	call.request.JSON("caption_entities", captionEntities)
 	return call
 }
@@ -883,7 +883,7 @@ func (call *SendVideoCall) ParseMode(parseMode ParseMode) *SendVideoCall {
 }
 
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
-func (call *SendVideoCall) CaptionEntities(captionEntities MessageEntity) *SendVideoCall {
+func (call *SendVideoCall) CaptionEntities(captionEntities []MessageEntity) *SendVideoCall {
 	call.request.JSON("caption_entities", captionEntities)
 	return call
 }
@@ -1002,7 +1002,7 @@ func (call *SendAnimationCall) ParseMode(parseMode ParseMode) *SendAnimationCall
 }
 
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
-func (call *SendAnimationCall) CaptionEntities(captionEntities MessageEntity) *SendAnimationCall {
+func (call *SendAnimationCall) CaptionEntities(captionEntities []MessageEntity) *SendAnimationCall {
 	call.request.JSON("caption_entities", captionEntities)
 	return call
 }
@@ -1092,7 +1092,7 @@ func (call *SendVoiceCall) ParseMode(parseMode ParseMode) *SendVoiceCall {
 }
 
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
-func (call *SendVoiceCall) CaptionEntities(captionEntities MessageEntity) *SendVoiceCall {
+func (call *SendVoiceCall) CaptionEntities(captionEntities []MessageEntity) *SendVoiceCall {
 	call.request.JSON("caption_entities", captionEntities)
 	return call
 }
@@ -1790,7 +1790,7 @@ func (call *SendPollCall) ExplanationParseMode(explanationParseMode string) *Sen
 }
 
 // ExplanationEntities A JSON-serialized list of special entities that appear in the poll explanation, which can be specified instead of parse_mode
-func (call *SendPollCall) ExplanationEntities(explanationEntities MessageEntity) *SendPollCall {
+func (call *SendPollCall) ExplanationEntities(explanationEntities []MessageEntity) *SendPollCall {
 	call.request.JSON("explanation_entities", explanationEntities)
 	return call
 }
@@ -1964,17 +1964,17 @@ type GetUserProfilePhotosCall struct {
 
 // NewGetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall with required parameters.
 // userId - Unique identifier of the target user
-func NewGetUserProfilePhotosCall(userId int) *GetUserProfilePhotosCall {
+func NewGetUserProfilePhotosCall(userId UserID) *GetUserProfilePhotosCall {
 	return &GetUserProfilePhotosCall{
 		Call[UserProfilePhotos]{
 			request: NewRequest("getUserProfilePhotos").
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // GetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall with required parameters.
-func (client *Client) GetUserProfilePhotos(userId int) *GetUserProfilePhotosCall {
+func (client *Client) GetUserProfilePhotos(userId UserID) *GetUserProfilePhotosCall {
 	return callWithClient(
 		client,
 		NewGetUserProfilePhotosCall(userId),
@@ -1982,8 +1982,8 @@ func (client *Client) GetUserProfilePhotos(userId int) *GetUserProfilePhotosCall
 }
 
 // UserId Unique identifier of the target user
-func (call *GetUserProfilePhotosCall) UserId(userId int) *GetUserProfilePhotosCall {
-	call.request.Int("user_id", userId)
+func (call *GetUserProfilePhotosCall) UserId(userId UserID) *GetUserProfilePhotosCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -2046,18 +2046,18 @@ type BanChatMemberCall struct {
 // NewBanChatMemberCall constructs a new BanChatMemberCall with required parameters.
 // chatId - Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
 // userId - Unique identifier of the target user
-func NewBanChatMemberCall(chatId PeerID, userId int) *BanChatMemberCall {
+func NewBanChatMemberCall(chatId PeerID, userId UserID) *BanChatMemberCall {
 	return &BanChatMemberCall{
 		CallNoResult{
 			request: NewRequest("banChatMember").
 				PeerID("chat_id", chatId).
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // BanChatMemberCall constructs a new BanChatMemberCall with required parameters.
-func (client *Client) BanChatMember(chatId PeerID, userId int) *BanChatMemberCall {
+func (client *Client) BanChatMember(chatId PeerID, userId UserID) *BanChatMemberCall {
 	return callWithClient(
 		client,
 		NewBanChatMemberCall(chatId, userId),
@@ -2071,8 +2071,8 @@ func (call *BanChatMemberCall) ChatId(chatId PeerID) *BanChatMemberCall {
 }
 
 // UserId Unique identifier of the target user
-func (call *BanChatMemberCall) UserId(userId int) *BanChatMemberCall {
-	call.request.Int("user_id", userId)
+func (call *BanChatMemberCall) UserId(userId UserID) *BanChatMemberCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -2102,18 +2102,18 @@ type UnbanChatMemberCall struct {
 // NewUnbanChatMemberCall constructs a new UnbanChatMemberCall with required parameters.
 // chatId - Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
 // userId - Unique identifier of the target user
-func NewUnbanChatMemberCall(chatId PeerID, userId int) *UnbanChatMemberCall {
+func NewUnbanChatMemberCall(chatId PeerID, userId UserID) *UnbanChatMemberCall {
 	return &UnbanChatMemberCall{
 		CallNoResult{
 			request: NewRequest("unbanChatMember").
 				PeerID("chat_id", chatId).
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // UnbanChatMemberCall constructs a new UnbanChatMemberCall with required parameters.
-func (client *Client) UnbanChatMember(chatId PeerID, userId int) *UnbanChatMemberCall {
+func (client *Client) UnbanChatMember(chatId PeerID, userId UserID) *UnbanChatMemberCall {
 	return callWithClient(
 		client,
 		NewUnbanChatMemberCall(chatId, userId),
@@ -2127,8 +2127,8 @@ func (call *UnbanChatMemberCall) ChatId(chatId PeerID) *UnbanChatMemberCall {
 }
 
 // UserId Unique identifier of the target user
-func (call *UnbanChatMemberCall) UserId(userId int) *UnbanChatMemberCall {
-	call.request.Int("user_id", userId)
+func (call *UnbanChatMemberCall) UserId(userId UserID) *UnbanChatMemberCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -2150,19 +2150,19 @@ type RestrictChatMemberCall struct {
 // chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
 // userId - Unique identifier of the target user
 // permissions - A JSON-serialized object for new user permissions
-func NewRestrictChatMemberCall(chatId PeerID, userId int, permissions ChatPermissions) *RestrictChatMemberCall {
+func NewRestrictChatMemberCall(chatId PeerID, userId UserID, permissions ChatPermissions) *RestrictChatMemberCall {
 	return &RestrictChatMemberCall{
 		CallNoResult{
 			request: NewRequest("restrictChatMember").
 				PeerID("chat_id", chatId).
-				Int("user_id", userId).
+				UserID("user_id", userId).
 				JSON("permissions", permissions),
 		},
 	}
 }
 
 // RestrictChatMemberCall constructs a new RestrictChatMemberCall with required parameters.
-func (client *Client) RestrictChatMember(chatId PeerID, userId int, permissions ChatPermissions) *RestrictChatMemberCall {
+func (client *Client) RestrictChatMember(chatId PeerID, userId UserID, permissions ChatPermissions) *RestrictChatMemberCall {
 	return callWithClient(
 		client,
 		NewRestrictChatMemberCall(chatId, userId, permissions),
@@ -2176,8 +2176,8 @@ func (call *RestrictChatMemberCall) ChatId(chatId PeerID) *RestrictChatMemberCal
 }
 
 // UserId Unique identifier of the target user
-func (call *RestrictChatMemberCall) UserId(userId int) *RestrictChatMemberCall {
-	call.request.Int("user_id", userId)
+func (call *RestrictChatMemberCall) UserId(userId UserID) *RestrictChatMemberCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -2204,18 +2204,18 @@ type PromoteChatMemberCall struct {
 // NewPromoteChatMemberCall constructs a new PromoteChatMemberCall with required parameters.
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // userId - Unique identifier of the target user
-func NewPromoteChatMemberCall(chatId PeerID, userId int) *PromoteChatMemberCall {
+func NewPromoteChatMemberCall(chatId PeerID, userId UserID) *PromoteChatMemberCall {
 	return &PromoteChatMemberCall{
 		CallNoResult{
 			request: NewRequest("promoteChatMember").
 				PeerID("chat_id", chatId).
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // PromoteChatMemberCall constructs a new PromoteChatMemberCall with required parameters.
-func (client *Client) PromoteChatMember(chatId PeerID, userId int) *PromoteChatMemberCall {
+func (client *Client) PromoteChatMember(chatId PeerID, userId UserID) *PromoteChatMemberCall {
 	return callWithClient(
 		client,
 		NewPromoteChatMemberCall(chatId, userId),
@@ -2229,8 +2229,8 @@ func (call *PromoteChatMemberCall) ChatId(chatId PeerID) *PromoteChatMemberCall 
 }
 
 // UserId Unique identifier of the target user
-func (call *PromoteChatMemberCall) UserId(userId int) *PromoteChatMemberCall {
-	call.request.Int("user_id", userId)
+func (call *PromoteChatMemberCall) UserId(userId UserID) *PromoteChatMemberCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -2310,19 +2310,19 @@ type SetChatAdministratorCustomTitleCall struct {
 // chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
 // userId - Unique identifier of the target user
 // customTitle - New custom title for the administrator; 0-16 characters, emoji are not allowed
-func NewSetChatAdministratorCustomTitleCall(chatId PeerID, userId int, customTitle string) *SetChatAdministratorCustomTitleCall {
+func NewSetChatAdministratorCustomTitleCall(chatId PeerID, userId UserID, customTitle string) *SetChatAdministratorCustomTitleCall {
 	return &SetChatAdministratorCustomTitleCall{
 		CallNoResult{
 			request: NewRequest("setChatAdministratorCustomTitle").
 				PeerID("chat_id", chatId).
-				Int("user_id", userId).
+				UserID("user_id", userId).
 				String("custom_title", customTitle),
 		},
 	}
 }
 
 // SetChatAdministratorCustomTitleCall constructs a new SetChatAdministratorCustomTitleCall with required parameters.
-func (client *Client) SetChatAdministratorCustomTitle(chatId PeerID, userId int, customTitle string) *SetChatAdministratorCustomTitleCall {
+func (client *Client) SetChatAdministratorCustomTitle(chatId PeerID, userId UserID, customTitle string) *SetChatAdministratorCustomTitleCall {
 	return callWithClient(
 		client,
 		NewSetChatAdministratorCustomTitleCall(chatId, userId, customTitle),
@@ -2336,8 +2336,8 @@ func (call *SetChatAdministratorCustomTitleCall) ChatId(chatId PeerID) *SetChatA
 }
 
 // UserId Unique identifier of the target user
-func (call *SetChatAdministratorCustomTitleCall) UserId(userId int) *SetChatAdministratorCustomTitleCall {
-	call.request.Int("user_id", userId)
+func (call *SetChatAdministratorCustomTitleCall) UserId(userId UserID) *SetChatAdministratorCustomTitleCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -2676,18 +2676,18 @@ type ApproveChatJoinRequestCall struct {
 // NewApproveChatJoinRequestCall constructs a new ApproveChatJoinRequestCall with required parameters.
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // userId - Unique identifier of the target user
-func NewApproveChatJoinRequestCall(chatId PeerID, userId int) *ApproveChatJoinRequestCall {
+func NewApproveChatJoinRequestCall(chatId PeerID, userId UserID) *ApproveChatJoinRequestCall {
 	return &ApproveChatJoinRequestCall{
 		CallNoResult{
 			request: NewRequest("approveChatJoinRequest").
 				PeerID("chat_id", chatId).
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // ApproveChatJoinRequestCall constructs a new ApproveChatJoinRequestCall with required parameters.
-func (client *Client) ApproveChatJoinRequest(chatId PeerID, userId int) *ApproveChatJoinRequestCall {
+func (client *Client) ApproveChatJoinRequest(chatId PeerID, userId UserID) *ApproveChatJoinRequestCall {
 	return callWithClient(
 		client,
 		NewApproveChatJoinRequestCall(chatId, userId),
@@ -2701,8 +2701,8 @@ func (call *ApproveChatJoinRequestCall) ChatId(chatId PeerID) *ApproveChatJoinRe
 }
 
 // UserId Unique identifier of the target user
-func (call *ApproveChatJoinRequestCall) UserId(userId int) *ApproveChatJoinRequestCall {
-	call.request.Int("user_id", userId)
+func (call *ApproveChatJoinRequestCall) UserId(userId UserID) *ApproveChatJoinRequestCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -2716,18 +2716,18 @@ type DeclineChatJoinRequestCall struct {
 // NewDeclineChatJoinRequestCall constructs a new DeclineChatJoinRequestCall with required parameters.
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // userId - Unique identifier of the target user
-func NewDeclineChatJoinRequestCall(chatId PeerID, userId int) *DeclineChatJoinRequestCall {
+func NewDeclineChatJoinRequestCall(chatId PeerID, userId UserID) *DeclineChatJoinRequestCall {
 	return &DeclineChatJoinRequestCall{
 		CallNoResult{
 			request: NewRequest("declineChatJoinRequest").
 				PeerID("chat_id", chatId).
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // DeclineChatJoinRequestCall constructs a new DeclineChatJoinRequestCall with required parameters.
-func (client *Client) DeclineChatJoinRequest(chatId PeerID, userId int) *DeclineChatJoinRequestCall {
+func (client *Client) DeclineChatJoinRequest(chatId PeerID, userId UserID) *DeclineChatJoinRequestCall {
 	return callWithClient(
 		client,
 		NewDeclineChatJoinRequestCall(chatId, userId),
@@ -2741,8 +2741,8 @@ func (call *DeclineChatJoinRequestCall) ChatId(chatId PeerID) *DeclineChatJoinRe
 }
 
 // UserId Unique identifier of the target user
-func (call *DeclineChatJoinRequestCall) UserId(userId int) *DeclineChatJoinRequestCall {
-	call.request.Int("user_id", userId)
+func (call *DeclineChatJoinRequestCall) UserId(userId UserID) *DeclineChatJoinRequestCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -3153,18 +3153,18 @@ type GetChatMemberCall struct {
 // NewGetChatMemberCall constructs a new GetChatMemberCall with required parameters.
 // chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 // userId - Unique identifier of the target user
-func NewGetChatMemberCall(chatId PeerID, userId int) *GetChatMemberCall {
+func NewGetChatMemberCall(chatId PeerID, userId UserID) *GetChatMemberCall {
 	return &GetChatMemberCall{
 		Call[ChatMember]{
 			request: NewRequest("getChatMember").
 				PeerID("chat_id", chatId).
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // GetChatMemberCall constructs a new GetChatMemberCall with required parameters.
-func (client *Client) GetChatMember(chatId PeerID, userId int) *GetChatMemberCall {
+func (client *Client) GetChatMember(chatId PeerID, userId UserID) *GetChatMemberCall {
 	return callWithClient(
 		client,
 		NewGetChatMemberCall(chatId, userId),
@@ -3178,8 +3178,8 @@ func (call *GetChatMemberCall) ChatId(chatId PeerID) *GetChatMemberCall {
 }
 
 // UserId Unique identifier of the target user
-func (call *GetChatMemberCall) UserId(userId int) *GetChatMemberCall {
-	call.request.Int("user_id", userId)
+func (call *GetChatMemberCall) UserId(userId UserID) *GetChatMemberCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -3326,7 +3326,7 @@ type SetMyCommandsCall struct {
 
 // NewSetMyCommandsCall constructs a new SetMyCommandsCall with required parameters.
 // commands - A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
-func NewSetMyCommandsCall(commands BotCommand) *SetMyCommandsCall {
+func NewSetMyCommandsCall(commands []BotCommand) *SetMyCommandsCall {
 	return &SetMyCommandsCall{
 		CallNoResult{
 			request: NewRequest("setMyCommands").
@@ -3336,7 +3336,7 @@ func NewSetMyCommandsCall(commands BotCommand) *SetMyCommandsCall {
 }
 
 // SetMyCommandsCall constructs a new SetMyCommandsCall with required parameters.
-func (client *Client) SetMyCommands(commands BotCommand) *SetMyCommandsCall {
+func (client *Client) SetMyCommands(commands []BotCommand) *SetMyCommandsCall {
 	return callWithClient(
 		client,
 		NewSetMyCommandsCall(commands),
@@ -3344,7 +3344,7 @@ func (client *Client) SetMyCommands(commands BotCommand) *SetMyCommandsCall {
 }
 
 // Commands A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
-func (call *SetMyCommandsCall) Commands(commands BotCommand) *SetMyCommandsCall {
+func (call *SetMyCommandsCall) Commands(commands []BotCommand) *SetMyCommandsCall {
 	call.request.JSON("commands", commands)
 	return call
 }
@@ -3647,7 +3647,7 @@ func (call *EditMessageTextCall) ParseMode(parseMode ParseMode) *EditMessageText
 }
 
 // Entities A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
-func (call *EditMessageTextCall) Entities(entities MessageEntity) *EditMessageTextCall {
+func (call *EditMessageTextCall) Entities(entities []MessageEntity) *EditMessageTextCall {
 	call.request.JSON("entities", entities)
 	return call
 }
@@ -3672,19 +3672,46 @@ type EditMessageCaptionCall struct {
 }
 
 // NewEditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
-func NewEditMessageCaptionCall() *EditMessageCaptionCall {
+// chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageId - Required if inline_message_id is not specified. Identifier of the message to edit
+// caption - New caption of the message, 0-1024 characters after entities parsing
+func NewEditMessageCaptionCall(chatId PeerID, messageId int, caption string) *EditMessageCaptionCall {
 	return &EditMessageCaptionCall{
 		Call[Message]{
-			request: NewRequest("editMessageCaption"),
+			request: NewRequest("editMessageCaption").
+				PeerID("chat_id", chatId).
+				Int("message_id", messageId).
+				String("caption", caption),
+		},
+	}
+}
+
+// NewEditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
+// inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
+// caption - New caption of the message, 0-1024 characters after entities parsing
+func NewEditMessageCaptionInlineCall(inlineMessageId string, caption string) *EditMessageCaptionCall {
+	return &EditMessageCaptionCall{
+		Call[Message]{
+			request: NewRequest("editMessageCaption").
+				String("inline_message_id", inlineMessageId).
+				String("caption", caption),
 		},
 	}
 }
 
 // EditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
-func (client *Client) EditMessageCaption() *EditMessageCaptionCall {
+func (client *Client) EditMessageCaption(chatId PeerID, messageId int, caption string) *EditMessageCaptionCall {
 	return callWithClient(
 		client,
-		NewEditMessageCaptionCall(),
+		NewEditMessageCaptionCall(chatId, messageId, caption),
+	)
+}
+
+// EditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
+func (client *Client) EditMessageCaptionInline(inlineMessageId string, caption string) *EditMessageCaptionCall {
+	return callWithClient(
+		client,
+		NewEditMessageCaptionInlineCall(inlineMessageId, caption),
 	)
 }
 
@@ -3719,7 +3746,7 @@ func (call *EditMessageCaptionCall) ParseMode(parseMode ParseMode) *EditMessageC
 }
 
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
-func (call *EditMessageCaptionCall) CaptionEntities(captionEntities MessageEntity) *EditMessageCaptionCall {
+func (call *EditMessageCaptionCall) CaptionEntities(captionEntities []MessageEntity) *EditMessageCaptionCall {
 	call.request.JSON("caption_entities", captionEntities)
 	return call
 }
@@ -3796,19 +3823,42 @@ type EditMessageReplyMarkupCall struct {
 }
 
 // NewEditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
-func NewEditMessageReplyMarkupCall() *EditMessageReplyMarkupCall {
+// chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageId - Required if inline_message_id is not specified. Identifier of the message to edit
+func NewEditMessageReplyMarkupCall(chatId PeerID, messageId int) *EditMessageReplyMarkupCall {
 	return &EditMessageReplyMarkupCall{
 		Call[Message]{
-			request: NewRequest("editMessageReplyMarkup"),
+			request: NewRequest("editMessageReplyMarkup").
+				PeerID("chat_id", chatId).
+				Int("message_id", messageId),
+		},
+	}
+}
+
+// NewEditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
+// inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
+func NewEditMessageReplyMarkupInlineCall(inlineMessageId string) *EditMessageReplyMarkupCall {
+	return &EditMessageReplyMarkupCall{
+		Call[Message]{
+			request: NewRequest("editMessageReplyMarkup").
+				String("inline_message_id", inlineMessageId),
 		},
 	}
 }
 
 // EditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
-func (client *Client) EditMessageReplyMarkup() *EditMessageReplyMarkupCall {
+func (client *Client) EditMessageReplyMarkup(chatId PeerID, messageId int) *EditMessageReplyMarkupCall {
 	return callWithClient(
 		client,
-		NewEditMessageReplyMarkupCall(),
+		NewEditMessageReplyMarkupCall(chatId, messageId),
+	)
+}
+
+// EditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
+func (client *Client) EditMessageReplyMarkupInline(inlineMessageId string) *EditMessageReplyMarkupCall {
+	return callWithClient(
+		client,
+		NewEditMessageReplyMarkupInlineCall(inlineMessageId),
 	)
 }
 
@@ -4032,18 +4082,18 @@ type UploadStickerFileCall struct {
 // NewUploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
 // userId - User identifier of sticker file owner
 // pngSticker - PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More information on Sending Files »
-func NewUploadStickerFileCall(userId int, pngSticker InputFile) *UploadStickerFileCall {
+func NewUploadStickerFileCall(userId UserID, pngSticker InputFile) *UploadStickerFileCall {
 	return &UploadStickerFileCall{
 		Call[File]{
 			request: NewRequest("uploadStickerFile").
-				Int("user_id", userId).
+				UserID("user_id", userId).
 				JSON("png_sticker", pngSticker),
 		},
 	}
 }
 
 // UploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
-func (client *Client) UploadStickerFile(userId int, pngSticker InputFile) *UploadStickerFileCall {
+func (client *Client) UploadStickerFile(userId UserID, pngSticker InputFile) *UploadStickerFileCall {
 	return callWithClient(
 		client,
 		NewUploadStickerFileCall(userId, pngSticker),
@@ -4051,8 +4101,8 @@ func (client *Client) UploadStickerFile(userId int, pngSticker InputFile) *Uploa
 }
 
 // UserId User identifier of sticker file owner
-func (call *UploadStickerFileCall) UserId(userId int) *UploadStickerFileCall {
-	call.request.Int("user_id", userId)
+func (call *UploadStickerFileCall) UserId(userId UserID) *UploadStickerFileCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -4075,11 +4125,11 @@ type CreateNewStickerSetCall struct {
 // name - Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
 // title - Sticker set title, 1-64 characters
 // emojis - One or more emoji corresponding to the sticker
-func NewCreateNewStickerSetCall(userId int, name string, title string, emojis string) *CreateNewStickerSetCall {
+func NewCreateNewStickerSetCall(userId UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
 	return &CreateNewStickerSetCall{
 		CallNoResult{
 			request: NewRequest("createNewStickerSet").
-				Int("user_id", userId).
+				UserID("user_id", userId).
 				String("name", name).
 				String("title", title).
 				String("emojis", emojis),
@@ -4088,7 +4138,7 @@ func NewCreateNewStickerSetCall(userId int, name string, title string, emojis st
 }
 
 // CreateNewStickerSetCall constructs a new CreateNewStickerSetCall with required parameters.
-func (client *Client) CreateNewStickerSet(userId int, name string, title string, emojis string) *CreateNewStickerSetCall {
+func (client *Client) CreateNewStickerSet(userId UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
 	return callWithClient(
 		client,
 		NewCreateNewStickerSetCall(userId, name, title, emojis),
@@ -4096,8 +4146,8 @@ func (client *Client) CreateNewStickerSet(userId int, name string, title string,
 }
 
 // UserId User identifier of created sticker set owner
-func (call *CreateNewStickerSetCall) UserId(userId int) *CreateNewStickerSetCall {
-	call.request.Int("user_id", userId)
+func (call *CreateNewStickerSetCall) UserId(userId UserID) *CreateNewStickerSetCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -4163,11 +4213,11 @@ type AddStickerToSetCall struct {
 // userId - User identifier of sticker set owner
 // name - Sticker set name
 // emojis - One or more emoji corresponding to the sticker
-func NewAddStickerToSetCall(userId int, name string, emojis string) *AddStickerToSetCall {
+func NewAddStickerToSetCall(userId UserID, name string, emojis string) *AddStickerToSetCall {
 	return &AddStickerToSetCall{
 		CallNoResult{
 			request: NewRequest("addStickerToSet").
-				Int("user_id", userId).
+				UserID("user_id", userId).
 				String("name", name).
 				String("emojis", emojis),
 		},
@@ -4175,7 +4225,7 @@ func NewAddStickerToSetCall(userId int, name string, emojis string) *AddStickerT
 }
 
 // AddStickerToSetCall constructs a new AddStickerToSetCall with required parameters.
-func (client *Client) AddStickerToSet(userId int, name string, emojis string) *AddStickerToSetCall {
+func (client *Client) AddStickerToSet(userId UserID, name string, emojis string) *AddStickerToSetCall {
 	return callWithClient(
 		client,
 		NewAddStickerToSetCall(userId, name, emojis),
@@ -4183,8 +4233,8 @@ func (client *Client) AddStickerToSet(userId int, name string, emojis string) *A
 }
 
 // UserId User identifier of sticker set owner
-func (call *AddStickerToSetCall) UserId(userId int) *AddStickerToSetCall {
-	call.request.Int("user_id", userId)
+func (call *AddStickerToSetCall) UserId(userId UserID) *AddStickerToSetCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -4305,18 +4355,18 @@ type SetStickerSetThumbCall struct {
 // NewSetStickerSetThumbCall constructs a new SetStickerSetThumbCall with required parameters.
 // name - Sticker set name
 // userId - User identifier of the sticker set owner
-func NewSetStickerSetThumbCall(name string, userId int) *SetStickerSetThumbCall {
+func NewSetStickerSetThumbCall(name string, userId UserID) *SetStickerSetThumbCall {
 	return &SetStickerSetThumbCall{
 		CallNoResult{
 			request: NewRequest("setStickerSetThumb").
 				String("name", name).
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // SetStickerSetThumbCall constructs a new SetStickerSetThumbCall with required parameters.
-func (client *Client) SetStickerSetThumb(name string, userId int) *SetStickerSetThumbCall {
+func (client *Client) SetStickerSetThumb(name string, userId UserID) *SetStickerSetThumbCall {
 	return callWithClient(
 		client,
 		NewSetStickerSetThumbCall(name, userId),
@@ -4330,8 +4380,8 @@ func (call *SetStickerSetThumbCall) Name(name string) *SetStickerSetThumbCall {
 }
 
 // UserId User identifier of the sticker set owner
-func (call *SetStickerSetThumbCall) UserId(userId int) *SetStickerSetThumbCall {
-	call.request.Int("user_id", userId)
+func (call *SetStickerSetThumbCall) UserId(userId UserID) *SetStickerSetThumbCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -4351,7 +4401,7 @@ type AnswerInlineQueryCall struct {
 // NewAnswerInlineQueryCall constructs a new AnswerInlineQueryCall with required parameters.
 // inlineQueryId - Unique identifier for the answered query
 // results - A JSON-serialized array of results for the inline query
-func NewAnswerInlineQueryCall(inlineQueryId string, results InlineQueryResult) *AnswerInlineQueryCall {
+func NewAnswerInlineQueryCall(inlineQueryId string, results []InlineQueryResult) *AnswerInlineQueryCall {
 	return &AnswerInlineQueryCall{
 		CallNoResult{
 			request: NewRequest("answerInlineQuery").
@@ -4362,7 +4412,7 @@ func NewAnswerInlineQueryCall(inlineQueryId string, results InlineQueryResult) *
 }
 
 // AnswerInlineQueryCall constructs a new AnswerInlineQueryCall with required parameters.
-func (client *Client) AnswerInlineQuery(inlineQueryId string, results InlineQueryResult) *AnswerInlineQueryCall {
+func (client *Client) AnswerInlineQuery(inlineQueryId string, results []InlineQueryResult) *AnswerInlineQueryCall {
 	return callWithClient(
 		client,
 		NewAnswerInlineQueryCall(inlineQueryId, results),
@@ -4376,7 +4426,7 @@ func (call *AnswerInlineQueryCall) InlineQueryId(inlineQueryId string) *AnswerIn
 }
 
 // Results A JSON-serialized array of results for the inline query
-func (call *AnswerInlineQueryCall) Results(results InlineQueryResult) *AnswerInlineQueryCall {
+func (call *AnswerInlineQueryCall) Results(results []InlineQueryResult) *AnswerInlineQueryCall {
 	call.request.JSON("results", results)
 	return call
 }
@@ -4466,7 +4516,7 @@ type SendInvoiceCall struct {
 // providerToken - Payment provider token, obtained via @BotFather
 // currency - Three-letter ISO 4217 currency code, see more on currencies
 // prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
-func NewSendInvoiceCall(chatId PeerID, title string, description string, payload string, providerToken string, currency string, prices LabeledPrice) *SendInvoiceCall {
+func NewSendInvoiceCall(chatId PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
 	return &SendInvoiceCall{
 		Call[Message]{
 			request: NewRequest("sendInvoice").
@@ -4482,7 +4532,7 @@ func NewSendInvoiceCall(chatId PeerID, title string, description string, payload
 }
 
 // SendInvoiceCall constructs a new SendInvoiceCall with required parameters.
-func (client *Client) SendInvoice(chatId PeerID, title string, description string, payload string, providerToken string, currency string, prices LabeledPrice) *SendInvoiceCall {
+func (client *Client) SendInvoice(chatId PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
 	return callWithClient(
 		client,
 		NewSendInvoiceCall(chatId, title, description, payload, providerToken, currency, prices),
@@ -4526,7 +4576,7 @@ func (call *SendInvoiceCall) Currency(currency string) *SendInvoiceCall {
 }
 
 // Prices Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
-func (call *SendInvoiceCall) Prices(prices LabeledPrice) *SendInvoiceCall {
+func (call *SendInvoiceCall) Prices(prices []LabeledPrice) *SendInvoiceCall {
 	call.request.JSON("prices", prices)
 	return call
 }
@@ -4665,7 +4715,7 @@ type CreateInvoiceLinkCall struct {
 // providerToken - Payment provider token, obtained via BotFather
 // currency - Three-letter ISO 4217 currency code, see more on currencies
 // prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
-func NewCreateInvoiceLinkCall(title string, description string, payload string, providerToken string, currency string, prices LabeledPrice) *CreateInvoiceLinkCall {
+func NewCreateInvoiceLinkCall(title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
 	return &CreateInvoiceLinkCall{
 		Call[string]{
 			request: NewRequest("createInvoiceLink").
@@ -4680,7 +4730,7 @@ func NewCreateInvoiceLinkCall(title string, description string, payload string, 
 }
 
 // CreateInvoiceLinkCall constructs a new CreateInvoiceLinkCall with required parameters.
-func (client *Client) CreateInvoiceLink(title string, description string, payload string, providerToken string, currency string, prices LabeledPrice) *CreateInvoiceLinkCall {
+func (client *Client) CreateInvoiceLink(title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
 	return callWithClient(
 		client,
 		NewCreateInvoiceLinkCall(title, description, payload, providerToken, currency, prices),
@@ -4718,7 +4768,7 @@ func (call *CreateInvoiceLinkCall) Currency(currency string) *CreateInvoiceLinkC
 }
 
 // Prices Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
-func (call *CreateInvoiceLinkCall) Prices(prices LabeledPrice) *CreateInvoiceLinkCall {
+func (call *CreateInvoiceLinkCall) Prices(prices []LabeledPrice) *CreateInvoiceLinkCall {
 	call.request.JSON("prices", prices)
 	return call
 }
@@ -4812,7 +4862,7 @@ func (call *CreateInvoiceLinkCall) IsFlexible(isFlexible bool) *CreateInvoiceLin
 // Use this method to reply to shipping queries
 // On success, True is returned.
 type AnswerShippingQueryCall struct {
-	Call[Update]
+	CallNoResult
 }
 
 // NewAnswerShippingQueryCall constructs a new AnswerShippingQueryCall with required parameters.
@@ -4820,7 +4870,7 @@ type AnswerShippingQueryCall struct {
 // ok - Specify True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
 func NewAnswerShippingQueryCall(shippingQueryId string, ok bool) *AnswerShippingQueryCall {
 	return &AnswerShippingQueryCall{
-		Call[Update]{
+		CallNoResult{
 			request: NewRequest("answerShippingQuery").
 				String("shipping_query_id", shippingQueryId).
 				Bool("ok", ok),
@@ -4849,7 +4899,7 @@ func (call *AnswerShippingQueryCall) Ok(ok bool) *AnswerShippingQueryCall {
 }
 
 // ShippingOptions Required if ok is True. A JSON-serialized array of available shipping options.
-func (call *AnswerShippingQueryCall) ShippingOptions(shippingOptions ShippingOption) *AnswerShippingQueryCall {
+func (call *AnswerShippingQueryCall) ShippingOptions(shippingOptions []ShippingOption) *AnswerShippingQueryCall {
 	call.request.JSON("shipping_options", shippingOptions)
 	return call
 }
@@ -4866,7 +4916,7 @@ func (call *AnswerShippingQueryCall) ErrorMessage(errorMessage string) *AnswerSh
 // On success, True is returned
 // Note: The Bot API must receive an answer within 10 seconds after the pre-checkout query was sent.
 type AnswerPreCheckoutQueryCall struct {
-	Call[Update]
+	CallNoResult
 }
 
 // NewAnswerPreCheckoutQueryCall constructs a new AnswerPreCheckoutQueryCall with required parameters.
@@ -4874,7 +4924,7 @@ type AnswerPreCheckoutQueryCall struct {
 // ok - Specify True if everything is alright (goods are available, etc.) and the bot is ready to proceed with the order. Use False if there are any problems.
 func NewAnswerPreCheckoutQueryCall(preCheckoutQueryId string, ok bool) *AnswerPreCheckoutQueryCall {
 	return &AnswerPreCheckoutQueryCall{
-		Call[Update]{
+		CallNoResult{
 			request: NewRequest("answerPreCheckoutQuery").
 				String("pre_checkout_query_id", preCheckoutQueryId).
 				Bool("ok", ok),
@@ -4921,18 +4971,18 @@ type SetPassportDataErrorsCall struct {
 // NewSetPassportDataErrorsCall constructs a new SetPassportDataErrorsCall with required parameters.
 // userId - User identifier
 // errors - A JSON-serialized array describing the errors
-func NewSetPassportDataErrorsCall(userId int, errors PassportElementError) *SetPassportDataErrorsCall {
+func NewSetPassportDataErrorsCall(userId UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
 	return &SetPassportDataErrorsCall{
 		CallNoResult{
 			request: NewRequest("setPassportDataErrors").
-				Int("user_id", userId).
+				UserID("user_id", userId).
 				JSON("errors", errors),
 		},
 	}
 }
 
 // SetPassportDataErrorsCall constructs a new SetPassportDataErrorsCall with required parameters.
-func (client *Client) SetPassportDataErrors(userId int, errors PassportElementError) *SetPassportDataErrorsCall {
+func (client *Client) SetPassportDataErrors(userId UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
 	return callWithClient(
 		client,
 		NewSetPassportDataErrorsCall(userId, errors),
@@ -4940,13 +4990,13 @@ func (client *Client) SetPassportDataErrors(userId int, errors PassportElementEr
 }
 
 // UserId User identifier
-func (call *SetPassportDataErrorsCall) UserId(userId int) *SetPassportDataErrorsCall {
-	call.request.Int("user_id", userId)
+func (call *SetPassportDataErrorsCall) UserId(userId UserID) *SetPassportDataErrorsCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
 // Errors A JSON-serialized array describing the errors
-func (call *SetPassportDataErrorsCall) Errors(errors PassportElementError) *SetPassportDataErrorsCall {
+func (call *SetPassportDataErrorsCall) Errors(errors []PassportElementError) *SetPassportDataErrorsCall {
 	call.request.JSON("errors", errors)
 	return call
 }
@@ -5032,18 +5082,18 @@ type SetGameScoreCall struct {
 // NewSetGameScoreCall constructs a new SetGameScoreCall with required parameters.
 // userId - User identifier
 // score - New score, must be non-negative
-func NewSetGameScoreCall(userId int, score int) *SetGameScoreCall {
+func NewSetGameScoreCall(userId UserID, score int) *SetGameScoreCall {
 	return &SetGameScoreCall{
 		Call[Message]{
 			request: NewRequest("setGameScore").
-				Int("user_id", userId).
+				UserID("user_id", userId).
 				Int("score", score),
 		},
 	}
 }
 
 // SetGameScoreCall constructs a new SetGameScoreCall with required parameters.
-func (client *Client) SetGameScore(userId int, score int) *SetGameScoreCall {
+func (client *Client) SetGameScore(userId UserID, score int) *SetGameScoreCall {
 	return callWithClient(
 		client,
 		NewSetGameScoreCall(userId, score),
@@ -5051,8 +5101,8 @@ func (client *Client) SetGameScore(userId int, score int) *SetGameScoreCall {
 }
 
 // UserId User identifier
-func (call *SetGameScoreCall) UserId(userId int) *SetGameScoreCall {
-	call.request.Int("user_id", userId)
+func (call *SetGameScoreCall) UserId(userId UserID) *SetGameScoreCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 
@@ -5105,17 +5155,17 @@ type GetGameHighScoresCall struct {
 
 // NewGetGameHighScoresCall constructs a new GetGameHighScoresCall with required parameters.
 // userId - Target user id
-func NewGetGameHighScoresCall(userId int) *GetGameHighScoresCall {
+func NewGetGameHighScoresCall(userId UserID) *GetGameHighScoresCall {
 	return &GetGameHighScoresCall{
 		Call[GameHighScore]{
 			request: NewRequest("getGameHighScores").
-				Int("user_id", userId),
+				UserID("user_id", userId),
 		},
 	}
 }
 
 // GetGameHighScoresCall constructs a new GetGameHighScoresCall with required parameters.
-func (client *Client) GetGameHighScores(userId int) *GetGameHighScoresCall {
+func (client *Client) GetGameHighScores(userId UserID) *GetGameHighScoresCall {
 	return callWithClient(
 		client,
 		NewGetGameHighScoresCall(userId),
@@ -5123,8 +5173,8 @@ func (client *Client) GetGameHighScores(userId int) *GetGameHighScoresCall {
 }
 
 // UserId Target user id
-func (call *GetGameHighScoresCall) UserId(userId int) *GetGameHighScoresCall {
-	call.request.Int("user_id", userId)
+func (call *GetGameHighScoresCall) UserId(userId UserID) *GetGameHighScoresCall {
+	call.request.UserID("user_id", userId)
 	return call
 }
 

@@ -112,9 +112,11 @@ func (poller *Poller) processUpdates(ctx context.Context, updates []tg.Update) {
 			}
 
 			update := &updates[i]
-			update.Bind(poller.client)
 
-			_ = poller.handler.Handle(ctx, update)
+			_ = poller.handler.Handle(ctx, &Update{
+				Update: update,
+				Client: poller.client,
+			})
 		}(i)
 	}
 }

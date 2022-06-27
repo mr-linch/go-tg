@@ -78,7 +78,7 @@ func newBot() *tgb.Bot {
 
 	return tgb.New().
 		// handles /start and /help
-		Message(func(ctx context.Context, msg *tg.Message) error {
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer(
 				tg.HTML.Text(
 					tg.HTML.Bold("👋 Hi, I'm echo bot!"),
@@ -88,7 +88,7 @@ func newBot() *tgb.Bot {
 			).ParseMode(tg.HTML).DoVoid(ctx)
 		}, tgb.Command("start", tgb.WithCommandAlias("help"))).
 		// handles gopher image
-		Message(func(ctx context.Context, msg *tg.Message) error {
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			if err := msg.AnswerChatAction("upload_photo").DoVoid(ctx); err != nil {
 				return fmt.Errorf("answer chat action: %w", err)
 			}
@@ -99,8 +99,8 @@ func newBot() *tgb.Bot {
 
 		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
 		// handle other messages
-		Message(func(ctx context.Context, msg *tg.Message) error {
-			return msg.Update().Respond(ctx, msg.Copy(msg.Chat))
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+			return msg.Copy(msg.Chat).DoVoid(ctx)
 		})
 
 }
