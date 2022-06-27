@@ -1677,6 +1677,51 @@ type InlineQueryResultGif struct {
 	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
 }
 
+// InlineQueryResultMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
+type InlineQueryResultMpeg4Gif struct {
+	// Type of the result, must be mpeg4_gif
+	Type string `json:"type"`
+
+	// Unique identifier for this result, 1-64 bytes
+	ID string `json:"id"`
+
+	// A valid URL for the MPEG4 file. File size must not exceed 1MB
+	Mpeg4URL string `json:"mpeg4_url"`
+
+	// Optional. Video width
+	Mpeg4Width int `json:"mpeg4_width,omitempty"`
+
+	// Optional. Video height
+	Mpeg4Height int `json:"mpeg4_height,omitempty"`
+
+	// Optional. Video duration in seconds
+	Mpeg4Duration int `json:"mpeg4_duration,omitempty"`
+
+	// URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
+	ThumbURL string `json:"thumb_url"`
+
+	// Optional. MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to “image/jpeg”
+	ThumbMIMEType string `json:"thumb_mime_type,omitempty"`
+
+	// Optional. Title for the result
+	Title string `json:"title,omitempty"`
+
+	// Optional. Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing
+	Caption string `json:"caption,omitempty"`
+
+	// Optional. Mode for parsing entities in the caption. See formatting options for more details.
+	ParseMode string `json:"parse_mode,omitempty"`
+
+	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
+
+	// Optional. Inline keyboard attached to the message
+	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
+
+	// Optional. Content of the message to be sent instead of the video animation
+	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+}
+
 // InlineQueryResultVideo represents a link to a page containing an embedded video player or a video file. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
 type InlineQueryResultVideo struct {
 	// Type of the result, must be video
@@ -2043,6 +2088,36 @@ type InlineQueryResultCachedGif struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the GIF animation
+	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+}
+
+// InlineQueryResultCachedMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
+type InlineQueryResultCachedMpeg4Gif struct {
+	// Type of the result, must be mpeg4_gif
+	Type string `json:"type"`
+
+	// Unique identifier for this result, 1-64 bytes
+	ID string `json:"id"`
+
+	// A valid file identifier for the MPEG4 file
+	Mpeg4FileID string `json:"mpeg4_file_id"`
+
+	// Optional. Title for the result
+	Title string `json:"title,omitempty"`
+
+	// Optional. Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing
+	Caption string `json:"caption,omitempty"`
+
+	// Optional. Mode for parsing entities in the caption. See formatting options for more details.
+	ParseMode string `json:"parse_mode,omitempty"`
+
+	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
+
+	// Optional. Inline keyboard attached to the message
+	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
+
+	// Optional. Content of the message to be sent instead of the video animation
 	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
 }
 
