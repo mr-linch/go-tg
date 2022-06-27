@@ -13,6 +13,10 @@ type Call[T any] struct {
 	request *Request
 }
 
+func (call *Call[T]) Request() *Request {
+	return call.request
+}
+
 func (call *Call[T]) MarshalJSON() ([]byte, error) {
 	args := make(map[string]string, len(call.request.args)+1)
 
@@ -52,6 +56,10 @@ func callWithClient[B interface {
 type CallNoResult struct {
 	client  *Client
 	request *Request
+}
+
+func (call *CallNoResult) Request() *Request {
+	return call.request
 }
 
 func (call *CallNoResult) MarshalJSON() ([]byte, error) {

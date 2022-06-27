@@ -9,11 +9,13 @@ import (
 
 type Update struct {
 	*tg.Update
-
-	isWebhook bool
-	response  json.Marshaler
-
 	Client *tg.Client
+
+	webhookResponse chan json.Marshaler
+}
+
+func (update *Update) isWebhook() bool {
+	return update.webhookResponse != nil
 }
 
 type UpdateRespond interface {
@@ -23,18 +25,14 @@ type UpdateRespond interface {
 }
 
 func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
-	if update.isWebhook && update.response == nil {
-		update.response = v
+	if update.isWebhook() {
+		update.webhookResponse <- v
 		return nil
 	}
 
 	v.Bind(update.Client)
 
 	return v.DoVoid(ctx)
-}
-
-func (update *Update) Response() json.Marshaler {
-	return update.response
 }
 
 type MessageUpdate struct {
@@ -111,15 +109,15 @@ func (msg *MessageUpdate) Copy(to tg.PeerID) *tg.CopyMessageCall {
 	return msg.Client.CopyMessage(to, msg.Chat, msg.ID)
 }
 
-func (msg *MessageUpdate) EditMessageText(text string) *tg.EditMessageTextCall {
+func (msg *MessageUpdate) EditText(text string) *tg.EditMessageTextCall {
 	return msg.Client.EditMessageText(msg.Chat, msg.ID, text)
 }
 
-func (msg *MessageUpdate) EditMessageCaption(caption string) *tg.EditMessageCaptionCall {
+func (msg *MessageUpdate) EditCaption(caption string) *tg.EditMessageCaptionCall {
 	return msg.Client.EditMessageCaption(msg.Chat, msg.ID, caption)
 }
 
-func (msg *MessageUpdate) EditMessageReplyMarkup(markup tg.InlineKeyboardMarkup) *tg.EditMessageReplyMarkupCall {
+func (msg *MessageUpdate) EditReplyMarkup(markup tg.InlineKeyboardMarkup) *tg.EditMessageReplyMarkupCall {
 	return msg.Client.EditMessageReplyMarkup(msg.Chat, msg.ID).ReplyMarkup(markup)
 }
 
