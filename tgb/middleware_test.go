@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	tg "github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,12 +29,12 @@ func TestChain_Then(t *testing.T) {
 		},
 	}
 
-	handler := chain.Then(HandlerFunc(func(ctx context.Context, update *tg.Update) error {
+	handler := chain.Then(HandlerFunc(func(ctx context.Context, update *Update) error {
 		calls = append(calls, 3)
 		return nil
 	}))
 
-	err := handler.Handle(context.Background(), &tg.Update{})
+	err := handler.Handle(context.Background(), &Update{})
 	assert.NoError(t, err)
 
 	assert.Equal(t, []int{2, 1, 3}, calls)

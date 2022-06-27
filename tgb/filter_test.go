@@ -34,52 +34,52 @@ func testWithClientLocal(
 
 func TestAny(t *testing.T) {
 	var (
-		filterYes = FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+		filterYes = FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 			return true, nil
 		})
-		filterNo = FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+		filterNo = FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 			return false, nil
 		})
-		filterErr = FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+		filterErr = FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 			return false, errors.New("some error")
 		})
 	)
 
-	allow, err := Any(filterYes, filterNo).Allow(context.Background(), &tg.Update{})
+	allow, err := Any(filterYes, filterNo).Allow(context.Background(), &Update{})
 	assert.NoError(t, err)
 	assert.True(t, allow)
 
-	allow, err = Any(filterNo, filterNo).Allow(context.Background(), &tg.Update{})
+	allow, err = Any(filterNo, filterNo).Allow(context.Background(), &Update{})
 	assert.NoError(t, err)
 	assert.False(t, allow)
 
-	allow, err = Any(filterErr, filterYes).Allow(context.Background(), &tg.Update{})
+	allow, err = Any(filterErr, filterYes).Allow(context.Background(), &Update{})
 	assert.Error(t, err)
 	assert.False(t, allow)
 }
 
 func TestAll(t *testing.T) {
 	var (
-		filterYes = FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+		filterYes = FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 			return true, nil
 		})
-		filterNo = FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+		filterNo = FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 			return false, nil
 		})
-		filterErr = FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+		filterErr = FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 			return false, errors.New("some error")
 		})
 	)
 
-	allow, err := All(filterYes, filterYes).Allow(context.Background(), &tg.Update{})
+	allow, err := All(filterYes, filterYes).Allow(context.Background(), &Update{})
 	assert.NoError(t, err)
 	assert.True(t, allow)
 
-	allow, err = All(filterYes, filterNo).Allow(context.Background(), &tg.Update{})
+	allow, err = All(filterYes, filterNo).Allow(context.Background(), &Update{})
 	assert.NoError(t, err)
 	assert.False(t, allow)
 
-	allow, err = All(filterYes, filterErr).Allow(context.Background(), &tg.Update{})
+	allow, err = All(filterYes, filterErr).Allow(context.Background(), &Update{})
 	assert.Error(t, err)
 	assert.False(t, allow)
 }
@@ -217,11 +217,9 @@ func TestCommandFilter(t *testing.T) {
 	} {
 		t.Run(test.Name, func(t *testing.T) {
 			testWithClientLocal(t, func(t *testing.T, ctx context.Context, client *tg.Client) {
-				update := *test.Update
+				update := &Update{Update: test.Update, Client: client}
 
-				update.Bind(client)
-
-				allow, err := test.Command.Allow(ctx, &update)
+				allow, err := test.Command.Allow(ctx, update)
 				assert.Equal(t, test.Allow, allow)
 				assert.Equal(t, test.Error, err)
 			}, func(w http.ResponseWriter, r *http.Request) {
@@ -327,7 +325,7 @@ func TestRegexp(t *testing.T) {
 		},
 	} {
 		t.Run(test.Name, func(t *testing.T) {
-			allow, err := test.Filter.Allow(context.Background(), test.Update)
+			allow, err := test.Filter.Allow(context.Background(), &Update{Update: test.Update})
 			assert.Equal(t, test.Allow, allow)
 			assert.NoError(t, err)
 		})
@@ -453,7 +451,7 @@ func TestChatType(t *testing.T) {
 		},
 	} {
 		t.Run(test.Name, func(t *testing.T) {
-			allow, err := test.Filter.Allow(context.Background(), test.Update)
+			allow, err := test.Filter.Allow(context.Background(), &Update{Update: test.Update})
 			assert.Equal(t, test.Allow, allow)
 			assert.NoError(t, err)
 		})

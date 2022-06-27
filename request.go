@@ -38,6 +38,10 @@ func (r *Request) PeerID(name string, v PeerID) *Request {
 	return r.String(name, v.PeerID())
 }
 
+func (r *Request) UserID(name string, v UserID) *Request {
+	return r.PeerID(name, v)
+}
+
 func (r *Request) String(name, value string) *Request {
 	r.args[name] = value
 	return r

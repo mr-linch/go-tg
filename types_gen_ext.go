@@ -1,7 +1,6 @@
 package tg
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -100,42 +99,6 @@ type FileArg struct {
 
 func (chat Chat) PeerID() string {
 	return chat.ID.PeerID()
-}
-
-func (update *Update) Client() *Client {
-	return update.client
-}
-
-func (update *Update) Bind(client *Client) {
-	update.client = client
-}
-
-type UpdateRespond interface {
-	json.Marshaler
-	DoNoResult(ctx context.Context) error
-	Bind(client *Client)
-}
-
-func NewUpdateWebhook(client *Client) *Update {
-	return &Update{
-		client:    client,
-		isWebhook: true,
-	}
-}
-
-func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
-	if update.isWebhook && update.response == nil {
-		update.response = v
-		return nil
-	}
-
-	v.Bind(update.client)
-
-	return v.DoNoResult(ctx)
-}
-
-func (update *Update) Response() json.Marshaler {
-	return update.response
 }
 
 type InputMedia struct {

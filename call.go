@@ -35,7 +35,7 @@ func (call *Call[T]) Do(ctx context.Context) (result T, err error) {
 	return
 }
 
-func (call *Call[T]) DoNoResult(ctx context.Context) (err error) {
+func (call *Call[T]) DoVoid(ctx context.Context) (err error) {
 	return call.client.Invoke(ctx, call.request, nil)
 }
 
@@ -79,6 +79,6 @@ func (call *CallNoResult) Do(ctx context.Context) (err error) {
 	return
 }
 
-func (call *CallNoResult) DoNoResult(ctx context.Context) (err error) {
+func (call *CallNoResult) DoVoid(ctx context.Context) (err error) {
 	return call.client.Invoke(ctx, call.request, nil)
 }

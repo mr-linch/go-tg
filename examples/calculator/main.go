@@ -47,22 +47,21 @@ func run(ctx context.Context) error {
 	const typingMessage = "use keyboard above for typing..."
 
 	bot := tgb.New().
-		Message(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
-
-			return update.Respond(ctx, tg.NewSendMessageCall(
-				update.Message.Chat,
-				tg.HTML.Italic(typingMessage),
-			).ReplyMarkup(newKeyboard()).ParseMode(tg.HTML))
-		})).
-		CallbackQuery(tgb.HandlerFunc(func(ctx context.Context, update *tg.Update) error {
-			cbq := update.CallbackQuery
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+			return msg.Answer(tg.HTML.Italic(typingMessage)).
+				ParseMode(tg.HTML).
+				ReplyMarkup(newKeyboard()).
+				DoVoid(ctx)
+		}).
+		CallbackQuery(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate) error {
 
 			var currentText string
 
 			if cbq.Message == nil {
-				return update.Respond(ctx, tg.NewAnswerCallbackQueryCall(
-					cbq.ID,
-				).Text("this keyboard is too old, please /start again").ShowAlert(true))
+				return cbq.AnswerText(
+					tg.HTML.Italic("this keyboard is too old, please /start again"),
+					true,
+				).DoVoid(ctx)
 			}
 
 			currentText = cbq.Message.Text
@@ -73,12 +72,16 @@ func run(ctx context.Context) error {
 
 			currentText += cbq.Data
 
-			return update.Respond(ctx, tg.NewEditMessageTextCall(
-				cbq.Message.Chat,
+			if err := cbq.Answer().DoVoid(ctx); err != nil {
+				return fmt.Errorf("answer callback query: %w", err)
+			}
+
+			return cbq.Client.EditMessageText(
+				cbq.Message.Chat.ID,
 				cbq.Message.ID,
 				currentText,
-			).ReplyMarkup(newKeyboard()))
-		}))
+			).ReplyMarkup(newKeyboard()).DoVoid(ctx)
+		})
 
 	return tgb.NewPoller(
 		bot,

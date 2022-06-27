@@ -12,22 +12,22 @@ import (
 
 // Filter is a interface for generic update filter.
 type Filter interface {
-	Allow(ctx context.Context, update *tg.Update) (bool, error)
+	Allow(ctx context.Context, update *Update) (bool, error)
 }
 
 // The FilterFunc type is an adapter to allow the use of
 // ordinary functions as filter. If f is a function
 // with the appropriate signature, FilterFunc(f) is a
 // Filter that calls f.
-type FilterFunc func(ctx context.Context, update *tg.Update) (bool, error)
+type FilterFunc func(ctx context.Context, update *Update) (bool, error)
 
-func (filter FilterFunc) Allow(ctx context.Context, update *tg.Update) (bool, error) {
+func (filter FilterFunc) Allow(ctx context.Context, update *Update) (bool, error) {
 	return filter(ctx, update)
 }
 
 // Any pass update to handler, if any of filters allow it.
 func Any(filters ...Filter) Filter {
-	return FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 		for _, filter := range filters {
 			if allow, err := filter.Allow(ctx, update); err != nil {
 				return false, err
@@ -41,7 +41,7 @@ func Any(filters ...Filter) Filter {
 
 // All pass update to handler, if all of filters allow it.
 func All(filters ...Filter) Filter {
-	return FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 		for _, filter := range filters {
 			if allow, err := filter.Allow(ctx, update); err != nil {
 				return false, err
@@ -128,7 +128,7 @@ func Command(command string, opts ...CommandFilterOption) *CommandFilter {
 }
 
 // Allow checks if update is allowed by filter.
-func (filter *CommandFilter) Allow(ctx context.Context, update *tg.Update) (bool, error) {
+func (filter *CommandFilter) Allow(ctx context.Context, update *Update) (bool, error) {
 	if update.Message == nil {
 		return false, nil
 	}
@@ -145,7 +145,7 @@ func (filter *CommandFilter) Allow(ctx context.Context, update *tg.Update) (bool
 
 	fullCommand, _, _ := strings.Cut(text, " ")
 
-	me, err := update.Client().Me(ctx)
+	me, err := update.Client.Me(ctx)
 	if err != nil {
 		return false, fmt.Errorf("command filter: get current bot info: %w", err)
 	}
@@ -181,7 +181,7 @@ func (filter *CommandFilter) Allow(ctx context.Context, update *tg.Update) (bool
 // - Update.ChosenInlineResult.Query
 // - Update.Poll.Question
 func Regexp(re *regexp.Regexp) Filter {
-	return FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 		var text string
 
 		switch {
@@ -212,7 +212,7 @@ func Regexp(re *regexp.Regexp) Filter {
 }
 
 func ChatType(types ...tg.ChatType) Filter {
-	return FilterFunc(func(ctx context.Context, update *tg.Update) (bool, error) {
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 		var typ tg.ChatType
 
 		switch {

@@ -61,7 +61,7 @@ func TestPoller(t *testing.T) {
 		defer cancel()
 
 		err := NewPoller(
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error {
+			HandlerFunc(func(ctx context.Context, update *Update) error {
 				cancel()
 				return nil
 			}),
@@ -117,7 +117,7 @@ func TestPoller(t *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 
 		err := NewPoller(
-			HandlerFunc(func(ctx context.Context, update *tg.Update) error {
+			HandlerFunc(func(ctx context.Context, update *Update) error {
 				cancel()
 				return nil
 			}),
