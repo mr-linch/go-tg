@@ -551,3 +551,13 @@ func (result InlineQueryResultVenue) MarshalJSON() ([]byte, error) {
 	type alias InlineQueryResultVenue
 	return json.Marshal(alias(result))
 }
+
+type InputMessageContent interface {
+	isInputMessageContent()
+}
+
+func (content InputTextMessageContent) isInputMessageContent()     {}
+func (content InputLocationMessageContent) isInputMessageContent() {}
+func (content InputVenueMessageContent) isInputMessageContent()    {}
+func (content InputContactMessageContent) isInputMessageContent()  {}
+func (content InputInvoiceMessageContent) isInputMessageContent()  {}

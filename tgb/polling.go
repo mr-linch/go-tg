@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -113,10 +114,14 @@ func (poller *Poller) processUpdates(ctx context.Context, updates []tg.Update) {
 
 			update := &updates[i]
 
-			_ = poller.handler.Handle(ctx, &Update{
+			err := poller.handler.Handle(ctx, &Update{
 				Update: update,
 				Client: poller.client,
 			})
+
+			if err != nil {
+				log.Printf("[%d] handler error: %v", update.ID, err)
+			}
 		}(i)
 	}
 }

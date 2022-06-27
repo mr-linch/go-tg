@@ -368,3 +368,15 @@ func TestInlineQueryResultMarshalJSON(t *testing.T) {
 
 	}
 }
+
+func TestInputMessageContent(t *testing.T) {
+	for _, test := range []InputMessageContent{
+		InputTextMessageContent{},
+		InputLocationMessageContent{},
+		InputVenueMessageContent{},
+		InputContactMessageContent{},
+		InputInvoiceMessageContent{},
+	} {
+		assert.Implements(t, (*InputMessageContent)(nil), test)
+	}
+}
