@@ -322,3 +322,49 @@ func TestNewButtonColumn(t *testing.T) {
 		{{Text: "3", CallbackData: "3"}},
 	}, keyboard)
 }
+
+func TestInlineQueryResultMarshalJSON(t *testing.T) {
+	for _, test := range []struct {
+		Type   string
+		Result InlineQueryResult
+	}{
+		{"audio", InlineQueryResultCachedAudio{}},
+
+		{"document", InlineQueryResultCachedDocument{}},
+		{"gif", InlineQueryResultCachedGif{}},
+		{"mpeg4_gif", InlineQueryResultCachedMpeg4Gif{}},
+		{"photo", InlineQueryResultCachedPhoto{}},
+		{"sticker", InlineQueryResultCachedSticker{}},
+		{"video", InlineQueryResultCachedVideo{}},
+		{"voice", InlineQueryResultCachedVoice{}},
+		{"audio", InlineQueryResultAudio{}},
+		{"document", InlineQueryResultDocument{}},
+		{"gif", InlineQueryResultGif{}},
+		{"mpeg4_gif", InlineQueryResultMpeg4Gif{}},
+		{"photo", InlineQueryResultPhoto{}},
+		{"video", InlineQueryResultVideo{}},
+		{"voice", InlineQueryResultVoice{}},
+		{"article", InlineQueryResultArticle{}},
+		{"contact", InlineQueryResultContact{}},
+		{"game", InlineQueryResultGame{}},
+		{"location", InlineQueryResultLocation{}},
+		{"venue", InlineQueryResultVenue{}},
+	} {
+		t.Run(test.Type, func(t *testing.T) {
+			body, err := json.Marshal(test.Result)
+			assert.NoError(t, err, "marshal json")
+
+			test.Result.isInlineQueryResult()
+
+			result := struct {
+				Type string `json:"type"`
+			}{}
+
+			err = json.Unmarshal(body, &result)
+			assert.NoError(t, err, "unmarshal json")
+
+			assert.Equal(t, test.Type, result.Type)
+		})
+
+	}
+}

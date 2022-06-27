@@ -104,9 +104,6 @@ func (chat Chat) PeerID() string {
 type InputMedia struct {
 }
 
-type InlineQueryResult struct {
-}
-
 type BotCommandScope struct {
 }
 
@@ -409,4 +406,148 @@ func (layout *ButtonLayout[T]) Add(buttons ...T) *ButtonLayout[T] {
 func (layout *ButtonLayout[T]) Row(buttons ...T) *ButtonLayout[T] {
 	layout.buttons = append(layout.buttons, buttons)
 	return layout
+}
+
+type InlineQueryResult interface {
+	isInlineQueryResult()
+}
+
+func (InlineQueryResultCachedAudio) isInlineQueryResult() {}
+func (result InlineQueryResultCachedAudio) MarshalJSON() ([]byte, error) {
+	result.Type = "audio"
+	type alias InlineQueryResultCachedAudio
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultCachedDocument) isInlineQueryResult() {}
+func (result InlineQueryResultCachedDocument) MarshalJSON() ([]byte, error) {
+	result.Type = "document"
+	type alias InlineQueryResultCachedDocument
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultCachedGif) isInlineQueryResult() {}
+func (result InlineQueryResultCachedGif) MarshalJSON() ([]byte, error) {
+	result.Type = "gif"
+	type alias InlineQueryResultCachedGif
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultCachedMpeg4Gif) isInlineQueryResult() {}
+func (result InlineQueryResultCachedMpeg4Gif) MarshalJSON() ([]byte, error) {
+	result.Type = "mpeg4_gif"
+	type alias InlineQueryResultCachedMpeg4Gif
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultCachedPhoto) isInlineQueryResult() {}
+func (result InlineQueryResultCachedPhoto) MarshalJSON() ([]byte, error) {
+	result.Type = "photo"
+	type alias InlineQueryResultCachedPhoto
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultCachedSticker) isInlineQueryResult() {}
+func (result InlineQueryResultCachedSticker) MarshalJSON() ([]byte, error) {
+	result.Type = "sticker"
+	type alias InlineQueryResultCachedSticker
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultCachedVideo) isInlineQueryResult() {}
+func (result InlineQueryResultCachedVideo) MarshalJSON() ([]byte, error) {
+	result.Type = "video"
+	type alias InlineQueryResultCachedVideo
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultCachedVoice) isInlineQueryResult() {}
+func (result InlineQueryResultCachedVoice) MarshalJSON() ([]byte, error) {
+	result.Type = "voice"
+	type alias InlineQueryResultCachedVoice
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultAudio) isInlineQueryResult() {}
+func (result InlineQueryResultAudio) MarshalJSON() ([]byte, error) {
+	result.Type = "audio"
+	type alias InlineQueryResultAudio
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultDocument) isInlineQueryResult() {}
+func (result InlineQueryResultDocument) MarshalJSON() ([]byte, error) {
+	result.Type = "document"
+	type alias InlineQueryResultDocument
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultGif) isInlineQueryResult() {}
+func (result InlineQueryResultGif) MarshalJSON() ([]byte, error) {
+	result.Type = "gif"
+	type alias InlineQueryResultGif
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultMpeg4Gif) isInlineQueryResult() {}
+func (result InlineQueryResultMpeg4Gif) MarshalJSON() ([]byte, error) {
+	result.Type = "mpeg4_gif"
+	type alias InlineQueryResultMpeg4Gif
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultPhoto) isInlineQueryResult() {}
+func (result InlineQueryResultPhoto) MarshalJSON() ([]byte, error) {
+	result.Type = "photo"
+	type alias InlineQueryResultPhoto
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultVideo) isInlineQueryResult() {}
+func (result InlineQueryResultVideo) MarshalJSON() ([]byte, error) {
+	result.Type = "video"
+	type alias InlineQueryResultVideo
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultVoice) isInlineQueryResult() {}
+func (result InlineQueryResultVoice) MarshalJSON() ([]byte, error) {
+	result.Type = "voice"
+	type alias InlineQueryResultVoice
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultArticle) isInlineQueryResult() {}
+func (result InlineQueryResultArticle) MarshalJSON() ([]byte, error) {
+	result.Type = "article"
+	type alias InlineQueryResultArticle
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultContact) isInlineQueryResult() {}
+func (result InlineQueryResultContact) MarshalJSON() ([]byte, error) {
+	result.Type = "contact"
+	type alias InlineQueryResultContact
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultGame) isInlineQueryResult() {}
+func (result InlineQueryResultGame) MarshalJSON() ([]byte, error) {
+	result.Type = "game"
+	type alias InlineQueryResultGame
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultLocation) isInlineQueryResult() {}
+func (result InlineQueryResultLocation) MarshalJSON() ([]byte, error) {
+	result.Type = "location"
+	type alias InlineQueryResultLocation
+	return json.Marshal(alias(result))
+}
+
+func (InlineQueryResultVenue) isInlineQueryResult() {}
+func (result InlineQueryResultVenue) MarshalJSON() ([]byte, error) {
+	result.Type = "venue"
+	type alias InlineQueryResultVenue
+	return json.Marshal(alias(result))
 }
