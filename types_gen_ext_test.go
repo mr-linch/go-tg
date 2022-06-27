@@ -117,6 +117,8 @@ func TestInlineReplyMarkup(t *testing.T) {
 			},
 		},
 	}, actual)
+
+	assert.Equal(t, actual, *actual.Ptr())
 }
 
 func TestReplyKeyboardMarkup(t *testing.T) {
