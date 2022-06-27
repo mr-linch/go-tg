@@ -98,15 +98,6 @@ func run(ctx context.Context) error {
 					tg.HTML.Line("by", tg.HTML.Bold(quote.Author.Name)),
 				)
 
-				replyMarkup := tg.NewInlineKeyboardMarkup(
-					tg.NewButtonRow(
-						tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(
-							fmt.Sprintf("More by %s", quote.Author.Name),
-							fmt.Sprintf("author:%s ", quote.Author.ID),
-						),
-					),
-				)
-
 				result[i] = tg.InlineQueryResultArticle{
 					ID:          quote.ID,
 					Title:       quote.Author.Name,
@@ -115,7 +106,14 @@ func run(ctx context.Context) error {
 						MessageText: messageText,
 						ParseMode:   tg.HTML.Name(),
 					},
-					ReplyMarkup: &replyMarkup,
+					ReplyMarkup: tg.NewInlineKeyboardMarkup(
+						tg.NewButtonRow(
+							tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(
+								fmt.Sprintf("More by %s", quote.Author.Name),
+								fmt.Sprintf("author:%s ", quote.Author.ID),
+							),
+						),
+					).Ptr(),
 				}
 			}
 

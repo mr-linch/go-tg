@@ -123,6 +123,10 @@ func NewInlineKeyboardMarkup(rows ...[]InlineKeyboardButton) InlineKeyboardMarku
 	}
 }
 
+func (markup InlineKeyboardMarkup) Ptr() *InlineKeyboardMarkup {
+	return &markup
+}
+
 // NewInlineButtonURL create inline button
 // with http(s):// or tg:// URL to be opened when the button is pressed.
 func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
