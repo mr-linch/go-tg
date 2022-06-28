@@ -7,7 +7,7 @@ import (
 )
 
 type ParseMode interface {
-	Name() string
+	String() string
 
 	// Change separator for next calls
 	Sep(v string) ParseMode
@@ -140,7 +140,7 @@ func (pm parseMode) Line(v ...string) string {
 	return strings.Join(v, " ")
 }
 
-func (pm parseMode) Name() string {
+func (pm parseMode) String() string {
 	return pm.name
 }
 
