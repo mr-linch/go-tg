@@ -1,12 +1,15 @@
 package tg
 
 import (
+	"encoding"
 	"html"
 	"regexp"
 	"strings"
 )
 
 type ParseMode interface {
+	encoding.TextMarshaler
+
 	String() string
 
 	// Change separator for next calls
@@ -138,6 +141,10 @@ func (pm parseMode) Text(v ...string) string {
 
 func (pm parseMode) Line(v ...string) string {
 	return strings.Join(v, " ")
+}
+
+func (pm parseMode) MarshalText() ([]byte, error) {
+	return []byte(pm.String()), nil
 }
 
 func (pm parseMode) String() string {

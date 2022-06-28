@@ -8,6 +8,10 @@ import (
 
 func TestParseModeHTML(t *testing.T) {
 	assert.Equal(t, "HTML", HTML.String())
+	marshaled, err := HTML.MarshalText()
+	assert.NoError(t, err)
+	assert.Equal(t, "HTML", string(marshaled))
+
 	assert.Equal(t, "Hello World", HTML.Line("Hello", "World"))
 	assert.Equal(t, "Hello\nWorld", HTML.Text("Hello", "World"))
 	assert.Equal(t, "<b>Hello World</b>", HTML.Bold("Hello", "World"))

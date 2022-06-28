@@ -1332,7 +1332,7 @@ type InputMediaPhoto struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1353,7 +1353,7 @@ type InputMediaVideo struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the video caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1386,7 +1386,7 @@ type InputMediaAnimation struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the animation caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1416,7 +1416,7 @@ type InputMediaAudio struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the audio caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1446,7 +1446,7 @@ type InputMediaDocument struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the document caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1620,7 +1620,7 @@ type InlineQueryResultPhoto struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1665,7 +1665,7 @@ type InlineQueryResultGif struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1710,7 +1710,7 @@ type InlineQueryResultMpeg4Gif struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1746,7 +1746,7 @@ type InlineQueryResultVideo struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the video caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1788,7 +1788,7 @@ type InlineQueryResultAudio struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the audio caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1824,7 +1824,7 @@ type InlineQueryResultVoice struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the voice message caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -1854,7 +1854,7 @@ type InlineQueryResultDocument struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the document caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -2049,7 +2049,7 @@ type InlineQueryResultCachedPhoto struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the photo caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -2079,7 +2079,7 @@ type InlineQueryResultCachedGif struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -2109,7 +2109,7 @@ type InlineQueryResultCachedMpeg4Gif struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -2160,7 +2160,7 @@ type InlineQueryResultCachedDocument struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the document caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -2193,7 +2193,7 @@ type InlineQueryResultCachedVideo struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the video caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -2223,7 +2223,7 @@ type InlineQueryResultCachedVoice struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the voice message caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -2250,7 +2250,7 @@ type InlineQueryResultCachedAudio struct {
 	Caption string `json:"caption,omitempty"`
 
 	// Optional. Mode for parsing entities in the audio caption. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
 	CaptionEntities []MessageEntity `json:"caption_entities,omitempty"`
@@ -2268,7 +2268,7 @@ type InputTextMessageContent struct {
 	MessageText string `json:"message_text"`
 
 	// Optional. Mode for parsing entities in the message text. See formatting options for more details.
-	ParseMode string `json:"parse_mode,omitempty"`
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
 
 	// Optional. List of special entities that appear in message text, which can be specified instead of parse_mode
 	Entities []MessageEntity `json:"entities,omitempty"`
