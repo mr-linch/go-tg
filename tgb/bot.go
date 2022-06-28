@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+// ErrorHandler define interface for error handling in Bot.
+// See Bot.Error for more information.
+type ErrorHandler func(ctx context.Context, update *Update, err error) error
+
 type registeredHandler struct {
 	Handler Handler
 	Filter  Filter
@@ -26,6 +30,8 @@ type Bot struct {
 	myChatMemberHandler       []*registeredHandler
 	chatMemberHandler         []*registeredHandler
 	chatJoinRequestHandler    []*registeredHandler
+
+	errorHandler ErrorHandler
 }
 
 func New() *Bot {
@@ -160,6 +166,15 @@ func (bot *Bot) ChatJoinRequest(handler ChatJoinRequestHandler, filters ...Filte
 	return bot
 }
 
+// Error registers a handler for errors.
+// If any error occurs in the chain, it will be passed to that handler.
+// By default, errors are returned back by handler method.
+// You can customize this behavior by passing a custom error handler.
+func (bot *Bot) Error(handler ErrorHandler) *Bot {
+	bot.errorHandler = handler
+	return bot
+}
+
 func (bot *Bot) pickAndHandle(ctx context.Context, update *Update, group []*registeredHandler) error {
 	for _, item := range group {
 		if item.Filter != nil {
@@ -214,5 +229,12 @@ func (bot *Bot) Handle(ctx context.Context, update *Update) error {
 		return nil
 	}
 
-	return bot.pickAndHandle(ctx, update, group)
+	if err := bot.pickAndHandle(ctx, update, group); err != nil {
+		if bot.errorHandler != nil {
+			return bot.errorHandler(ctx, update, err)
+		}
+		return err
+	}
+
+	return nil
 }
