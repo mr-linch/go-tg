@@ -2,6 +2,7 @@ package tg
 
 import (
 	"encoding"
+	"fmt"
 	"html"
 	"regexp"
 	"strings"
@@ -9,8 +10,7 @@ import (
 
 type ParseMode interface {
 	encoding.TextMarshaler
-
-	String() string
+	fmt.Stringer
 
 	// Change separator for next calls
 	Sep(v string) ParseMode
