@@ -13,6 +13,7 @@ func (c chain) Append(mws ...Middleware) chain {
 	return result
 }
 
+// Then wraps handler with middleware chain.
 func (c chain) Then(handler Handler) Handler {
 	for i := range c {
 		handler = c[len(c)-1-i](handler)

@@ -38,6 +38,8 @@ func (handler MessageHandler) Handle(ctx context.Context, update *Update) error 
 	return nil
 }
 
+// InlineQueryHandler it's typed handler for InlineQuery.
+// Impliment Handler interface.
 type InlineQueryHandler func(context.Context, *InlineQueryUpdate) error
 
 func (handler InlineQueryHandler) Handle(ctx context.Context, update *Update) error {
@@ -48,6 +50,8 @@ func (handler InlineQueryHandler) Handle(ctx context.Context, update *Update) er
 	})
 }
 
+// ChosenInlineResultHandler it's typed handler for ChosenInlineResult.
+// Impliment Handler interface.
 type ChosenInlineResultHandler func(context.Context, *ChosenInlineResultUpdate) error
 
 func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *Update) error {
@@ -58,6 +62,7 @@ func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *Upd
 	})
 }
 
+// CallbackQueryHandler it's typed handler for CallbackQuery.
 type CallbackQueryHandler func(context.Context, *CallbackQueryUpdate) error
 
 func (handler CallbackQueryHandler) Handle(ctx context.Context, update *Update) error {
@@ -68,6 +73,7 @@ func (handler CallbackQueryHandler) Handle(ctx context.Context, update *Update) 
 	})
 }
 
+// ShippingQueryHandler it's typed handler for ShippingQuery.
 type ShippingQueryHandler func(context.Context, *ShippingQueryUpdate) error
 
 func (handler ShippingQueryHandler) Handle(ctx context.Context, update *Update) error {
@@ -78,6 +84,7 @@ func (handler ShippingQueryHandler) Handle(ctx context.Context, update *Update) 
 	})
 }
 
+// PreCheckoutQueryHandler it's typed handler for PreCheckoutQuery.
 type PreCheckoutQueryHandler func(context.Context, *PreCheckoutQueryUpdate) error
 
 func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *Update) error {
@@ -88,6 +95,7 @@ func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *Updat
 	})
 }
 
+// PollHandler it's typed handler for Poll.
 type PollHandler func(context.Context, *PollUpdate) error
 
 func (handler PollHandler) Handle(ctx context.Context, update *Update) error {
@@ -98,6 +106,7 @@ func (handler PollHandler) Handle(ctx context.Context, update *Update) error {
 	})
 }
 
+// PollAnswerHandler it's typed handler for PollAnswer.
 type PollAnswerHandler func(context.Context, *PollAnswerUpdate) error
 
 func (handler PollAnswerHandler) Handle(ctx context.Context, update *Update) error {
@@ -108,6 +117,7 @@ func (handler PollAnswerHandler) Handle(ctx context.Context, update *Update) err
 	})
 }
 
+// UpdateHandler it's typed handler for ChatMemberUpdate subtype.
 type ChatMemberUpdatedHandler func(context.Context, *ChatMemberUpdatedUpdate) error
 
 func (handler ChatMemberUpdatedHandler) Handle(ctx context.Context, update *Update) error {
@@ -125,6 +135,7 @@ func (handler ChatMemberUpdatedHandler) Handle(ctx context.Context, update *Upda
 	return nil
 }
 
+// ChatJoinRequestHandler it's typed handler for ChatJoinRequest.
 type ChatJoinRequestHandler func(context.Context, *ChatJoinRequestUpdate) error
 
 func (handler ChatJoinRequestHandler) Handle(ctx context.Context, update *Update) error {
