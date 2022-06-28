@@ -104,7 +104,7 @@ func run(ctx context.Context) error {
 					Description: quoteText(quote.Text),
 					InputMessageContent: tg.InputTextMessageContent{
 						MessageText: messageText,
-						ParseMode:   tg.HTML.String(),
+						ParseMode:   tg.HTML,
 					},
 					ReplyMarkup: tg.NewInlineKeyboardMarkup(
 						tg.NewButtonRow(
