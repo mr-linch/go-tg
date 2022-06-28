@@ -10,6 +10,37 @@ import (
 )
 
 func TestBot(t *testing.T) {
+	t.Run("HandleEmpty", func(t *testing.T) {
+		err := New().Handle(context.Background(), &Update{
+			Update: &tg.Update{
+				Message: &tg.Message{},
+			},
+		})
+		assert.NoError(t, err)
+	})
+	t.Run("UpdateHanlder", func(t *testing.T) {
+		isMessageHandlerCalled := false
+		isUpdateHanlderCalled := false
+		err := New().
+			Message(func(ctx context.Context, msg *MessageUpdate) error {
+				isMessageHandlerCalled = true
+				return nil
+			}).
+			Update(func(ctx context.Context, update *Update) error {
+				isUpdateHanlderCalled = true
+				return nil
+			}).
+			Handle(context.Background(), &Update{
+				Update: &tg.Update{
+					Message: &tg.Message{},
+				},
+			})
+
+		assert.NoError(t, err)
+		assert.False(t, isMessageHandlerCalled)
+		assert.True(t, isUpdateHanlderCalled)
+	})
+
 	t.Run("UnknownUpdateSubtype", func(t *testing.T) {
 		err := New().Message(func(ctx context.Context, msg *MessageUpdate) error {
 			return nil
