@@ -95,6 +95,7 @@ func (action ChatAction) String() string {
 		"record_voice",
 		"upload_voice",
 		"upload_document",
+		"choose_sticker",
 		"find_location",
 		"record_video_note",
 		"upload_video_note",
