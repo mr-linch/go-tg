@@ -66,6 +66,42 @@ func (chatType *ChatType) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// ChatAction type of action to broadcast via sendChatAction.
+type ChatAction int8
+
+const (
+	ChatActionTyping ChatAction = iota + 1
+	ChatActionUploadPhoto
+	ChatActionRecordVideo
+	ChatActionUploadVideo
+	ChatActionRecordVoice
+	ChatActionUploadVoice
+	ChatActionUploadDocument
+	ChatActionChooseSticker
+	ChatActionFindLocation
+	ChatActionRecordVideoNote
+	ChatActionUploadVideoNote
+)
+
+func (action ChatAction) String() string {
+	if action < ChatActionTyping || action > ChatActionUploadVideoNote {
+		return "unknown"
+	}
+	return [...]string{
+		"typing",
+		"upload_photo",
+		"record_video",
+		"upload_video",
+		"record_voice",
+		"upload_voice",
+		"upload_document",
+		"choose_sticker",
+		"find_location",
+		"record_video_note",
+		"upload_video_note",
+	}[action-1]
+}
+
 // UserID it's unique identifier for Telegram user or bot.
 type UserID int64
 

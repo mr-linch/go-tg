@@ -117,7 +117,7 @@ func (msg *MessageUpdate) AnswerDice(emoji string) *tg.SendDiceCall {
 }
 
 // AnswerChatAction calls sendChatAction with pre-defined chatID to incoming message chat.
-func (msg *MessageUpdate) AnswerChatAction(action string) *tg.SendChatActionCall {
+func (msg *MessageUpdate) AnswerChatAction(action tg.ChatAction) *tg.SendChatActionCall {
 	return msg.Client.SendChatAction(msg.Chat, action)
 }
 

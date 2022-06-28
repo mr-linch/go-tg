@@ -20,6 +20,10 @@ func TestPeerIDImpl(t *testing.T) {
 	}
 }
 
+func TestUsername_PeerID(t *testing.T) {
+	assert.Equal(t, "@username", Username("username").PeerID())
+}
+
 func TestChatType_String(t *testing.T) {
 	for _, test := range []struct {
 		ChatType ChatType
@@ -33,6 +37,28 @@ func TestChatType_String(t *testing.T) {
 		{ChatType(-1), "unknown"},
 	} {
 		assert.Equal(t, test.Want, test.ChatType.String())
+	}
+}
+
+func TestChatAction_String(t *testing.T) {
+	for _, test := range []struct {
+		ChatAction ChatAction
+		Want       string
+	}{
+		{ChatActionTyping, "typing"},
+		{ChatActionUploadPhoto, "upload_photo"},
+		{ChatActionUploadVideo, "upload_video"},
+		{ChatActionRecordVideo, "record_video"},
+		{ChatActionRecordVoice, "record_voice"},
+		{ChatActionUploadVoice, "upload_voice"},
+		{ChatActionUploadDocument, "upload_document"},
+		{ChatActionChooseSticker, "choose_sticker"},
+		{ChatActionFindLocation, "find_location"},
+		{ChatActionRecordVideoNote, "record_video_note"},
+		{ChatActionUploadVideoNote, "upload_video_note"},
+		{ChatAction(-1), "unknown"},
+	} {
+		assert.Equal(t, test.Want, test.ChatAction.String())
 	}
 }
 

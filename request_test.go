@@ -26,7 +26,7 @@ func TestRequestSetters(t *testing.T) {
 	r.Int64("int64", 1)
 	r.Float64("float64", 1)
 	r.ChatID("chat", ChatID(1))
-	r.ParseMode("parse_mode", MD2)
+	r.Stringer("parse_mode", MD2)
 	r.File("file_by_id", FileArg{
 		FileID: "file_id",
 	})

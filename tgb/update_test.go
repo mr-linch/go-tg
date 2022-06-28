@@ -270,7 +270,7 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		},
 		{
 			Name:           "AnswerChatAction",
-			Request:        msg.AnswerChatAction("upload_photo").Request(),
+			Request:        msg.AnswerChatAction(tg.ChatActionUploadPhoto).Request(),
 			ExceptedMethod: "sendChatAction",
 			ExpectedArgs: map[string]string{
 				"chat_id": "123",

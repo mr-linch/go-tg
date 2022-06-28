@@ -296,7 +296,7 @@ func (call *SendMessageCall) Text(text string) *SendMessageCall {
 
 // ParseMode Mode for parsing entities in the message text. See formatting options for more details.
 func (call *SendMessageCall) ParseMode(parseMode ParseMode) *SendMessageCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -461,7 +461,7 @@ func (call *CopyMessageCall) Caption(caption string) *CopyMessageCall {
 
 // ParseMode Mode for parsing entities in the new caption. See formatting options for more details.
 func (call *CopyMessageCall) ParseMode(parseMode ParseMode) *CopyMessageCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -549,7 +549,7 @@ func (call *SendPhotoCall) Caption(caption string) *SendPhotoCall {
 
 // ParseMode Mode for parsing entities in the photo caption. See formatting options for more details.
 func (call *SendPhotoCall) ParseMode(parseMode ParseMode) *SendPhotoCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -640,7 +640,7 @@ func (call *SendAudioCall) Caption(caption string) *SendAudioCall {
 
 // ParseMode Mode for parsing entities in the audio caption. See formatting options for more details.
 func (call *SendAudioCall) ParseMode(parseMode ParseMode) *SendAudioCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -759,7 +759,7 @@ func (call *SendDocumentCall) Caption(caption string) *SendDocumentCall {
 
 // ParseMode Mode for parsing entities in the document caption. See formatting options for more details.
 func (call *SendDocumentCall) ParseMode(parseMode ParseMode) *SendDocumentCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -878,7 +878,7 @@ func (call *SendVideoCall) Caption(caption string) *SendVideoCall {
 
 // ParseMode Mode for parsing entities in the video caption. See formatting options for more details.
 func (call *SendVideoCall) ParseMode(parseMode ParseMode) *SendVideoCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -997,7 +997,7 @@ func (call *SendAnimationCall) Caption(caption string) *SendAnimationCall {
 
 // ParseMode Mode for parsing entities in the animation caption. See formatting options for more details.
 func (call *SendAnimationCall) ParseMode(parseMode ParseMode) *SendAnimationCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -1087,7 +1087,7 @@ func (call *SendVoiceCall) Caption(caption string) *SendVoiceCall {
 
 // ParseMode Mode for parsing entities in the voice message caption. See formatting options for more details.
 func (call *SendVoiceCall) ParseMode(parseMode ParseMode) *SendVoiceCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -1925,18 +1925,18 @@ type SendChatActionCall struct {
 // NewSendChatActionCall constructs a new SendChatActionCall with required parameters.
 // chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // action - Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes.
-func NewSendChatActionCall(chatId PeerID, action string) *SendChatActionCall {
+func NewSendChatActionCall(chatId PeerID, action ChatAction) *SendChatActionCall {
 	return &SendChatActionCall{
 		CallNoResult{
 			request: NewRequest("sendChatAction").
 				PeerID("chat_id", chatId).
-				String("action", action),
+				Stringer("action", action),
 		},
 	}
 }
 
 // SendChatActionCall constructs a new SendChatActionCall with required parameters.
-func (client *Client) SendChatAction(chatId PeerID, action string) *SendChatActionCall {
+func (client *Client) SendChatAction(chatId PeerID, action ChatAction) *SendChatActionCall {
 	return callWithClient(
 		client,
 		NewSendChatActionCall(chatId, action),
@@ -1950,8 +1950,8 @@ func (call *SendChatActionCall) ChatId(chatId PeerID) *SendChatActionCall {
 }
 
 // Action Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes.
-func (call *SendChatActionCall) Action(action string) *SendChatActionCall {
-	call.request.String("action", action)
+func (call *SendChatActionCall) Action(action ChatAction) *SendChatActionCall {
+	call.request.Stringer("action", action)
 	return call
 }
 
@@ -3642,7 +3642,7 @@ func (call *EditMessageTextCall) Text(text string) *EditMessageTextCall {
 
 // ParseMode Mode for parsing entities in the message text. See formatting options for more details.
 func (call *EditMessageTextCall) ParseMode(parseMode ParseMode) *EditMessageTextCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 
@@ -3741,7 +3741,7 @@ func (call *EditMessageCaptionCall) Caption(caption string) *EditMessageCaptionC
 
 // ParseMode Mode for parsing entities in the message caption. See formatting options for more details.
 func (call *EditMessageCaptionCall) ParseMode(parseMode ParseMode) *EditMessageCaptionCall {
-	call.request.ParseMode("parse_mode", parseMode)
+	call.request.Stringer("parse_mode", parseMode)
 	return call
 }
 

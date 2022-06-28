@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseModeHTML(t *testing.T) {
-	assert.Equal(t, "HTML", HTML.Name())
+	assert.Equal(t, "HTML", HTML.String())
 	assert.Equal(t, "Hello World", HTML.Line("Hello", "World"))
 	assert.Equal(t, "Hello\nWorld", HTML.Text("Hello", "World"))
 	assert.Equal(t, "<b>Hello World</b>", HTML.Bold("Hello", "World"))
@@ -23,7 +23,7 @@ func TestParseModeHTML(t *testing.T) {
 }
 
 func TestParseModeMarkdown(t *testing.T) {
-	assert.Equal(t, "Markdown", MD.Name())
+	assert.Equal(t, "Markdown", MD.String())
 	assert.Equal(t, "Hello World", MD.Line("Hello", "World"))
 	assert.Equal(t, "Hello\nWorld", MD.Text("Hello", "World"))
 	assert.Equal(t, "*Hello World*", MD.Bold("Hello", "World"))
@@ -39,7 +39,7 @@ func TestParseModeMarkdown(t *testing.T) {
 }
 
 func TestParseModeMarkdownV2(t *testing.T) {
-	assert.Equal(t, "MarkdownV2", MD2.Name())
+	assert.Equal(t, "MarkdownV2", MD2.String())
 	assert.Equal(t, "Hello World", MD2.Line("Hello", "World"))
 	assert.Equal(t, "Hello\nWorld", MD2.Text("Hello", "World"))
 
