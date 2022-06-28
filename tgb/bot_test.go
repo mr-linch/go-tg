@@ -2,6 +2,7 @@ package tgb
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/mr-linch/go-tg"
@@ -9,6 +10,63 @@ import (
 )
 
 func TestBot(t *testing.T) {
+	t.Run("UnknownUpdateSubtype", func(t *testing.T) {
+		err := New().Message(func(ctx context.Context, msg *MessageUpdate) error {
+			return nil
+		}).Handle(context.Background(), &Update{
+			Update: &tg.Update{},
+		})
+
+		assert.NoError(t, err)
+	})
+	t.Run("AllowError", func(t *testing.T) {
+
+		err := New().
+			Message(func(ctx context.Context, msg *MessageUpdate) error {
+				return nil
+			}, FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
+				return false, fmt.Errorf("failure")
+			})).Handle(context.Background(), &Update{Update: &tg.Update{
+			Message: &tg.Message{},
+		}})
+
+		assert.EqualError(t, err, "filter tgb.FilterFunc: failure")
+
+	})
+	t.Run("Error", func(t *testing.T) {
+		handlerErr := fmt.Errorf("handler error")
+
+		bot := New().
+			Message(func(ctx context.Context, msg *MessageUpdate) error {
+				return handlerErr
+			})
+
+		err := bot.Handle(context.Background(), &Update{
+			Update: &tg.Update{
+				Message: &tg.Message{},
+			},
+		})
+
+		assert.Equal(t, handlerErr, err)
+
+		isErrorHandlerCalled := false
+
+		bot.Error(func(ctx context.Context, update *Update, err error) error {
+			isErrorHandlerCalled = true
+			assert.Equal(t, handlerErr, err)
+			return nil
+		})
+
+		err = bot.Handle(context.Background(), &Update{
+			Update: &tg.Update{
+				Message: &tg.Message{},
+			},
+		})
+
+		assert.Nil(t, err)
+		assert.True(t, isErrorHandlerCalled)
+	})
+
 	t.Run("Handlers", func(t *testing.T) {
 		bot := New()
 		ctx := context.Background()
