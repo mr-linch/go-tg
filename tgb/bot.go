@@ -30,8 +30,8 @@ type Bot struct {
 	myChatMemberHandler       []*registeredHandler
 	chatMemberHandler         []*registeredHandler
 	chatJoinRequestHandler    []*registeredHandler
-
-	errorHandler ErrorHandler
+	updateHandler             []*registeredHandler
+	errorHandler              ErrorHandler
 }
 
 func New() *Bot {
@@ -175,6 +175,17 @@ func (bot *Bot) Error(handler ErrorHandler) *Bot {
 	return bot
 }
 
+// Update registers a generic Update handler.
+// It will be called as typed handlers only in filters match the update.
+// First check Update handler, then typed.
+func (bot *Bot) Update(handler HandlerFunc, filters ...Filter) *Bot {
+	bot.updateHandler = append(bot.updateHandler, &registeredHandler{
+		Handler: bot.chain.Then(handler),
+		Filter:  compactFilter(filters...),
+	})
+	return bot
+}
+
 func (bot *Bot) pickAndHandle(ctx context.Context, update *Update, group []*registeredHandler) error {
 	for _, item := range group {
 		if item.Filter != nil {
@@ -194,37 +205,37 @@ func (bot *Bot) pickAndHandle(ctx context.Context, update *Update, group []*regi
 }
 
 func (bot *Bot) Handle(ctx context.Context, update *Update) error {
-	var group []*registeredHandler
+	group := append([]*registeredHandler{}, bot.updateHandler...)
 
 	switch {
 	case update.Message != nil:
-		group = bot.messageHandler
+		group = append(group, bot.messageHandler...)
 	case update.EditedMessage != nil:
-		group = bot.editedMessageHandler
+		group = append(group, bot.editedMessageHandler...)
 	case update.ChannelPost != nil:
-		group = bot.channelPostHandler
+		group = append(group, bot.channelPostHandler...)
 	case update.EditedChannelPost != nil:
-		group = bot.editedChannelPostHandler
+		group = append(group, bot.editedChannelPostHandler...)
 	case update.InlineQuery != nil:
-		group = bot.inlineQueryHandler
+		group = append(group, bot.inlineQueryHandler...)
 	case update.ChosenInlineResult != nil:
-		group = bot.chosenInlineResultHandler
+		group = append(group, bot.chosenInlineResultHandler...)
 	case update.CallbackQuery != nil:
-		group = bot.callbackQueryHandler
+		group = append(group, bot.callbackQueryHandler...)
 	case update.ShippingQuery != nil:
-		group = bot.shippingQueryHandler
+		group = append(group, bot.shippingQueryHandler...)
 	case update.PreCheckoutQuery != nil:
-		group = bot.preCheckoutQueryHandler
+		group = append(group, bot.preCheckoutQueryHandler...)
 	case update.Poll != nil:
-		group = bot.pollHandler
+		group = append(group, bot.pollHandler...)
 	case update.PollAnswer != nil:
-		group = bot.pollAnswerHandler
+		group = append(group, bot.pollAnswerHandler...)
 	case update.MyChatMember != nil:
-		group = bot.myChatMemberHandler
+		group = append(group, bot.myChatMemberHandler...)
 	case update.ChatMember != nil:
-		group = bot.chatMemberHandler
+		group = append(group, bot.chatMemberHandler...)
 	case update.ChatJoinRequest != nil:
-		group = bot.chatJoinRequestHandler
+		group = append(group, bot.chatJoinRequestHandler...)
 	default:
 		return nil
 	}
