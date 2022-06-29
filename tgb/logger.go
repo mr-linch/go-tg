@@ -1,4 +1,4 @@
-package tg
+package tgb
 
 // Logger defines generic interface for loggers
 type Logger interface {

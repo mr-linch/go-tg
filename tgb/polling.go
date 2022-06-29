@@ -14,7 +14,7 @@ import (
 type Poller struct {
 	client         *tg.Client
 	handler        Handler
-	logger         tg.Logger
+	logger         Logger
 	handlerTimeout time.Duration
 	timeout        time.Duration
 	retryAfter     time.Duration
@@ -62,7 +62,7 @@ func WithPollerAllowedUpdates(allowedUpdates []string) PollerOption {
 }
 
 // WithPollerLogger sets the logger for the poller.
-func WithPollerLogger(logger tg.Logger) PollerOption {
+func WithPollerLogger(logger Logger) PollerOption {
 	return func(poller *Poller) {
 		poller.logger = logger
 	}

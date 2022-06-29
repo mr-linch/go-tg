@@ -19,7 +19,7 @@ type Webhook struct {
 	url     string
 	handler Handler
 	client  *tg.Client
-	logger  tg.Logger
+	logger  Logger
 
 	ip                 string
 	maxConnections     int
@@ -41,7 +41,7 @@ var defaultSubnets = []netip.Prefix{
 type WebhookOption func(*Webhook)
 
 // WithWebhookLogger sets the logger which will be used to log the webhook related errors.
-func WithWebhookLogger(logger tg.Logger) WebhookOption {
+func WithWebhookLogger(logger Logger) WebhookOption {
 	return func(webhook *Webhook) {
 		webhook.logger = logger
 	}
