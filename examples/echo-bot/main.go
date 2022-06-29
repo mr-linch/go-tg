@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"regexp"
@@ -37,7 +36,6 @@ func main() {
 	flag.StringVar(&flagServer, "server", "https://api.telegram.org", "Telegram Bot API server")
 	flag.StringVar(&flagWebhookURL, "webhook-url", "", "Telegram Bot API webhook URL, if not provdide run in longpoll mode")
 	flag.StringVar(&flagWebhookListen, "webhook-listen", ":8000", "Telegram Bot API webhook URL")
-	flag.BoolVar(&flagDebug, "debug", false, "Debug mode")
 	flag.Parse()
 
 	ctx := context.Background()
@@ -122,39 +120,11 @@ func runPolling(ctx context.Context, client *tg.Client, bot *tgb.Bot) error {
 }
 
 func runWebhook(ctx context.Context, client *tg.Client, bot *tgb.Bot, url, listen string) error {
-	webhook := tgb.NewWebhook(
+	return tgb.NewWebhook(
 		url,
 		bot,
 		client,
 		tgb.WithDropPendingUpdates(true),
-	)
-
-	if err := webhook.Setup(ctx); err != nil {
-		return fmt.Errorf("webhook: %w", err)
-	}
-
-	server := http.Server{
-		Handler: webhook,
-		Addr:    listen,
-	}
-
-	go func() {
-		<-ctx.Done()
-
-		log.Printf("shutdown webhook server")
-
-		closeCtx, close := context.WithTimeout(context.Background(), 10*time.Second)
-		defer close()
-
-		if err := server.Shutdown(closeCtx); err != nil {
-			log.Printf("server shutdown error: %v", err)
-		}
-	}()
-
-	log.Printf("start webhook server on %s", listen)
-	if err := server.ListenAndServe(); err != http.ErrServerClosed {
-		return fmt.Errorf("listen and serve: %w", err)
-	}
-
-	return nil
+		tgb.WithWebhookLogger(log.Default()),
+	).Run(ctx, listen)
 }

@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/netip"
+	"time"
 
 	tg "github.com/mr-linch/go-tg"
 	"github.com/tomasen/realip"
@@ -16,9 +16,11 @@ import (
 )
 
 type Webhook struct {
-	url                string
-	handler            Handler
-	client             *tg.Client
+	url     string
+	handler Handler
+	client  *tg.Client
+	logger  tg.Logger
+
 	ip                 string
 	maxConnections     int
 	dropPendingUpdates bool
@@ -26,6 +28,8 @@ type Webhook struct {
 
 	securitySubnets []netip.Prefix
 	securityToken   string
+
+	isSetup bool
 }
 
 var defaultSubnets = []netip.Prefix{
@@ -35,6 +39,13 @@ var defaultSubnets = []netip.Prefix{
 
 // WebhookOption used to configure the Webhook
 type WebhookOption func(*Webhook)
+
+// WithWebhookLogger sets the logger which will be used to log the webhook related errors.
+func WithWebhookLogger(logger tg.Logger) WebhookOption {
+	return func(webhook *Webhook) {
+		webhook.logger = logger
+	}
+}
 
 // WithDropPendingUpdates drop pending updates (if pending > 0 only)
 func WithDropPendingUpdates(dropPendingUpdates bool) WebhookOption {
@@ -111,9 +122,19 @@ func NewWebhook(url string, handler Handler, client *tg.Client, options ...Webho
 	return webhook
 }
 
+func (webhook *Webhook) log(format string, args ...any) {
+	if webhook.logger != nil {
+		webhook.logger.Printf("tgb.Webhook: "+format, args...)
+	}
+}
+
 const defaultMaxConnections = 40
 
-func (webhook *Webhook) Setup(ctx context.Context) error {
+func (webhook *Webhook) Setup(ctx context.Context) (err error) {
+	defer func() {
+		webhook.isSetup = err == nil
+	}()
+
 	info, err := webhook.client.GetWebhookInfo().Do(ctx)
 	if err != nil {
 		return fmt.Errorf("get webhook info: %w", err)
@@ -124,6 +145,8 @@ func (webhook *Webhook) Setup(ctx context.Context) error {
 		(len(info.AllowedUpdates) > 0 && !slices.Equal(info.AllowedUpdates, webhook.allowedUpdates)) ||
 		(webhook.ip != "" && info.IPAddress != webhook.ip) ||
 		(info.PendingUpdateCount > 0 && webhook.dropPendingUpdates) {
+
+		webhook.log("current webhook config is outdated, updating...")
 
 		setWebhookCall := webhook.client.SetWebhook(webhook.url)
 
@@ -174,6 +197,7 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// check method
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		webhook.log("http error: method not allowed: %s", r.Method)
 		return
 	}
 
@@ -181,18 +205,21 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ip, err := netip.ParseAddr(realip.FromRequest(r))
 	if err != nil {
 		http.Error(w, "invalid ip", http.StatusBadRequest)
+		webhook.log("http error: invalid ip: %v", err)
 		return
 	}
 
 	if !webhook.isAllowedIP(ip) {
 		http.Error(w, "security check failed", http.StatusUnauthorized)
+		webhook.log("http error: security check failed: ip '%s' is not allowed", ip)
 		return
 	}
 
 	// check token
 	if webhook.securityToken != "" {
-		if r.Header.Get(securityTokenHeader) != webhook.securityToken {
+		if securityToken := r.Header.Get(securityTokenHeader); securityToken != webhook.securityToken {
 			http.Error(w, "security check failed", http.StatusUnauthorized)
+			webhook.log("http error: security check failed: token '%s' is not allowed", securityToken)
 			return
 		}
 	}
@@ -200,6 +227,7 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// check content type
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, "content type not supported", http.StatusUnsupportedMediaType)
+		webhook.log("http error: content type not supported: %s", r.Header.Get("Content-Type"))
 		return
 	}
 
@@ -207,6 +235,7 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "failed to read body", http.StatusBadRequest)
+		webhook.log("http error: read body failed: %v", err)
 		return
 	}
 
@@ -214,6 +243,7 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	baseUpdate := &tg.Update{}
 	if err := json.Unmarshal(body, &baseUpdate); err != nil {
 		http.Error(w, "failed to parse body", http.StatusBadRequest)
+		webhook.log("http error: parse body failed: %v", err)
 		return
 	}
 
@@ -227,16 +257,25 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	handlerDoneChan := make(chan struct{})
 
+	var handlerClose context.CancelFunc
 	go func() {
+		handlerCtx := context.Background()
+
+		handlerCtx, handlerClose = context.WithCancel(handlerCtx)
+		defer handlerClose()
+
 		// handle update
-		if err := webhook.handler.Handle(context.Background(), update); err != nil {
-			log.Printf("failed to handle update: %v", err)
+		if err := webhook.handler.Handle(handlerCtx, update); err != nil {
+			webhook.log("handler error: %v", err)
 		}
+
 		handlerDoneChan <- struct{}{}
 	}()
 
 	select {
 	case <-r.Context().Done():
+		webhook.log("shutdown...")
+		handlerClose()
 		return
 	case response := <-responseChan:
 		w.Header().Set("Content-Type", "application/json")
@@ -245,13 +284,13 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			body, err := json.Marshal(response)
 
 			if err != nil {
-				log.Printf("failed to marshal response: %s", err)
+				webhook.log("marshal webhook response error: %v", err)
 				return
 			}
 
 			_, err = w.Write(body)
 			if err != nil {
-				log.Printf("failed to write response: %s", err)
+				webhook.log("write webhook response error: %v", err)
 				return
 			}
 		}
@@ -259,4 +298,39 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case <-handlerDoneChan:
 		w.WriteHeader(http.StatusOK)
 	}
+}
+
+// Run starts the webhook server.
+func (webhook *Webhook) Run(ctx context.Context, listen string) error {
+	if !webhook.isSetup {
+		if err := webhook.Setup(ctx); err != nil {
+			return fmt.Errorf("setup webhook: %v", err)
+		}
+	}
+
+	server := &http.Server{
+		Addr:    listen,
+		Handler: webhook,
+	}
+
+	go func() {
+		<-ctx.Done()
+
+		webhook.log("shutdown server...")
+
+		closeCtx, close := context.WithTimeout(context.Background(), 10*time.Second)
+		defer close()
+
+		if err := server.Shutdown(closeCtx); err != nil {
+			webhook.log("server shutdown error: %v", err)
+		}
+	}()
+
+	webhook.log("starting webhook server on %s", listen)
+
+	if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		return fmt.Errorf("server error: %v", err)
+	}
+
+	return nil
 }
