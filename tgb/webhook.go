@@ -98,7 +98,7 @@ func WithWebhookAllowedUpdates(updates ...string) WebhookOption {
 	}
 }
 
-func NewWebhook(url string, handler Handler, client *tg.Client, options ...WebhookOption) *Webhook {
+func NewWebhook(handler Handler, client *tg.Client, url string, options ...WebhookOption) *Webhook {
 	securityToken := sha256.Sum256([]byte(client.Token()))
 	token := fmt.Sprintf("%x", securityToken)
 

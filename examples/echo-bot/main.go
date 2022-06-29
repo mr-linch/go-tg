@@ -23,7 +23,6 @@ var (
 	flagServer        string
 	flagWebhookURL    string
 	flagWebhookListen string
-	flagDebug         bool
 )
 
 var (
@@ -66,9 +65,22 @@ func run(ctx context.Context) error {
 	bot := newBot()
 
 	if flagWebhookURL != "" {
-		return runWebhook(ctx, client, bot, flagWebhookURL, flagWebhookListen)
+		return tgb.NewWebhook(
+			bot,
+			client,
+			flagWebhookURL,
+			tgb.WithDropPendingUpdates(true),
+			tgb.WithWebhookLogger(log.Default()),
+		).Run(
+			ctx,
+			flagWebhookListen,
+		)
 	} else {
-		return runPolling(ctx, client, bot)
+		return tgb.NewPoller(
+			bot,
+			client,
+			tgb.WithPollerLogger(log.Default()),
+		).Run(ctx)
 	}
 }
 
@@ -103,28 +115,4 @@ func newBot() *tgb.Bot {
 			return msg.Copy(msg.Chat).DoVoid(ctx)
 		})
 
-}
-
-func runPolling(ctx context.Context, client *tg.Client, bot *tgb.Bot) error {
-	poller := tgb.NewPoller(
-		bot,
-		client,
-	)
-
-	log.Printf("start poller")
-	if err := poller.Run(ctx); err != nil {
-		return fmt.Errorf("start polling: %w", err)
-	}
-
-	return nil
-}
-
-func runWebhook(ctx context.Context, client *tg.Client, bot *tgb.Bot, url, listen string) error {
-	return tgb.NewWebhook(
-		url,
-		bot,
-		client,
-		tgb.WithDropPendingUpdates(true),
-		tgb.WithWebhookLogger(log.Default()),
-	).Run(ctx, listen)
 }
