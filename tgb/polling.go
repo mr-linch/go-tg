@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"sync"
 	"time"
 
@@ -13,9 +12,9 @@ import (
 
 // Poller is a long polling update deliverer.
 type Poller struct {
-	client  *tg.Client
-	handler Handler
-
+	client         *tg.Client
+	handler        Handler
+	logger         Logger
 	handlerTimeout time.Duration
 	timeout        time.Duration
 	retryAfter     time.Duration
@@ -62,6 +61,13 @@ func WithPollerAllowedUpdates(allowedUpdates []string) PollerOption {
 	}
 }
 
+// WithPollerLogger sets the logger for the poller.
+func WithPollerLogger(logger Logger) PollerOption {
+	return func(poller *Poller) {
+		poller.logger = logger
+	}
+}
+
 const defaultPollerLimit = 100
 
 func NewPoller(handler Handler, client *tg.Client, opts ...PollerOption) *Poller {
@@ -84,6 +90,12 @@ func NewPoller(handler Handler, client *tg.Client, opts ...PollerOption) *Poller
 	return poller
 }
 
+func (poller *Poller) log(format string, args ...interface{}) {
+	if poller.logger != nil {
+		poller.logger.Printf("tgb.Poller: "+format, args...)
+	}
+}
+
 func (poller *Poller) removeWebhookIfSet(ctx context.Context) error {
 	info, err := poller.client.GetWebhookInfo().Do(ctx)
 	if err != nil {
@@ -91,6 +103,7 @@ func (poller *Poller) removeWebhookIfSet(ctx context.Context) error {
 	}
 
 	if info.URL != "" {
+		poller.log("removing webhook...")
 		if err := poller.client.DeleteWebhook().Do(ctx); err != nil {
 			return fmt.Errorf("delete webhook: %w", err)
 		}
@@ -120,7 +133,7 @@ func (poller *Poller) processUpdates(ctx context.Context, updates []tg.Update) {
 			})
 
 			if err != nil {
-				log.Printf("[%d] handler error: %v", update.ID, err)
+				poller.log("error handling update: %v", err)
 			}
 		}(i)
 	}
@@ -136,6 +149,7 @@ func (poller *Poller) Run(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
+			poller.log("shutdown...")
 			poller.wg.Wait()
 			return nil
 		default:
@@ -154,6 +168,7 @@ func (poller *Poller) Run(ctx context.Context) error {
 
 			if err != nil && !errors.Is(err, context.Canceled) {
 				if poller.retryAfter > 0 {
+					poller.log("error getting updates, retrying in %v...", poller.retryAfter)
 					time.Sleep(poller.retryAfter)
 				}
 				continue

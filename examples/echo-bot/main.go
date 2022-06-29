@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"regexp"
@@ -24,7 +23,6 @@ var (
 	flagServer        string
 	flagWebhookURL    string
 	flagWebhookListen string
-	flagDebug         bool
 )
 
 var (
@@ -37,7 +35,6 @@ func main() {
 	flag.StringVar(&flagServer, "server", "https://api.telegram.org", "Telegram Bot API server")
 	flag.StringVar(&flagWebhookURL, "webhook-url", "", "Telegram Bot API webhook URL, if not provdide run in longpoll mode")
 	flag.StringVar(&flagWebhookListen, "webhook-listen", ":8000", "Telegram Bot API webhook URL")
-	flag.BoolVar(&flagDebug, "debug", false, "Debug mode")
 	flag.Parse()
 
 	ctx := context.Background()
@@ -68,9 +65,22 @@ func run(ctx context.Context) error {
 	bot := newBot()
 
 	if flagWebhookURL != "" {
-		return runWebhook(ctx, client, bot, flagWebhookURL, flagWebhookListen)
+		return tgb.NewWebhook(
+			bot,
+			client,
+			flagWebhookURL,
+			tgb.WithDropPendingUpdates(true),
+			tgb.WithWebhookLogger(log.Default()),
+		).Run(
+			ctx,
+			flagWebhookListen,
+		)
 	} else {
-		return runPolling(ctx, client, bot)
+		return tgb.NewPoller(
+			bot,
+			client,
+			tgb.WithPollerLogger(log.Default()),
+		).Run(ctx)
 	}
 }
 
@@ -105,56 +115,4 @@ func newBot() *tgb.Bot {
 			return msg.Copy(msg.Chat).DoVoid(ctx)
 		})
 
-}
-
-func runPolling(ctx context.Context, client *tg.Client, bot *tgb.Bot) error {
-	poller := tgb.NewPoller(
-		bot,
-		client,
-	)
-
-	log.Printf("start poller")
-	if err := poller.Run(ctx); err != nil {
-		return fmt.Errorf("start polling: %w", err)
-	}
-
-	return nil
-}
-
-func runWebhook(ctx context.Context, client *tg.Client, bot *tgb.Bot, url, listen string) error {
-	webhook := tgb.NewWebhook(
-		url,
-		bot,
-		client,
-		tgb.WithDropPendingUpdates(true),
-	)
-
-	if err := webhook.Setup(ctx); err != nil {
-		return fmt.Errorf("webhook: %w", err)
-	}
-
-	server := http.Server{
-		Handler: webhook,
-		Addr:    listen,
-	}
-
-	go func() {
-		<-ctx.Done()
-
-		log.Printf("shutdown webhook server")
-
-		closeCtx, close := context.WithTimeout(context.Background(), 10*time.Second)
-		defer close()
-
-		if err := server.Shutdown(closeCtx); err != nil {
-			log.Printf("server shutdown error: %v", err)
-		}
-	}()
-
-	log.Printf("start webhook server on %s", listen)
-	if err := server.ListenAndServe(); err != http.ErrServerClosed {
-		return fmt.Errorf("listen and serve: %w", err)
-	}
-
-	return nil
 }
