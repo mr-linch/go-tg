@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
@@ -387,4 +388,24 @@ func TestWebhook_log(t *testing.T) {
 
 		logger.AssertExpectations(t)
 	})
+}
+
+func TestWebhook_Run(t *testing.T) {
+	webhook := NewWebhook(
+		HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
+		&tg.Client{},
+		"https://google.com",
+	)
+	webhook.isSetup = true
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		err := webhook.Run(ctx, "")
+		assert.NoError(t, err)
+	}()
+
+	time.Sleep(time.Millisecond * 100)
+
+	cancel()
 }
