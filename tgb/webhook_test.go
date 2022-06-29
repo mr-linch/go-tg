@@ -13,6 +13,7 @@ import (
 
 	"github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestNewWebhook(t *testing.T) {
@@ -350,4 +351,40 @@ func TestWebhook_Setup(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+}
+
+type loggerMock struct {
+	mock.Mock
+}
+
+func (mock *loggerMock) Printf(format string, v ...interface{}) {
+	mock.Called(format, v)
+}
+
+func TestWebhook_log(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		wh := NewWebhook(
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
+			&tg.Client{},
+			"https://google.com",
+		)
+
+		wh.log("test")
+	})
+
+	t.Run("WithLogger", func(t *testing.T) {
+		logger := &loggerMock{}
+		logger.On("Printf", "tgb.Webhook: test", mock.Anything).Return()
+
+		wh := NewWebhook(
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
+			&tg.Client{},
+			"https://google.com",
+			WithWebhookLogger(logger),
+		)
+
+		wh.log("test")
+
+		logger.AssertExpectations(t)
+	})
 }

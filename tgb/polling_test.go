@@ -11,6 +11,7 @@ import (
 
 	tg "github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestPoller(t *testing.T) {
@@ -129,5 +130,32 @@ func TestPoller(t *testing.T) {
 			WithPollerTimeout(time.Second*2),
 		).Run(ctx)
 		assert.NoError(t, err)
+	})
+}
+
+func TestPolling_log(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		poller := NewPoller(
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
+			&tg.Client{},
+		)
+
+		poller.log("test")
+	})
+
+	t.Run("WithLogger", func(t *testing.T) {
+		logger := &loggerMock{}
+
+		poller := NewPoller(
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
+			&tg.Client{},
+			WithPollerLogger(logger),
+		)
+
+		logger.On("Printf", "tgb.Poller: test", mock.Anything).Return()
+
+		poller.log("test")
+
+		logger.AssertExpectations(t)
 	})
 }
