@@ -401,7 +401,7 @@ func TestWebhook_Run(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go func() {
-		err := webhook.Run(ctx, "")
+		err := webhook.Run(ctx, ":12345")
 		assert.NoError(t, err)
 	}()
 
