@@ -111,6 +111,16 @@ func TestCommandFilter(t *testing.T) {
 			Allow:   false,
 		},
 		{
+			Name:    "ChannelPost",
+			Command: Command("start"),
+			Update: &tg.Update{
+				ChannelPost: &tg.Message{
+					Text: "/start azcv 5678",
+				},
+			},
+			Allow: true,
+		},
+		{
 			Name: "InCaption",
 			Command: Command("start",
 				WithCommandIgnoreCaption(false),
