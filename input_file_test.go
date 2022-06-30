@@ -36,7 +36,7 @@ func TestNewInputFileBytes(t *testing.T) {
 
 func TestNewInputFileLocal(t *testing.T) {
 	{
-		file, close, err := NewInputFileLocal("./testdata/gopher.png")
+		file, close, err := NewInputFileLocal("examples/echo-bot/resources/gopher.png")
 
 		if assert.NoError(t, err) {
 			assert.Equal(t, "gopher.png", file.Name)
