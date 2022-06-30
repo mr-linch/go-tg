@@ -77,12 +77,12 @@ func (r *Request) File(name string, arg FileArg) *Request {
 	}
 }
 
-func (r *Request) InputMediaSlice(im []InputMedia) *Request {
+func (r *Request) InputMediaSlice(name string, im []InputMedia) *Request {
 	for _, v := range im {
 		r.InputMedia(v)
 	}
 
-	r.JSON("media", im)
+	r.JSON(name, im)
 
 	return r
 }

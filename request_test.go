@@ -34,7 +34,7 @@ func TestRequestSetters(t *testing.T) {
 		Upload: NewInputFileBytes("file_name", []byte("file_content")),
 	})
 
-	r.InputMediaSlice([]InputMedia{
+	r.InputMediaSlice("media", []InputMedia{
 		&InputMediaDocument{
 			Media: FileArg{
 				Upload: NewInputFileBytes("file_name", []byte("file_content")),
