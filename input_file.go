@@ -2,6 +2,8 @@ package tg
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -14,12 +16,27 @@ type InputFile struct {
 
 	// Body of file
 	Body io.Reader
+
+	addr string
+}
+
+func (file *InputFile) MarshalJSON() ([]byte, error) {
+	if file.addr != "" {
+		return json.Marshal(file.addr)
+	}
+
+	return nil, fmt.Errorf("can't marshal InputFile without address")
 }
 
 // WithName creates new InputFile with overridden name.
 func (file InputFile) WithName(name string) InputFile {
 	file.Name = name
 	return file
+}
+
+// Ptr returns pointer to InputFile. Helper method.
+func (file InputFile) Ptr() *InputFile {
+	return &file
 }
 
 // NewInputFile creates new InputFile with given name and body.

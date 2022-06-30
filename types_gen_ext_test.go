@@ -409,3 +409,127 @@ func TestInputMessageContent(t *testing.T) {
 		test.isInputMessageContent()
 	}
 }
+
+func TestInputMedia_getMedia(t *testing.T) {
+	for _, test := range []InputMedia{
+		&InputMediaPhoto{},
+		&InputMediaVideo{},
+		&InputMediaAudio{},
+		&InputMediaAnimation{},
+		&InputMediaDocument{},
+	} {
+		assert.Implements(t, (*InputMedia)(nil), test)
+
+		media, _ := test.getMedia()
+
+		assert.NotNil(t, media)
+	}
+}
+
+func TestInputMedia_MarshalJSON(t *testing.T) {
+	for _, test := range []struct {
+		InputMedia InputMedia
+		Want       string
+	}{
+		{
+			InputMedia: &InputMediaPhoto{
+				Media: FileArg{FileID: "file_id"},
+			},
+			Want: `{"type":"photo","media":"file_id"}`,
+		},
+		{
+			InputMedia: &InputMediaVideo{
+				Media: FileArg{FileID: "file_id"},
+			},
+			Want: `{"type":"video","media":"file_id"}`,
+		},
+		{
+			InputMedia: &InputMediaAudio{
+				Media: FileArg{FileID: "file_id"},
+			},
+			Want: `{"type":"audio","media":"file_id"}`,
+		},
+		{
+			InputMedia: &InputMediaAnimation{
+				Media: FileArg{FileID: "file_id"},
+			},
+			Want: `{"type":"animation","media":"file_id"}`,
+		},
+		{
+			InputMedia: &InputMediaDocument{
+				Media: FileArg{FileID: "file_id"},
+			},
+			Want: `{"type":"document","media":"file_id"}`,
+		},
+	} {
+		v, err := json.Marshal(test.InputMedia)
+		assert.NoError(t, err, "marshal json")
+		assert.Equal(t, test.Want, string(v))
+	}
+}
+
+func TestFileArg_MarshalJSON(t *testing.T) {
+	for _, test := range []struct {
+		Name    string
+		FileArg FileArg
+		Want    string
+		Err     bool
+	}{
+		{
+			Name:    "FileID",
+			FileArg: FileArg{FileID: "file_id"},
+			Want:    `"file_id"`,
+		},
+		{
+			Name:    "FileURL",
+			FileArg: FileArg{URL: "file_url"},
+			Want:    `"file_url"`,
+		},
+		{
+			Name:    "FileAddr",
+			FileArg: FileArg{addr: "addr"},
+			Want:    `"addr"`,
+		},
+		{
+			Name: "FileUpload",
+			FileArg: FileArg{
+				Upload: InputFile{},
+			},
+			Err: true,
+		},
+	} {
+		t.Run(test.Name, func(t *testing.T) {
+
+			v, err := json.Marshal(test.FileArg)
+
+			if test.Err {
+				assert.Error(t, err, "marshal json")
+			} else {
+				assert.NoError(t, err, "marshal json")
+				assert.Equal(t, test.Want, string(v))
+			}
+		})
+	}
+}
+
+func TestFileArg_getString(t *testing.T) {
+	for _, test := range []struct {
+		FileArg FileArg
+		Want    string
+	}{
+		{
+			FileArg: FileArg{FileID: "file_id"},
+			Want:    "file_id",
+		},
+		{
+			FileArg: FileArg{URL: "file_url"},
+			Want:    "file_url",
+		},
+		{
+			FileArg: FileArg{addr: "addr"},
+			Want:    "addr",
+		},
+	} {
+		assert.Equal(t, test.Want, test.FileArg.getString())
+	}
+}
