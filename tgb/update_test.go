@@ -331,6 +331,21 @@ func TestMessageUpdateHelpers(t *testing.T) {
 				"reply_markup": "{\"inline_keyboard\":[[{\"text\":\"1\",\"callback_data\":\"1\"}]]}",
 			},
 		},
+		{
+			Name: "AnswerMediaGroup",
+			Request: msg.AnswerMediaGroup([]tg.InputMedia{
+				&tg.InputMediaPhoto{
+					Media: tg.FileArg{
+						FileID: "file_id",
+					},
+				},
+			}).Request(),
+			ExceptedMethod: "sendMediaGroup",
+			ExpectedArgs: map[string]string{
+				"chat_id": "123",
+				"media":   "[{\"type\":\"photo\",\"media\":\"file_id\"}]",
+			},
+		},
 	} {
 		t.Run(test.Name, func(t *testing.T) {
 			encoder := EncoderCollect{
