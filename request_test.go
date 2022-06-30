@@ -34,6 +34,16 @@ func TestRequestSetters(t *testing.T) {
 		Upload: NewInputFileBytes("file_name", []byte("file_content")),
 	})
 
+	r.InputMediaSlice([]InputMedia{
+		&InputMediaDocument{
+			Media: FileArg{
+				Upload: NewInputFileBytes("file_name", []byte("file_content")),
+			},
+
+			Thumb: NewInputFileBytes("thumb.jpg", []byte("")).Ptr(),
+		},
+	})
+
 	encoder := &testEncoder{}
 
 	err := r.Encode(encoder)
@@ -50,6 +60,7 @@ func TestRequestSetters(t *testing.T) {
 		"foo",
 		"int",
 		"int64",
+		"media",
 		"parse_mode",
 		"peer",
 		"str",
@@ -57,6 +68,8 @@ func TestRequestSetters(t *testing.T) {
 	}, encoder.stringKeys)
 
 	assert.Equal(t, []string{
+		"attachment_0",
+		"attachment_0_thumb",
 		"file",
 		"file_input",
 	}, encoder.fileKeys)

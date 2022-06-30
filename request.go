@@ -104,6 +104,7 @@ func (r *Request) InputMedia(im InputMedia) *Request {
 		r.InputFile(thumbID, *thumb)
 		thumb.addr = fmt.Sprintf("attach://%s", thumbID)
 	}
+
 	return r
 }
 
