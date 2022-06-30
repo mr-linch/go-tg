@@ -74,3 +74,9 @@ func TestInputFile_MarshalJSON(t *testing.T) {
 		assert.Equal(t, `"attach://test"`, string(data))
 	})
 }
+
+func TestInputFile_Ptr(t *testing.T) {
+	file := NewInputFile("test.txt", nil)
+
+	assert.Equal(t, &file, file.Ptr())
+}

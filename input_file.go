@@ -34,6 +34,11 @@ func (file InputFile) WithName(name string) InputFile {
 	return file
 }
 
+// Ptr returns pointer to InputFile. Helper method.
+func (file InputFile) Ptr() *InputFile {
+	return &file
+}
+
 // NewInputFile creates new InputFile with given name and body.
 func NewInputFile(name string, body io.Reader) InputFile {
 	return InputFile{
