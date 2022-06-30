@@ -1,6 +1,7 @@
 package tg
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -52,4 +53,24 @@ func TestNewInputFileLocal(t *testing.T) {
 		assert.Zero(t, file)
 		assert.Nil(t, close)
 	}
+}
+
+func TestInputFile_MarshalJSON(t *testing.T) {
+	t.Run("WithoutAddr", func(t *testing.T) {
+		file := NewInputFile("test.txt", nil)
+
+		data, err := json.Marshal(&file)
+
+		assert.Error(t, err)
+		assert.Nil(t, data)
+	})
+	t.Run("WithAddr", func(t *testing.T) {
+		file := NewInputFile("test.txt", nil)
+		file.addr = "attach://test"
+
+		data, err := json.Marshal(&file)
+
+		assert.NoError(t, err)
+		assert.Equal(t, `"attach://test"`, string(data))
+	})
 }
