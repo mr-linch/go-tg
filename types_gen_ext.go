@@ -128,7 +128,31 @@ type FileID string
 
 type FileArg struct {
 	FileID FileID
+	URL    string
 	Upload InputFile
+
+	addr string
+}
+
+func (arg FileArg) MarshalJSON() ([]byte, error) {
+	str := arg.getString()
+	if str != "" {
+		return json.Marshal(str)
+	}
+
+	return nil, fmt.Errorf("FileArg is not json serializable")
+}
+
+func (arg *FileArg) getString() string {
+	if arg.FileID != "" {
+		return string(arg.FileID)
+	} else if arg.URL != "" {
+		return arg.URL
+	} else if arg.addr != "" {
+		return arg.addr
+	}
+
+	return ""
 }
 
 //go:generate go run github.com/mr-linch/go-tg-gen@latest -types-output types_gen.go
@@ -137,7 +161,8 @@ func (chat Chat) PeerID() string {
 	return chat.ID.PeerID()
 }
 
-type InputMedia struct {
+type InputMedia interface {
+	getMedia() (media *FileArg, thumb *InputFile)
 }
 
 type BotCommandScope struct {
@@ -601,3 +626,39 @@ func (content InputLocationMessageContent) isInputMessageContent() {}
 func (content InputVenueMessageContent) isInputMessageContent()    {}
 func (content InputContactMessageContent) isInputMessageContent()  {}
 func (content InputInvoiceMessageContent) isInputMessageContent()  {}
+
+func (media *InputMediaPhoto) getMedia() (*FileArg, *InputFile)     { return &media.Media, nil }
+func (media *InputMediaVideo) getMedia() (*FileArg, *InputFile)     { return &media.Media, media.Thumb }
+func (media *InputMediaAudio) getMedia() (*FileArg, *InputFile)     { return &media.Media, media.Thumb }
+func (media *InputMediaDocument) getMedia() (*FileArg, *InputFile)  { return &media.Media, media.Thumb }
+func (media *InputMediaAnimation) getMedia() (*FileArg, *InputFile) { return &media.Media, media.Thumb }
+
+func (media *InputMediaPhoto) MarshalJSON() ([]byte, error) {
+	media.Type = "photo"
+	type alias InputMediaPhoto
+	return json.Marshal(alias(*media))
+}
+
+func (media *InputMediaVideo) MarshalJSON() ([]byte, error) {
+	media.Type = "video"
+	type alias InputMediaVideo
+	return json.Marshal(alias(*media))
+}
+
+func (media *InputMediaAudio) MarshalJSON() ([]byte, error) {
+	media.Type = "audio"
+	type alias InputMediaAudio
+	return json.Marshal(alias(*media))
+}
+
+func (media *InputMediaDocument) MarshalJSON() ([]byte, error) {
+	media.Type = "document"
+	type alias InputMediaDocument
+	return json.Marshal(alias(*media))
+}
+
+func (media *InputMediaAnimation) MarshalJSON() ([]byte, error) {
+	media.Type = "animation"
+	type alias InputMediaAnimation
+	return json.Marshal(alias(*media))
+}

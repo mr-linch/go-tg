@@ -13,6 +13,8 @@ type Request struct {
 	json  map[string]any
 	args  map[string]string
 	files map[string]InputFile
+
+	attachmentIdx int
 }
 
 func NewRequest(method string) *Request {
@@ -73,6 +75,36 @@ func (r *Request) File(name string, arg FileArg) *Request {
 	} else {
 		return r.InputFile(name, arg.Upload)
 	}
+}
+
+func (r *Request) InputMediaSlice(im []InputMedia) *Request {
+	for _, v := range im {
+		r.InputMedia(v)
+	}
+
+	r.JSON("media", im)
+
+	return r
+}
+
+func (r *Request) InputMedia(im InputMedia) *Request {
+	media, thumb := im.getMedia()
+
+	id := fmt.Sprintf("attachment_%d", r.attachmentIdx)
+	addr := fmt.Sprintf("attach://%s", id)
+
+	if media.getString() == "" {
+		r.InputFile(id, media.Upload)
+		media.addr = addr
+		r.attachmentIdx++
+	}
+
+	if thumb != nil {
+		thumbID := id + "_thumb"
+		r.InputFile(thumbID, *thumb)
+		thumb.addr = fmt.Sprintf("attach://%s", thumbID)
+	}
+	return r
 }
 
 func (r *Request) Stringer(name string, v fmt.Stringer) *Request {
