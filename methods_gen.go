@@ -262,29 +262,29 @@ type SendMessageCall struct {
 }
 
 // NewSendMessageCall constructs a new SendMessageCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // text - Text of the message to be sent, 1-4096 characters after entities parsing
-func NewSendMessageCall(chatId PeerID, text string) *SendMessageCall {
+func NewSendMessageCall(chatID PeerID, text string) *SendMessageCall {
 	return &SendMessageCall{
 		Call[Message]{
 			request: NewRequest("sendMessage").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				String("text", text),
 		},
 	}
 }
 
 // SendMessageCall constructs a new SendMessageCall with required parameters.
-func (client *Client) SendMessage(chatId PeerID, text string) *SendMessageCall {
+func (client *Client) SendMessage(chatID PeerID, text string) *SendMessageCall {
 	return callWithClient(
 		client,
-		NewSendMessageCall(chatId, text),
+		NewSendMessageCall(chatID, text),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendMessageCall) ChatID(chatId PeerID) *SendMessageCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendMessageCall) ChatID(chatID PeerID) *SendMessageCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -325,8 +325,8 @@ func (call *SendMessageCall) ProtectContent(protectContent bool) *SendMessageCal
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendMessageCall) ReplyToMessageID(replyToMessageId int) *SendMessageCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendMessageCall) ReplyToMessageID(replyToMessageID int) *SendMessageCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -351,37 +351,37 @@ type ForwardMessageCall struct {
 }
 
 // NewForwardMessageCall constructs a new ForwardMessageCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// fromChatId - Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
-// messageId - Message identifier in the chat specified in from_chat_id
-func NewForwardMessageCall(chatId PeerID, fromChatId PeerID, messageId int) *ForwardMessageCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// fromChatID - Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
+// messageID - Message identifier in the chat specified in from_chat_id
+func NewForwardMessageCall(chatID PeerID, fromChatID PeerID, messageID int) *ForwardMessageCall {
 	return &ForwardMessageCall{
 		Call[Message]{
 			request: NewRequest("forwardMessage").
-				PeerID("chat_id", chatId).
-				PeerID("from_chat_id", fromChatId).
-				Int("message_id", messageId),
+				PeerID("chat_id", chatID).
+				PeerID("from_chat_id", fromChatID).
+				Int("message_id", messageID),
 		},
 	}
 }
 
 // ForwardMessageCall constructs a new ForwardMessageCall with required parameters.
-func (client *Client) ForwardMessage(chatId PeerID, fromChatId PeerID, messageId int) *ForwardMessageCall {
+func (client *Client) ForwardMessage(chatID PeerID, fromChatID PeerID, messageID int) *ForwardMessageCall {
 	return callWithClient(
 		client,
-		NewForwardMessageCall(chatId, fromChatId, messageId),
+		NewForwardMessageCall(chatID, fromChatID, messageID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *ForwardMessageCall) ChatID(chatId PeerID) *ForwardMessageCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *ForwardMessageCall) ChatID(chatID PeerID) *ForwardMessageCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // FromChatID Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
-func (call *ForwardMessageCall) FromChatID(fromChatId PeerID) *ForwardMessageCall {
-	call.request.PeerID("from_chat_id", fromChatId)
+func (call *ForwardMessageCall) FromChatID(fromChatID PeerID) *ForwardMessageCall {
+	call.request.PeerID("from_chat_id", fromChatID)
 	return call
 }
 
@@ -398,8 +398,8 @@ func (call *ForwardMessageCall) ProtectContent(protectContent bool) *ForwardMess
 }
 
 // MessageID Message identifier in the chat specified in from_chat_id
-func (call *ForwardMessageCall) MessageID(messageId int) *ForwardMessageCall {
-	call.request.Int("message_id", messageId)
+func (call *ForwardMessageCall) MessageID(messageID int) *ForwardMessageCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
@@ -413,43 +413,43 @@ type CopyMessageCall struct {
 }
 
 // NewCopyMessageCall constructs a new CopyMessageCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// fromChatId - Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
-// messageId - Message identifier in the chat specified in from_chat_id
-func NewCopyMessageCall(chatId PeerID, fromChatId PeerID, messageId int) *CopyMessageCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// fromChatID - Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
+// messageID - Message identifier in the chat specified in from_chat_id
+func NewCopyMessageCall(chatID PeerID, fromChatID PeerID, messageID int) *CopyMessageCall {
 	return &CopyMessageCall{
 		Call[MessageId]{
 			request: NewRequest("copyMessage").
-				PeerID("chat_id", chatId).
-				PeerID("from_chat_id", fromChatId).
-				Int("message_id", messageId),
+				PeerID("chat_id", chatID).
+				PeerID("from_chat_id", fromChatID).
+				Int("message_id", messageID),
 		},
 	}
 }
 
 // CopyMessageCall constructs a new CopyMessageCall with required parameters.
-func (client *Client) CopyMessage(chatId PeerID, fromChatId PeerID, messageId int) *CopyMessageCall {
+func (client *Client) CopyMessage(chatID PeerID, fromChatID PeerID, messageID int) *CopyMessageCall {
 	return callWithClient(
 		client,
-		NewCopyMessageCall(chatId, fromChatId, messageId),
+		NewCopyMessageCall(chatID, fromChatID, messageID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *CopyMessageCall) ChatID(chatId PeerID) *CopyMessageCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *CopyMessageCall) ChatID(chatID PeerID) *CopyMessageCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // FromChatID Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
-func (call *CopyMessageCall) FromChatID(fromChatId PeerID) *CopyMessageCall {
-	call.request.PeerID("from_chat_id", fromChatId)
+func (call *CopyMessageCall) FromChatID(fromChatID PeerID) *CopyMessageCall {
+	call.request.PeerID("from_chat_id", fromChatID)
 	return call
 }
 
 // MessageID Message identifier in the chat specified in from_chat_id
-func (call *CopyMessageCall) MessageID(messageId int) *CopyMessageCall {
-	call.request.Int("message_id", messageId)
+func (call *CopyMessageCall) MessageID(messageID int) *CopyMessageCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
@@ -484,8 +484,8 @@ func (call *CopyMessageCall) ProtectContent(protectContent bool) *CopyMessageCal
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *CopyMessageCall) ReplyToMessageID(replyToMessageId int) *CopyMessageCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *CopyMessageCall) ReplyToMessageID(replyToMessageID int) *CopyMessageCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -509,29 +509,29 @@ type SendPhotoCall struct {
 }
 
 // NewSendPhotoCall constructs a new SendPhotoCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // photo - Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More information on Sending Files »
-func NewSendPhotoCall(chatId PeerID, photo FileArg) *SendPhotoCall {
+func NewSendPhotoCall(chatID PeerID, photo FileArg) *SendPhotoCall {
 	return &SendPhotoCall{
 		Call[Message]{
 			request: NewRequest("sendPhoto").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				File("photo", photo),
 		},
 	}
 }
 
 // SendPhotoCall constructs a new SendPhotoCall with required parameters.
-func (client *Client) SendPhoto(chatId PeerID, photo FileArg) *SendPhotoCall {
+func (client *Client) SendPhoto(chatID PeerID, photo FileArg) *SendPhotoCall {
 	return callWithClient(
 		client,
-		NewSendPhotoCall(chatId, photo),
+		NewSendPhotoCall(chatID, photo),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendPhotoCall) ChatID(chatId PeerID) *SendPhotoCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendPhotoCall) ChatID(chatID PeerID) *SendPhotoCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -572,8 +572,8 @@ func (call *SendPhotoCall) ProtectContent(protectContent bool) *SendPhotoCall {
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendPhotoCall) ReplyToMessageID(replyToMessageId int) *SendPhotoCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendPhotoCall) ReplyToMessageID(replyToMessageID int) *SendPhotoCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -600,29 +600,29 @@ type SendAudioCall struct {
 }
 
 // NewSendAudioCall constructs a new SendAudioCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // audio - Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func NewSendAudioCall(chatId PeerID, audio FileArg) *SendAudioCall {
+func NewSendAudioCall(chatID PeerID, audio FileArg) *SendAudioCall {
 	return &SendAudioCall{
 		Call[Message]{
 			request: NewRequest("sendAudio").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				File("audio", audio),
 		},
 	}
 }
 
 // SendAudioCall constructs a new SendAudioCall with required parameters.
-func (client *Client) SendAudio(chatId PeerID, audio FileArg) *SendAudioCall {
+func (client *Client) SendAudio(chatID PeerID, audio FileArg) *SendAudioCall {
 	return callWithClient(
 		client,
-		NewSendAudioCall(chatId, audio),
+		NewSendAudioCall(chatID, audio),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendAudioCall) ChatID(chatId PeerID) *SendAudioCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendAudioCall) ChatID(chatID PeerID) *SendAudioCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -687,8 +687,8 @@ func (call *SendAudioCall) ProtectContent(protectContent bool) *SendAudioCall {
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendAudioCall) ReplyToMessageID(replyToMessageId int) *SendAudioCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendAudioCall) ReplyToMessageID(replyToMessageID int) *SendAudioCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -713,29 +713,29 @@ type SendDocumentCall struct {
 }
 
 // NewSendDocumentCall constructs a new SendDocumentCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // document - File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func NewSendDocumentCall(chatId PeerID, document FileArg) *SendDocumentCall {
+func NewSendDocumentCall(chatID PeerID, document FileArg) *SendDocumentCall {
 	return &SendDocumentCall{
 		Call[Message]{
 			request: NewRequest("sendDocument").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				File("document", document),
 		},
 	}
 }
 
 // SendDocumentCall constructs a new SendDocumentCall with required parameters.
-func (client *Client) SendDocument(chatId PeerID, document FileArg) *SendDocumentCall {
+func (client *Client) SendDocument(chatID PeerID, document FileArg) *SendDocumentCall {
 	return callWithClient(
 		client,
-		NewSendDocumentCall(chatId, document),
+		NewSendDocumentCall(chatID, document),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendDocumentCall) ChatID(chatId PeerID) *SendDocumentCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendDocumentCall) ChatID(chatID PeerID) *SendDocumentCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -788,8 +788,8 @@ func (call *SendDocumentCall) ProtectContent(protectContent bool) *SendDocumentC
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendDocumentCall) ReplyToMessageID(replyToMessageId int) *SendDocumentCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendDocumentCall) ReplyToMessageID(replyToMessageID int) *SendDocumentCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -814,29 +814,29 @@ type SendVideoCall struct {
 }
 
 // NewSendVideoCall constructs a new SendVideoCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // video - Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More information on Sending Files »
-func NewSendVideoCall(chatId PeerID, video FileArg) *SendVideoCall {
+func NewSendVideoCall(chatID PeerID, video FileArg) *SendVideoCall {
 	return &SendVideoCall{
 		Call[Message]{
 			request: NewRequest("sendVideo").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				File("video", video),
 		},
 	}
 }
 
 // SendVideoCall constructs a new SendVideoCall with required parameters.
-func (client *Client) SendVideo(chatId PeerID, video FileArg) *SendVideoCall {
+func (client *Client) SendVideo(chatID PeerID, video FileArg) *SendVideoCall {
 	return callWithClient(
 		client,
-		NewSendVideoCall(chatId, video),
+		NewSendVideoCall(chatID, video),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendVideoCall) ChatID(chatId PeerID) *SendVideoCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendVideoCall) ChatID(chatID PeerID) *SendVideoCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -907,8 +907,8 @@ func (call *SendVideoCall) ProtectContent(protectContent bool) *SendVideoCall {
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendVideoCall) ReplyToMessageID(replyToMessageId int) *SendVideoCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendVideoCall) ReplyToMessageID(replyToMessageID int) *SendVideoCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -933,29 +933,29 @@ type SendAnimationCall struct {
 }
 
 // NewSendAnimationCall constructs a new SendAnimationCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // animation - Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More information on Sending Files »
-func NewSendAnimationCall(chatId PeerID, animation FileArg) *SendAnimationCall {
+func NewSendAnimationCall(chatID PeerID, animation FileArg) *SendAnimationCall {
 	return &SendAnimationCall{
 		Call[Message]{
 			request: NewRequest("sendAnimation").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				File("animation", animation),
 		},
 	}
 }
 
 // SendAnimationCall constructs a new SendAnimationCall with required parameters.
-func (client *Client) SendAnimation(chatId PeerID, animation FileArg) *SendAnimationCall {
+func (client *Client) SendAnimation(chatID PeerID, animation FileArg) *SendAnimationCall {
 	return callWithClient(
 		client,
-		NewSendAnimationCall(chatId, animation),
+		NewSendAnimationCall(chatID, animation),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendAnimationCall) ChatID(chatId PeerID) *SendAnimationCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendAnimationCall) ChatID(chatID PeerID) *SendAnimationCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1020,8 +1020,8 @@ func (call *SendAnimationCall) ProtectContent(protectContent bool) *SendAnimatio
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendAnimationCall) ReplyToMessageID(replyToMessageId int) *SendAnimationCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendAnimationCall) ReplyToMessageID(replyToMessageID int) *SendAnimationCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1047,29 +1047,29 @@ type SendVoiceCall struct {
 }
 
 // NewSendVoiceCall constructs a new SendVoiceCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // voice - Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func NewSendVoiceCall(chatId PeerID, voice FileArg) *SendVoiceCall {
+func NewSendVoiceCall(chatID PeerID, voice FileArg) *SendVoiceCall {
 	return &SendVoiceCall{
 		Call[Message]{
 			request: NewRequest("sendVoice").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				File("voice", voice),
 		},
 	}
 }
 
 // SendVoiceCall constructs a new SendVoiceCall with required parameters.
-func (client *Client) SendVoice(chatId PeerID, voice FileArg) *SendVoiceCall {
+func (client *Client) SendVoice(chatID PeerID, voice FileArg) *SendVoiceCall {
 	return callWithClient(
 		client,
-		NewSendVoiceCall(chatId, voice),
+		NewSendVoiceCall(chatID, voice),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendVoiceCall) ChatID(chatId PeerID) *SendVoiceCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendVoiceCall) ChatID(chatID PeerID) *SendVoiceCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1116,8 +1116,8 @@ func (call *SendVoiceCall) ProtectContent(protectContent bool) *SendVoiceCall {
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendVoiceCall) ReplyToMessageID(replyToMessageId int) *SendVoiceCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendVoiceCall) ReplyToMessageID(replyToMessageID int) *SendVoiceCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1142,29 +1142,29 @@ type SendVideoNoteCall struct {
 }
 
 // NewSendVideoNoteCall constructs a new SendVideoNoteCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // videoNote - Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending video notes by a URL is currently unsupported
-func NewSendVideoNoteCall(chatId PeerID, videoNote FileArg) *SendVideoNoteCall {
+func NewSendVideoNoteCall(chatID PeerID, videoNote FileArg) *SendVideoNoteCall {
 	return &SendVideoNoteCall{
 		Call[Message]{
 			request: NewRequest("sendVideoNote").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				File("video_note", videoNote),
 		},
 	}
 }
 
 // SendVideoNoteCall constructs a new SendVideoNoteCall with required parameters.
-func (client *Client) SendVideoNote(chatId PeerID, videoNote FileArg) *SendVideoNoteCall {
+func (client *Client) SendVideoNote(chatID PeerID, videoNote FileArg) *SendVideoNoteCall {
 	return callWithClient(
 		client,
-		NewSendVideoNoteCall(chatId, videoNote),
+		NewSendVideoNoteCall(chatID, videoNote),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendVideoNoteCall) ChatID(chatId PeerID) *SendVideoNoteCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendVideoNoteCall) ChatID(chatID PeerID) *SendVideoNoteCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1205,8 +1205,8 @@ func (call *SendVideoNoteCall) ProtectContent(protectContent bool) *SendVideoNot
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendVideoNoteCall) ReplyToMessageID(replyToMessageId int) *SendVideoNoteCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendVideoNoteCall) ReplyToMessageID(replyToMessageID int) *SendVideoNoteCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1231,29 +1231,29 @@ type SendMediaGroupCall struct {
 }
 
 // NewSendMediaGroupCall constructs a new SendMediaGroupCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // media - A JSON-serialized array describing messages to be sent, must include 2-10 items
-func NewSendMediaGroupCall(chatId PeerID, media []InputMedia) *SendMediaGroupCall {
+func NewSendMediaGroupCall(chatID PeerID, media []InputMedia) *SendMediaGroupCall {
 	return &SendMediaGroupCall{
 		Call[[]Message]{
 			request: NewRequest("sendMediaGroup").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				InputMediaSlice("media", media),
 		},
 	}
 }
 
 // SendMediaGroupCall constructs a new SendMediaGroupCall with required parameters.
-func (client *Client) SendMediaGroup(chatId PeerID, media []InputMedia) *SendMediaGroupCall {
+func (client *Client) SendMediaGroup(chatID PeerID, media []InputMedia) *SendMediaGroupCall {
 	return callWithClient(
 		client,
-		NewSendMediaGroupCall(chatId, media),
+		NewSendMediaGroupCall(chatID, media),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendMediaGroupCall) ChatID(chatId PeerID) *SendMediaGroupCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendMediaGroupCall) ChatID(chatID PeerID) *SendMediaGroupCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1276,8 +1276,8 @@ func (call *SendMediaGroupCall) ProtectContent(protectContent bool) *SendMediaGr
 }
 
 // ReplyToMessageID If the messages are a reply, ID of the original message
-func (call *SendMediaGroupCall) ReplyToMessageID(replyToMessageId int) *SendMediaGroupCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendMediaGroupCall) ReplyToMessageID(replyToMessageID int) *SendMediaGroupCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1295,14 +1295,14 @@ type SendLocationCall struct {
 }
 
 // NewSendLocationCall constructs a new SendLocationCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // latitude - Latitude of the location
 // longitude - Longitude of the location
-func NewSendLocationCall(chatId PeerID, latitude float64, longitude float64) *SendLocationCall {
+func NewSendLocationCall(chatID PeerID, latitude float64, longitude float64) *SendLocationCall {
 	return &SendLocationCall{
 		Call[Message]{
 			request: NewRequest("sendLocation").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				Float64("latitude", latitude).
 				Float64("longitude", longitude),
 		},
@@ -1310,16 +1310,16 @@ func NewSendLocationCall(chatId PeerID, latitude float64, longitude float64) *Se
 }
 
 // SendLocationCall constructs a new SendLocationCall with required parameters.
-func (client *Client) SendLocation(chatId PeerID, latitude float64, longitude float64) *SendLocationCall {
+func (client *Client) SendLocation(chatID PeerID, latitude float64, longitude float64) *SendLocationCall {
 	return callWithClient(
 		client,
-		NewSendLocationCall(chatId, latitude, longitude),
+		NewSendLocationCall(chatID, latitude, longitude),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendLocationCall) ChatID(chatId PeerID) *SendLocationCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendLocationCall) ChatID(chatID PeerID) *SendLocationCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1372,8 +1372,8 @@ func (call *SendLocationCall) ProtectContent(protectContent bool) *SendLocationC
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendLocationCall) ReplyToMessageID(replyToMessageId int) *SendLocationCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendLocationCall) ReplyToMessageID(replyToMessageID int) *SendLocationCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1398,60 +1398,60 @@ type EditMessageLiveLocationCall struct {
 }
 
 // NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-// chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageId - Required if inline_message_id is not specified. Identifier of the message to edit
-func NewEditMessageLiveLocationCall(chatId PeerID, messageId int) *EditMessageLiveLocationCall {
+// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Required if inline_message_id is not specified. Identifier of the message to edit
+func NewEditMessageLiveLocationCall(chatID PeerID, messageID int) *EditMessageLiveLocationCall {
 	return &EditMessageLiveLocationCall{
 		Call[Message]{
 			request: NewRequest("editMessageLiveLocation").
-				PeerID("chat_id", chatId).
-				Int("message_id", messageId),
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
 		},
 	}
 }
 
 // NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-// inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
-func NewEditMessageLiveLocationInlineCall(inlineMessageId string) *EditMessageLiveLocationCall {
+// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
+func NewEditMessageLiveLocationInlineCall(inlineMessageID string) *EditMessageLiveLocationCall {
 	return &EditMessageLiveLocationCall{
 		Call[Message]{
 			request: NewRequest("editMessageLiveLocation").
-				String("inline_message_id", inlineMessageId),
+				String("inline_message_id", inlineMessageID),
 		},
 	}
 }
 
 // EditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-func (client *Client) EditMessageLiveLocation(chatId PeerID, messageId int) *EditMessageLiveLocationCall {
+func (client *Client) EditMessageLiveLocation(chatID PeerID, messageID int) *EditMessageLiveLocationCall {
 	return callWithClient(
 		client,
-		NewEditMessageLiveLocationCall(chatId, messageId),
+		NewEditMessageLiveLocationCall(chatID, messageID),
 	)
 }
 
 // EditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-func (client *Client) EditMessageLiveLocationInline(inlineMessageId string) *EditMessageLiveLocationCall {
+func (client *Client) EditMessageLiveLocationInline(inlineMessageID string) *EditMessageLiveLocationCall {
 	return callWithClient(
 		client,
-		NewEditMessageLiveLocationInlineCall(inlineMessageId),
+		NewEditMessageLiveLocationInlineCall(inlineMessageID),
 	)
 }
 
 // ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *EditMessageLiveLocationCall) ChatID(chatId PeerID) *EditMessageLiveLocationCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *EditMessageLiveLocationCall) ChatID(chatID PeerID) *EditMessageLiveLocationCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Required if inline_message_id is not specified. Identifier of the message to edit
-func (call *EditMessageLiveLocationCall) MessageID(messageId int) *EditMessageLiveLocationCall {
-	call.request.Int("message_id", messageId)
+func (call *EditMessageLiveLocationCall) MessageID(messageID int) *EditMessageLiveLocationCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
 // InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *EditMessageLiveLocationCall) InlineMessageID(inlineMessageId string) *EditMessageLiveLocationCall {
-	call.request.String("inline_message_id", inlineMessageId)
+func (call *EditMessageLiveLocationCall) InlineMessageID(inlineMessageID string) *EditMessageLiveLocationCall {
+	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
 
@@ -1499,60 +1499,60 @@ type StopMessageLiveLocationCall struct {
 }
 
 // NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-// chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageId - Required if inline_message_id is not specified. Identifier of the message with live location to stop
-func NewStopMessageLiveLocationCall(chatId PeerID, messageId int) *StopMessageLiveLocationCall {
+// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Required if inline_message_id is not specified. Identifier of the message with live location to stop
+func NewStopMessageLiveLocationCall(chatID PeerID, messageID int) *StopMessageLiveLocationCall {
 	return &StopMessageLiveLocationCall{
 		Call[Message]{
 			request: NewRequest("stopMessageLiveLocation").
-				PeerID("chat_id", chatId).
-				Int("message_id", messageId),
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
 		},
 	}
 }
 
 // NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-// inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
-func NewStopMessageLiveLocationInlineCall(inlineMessageId string) *StopMessageLiveLocationCall {
+// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
+func NewStopMessageLiveLocationInlineCall(inlineMessageID string) *StopMessageLiveLocationCall {
 	return &StopMessageLiveLocationCall{
 		Call[Message]{
 			request: NewRequest("stopMessageLiveLocation").
-				String("inline_message_id", inlineMessageId),
+				String("inline_message_id", inlineMessageID),
 		},
 	}
 }
 
 // StopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-func (client *Client) StopMessageLiveLocation(chatId PeerID, messageId int) *StopMessageLiveLocationCall {
+func (client *Client) StopMessageLiveLocation(chatID PeerID, messageID int) *StopMessageLiveLocationCall {
 	return callWithClient(
 		client,
-		NewStopMessageLiveLocationCall(chatId, messageId),
+		NewStopMessageLiveLocationCall(chatID, messageID),
 	)
 }
 
 // StopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-func (client *Client) StopMessageLiveLocationInline(inlineMessageId string) *StopMessageLiveLocationCall {
+func (client *Client) StopMessageLiveLocationInline(inlineMessageID string) *StopMessageLiveLocationCall {
 	return callWithClient(
 		client,
-		NewStopMessageLiveLocationInlineCall(inlineMessageId),
+		NewStopMessageLiveLocationInlineCall(inlineMessageID),
 	)
 }
 
 // ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *StopMessageLiveLocationCall) ChatID(chatId PeerID) *StopMessageLiveLocationCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *StopMessageLiveLocationCall) ChatID(chatID PeerID) *StopMessageLiveLocationCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Required if inline_message_id is not specified. Identifier of the message with live location to stop
-func (call *StopMessageLiveLocationCall) MessageID(messageId int) *StopMessageLiveLocationCall {
-	call.request.Int("message_id", messageId)
+func (call *StopMessageLiveLocationCall) MessageID(messageID int) *StopMessageLiveLocationCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
 // InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *StopMessageLiveLocationCall) InlineMessageID(inlineMessageId string) *StopMessageLiveLocationCall {
-	call.request.String("inline_message_id", inlineMessageId)
+func (call *StopMessageLiveLocationCall) InlineMessageID(inlineMessageID string) *StopMessageLiveLocationCall {
+	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
 
@@ -1570,16 +1570,16 @@ type SendVenueCall struct {
 }
 
 // NewSendVenueCall constructs a new SendVenueCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // latitude - Latitude of the venue
 // longitude - Longitude of the venue
 // title - Name of the venue
 // address - Address of the venue
-func NewSendVenueCall(chatId PeerID, latitude float64, longitude float64, title string, address string) *SendVenueCall {
+func NewSendVenueCall(chatID PeerID, latitude float64, longitude float64, title string, address string) *SendVenueCall {
 	return &SendVenueCall{
 		Call[Message]{
 			request: NewRequest("sendVenue").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				Float64("latitude", latitude).
 				Float64("longitude", longitude).
 				String("title", title).
@@ -1589,16 +1589,16 @@ func NewSendVenueCall(chatId PeerID, latitude float64, longitude float64, title 
 }
 
 // SendVenueCall constructs a new SendVenueCall with required parameters.
-func (client *Client) SendVenue(chatId PeerID, latitude float64, longitude float64, title string, address string) *SendVenueCall {
+func (client *Client) SendVenue(chatID PeerID, latitude float64, longitude float64, title string, address string) *SendVenueCall {
 	return callWithClient(
 		client,
-		NewSendVenueCall(chatId, latitude, longitude, title, address),
+		NewSendVenueCall(chatID, latitude, longitude, title, address),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendVenueCall) ChatID(chatId PeerID) *SendVenueCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendVenueCall) ChatID(chatID PeerID) *SendVenueCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1627,8 +1627,8 @@ func (call *SendVenueCall) Address(address string) *SendVenueCall {
 }
 
 // FoursquareID Foursquare identifier of the venue
-func (call *SendVenueCall) FoursquareID(foursquareId string) *SendVenueCall {
-	call.request.String("foursquare_id", foursquareId)
+func (call *SendVenueCall) FoursquareID(foursquareID string) *SendVenueCall {
+	call.request.String("foursquare_id", foursquareID)
 	return call
 }
 
@@ -1639,8 +1639,8 @@ func (call *SendVenueCall) FoursquareType(foursquareType string) *SendVenueCall 
 }
 
 // GooglePlaceID Google Places identifier of the venue
-func (call *SendVenueCall) GooglePlaceID(googlePlaceId string) *SendVenueCall {
-	call.request.String("google_place_id", googlePlaceId)
+func (call *SendVenueCall) GooglePlaceID(googlePlaceID string) *SendVenueCall {
+	call.request.String("google_place_id", googlePlaceID)
 	return call
 }
 
@@ -1663,8 +1663,8 @@ func (call *SendVenueCall) ProtectContent(protectContent bool) *SendVenueCall {
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendVenueCall) ReplyToMessageID(replyToMessageId int) *SendVenueCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendVenueCall) ReplyToMessageID(replyToMessageID int) *SendVenueCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1688,14 +1688,14 @@ type SendContactCall struct {
 }
 
 // NewSendContactCall constructs a new SendContactCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // phoneNumber - Contact's phone number
 // firstName - Contact's first name
-func NewSendContactCall(chatId PeerID, phoneNumber string, firstName string) *SendContactCall {
+func NewSendContactCall(chatID PeerID, phoneNumber string, firstName string) *SendContactCall {
 	return &SendContactCall{
 		Call[Message]{
 			request: NewRequest("sendContact").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				String("phone_number", phoneNumber).
 				String("first_name", firstName),
 		},
@@ -1703,16 +1703,16 @@ func NewSendContactCall(chatId PeerID, phoneNumber string, firstName string) *Se
 }
 
 // SendContactCall constructs a new SendContactCall with required parameters.
-func (client *Client) SendContact(chatId PeerID, phoneNumber string, firstName string) *SendContactCall {
+func (client *Client) SendContact(chatID PeerID, phoneNumber string, firstName string) *SendContactCall {
 	return callWithClient(
 		client,
-		NewSendContactCall(chatId, phoneNumber, firstName),
+		NewSendContactCall(chatID, phoneNumber, firstName),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendContactCall) ChatID(chatId PeerID) *SendContactCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendContactCall) ChatID(chatID PeerID) *SendContactCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1753,8 +1753,8 @@ func (call *SendContactCall) ProtectContent(protectContent bool) *SendContactCal
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendContactCall) ReplyToMessageID(replyToMessageId int) *SendContactCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendContactCall) ReplyToMessageID(replyToMessageID int) *SendContactCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1778,14 +1778,14 @@ type SendPollCall struct {
 }
 
 // NewSendPollCall constructs a new SendPollCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // question - Poll question, 1-300 characters
 // options - A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
-func NewSendPollCall(chatId PeerID, question string, options []string) *SendPollCall {
+func NewSendPollCall(chatID PeerID, question string, options []string) *SendPollCall {
 	return &SendPollCall{
 		Call[Message]{
 			request: NewRequest("sendPoll").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				String("question", question).
 				JSON("options", options),
 		},
@@ -1793,16 +1793,16 @@ func NewSendPollCall(chatId PeerID, question string, options []string) *SendPoll
 }
 
 // SendPollCall constructs a new SendPollCall with required parameters.
-func (client *Client) SendPoll(chatId PeerID, question string, options []string) *SendPollCall {
+func (client *Client) SendPoll(chatID PeerID, question string, options []string) *SendPollCall {
 	return callWithClient(
 		client,
-		NewSendPollCall(chatId, question, options),
+		NewSendPollCall(chatID, question, options),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendPollCall) ChatID(chatId PeerID) *SendPollCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendPollCall) ChatID(chatID PeerID) *SendPollCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1837,8 +1837,8 @@ func (call *SendPollCall) AllowsMultipleAnswers(allowsMultipleAnswers bool) *Sen
 }
 
 // CorrectOptionID 0-based identifier of the correct answer option, required for polls in quiz mode
-func (call *SendPollCall) CorrectOptionID(correctOptionId int) *SendPollCall {
-	call.request.Int("correct_option_id", correctOptionId)
+func (call *SendPollCall) CorrectOptionID(correctOptionID int) *SendPollCall {
+	call.request.Int("correct_option_id", correctOptionID)
 	return call
 }
 
@@ -1891,8 +1891,8 @@ func (call *SendPollCall) ProtectContent(protectContent bool) *SendPollCall {
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendPollCall) ReplyToMessageID(replyToMessageId int) *SendPollCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendPollCall) ReplyToMessageID(replyToMessageID int) *SendPollCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1916,27 +1916,27 @@ type SendDiceCall struct {
 }
 
 // NewSendDiceCall constructs a new SendDiceCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func NewSendDiceCall(chatId PeerID) *SendDiceCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func NewSendDiceCall(chatID PeerID) *SendDiceCall {
 	return &SendDiceCall{
 		Call[Message]{
 			request: NewRequest("sendDice").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // SendDiceCall constructs a new SendDiceCall with required parameters.
-func (client *Client) SendDice(chatId PeerID) *SendDiceCall {
+func (client *Client) SendDice(chatID PeerID) *SendDiceCall {
 	return callWithClient(
 		client,
-		NewSendDiceCall(chatId),
+		NewSendDiceCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendDiceCall) ChatID(chatId PeerID) *SendDiceCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendDiceCall) ChatID(chatID PeerID) *SendDiceCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -1959,8 +1959,8 @@ func (call *SendDiceCall) ProtectContent(protectContent bool) *SendDiceCall {
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendDiceCall) ReplyToMessageID(replyToMessageId int) *SendDiceCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendDiceCall) ReplyToMessageID(replyToMessageID int) *SendDiceCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -1988,29 +1988,29 @@ type SendChatActionCall struct {
 }
 
 // NewSendChatActionCall constructs a new SendChatActionCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // action - Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes.
-func NewSendChatActionCall(chatId PeerID, action ChatAction) *SendChatActionCall {
+func NewSendChatActionCall(chatID PeerID, action ChatAction) *SendChatActionCall {
 	return &SendChatActionCall{
 		CallNoResult{
 			request: NewRequest("sendChatAction").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				Stringer("action", action),
 		},
 	}
 }
 
 // SendChatActionCall constructs a new SendChatActionCall with required parameters.
-func (client *Client) SendChatAction(chatId PeerID, action ChatAction) *SendChatActionCall {
+func (client *Client) SendChatAction(chatID PeerID, action ChatAction) *SendChatActionCall {
 	return callWithClient(
 		client,
-		NewSendChatActionCall(chatId, action),
+		NewSendChatActionCall(chatID, action),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendChatActionCall) ChatID(chatId PeerID) *SendChatActionCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendChatActionCall) ChatID(chatID PeerID) *SendChatActionCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2028,27 +2028,27 @@ type GetUserProfilePhotosCall struct {
 }
 
 // NewGetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall with required parameters.
-// userId - Unique identifier of the target user
-func NewGetUserProfilePhotosCall(userId UserID) *GetUserProfilePhotosCall {
+// userID - Unique identifier of the target user
+func NewGetUserProfilePhotosCall(userID UserID) *GetUserProfilePhotosCall {
 	return &GetUserProfilePhotosCall{
 		Call[UserProfilePhotos]{
 			request: NewRequest("getUserProfilePhotos").
-				UserID("user_id", userId),
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // GetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall with required parameters.
-func (client *Client) GetUserProfilePhotos(userId UserID) *GetUserProfilePhotosCall {
+func (client *Client) GetUserProfilePhotos(userID UserID) *GetUserProfilePhotosCall {
 	return callWithClient(
 		client,
-		NewGetUserProfilePhotosCall(userId),
+		NewGetUserProfilePhotosCall(userID),
 	)
 }
 
 // UserID Unique identifier of the target user
-func (call *GetUserProfilePhotosCall) UserID(userId UserID) *GetUserProfilePhotosCall {
-	call.request.UserID("user_id", userId)
+func (call *GetUserProfilePhotosCall) UserID(userID UserID) *GetUserProfilePhotosCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -2076,27 +2076,27 @@ type GetFileCall struct {
 }
 
 // NewGetFileCall constructs a new GetFileCall with required parameters.
-// fileId - File identifier to get information about
-func NewGetFileCall(fileId string) *GetFileCall {
+// fileID - File identifier to get information about
+func NewGetFileCall(fileID string) *GetFileCall {
 	return &GetFileCall{
 		Call[File]{
 			request: NewRequest("getFile").
-				String("file_id", fileId),
+				String("file_id", fileID),
 		},
 	}
 }
 
 // GetFileCall constructs a new GetFileCall with required parameters.
-func (client *Client) GetFile(fileId string) *GetFileCall {
+func (client *Client) GetFile(fileID string) *GetFileCall {
 	return callWithClient(
 		client,
-		NewGetFileCall(fileId),
+		NewGetFileCall(fileID),
 	)
 }
 
 // FileID File identifier to get information about
-func (call *GetFileCall) FileID(fileId string) *GetFileCall {
-	call.request.String("file_id", fileId)
+func (call *GetFileCall) FileID(fileID string) *GetFileCall {
+	call.request.String("file_id", fileID)
 	return call
 }
 
@@ -2109,35 +2109,35 @@ type BanChatMemberCall struct {
 }
 
 // NewBanChatMemberCall constructs a new BanChatMemberCall with required parameters.
-// chatId - Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
-// userId - Unique identifier of the target user
-func NewBanChatMemberCall(chatId PeerID, userId UserID) *BanChatMemberCall {
+// chatID - Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
+// userID - Unique identifier of the target user
+func NewBanChatMemberCall(chatID PeerID, userID UserID) *BanChatMemberCall {
 	return &BanChatMemberCall{
 		CallNoResult{
 			request: NewRequest("banChatMember").
-				PeerID("chat_id", chatId).
-				UserID("user_id", userId),
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // BanChatMemberCall constructs a new BanChatMemberCall with required parameters.
-func (client *Client) BanChatMember(chatId PeerID, userId UserID) *BanChatMemberCall {
+func (client *Client) BanChatMember(chatID PeerID, userID UserID) *BanChatMemberCall {
 	return callWithClient(
 		client,
-		NewBanChatMemberCall(chatId, userId),
+		NewBanChatMemberCall(chatID, userID),
 	)
 }
 
 // ChatID Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
-func (call *BanChatMemberCall) ChatID(chatId PeerID) *BanChatMemberCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *BanChatMemberCall) ChatID(chatID PeerID) *BanChatMemberCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // UserID Unique identifier of the target user
-func (call *BanChatMemberCall) UserID(userId UserID) *BanChatMemberCall {
-	call.request.UserID("user_id", userId)
+func (call *BanChatMemberCall) UserID(userID UserID) *BanChatMemberCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -2165,35 +2165,35 @@ type UnbanChatMemberCall struct {
 }
 
 // NewUnbanChatMemberCall constructs a new UnbanChatMemberCall with required parameters.
-// chatId - Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
-// userId - Unique identifier of the target user
-func NewUnbanChatMemberCall(chatId PeerID, userId UserID) *UnbanChatMemberCall {
+// chatID - Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
+// userID - Unique identifier of the target user
+func NewUnbanChatMemberCall(chatID PeerID, userID UserID) *UnbanChatMemberCall {
 	return &UnbanChatMemberCall{
 		CallNoResult{
 			request: NewRequest("unbanChatMember").
-				PeerID("chat_id", chatId).
-				UserID("user_id", userId),
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // UnbanChatMemberCall constructs a new UnbanChatMemberCall with required parameters.
-func (client *Client) UnbanChatMember(chatId PeerID, userId UserID) *UnbanChatMemberCall {
+func (client *Client) UnbanChatMember(chatID PeerID, userID UserID) *UnbanChatMemberCall {
 	return callWithClient(
 		client,
-		NewUnbanChatMemberCall(chatId, userId),
+		NewUnbanChatMemberCall(chatID, userID),
 	)
 }
 
 // ChatID Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
-func (call *UnbanChatMemberCall) ChatID(chatId PeerID) *UnbanChatMemberCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *UnbanChatMemberCall) ChatID(chatID PeerID) *UnbanChatMemberCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // UserID Unique identifier of the target user
-func (call *UnbanChatMemberCall) UserID(userId UserID) *UnbanChatMemberCall {
-	call.request.UserID("user_id", userId)
+func (call *UnbanChatMemberCall) UserID(userID UserID) *UnbanChatMemberCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -2212,37 +2212,37 @@ type RestrictChatMemberCall struct {
 }
 
 // NewRestrictChatMemberCall constructs a new RestrictChatMemberCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-// userId - Unique identifier of the target user
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// userID - Unique identifier of the target user
 // permissions - A JSON-serialized object for new user permissions
-func NewRestrictChatMemberCall(chatId PeerID, userId UserID, permissions ChatPermissions) *RestrictChatMemberCall {
+func NewRestrictChatMemberCall(chatID PeerID, userID UserID, permissions ChatPermissions) *RestrictChatMemberCall {
 	return &RestrictChatMemberCall{
 		CallNoResult{
 			request: NewRequest("restrictChatMember").
-				PeerID("chat_id", chatId).
-				UserID("user_id", userId).
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID).
 				JSON("permissions", permissions),
 		},
 	}
 }
 
 // RestrictChatMemberCall constructs a new RestrictChatMemberCall with required parameters.
-func (client *Client) RestrictChatMember(chatId PeerID, userId UserID, permissions ChatPermissions) *RestrictChatMemberCall {
+func (client *Client) RestrictChatMember(chatID PeerID, userID UserID, permissions ChatPermissions) *RestrictChatMemberCall {
 	return callWithClient(
 		client,
-		NewRestrictChatMemberCall(chatId, userId, permissions),
+		NewRestrictChatMemberCall(chatID, userID, permissions),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-func (call *RestrictChatMemberCall) ChatID(chatId PeerID) *RestrictChatMemberCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *RestrictChatMemberCall) ChatID(chatID PeerID) *RestrictChatMemberCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // UserID Unique identifier of the target user
-func (call *RestrictChatMemberCall) UserID(userId UserID) *RestrictChatMemberCall {
-	call.request.UserID("user_id", userId)
+func (call *RestrictChatMemberCall) UserID(userID UserID) *RestrictChatMemberCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -2267,35 +2267,35 @@ type PromoteChatMemberCall struct {
 }
 
 // NewPromoteChatMemberCall constructs a new PromoteChatMemberCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// userId - Unique identifier of the target user
-func NewPromoteChatMemberCall(chatId PeerID, userId UserID) *PromoteChatMemberCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// userID - Unique identifier of the target user
+func NewPromoteChatMemberCall(chatID PeerID, userID UserID) *PromoteChatMemberCall {
 	return &PromoteChatMemberCall{
 		CallNoResult{
 			request: NewRequest("promoteChatMember").
-				PeerID("chat_id", chatId).
-				UserID("user_id", userId),
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // PromoteChatMemberCall constructs a new PromoteChatMemberCall with required parameters.
-func (client *Client) PromoteChatMember(chatId PeerID, userId UserID) *PromoteChatMemberCall {
+func (client *Client) PromoteChatMember(chatID PeerID, userID UserID) *PromoteChatMemberCall {
 	return callWithClient(
 		client,
-		NewPromoteChatMemberCall(chatId, userId),
+		NewPromoteChatMemberCall(chatID, userID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *PromoteChatMemberCall) ChatID(chatId PeerID) *PromoteChatMemberCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *PromoteChatMemberCall) ChatID(chatID PeerID) *PromoteChatMemberCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // UserID Unique identifier of the target user
-func (call *PromoteChatMemberCall) UserID(userId UserID) *PromoteChatMemberCall {
-	call.request.UserID("user_id", userId)
+func (call *PromoteChatMemberCall) UserID(userID UserID) *PromoteChatMemberCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -2372,37 +2372,37 @@ type SetChatAdministratorCustomTitleCall struct {
 }
 
 // NewSetChatAdministratorCustomTitleCall constructs a new SetChatAdministratorCustomTitleCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-// userId - Unique identifier of the target user
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// userID - Unique identifier of the target user
 // customTitle - New custom title for the administrator; 0-16 characters, emoji are not allowed
-func NewSetChatAdministratorCustomTitleCall(chatId PeerID, userId UserID, customTitle string) *SetChatAdministratorCustomTitleCall {
+func NewSetChatAdministratorCustomTitleCall(chatID PeerID, userID UserID, customTitle string) *SetChatAdministratorCustomTitleCall {
 	return &SetChatAdministratorCustomTitleCall{
 		CallNoResult{
 			request: NewRequest("setChatAdministratorCustomTitle").
-				PeerID("chat_id", chatId).
-				UserID("user_id", userId).
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID).
 				String("custom_title", customTitle),
 		},
 	}
 }
 
 // SetChatAdministratorCustomTitleCall constructs a new SetChatAdministratorCustomTitleCall with required parameters.
-func (client *Client) SetChatAdministratorCustomTitle(chatId PeerID, userId UserID, customTitle string) *SetChatAdministratorCustomTitleCall {
+func (client *Client) SetChatAdministratorCustomTitle(chatID PeerID, userID UserID, customTitle string) *SetChatAdministratorCustomTitleCall {
 	return callWithClient(
 		client,
-		NewSetChatAdministratorCustomTitleCall(chatId, userId, customTitle),
+		NewSetChatAdministratorCustomTitleCall(chatID, userID, customTitle),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-func (call *SetChatAdministratorCustomTitleCall) ChatID(chatId PeerID) *SetChatAdministratorCustomTitleCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SetChatAdministratorCustomTitleCall) ChatID(chatID PeerID) *SetChatAdministratorCustomTitleCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // UserID Unique identifier of the target user
-func (call *SetChatAdministratorCustomTitleCall) UserID(userId UserID) *SetChatAdministratorCustomTitleCall {
-	call.request.UserID("user_id", userId)
+func (call *SetChatAdministratorCustomTitleCall) UserID(userID UserID) *SetChatAdministratorCustomTitleCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -2421,35 +2421,35 @@ type BanChatSenderChatCall struct {
 }
 
 // NewBanChatSenderChatCall constructs a new BanChatSenderChatCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// senderChatId - Unique identifier of the target sender chat
-func NewBanChatSenderChatCall(chatId PeerID, senderChatId int) *BanChatSenderChatCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// senderChatID - Unique identifier of the target sender chat
+func NewBanChatSenderChatCall(chatID PeerID, senderChatID int) *BanChatSenderChatCall {
 	return &BanChatSenderChatCall{
 		CallNoResult{
 			request: NewRequest("banChatSenderChat").
-				PeerID("chat_id", chatId).
-				Int("sender_chat_id", senderChatId),
+				PeerID("chat_id", chatID).
+				Int("sender_chat_id", senderChatID),
 		},
 	}
 }
 
 // BanChatSenderChatCall constructs a new BanChatSenderChatCall with required parameters.
-func (client *Client) BanChatSenderChat(chatId PeerID, senderChatId int) *BanChatSenderChatCall {
+func (client *Client) BanChatSenderChat(chatID PeerID, senderChatID int) *BanChatSenderChatCall {
 	return callWithClient(
 		client,
-		NewBanChatSenderChatCall(chatId, senderChatId),
+		NewBanChatSenderChatCall(chatID, senderChatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *BanChatSenderChatCall) ChatID(chatId PeerID) *BanChatSenderChatCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *BanChatSenderChatCall) ChatID(chatID PeerID) *BanChatSenderChatCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // SenderChatID Unique identifier of the target sender chat
-func (call *BanChatSenderChatCall) SenderChatID(senderChatId int) *BanChatSenderChatCall {
-	call.request.Int("sender_chat_id", senderChatId)
+func (call *BanChatSenderChatCall) SenderChatID(senderChatID int) *BanChatSenderChatCall {
+	call.request.Int("sender_chat_id", senderChatID)
 	return call
 }
 
@@ -2461,35 +2461,35 @@ type UnbanChatSenderChatCall struct {
 }
 
 // NewUnbanChatSenderChatCall constructs a new UnbanChatSenderChatCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// senderChatId - Unique identifier of the target sender chat
-func NewUnbanChatSenderChatCall(chatId PeerID, senderChatId int) *UnbanChatSenderChatCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// senderChatID - Unique identifier of the target sender chat
+func NewUnbanChatSenderChatCall(chatID PeerID, senderChatID int) *UnbanChatSenderChatCall {
 	return &UnbanChatSenderChatCall{
 		CallNoResult{
 			request: NewRequest("unbanChatSenderChat").
-				PeerID("chat_id", chatId).
-				Int("sender_chat_id", senderChatId),
+				PeerID("chat_id", chatID).
+				Int("sender_chat_id", senderChatID),
 		},
 	}
 }
 
 // UnbanChatSenderChatCall constructs a new UnbanChatSenderChatCall with required parameters.
-func (client *Client) UnbanChatSenderChat(chatId PeerID, senderChatId int) *UnbanChatSenderChatCall {
+func (client *Client) UnbanChatSenderChat(chatID PeerID, senderChatID int) *UnbanChatSenderChatCall {
 	return callWithClient(
 		client,
-		NewUnbanChatSenderChatCall(chatId, senderChatId),
+		NewUnbanChatSenderChatCall(chatID, senderChatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *UnbanChatSenderChatCall) ChatID(chatId PeerID) *UnbanChatSenderChatCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *UnbanChatSenderChatCall) ChatID(chatID PeerID) *UnbanChatSenderChatCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // SenderChatID Unique identifier of the target sender chat
-func (call *UnbanChatSenderChatCall) SenderChatID(senderChatId int) *UnbanChatSenderChatCall {
-	call.request.Int("sender_chat_id", senderChatId)
+func (call *UnbanChatSenderChatCall) SenderChatID(senderChatID int) *UnbanChatSenderChatCall {
+	call.request.Int("sender_chat_id", senderChatID)
 	return call
 }
 
@@ -2501,29 +2501,29 @@ type SetChatPermissionsCall struct {
 }
 
 // NewSetChatPermissionsCall constructs a new SetChatPermissionsCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
 // permissions - A JSON-serialized object for new default chat permissions
-func NewSetChatPermissionsCall(chatId PeerID, permissions ChatPermissions) *SetChatPermissionsCall {
+func NewSetChatPermissionsCall(chatID PeerID, permissions ChatPermissions) *SetChatPermissionsCall {
 	return &SetChatPermissionsCall{
 		CallNoResult{
 			request: NewRequest("setChatPermissions").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				JSON("permissions", permissions),
 		},
 	}
 }
 
 // SetChatPermissionsCall constructs a new SetChatPermissionsCall with required parameters.
-func (client *Client) SetChatPermissions(chatId PeerID, permissions ChatPermissions) *SetChatPermissionsCall {
+func (client *Client) SetChatPermissions(chatID PeerID, permissions ChatPermissions) *SetChatPermissionsCall {
 	return callWithClient(
 		client,
-		NewSetChatPermissionsCall(chatId, permissions),
+		NewSetChatPermissionsCall(chatID, permissions),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-func (call *SetChatPermissionsCall) ChatID(chatId PeerID) *SetChatPermissionsCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SetChatPermissionsCall) ChatID(chatID PeerID) *SetChatPermissionsCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2542,27 +2542,27 @@ type ExportChatInviteLinkCall struct {
 }
 
 // NewExportChatInviteLinkCall constructs a new ExportChatInviteLinkCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func NewExportChatInviteLinkCall(chatId PeerID) *ExportChatInviteLinkCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func NewExportChatInviteLinkCall(chatID PeerID) *ExportChatInviteLinkCall {
 	return &ExportChatInviteLinkCall{
 		Call[string]{
 			request: NewRequest("exportChatInviteLink").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // ExportChatInviteLinkCall constructs a new ExportChatInviteLinkCall with required parameters.
-func (client *Client) ExportChatInviteLink(chatId PeerID) *ExportChatInviteLinkCall {
+func (client *Client) ExportChatInviteLink(chatID PeerID) *ExportChatInviteLinkCall {
 	return callWithClient(
 		client,
-		NewExportChatInviteLinkCall(chatId),
+		NewExportChatInviteLinkCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *ExportChatInviteLinkCall) ChatID(chatId PeerID) *ExportChatInviteLinkCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *ExportChatInviteLinkCall) ChatID(chatID PeerID) *ExportChatInviteLinkCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2576,27 +2576,27 @@ type CreateChatInviteLinkCall struct {
 }
 
 // NewCreateChatInviteLinkCall constructs a new CreateChatInviteLinkCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func NewCreateChatInviteLinkCall(chatId PeerID) *CreateChatInviteLinkCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func NewCreateChatInviteLinkCall(chatID PeerID) *CreateChatInviteLinkCall {
 	return &CreateChatInviteLinkCall{
 		Call[ChatInviteLink]{
 			request: NewRequest("createChatInviteLink").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // CreateChatInviteLinkCall constructs a new CreateChatInviteLinkCall with required parameters.
-func (client *Client) CreateChatInviteLink(chatId PeerID) *CreateChatInviteLinkCall {
+func (client *Client) CreateChatInviteLink(chatID PeerID) *CreateChatInviteLinkCall {
 	return callWithClient(
 		client,
-		NewCreateChatInviteLinkCall(chatId),
+		NewCreateChatInviteLinkCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *CreateChatInviteLinkCall) ChatID(chatId PeerID) *CreateChatInviteLinkCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *CreateChatInviteLinkCall) ChatID(chatID PeerID) *CreateChatInviteLinkCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2633,29 +2633,29 @@ type EditChatInviteLinkCall struct {
 }
 
 // NewEditChatInviteLinkCall constructs a new EditChatInviteLinkCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // inviteLink - The invite link to edit
-func NewEditChatInviteLinkCall(chatId PeerID, inviteLink string) *EditChatInviteLinkCall {
+func NewEditChatInviteLinkCall(chatID PeerID, inviteLink string) *EditChatInviteLinkCall {
 	return &EditChatInviteLinkCall{
 		Call[ChatInviteLink]{
 			request: NewRequest("editChatInviteLink").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				String("invite_link", inviteLink),
 		},
 	}
 }
 
 // EditChatInviteLinkCall constructs a new EditChatInviteLinkCall with required parameters.
-func (client *Client) EditChatInviteLink(chatId PeerID, inviteLink string) *EditChatInviteLinkCall {
+func (client *Client) EditChatInviteLink(chatID PeerID, inviteLink string) *EditChatInviteLinkCall {
 	return callWithClient(
 		client,
-		NewEditChatInviteLinkCall(chatId, inviteLink),
+		NewEditChatInviteLinkCall(chatID, inviteLink),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *EditChatInviteLinkCall) ChatID(chatId PeerID) *EditChatInviteLinkCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *EditChatInviteLinkCall) ChatID(chatID PeerID) *EditChatInviteLinkCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2699,29 +2699,29 @@ type RevokeChatInviteLinkCall struct {
 }
 
 // NewRevokeChatInviteLinkCall constructs a new RevokeChatInviteLinkCall with required parameters.
-// chatId - Unique identifier of the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier of the target chat or username of the target channel (in the format @channelusername)
 // inviteLink - The invite link to revoke
-func NewRevokeChatInviteLinkCall(chatId PeerID, inviteLink string) *RevokeChatInviteLinkCall {
+func NewRevokeChatInviteLinkCall(chatID PeerID, inviteLink string) *RevokeChatInviteLinkCall {
 	return &RevokeChatInviteLinkCall{
 		Call[ChatInviteLink]{
 			request: NewRequest("revokeChatInviteLink").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				String("invite_link", inviteLink),
 		},
 	}
 }
 
 // RevokeChatInviteLinkCall constructs a new RevokeChatInviteLinkCall with required parameters.
-func (client *Client) RevokeChatInviteLink(chatId PeerID, inviteLink string) *RevokeChatInviteLinkCall {
+func (client *Client) RevokeChatInviteLink(chatID PeerID, inviteLink string) *RevokeChatInviteLinkCall {
 	return callWithClient(
 		client,
-		NewRevokeChatInviteLinkCall(chatId, inviteLink),
+		NewRevokeChatInviteLinkCall(chatID, inviteLink),
 	)
 }
 
 // ChatID Unique identifier of the target chat or username of the target channel (in the format @channelusername)
-func (call *RevokeChatInviteLinkCall) ChatID(chatId PeerID) *RevokeChatInviteLinkCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *RevokeChatInviteLinkCall) ChatID(chatID PeerID) *RevokeChatInviteLinkCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2739,35 +2739,35 @@ type ApproveChatJoinRequestCall struct {
 }
 
 // NewApproveChatJoinRequestCall constructs a new ApproveChatJoinRequestCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// userId - Unique identifier of the target user
-func NewApproveChatJoinRequestCall(chatId PeerID, userId UserID) *ApproveChatJoinRequestCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// userID - Unique identifier of the target user
+func NewApproveChatJoinRequestCall(chatID PeerID, userID UserID) *ApproveChatJoinRequestCall {
 	return &ApproveChatJoinRequestCall{
 		CallNoResult{
 			request: NewRequest("approveChatJoinRequest").
-				PeerID("chat_id", chatId).
-				UserID("user_id", userId),
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // ApproveChatJoinRequestCall constructs a new ApproveChatJoinRequestCall with required parameters.
-func (client *Client) ApproveChatJoinRequest(chatId PeerID, userId UserID) *ApproveChatJoinRequestCall {
+func (client *Client) ApproveChatJoinRequest(chatID PeerID, userID UserID) *ApproveChatJoinRequestCall {
 	return callWithClient(
 		client,
-		NewApproveChatJoinRequestCall(chatId, userId),
+		NewApproveChatJoinRequestCall(chatID, userID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *ApproveChatJoinRequestCall) ChatID(chatId PeerID) *ApproveChatJoinRequestCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *ApproveChatJoinRequestCall) ChatID(chatID PeerID) *ApproveChatJoinRequestCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // UserID Unique identifier of the target user
-func (call *ApproveChatJoinRequestCall) UserID(userId UserID) *ApproveChatJoinRequestCall {
-	call.request.UserID("user_id", userId)
+func (call *ApproveChatJoinRequestCall) UserID(userID UserID) *ApproveChatJoinRequestCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -2779,35 +2779,35 @@ type DeclineChatJoinRequestCall struct {
 }
 
 // NewDeclineChatJoinRequestCall constructs a new DeclineChatJoinRequestCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// userId - Unique identifier of the target user
-func NewDeclineChatJoinRequestCall(chatId PeerID, userId UserID) *DeclineChatJoinRequestCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// userID - Unique identifier of the target user
+func NewDeclineChatJoinRequestCall(chatID PeerID, userID UserID) *DeclineChatJoinRequestCall {
 	return &DeclineChatJoinRequestCall{
 		CallNoResult{
 			request: NewRequest("declineChatJoinRequest").
-				PeerID("chat_id", chatId).
-				UserID("user_id", userId),
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // DeclineChatJoinRequestCall constructs a new DeclineChatJoinRequestCall with required parameters.
-func (client *Client) DeclineChatJoinRequest(chatId PeerID, userId UserID) *DeclineChatJoinRequestCall {
+func (client *Client) DeclineChatJoinRequest(chatID PeerID, userID UserID) *DeclineChatJoinRequestCall {
 	return callWithClient(
 		client,
-		NewDeclineChatJoinRequestCall(chatId, userId),
+		NewDeclineChatJoinRequestCall(chatID, userID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *DeclineChatJoinRequestCall) ChatID(chatId PeerID) *DeclineChatJoinRequestCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *DeclineChatJoinRequestCall) ChatID(chatID PeerID) *DeclineChatJoinRequestCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // UserID Unique identifier of the target user
-func (call *DeclineChatJoinRequestCall) UserID(userId UserID) *DeclineChatJoinRequestCall {
-	call.request.UserID("user_id", userId)
+func (call *DeclineChatJoinRequestCall) UserID(userID UserID) *DeclineChatJoinRequestCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -2820,29 +2820,29 @@ type SetChatPhotoCall struct {
 }
 
 // NewSetChatPhotoCall constructs a new SetChatPhotoCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // photo - New chat photo, uploaded using multipart/form-data
-func NewSetChatPhotoCall(chatId PeerID, photo InputFile) *SetChatPhotoCall {
+func NewSetChatPhotoCall(chatID PeerID, photo InputFile) *SetChatPhotoCall {
 	return &SetChatPhotoCall{
 		CallNoResult{
 			request: NewRequest("setChatPhoto").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				JSON("photo", photo),
 		},
 	}
 }
 
 // SetChatPhotoCall constructs a new SetChatPhotoCall with required parameters.
-func (client *Client) SetChatPhoto(chatId PeerID, photo InputFile) *SetChatPhotoCall {
+func (client *Client) SetChatPhoto(chatID PeerID, photo InputFile) *SetChatPhotoCall {
 	return callWithClient(
 		client,
-		NewSetChatPhotoCall(chatId, photo),
+		NewSetChatPhotoCall(chatID, photo),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SetChatPhotoCall) ChatID(chatId PeerID) *SetChatPhotoCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SetChatPhotoCall) ChatID(chatID PeerID) *SetChatPhotoCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2861,27 +2861,27 @@ type DeleteChatPhotoCall struct {
 }
 
 // NewDeleteChatPhotoCall constructs a new DeleteChatPhotoCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func NewDeleteChatPhotoCall(chatId PeerID) *DeleteChatPhotoCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func NewDeleteChatPhotoCall(chatID PeerID) *DeleteChatPhotoCall {
 	return &DeleteChatPhotoCall{
 		CallNoResult{
 			request: NewRequest("deleteChatPhoto").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // DeleteChatPhotoCall constructs a new DeleteChatPhotoCall with required parameters.
-func (client *Client) DeleteChatPhoto(chatId PeerID) *DeleteChatPhotoCall {
+func (client *Client) DeleteChatPhoto(chatID PeerID) *DeleteChatPhotoCall {
 	return callWithClient(
 		client,
-		NewDeleteChatPhotoCall(chatId),
+		NewDeleteChatPhotoCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *DeleteChatPhotoCall) ChatID(chatId PeerID) *DeleteChatPhotoCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *DeleteChatPhotoCall) ChatID(chatID PeerID) *DeleteChatPhotoCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2894,29 +2894,29 @@ type SetChatTitleCall struct {
 }
 
 // NewSetChatTitleCall constructs a new SetChatTitleCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // title - New chat title, 1-255 characters
-func NewSetChatTitleCall(chatId PeerID, title string) *SetChatTitleCall {
+func NewSetChatTitleCall(chatID PeerID, title string) *SetChatTitleCall {
 	return &SetChatTitleCall{
 		CallNoResult{
 			request: NewRequest("setChatTitle").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				String("title", title),
 		},
 	}
 }
 
 // SetChatTitleCall constructs a new SetChatTitleCall with required parameters.
-func (client *Client) SetChatTitle(chatId PeerID, title string) *SetChatTitleCall {
+func (client *Client) SetChatTitle(chatID PeerID, title string) *SetChatTitleCall {
 	return callWithClient(
 		client,
-		NewSetChatTitleCall(chatId, title),
+		NewSetChatTitleCall(chatID, title),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SetChatTitleCall) ChatID(chatId PeerID) *SetChatTitleCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SetChatTitleCall) ChatID(chatID PeerID) *SetChatTitleCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2934,27 +2934,27 @@ type SetChatDescriptionCall struct {
 }
 
 // NewSetChatDescriptionCall constructs a new SetChatDescriptionCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func NewSetChatDescriptionCall(chatId PeerID) *SetChatDescriptionCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func NewSetChatDescriptionCall(chatID PeerID) *SetChatDescriptionCall {
 	return &SetChatDescriptionCall{
 		CallNoResult{
 			request: NewRequest("setChatDescription").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // SetChatDescriptionCall constructs a new SetChatDescriptionCall with required parameters.
-func (client *Client) SetChatDescription(chatId PeerID) *SetChatDescriptionCall {
+func (client *Client) SetChatDescription(chatID PeerID) *SetChatDescriptionCall {
 	return callWithClient(
 		client,
-		NewSetChatDescriptionCall(chatId),
+		NewSetChatDescriptionCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SetChatDescriptionCall) ChatID(chatId PeerID) *SetChatDescriptionCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SetChatDescriptionCall) ChatID(chatID PeerID) *SetChatDescriptionCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -2972,35 +2972,35 @@ type PinChatMessageCall struct {
 }
 
 // NewPinChatMessageCall constructs a new PinChatMessageCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageId - Identifier of a message to pin
-func NewPinChatMessageCall(chatId PeerID, messageId int) *PinChatMessageCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Identifier of a message to pin
+func NewPinChatMessageCall(chatID PeerID, messageID int) *PinChatMessageCall {
 	return &PinChatMessageCall{
 		CallNoResult{
 			request: NewRequest("pinChatMessage").
-				PeerID("chat_id", chatId).
-				Int("message_id", messageId),
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
 		},
 	}
 }
 
 // PinChatMessageCall constructs a new PinChatMessageCall with required parameters.
-func (client *Client) PinChatMessage(chatId PeerID, messageId int) *PinChatMessageCall {
+func (client *Client) PinChatMessage(chatID PeerID, messageID int) *PinChatMessageCall {
 	return callWithClient(
 		client,
-		NewPinChatMessageCall(chatId, messageId),
+		NewPinChatMessageCall(chatID, messageID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *PinChatMessageCall) ChatID(chatId PeerID) *PinChatMessageCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *PinChatMessageCall) ChatID(chatID PeerID) *PinChatMessageCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Identifier of a message to pin
-func (call *PinChatMessageCall) MessageID(messageId int) *PinChatMessageCall {
-	call.request.Int("message_id", messageId)
+func (call *PinChatMessageCall) MessageID(messageID int) *PinChatMessageCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
@@ -3018,33 +3018,33 @@ type UnpinChatMessageCall struct {
 }
 
 // NewUnpinChatMessageCall constructs a new UnpinChatMessageCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func NewUnpinChatMessageCall(chatId PeerID) *UnpinChatMessageCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func NewUnpinChatMessageCall(chatID PeerID) *UnpinChatMessageCall {
 	return &UnpinChatMessageCall{
 		CallNoResult{
 			request: NewRequest("unpinChatMessage").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // UnpinChatMessageCall constructs a new UnpinChatMessageCall with required parameters.
-func (client *Client) UnpinChatMessage(chatId PeerID) *UnpinChatMessageCall {
+func (client *Client) UnpinChatMessage(chatID PeerID) *UnpinChatMessageCall {
 	return callWithClient(
 		client,
-		NewUnpinChatMessageCall(chatId),
+		NewUnpinChatMessageCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *UnpinChatMessageCall) ChatID(chatId PeerID) *UnpinChatMessageCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *UnpinChatMessageCall) ChatID(chatID PeerID) *UnpinChatMessageCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Identifier of a message to unpin. If not specified, the most recent pinned message (by sending date) will be unpinned.
-func (call *UnpinChatMessageCall) MessageID(messageId int) *UnpinChatMessageCall {
-	call.request.Int("message_id", messageId)
+func (call *UnpinChatMessageCall) MessageID(messageID int) *UnpinChatMessageCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
@@ -3056,27 +3056,27 @@ type UnpinAllChatMessagesCall struct {
 }
 
 // NewUnpinAllChatMessagesCall constructs a new UnpinAllChatMessagesCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func NewUnpinAllChatMessagesCall(chatId PeerID) *UnpinAllChatMessagesCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func NewUnpinAllChatMessagesCall(chatID PeerID) *UnpinAllChatMessagesCall {
 	return &UnpinAllChatMessagesCall{
 		CallNoResult{
 			request: NewRequest("unpinAllChatMessages").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // UnpinAllChatMessagesCall constructs a new UnpinAllChatMessagesCall with required parameters.
-func (client *Client) UnpinAllChatMessages(chatId PeerID) *UnpinAllChatMessagesCall {
+func (client *Client) UnpinAllChatMessages(chatID PeerID) *UnpinAllChatMessagesCall {
 	return callWithClient(
 		client,
-		NewUnpinAllChatMessagesCall(chatId),
+		NewUnpinAllChatMessagesCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *UnpinAllChatMessagesCall) ChatID(chatId PeerID) *UnpinAllChatMessagesCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *UnpinAllChatMessagesCall) ChatID(chatID PeerID) *UnpinAllChatMessagesCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -3087,27 +3087,27 @@ type LeaveChatCall struct {
 }
 
 // NewLeaveChatCall constructs a new LeaveChatCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func NewLeaveChatCall(chatId PeerID) *LeaveChatCall {
+// chatID - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+func NewLeaveChatCall(chatID PeerID) *LeaveChatCall {
 	return &LeaveChatCall{
 		CallNoResult{
 			request: NewRequest("leaveChat").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // LeaveChatCall constructs a new LeaveChatCall with required parameters.
-func (client *Client) LeaveChat(chatId PeerID) *LeaveChatCall {
+func (client *Client) LeaveChat(chatID PeerID) *LeaveChatCall {
 	return callWithClient(
 		client,
-		NewLeaveChatCall(chatId),
+		NewLeaveChatCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func (call *LeaveChatCall) ChatID(chatId PeerID) *LeaveChatCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *LeaveChatCall) ChatID(chatID PeerID) *LeaveChatCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -3119,27 +3119,27 @@ type GetChatCall struct {
 }
 
 // NewGetChatCall constructs a new GetChatCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func NewGetChatCall(chatId PeerID) *GetChatCall {
+// chatID - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+func NewGetChatCall(chatID PeerID) *GetChatCall {
 	return &GetChatCall{
 		Call[Chat]{
 			request: NewRequest("getChat").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // GetChatCall constructs a new GetChatCall with required parameters.
-func (client *Client) GetChat(chatId PeerID) *GetChatCall {
+func (client *Client) GetChat(chatID PeerID) *GetChatCall {
 	return callWithClient(
 		client,
-		NewGetChatCall(chatId),
+		NewGetChatCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func (call *GetChatCall) ChatID(chatId PeerID) *GetChatCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *GetChatCall) ChatID(chatID PeerID) *GetChatCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -3152,27 +3152,27 @@ type GetChatAdministratorsCall struct {
 }
 
 // NewGetChatAdministratorsCall constructs a new GetChatAdministratorsCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func NewGetChatAdministratorsCall(chatId PeerID) *GetChatAdministratorsCall {
+// chatID - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+func NewGetChatAdministratorsCall(chatID PeerID) *GetChatAdministratorsCall {
 	return &GetChatAdministratorsCall{
 		Call[[]ChatMember]{
 			request: NewRequest("getChatAdministrators").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // GetChatAdministratorsCall constructs a new GetChatAdministratorsCall with required parameters.
-func (client *Client) GetChatAdministrators(chatId PeerID) *GetChatAdministratorsCall {
+func (client *Client) GetChatAdministrators(chatID PeerID) *GetChatAdministratorsCall {
 	return callWithClient(
 		client,
-		NewGetChatAdministratorsCall(chatId),
+		NewGetChatAdministratorsCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func (call *GetChatAdministratorsCall) ChatID(chatId PeerID) *GetChatAdministratorsCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *GetChatAdministratorsCall) ChatID(chatID PeerID) *GetChatAdministratorsCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -3184,27 +3184,27 @@ type GetChatMemberCountCall struct {
 }
 
 // NewGetChatMemberCountCall constructs a new GetChatMemberCountCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func NewGetChatMemberCountCall(chatId PeerID) *GetChatMemberCountCall {
+// chatID - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+func NewGetChatMemberCountCall(chatID PeerID) *GetChatMemberCountCall {
 	return &GetChatMemberCountCall{
 		Call[int]{
 			request: NewRequest("getChatMemberCount").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // GetChatMemberCountCall constructs a new GetChatMemberCountCall with required parameters.
-func (client *Client) GetChatMemberCount(chatId PeerID) *GetChatMemberCountCall {
+func (client *Client) GetChatMemberCount(chatID PeerID) *GetChatMemberCountCall {
 	return callWithClient(
 		client,
-		NewGetChatMemberCountCall(chatId),
+		NewGetChatMemberCountCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func (call *GetChatMemberCountCall) ChatID(chatId PeerID) *GetChatMemberCountCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *GetChatMemberCountCall) ChatID(chatID PeerID) *GetChatMemberCountCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -3216,35 +3216,35 @@ type GetChatMemberCall struct {
 }
 
 // NewGetChatMemberCall constructs a new GetChatMemberCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-// userId - Unique identifier of the target user
-func NewGetChatMemberCall(chatId PeerID, userId UserID) *GetChatMemberCall {
+// chatID - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+// userID - Unique identifier of the target user
+func NewGetChatMemberCall(chatID PeerID, userID UserID) *GetChatMemberCall {
 	return &GetChatMemberCall{
 		Call[ChatMember]{
 			request: NewRequest("getChatMember").
-				PeerID("chat_id", chatId).
-				UserID("user_id", userId),
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // GetChatMemberCall constructs a new GetChatMemberCall with required parameters.
-func (client *Client) GetChatMember(chatId PeerID, userId UserID) *GetChatMemberCall {
+func (client *Client) GetChatMember(chatID PeerID, userID UserID) *GetChatMemberCall {
 	return callWithClient(
 		client,
-		NewGetChatMemberCall(chatId, userId),
+		NewGetChatMemberCall(chatID, userID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
-func (call *GetChatMemberCall) ChatID(chatId PeerID) *GetChatMemberCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *GetChatMemberCall) ChatID(chatID PeerID) *GetChatMemberCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // UserID Unique identifier of the target user
-func (call *GetChatMemberCall) UserID(userId UserID) *GetChatMemberCall {
-	call.request.UserID("user_id", userId)
+func (call *GetChatMemberCall) UserID(userID UserID) *GetChatMemberCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -3257,29 +3257,29 @@ type SetChatStickerSetCall struct {
 }
 
 // NewSetChatStickerSetCall constructs a new SetChatStickerSetCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
 // stickerSetName - Name of the sticker set to be set as the group sticker set
-func NewSetChatStickerSetCall(chatId PeerID, stickerSetName string) *SetChatStickerSetCall {
+func NewSetChatStickerSetCall(chatID PeerID, stickerSetName string) *SetChatStickerSetCall {
 	return &SetChatStickerSetCall{
 		CallNoResult{
 			request: NewRequest("setChatStickerSet").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				String("sticker_set_name", stickerSetName),
 		},
 	}
 }
 
 // SetChatStickerSetCall constructs a new SetChatStickerSetCall with required parameters.
-func (client *Client) SetChatStickerSet(chatId PeerID, stickerSetName string) *SetChatStickerSetCall {
+func (client *Client) SetChatStickerSet(chatID PeerID, stickerSetName string) *SetChatStickerSetCall {
 	return callWithClient(
 		client,
-		NewSetChatStickerSetCall(chatId, stickerSetName),
+		NewSetChatStickerSetCall(chatID, stickerSetName),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-func (call *SetChatStickerSetCall) ChatID(chatId PeerID) *SetChatStickerSetCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SetChatStickerSetCall) ChatID(chatID PeerID) *SetChatStickerSetCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -3298,27 +3298,27 @@ type DeleteChatStickerSetCall struct {
 }
 
 // NewDeleteChatStickerSetCall constructs a new DeleteChatStickerSetCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-func NewDeleteChatStickerSetCall(chatId PeerID) *DeleteChatStickerSetCall {
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func NewDeleteChatStickerSetCall(chatID PeerID) *DeleteChatStickerSetCall {
 	return &DeleteChatStickerSetCall{
 		CallNoResult{
 			request: NewRequest("deleteChatStickerSet").
-				PeerID("chat_id", chatId),
+				PeerID("chat_id", chatID),
 		},
 	}
 }
 
 // DeleteChatStickerSetCall constructs a new DeleteChatStickerSetCall with required parameters.
-func (client *Client) DeleteChatStickerSet(chatId PeerID) *DeleteChatStickerSetCall {
+func (client *Client) DeleteChatStickerSet(chatID PeerID) *DeleteChatStickerSetCall {
 	return callWithClient(
 		client,
-		NewDeleteChatStickerSetCall(chatId),
+		NewDeleteChatStickerSetCall(chatID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
-func (call *DeleteChatStickerSetCall) ChatID(chatId PeerID) *DeleteChatStickerSetCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *DeleteChatStickerSetCall) ChatID(chatID PeerID) *DeleteChatStickerSetCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -3334,27 +3334,27 @@ type AnswerCallbackQueryCall struct {
 }
 
 // NewAnswerCallbackQueryCall constructs a new AnswerCallbackQueryCall with required parameters.
-// callbackQueryId - Unique identifier for the query to be answered
-func NewAnswerCallbackQueryCall(callbackQueryId string) *AnswerCallbackQueryCall {
+// callbackQueryID - Unique identifier for the query to be answered
+func NewAnswerCallbackQueryCall(callbackQueryID string) *AnswerCallbackQueryCall {
 	return &AnswerCallbackQueryCall{
 		CallNoResult{
 			request: NewRequest("answerCallbackQuery").
-				String("callback_query_id", callbackQueryId),
+				String("callback_query_id", callbackQueryID),
 		},
 	}
 }
 
 // AnswerCallbackQueryCall constructs a new AnswerCallbackQueryCall with required parameters.
-func (client *Client) AnswerCallbackQuery(callbackQueryId string) *AnswerCallbackQueryCall {
+func (client *Client) AnswerCallbackQuery(callbackQueryID string) *AnswerCallbackQueryCall {
 	return callWithClient(
 		client,
-		NewAnswerCallbackQueryCall(callbackQueryId),
+		NewAnswerCallbackQueryCall(callbackQueryID),
 	)
 }
 
 // CallbackQueryID Unique identifier for the query to be answered
-func (call *AnswerCallbackQueryCall) CallbackQueryID(callbackQueryId string) *AnswerCallbackQueryCall {
-	call.request.String("callback_query_id", callbackQueryId)
+func (call *AnswerCallbackQueryCall) CallbackQueryID(callbackQueryID string) *AnswerCallbackQueryCall {
+	call.request.String("callback_query_id", callbackQueryID)
 	return call
 }
 
@@ -3523,8 +3523,8 @@ func (client *Client) SetChatMenuButton() *SetChatMenuButtonCall {
 }
 
 // ChatID Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
-func (call *SetChatMenuButtonCall) ChatID(chatId ChatID) *SetChatMenuButtonCall {
-	call.request.ChatID("chat_id", chatId)
+func (call *SetChatMenuButtonCall) ChatID(chatID ChatID) *SetChatMenuButtonCall {
+	call.request.ChatID("chat_id", chatID)
 	return call
 }
 
@@ -3559,8 +3559,8 @@ func (client *Client) GetChatMenuButton() *GetChatMenuButtonCall {
 }
 
 // ChatID Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
-func (call *GetChatMenuButtonCall) ChatID(chatId ChatID) *GetChatMenuButtonCall {
-	call.request.ChatID("chat_id", chatId)
+func (call *GetChatMenuButtonCall) ChatID(chatID ChatID) *GetChatMenuButtonCall {
+	call.request.ChatID("chat_id", chatID)
 	return call
 }
 
@@ -3638,64 +3638,64 @@ type EditMessageTextCall struct {
 }
 
 // NewEditMessageTextCall constructs a new EditMessageTextCall with required parameters.
-// chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageId - Required if inline_message_id is not specified. Identifier of the message to edit
+// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Required if inline_message_id is not specified. Identifier of the message to edit
 // text - New text of the message, 1-4096 characters after entities parsing
-func NewEditMessageTextCall(chatId PeerID, messageId int, text string) *EditMessageTextCall {
+func NewEditMessageTextCall(chatID PeerID, messageID int, text string) *EditMessageTextCall {
 	return &EditMessageTextCall{
 		Call[Message]{
 			request: NewRequest("editMessageText").
-				PeerID("chat_id", chatId).
-				Int("message_id", messageId).
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID).
 				String("text", text),
 		},
 	}
 }
 
 // NewEditMessageTextCall constructs a new EditMessageTextCall with required parameters.
-// inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
+// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
 // text - New text of the message, 1-4096 characters after entities parsing
-func NewEditMessageTextInlineCall(inlineMessageId string, text string) *EditMessageTextCall {
+func NewEditMessageTextInlineCall(inlineMessageID string, text string) *EditMessageTextCall {
 	return &EditMessageTextCall{
 		Call[Message]{
 			request: NewRequest("editMessageText").
-				String("inline_message_id", inlineMessageId).
+				String("inline_message_id", inlineMessageID).
 				String("text", text),
 		},
 	}
 }
 
 // EditMessageTextCall constructs a new EditMessageTextCall with required parameters.
-func (client *Client) EditMessageText(chatId PeerID, messageId int, text string) *EditMessageTextCall {
+func (client *Client) EditMessageText(chatID PeerID, messageID int, text string) *EditMessageTextCall {
 	return callWithClient(
 		client,
-		NewEditMessageTextCall(chatId, messageId, text),
+		NewEditMessageTextCall(chatID, messageID, text),
 	)
 }
 
 // EditMessageTextCall constructs a new EditMessageTextCall with required parameters.
-func (client *Client) EditMessageTextInline(inlineMessageId string, text string) *EditMessageTextCall {
+func (client *Client) EditMessageTextInline(inlineMessageID string, text string) *EditMessageTextCall {
 	return callWithClient(
 		client,
-		NewEditMessageTextInlineCall(inlineMessageId, text),
+		NewEditMessageTextInlineCall(inlineMessageID, text),
 	)
 }
 
 // ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *EditMessageTextCall) ChatID(chatId PeerID) *EditMessageTextCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *EditMessageTextCall) ChatID(chatID PeerID) *EditMessageTextCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Required if inline_message_id is not specified. Identifier of the message to edit
-func (call *EditMessageTextCall) MessageID(messageId int) *EditMessageTextCall {
-	call.request.Int("message_id", messageId)
+func (call *EditMessageTextCall) MessageID(messageID int) *EditMessageTextCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
 // InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *EditMessageTextCall) InlineMessageID(inlineMessageId string) *EditMessageTextCall {
-	call.request.String("inline_message_id", inlineMessageId)
+func (call *EditMessageTextCall) InlineMessageID(inlineMessageID string) *EditMessageTextCall {
+	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
 
@@ -3737,64 +3737,64 @@ type EditMessageCaptionCall struct {
 }
 
 // NewEditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
-// chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageId - Required if inline_message_id is not specified. Identifier of the message to edit
+// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Required if inline_message_id is not specified. Identifier of the message to edit
 // caption - New caption of the message, 0-1024 characters after entities parsing
-func NewEditMessageCaptionCall(chatId PeerID, messageId int, caption string) *EditMessageCaptionCall {
+func NewEditMessageCaptionCall(chatID PeerID, messageID int, caption string) *EditMessageCaptionCall {
 	return &EditMessageCaptionCall{
 		Call[Message]{
 			request: NewRequest("editMessageCaption").
-				PeerID("chat_id", chatId).
-				Int("message_id", messageId).
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID).
 				String("caption", caption),
 		},
 	}
 }
 
 // NewEditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
-// inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
+// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
 // caption - New caption of the message, 0-1024 characters after entities parsing
-func NewEditMessageCaptionInlineCall(inlineMessageId string, caption string) *EditMessageCaptionCall {
+func NewEditMessageCaptionInlineCall(inlineMessageID string, caption string) *EditMessageCaptionCall {
 	return &EditMessageCaptionCall{
 		Call[Message]{
 			request: NewRequest("editMessageCaption").
-				String("inline_message_id", inlineMessageId).
+				String("inline_message_id", inlineMessageID).
 				String("caption", caption),
 		},
 	}
 }
 
 // EditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
-func (client *Client) EditMessageCaption(chatId PeerID, messageId int, caption string) *EditMessageCaptionCall {
+func (client *Client) EditMessageCaption(chatID PeerID, messageID int, caption string) *EditMessageCaptionCall {
 	return callWithClient(
 		client,
-		NewEditMessageCaptionCall(chatId, messageId, caption),
+		NewEditMessageCaptionCall(chatID, messageID, caption),
 	)
 }
 
 // EditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
-func (client *Client) EditMessageCaptionInline(inlineMessageId string, caption string) *EditMessageCaptionCall {
+func (client *Client) EditMessageCaptionInline(inlineMessageID string, caption string) *EditMessageCaptionCall {
 	return callWithClient(
 		client,
-		NewEditMessageCaptionInlineCall(inlineMessageId, caption),
+		NewEditMessageCaptionInlineCall(inlineMessageID, caption),
 	)
 }
 
 // ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *EditMessageCaptionCall) ChatID(chatId PeerID) *EditMessageCaptionCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *EditMessageCaptionCall) ChatID(chatID PeerID) *EditMessageCaptionCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Required if inline_message_id is not specified. Identifier of the message to edit
-func (call *EditMessageCaptionCall) MessageID(messageId int) *EditMessageCaptionCall {
-	call.request.Int("message_id", messageId)
+func (call *EditMessageCaptionCall) MessageID(messageID int) *EditMessageCaptionCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
 // InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *EditMessageCaptionCall) InlineMessageID(inlineMessageId string) *EditMessageCaptionCall {
-	call.request.String("inline_message_id", inlineMessageId)
+func (call *EditMessageCaptionCall) InlineMessageID(inlineMessageID string) *EditMessageCaptionCall {
+	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
 
@@ -3851,20 +3851,20 @@ func (client *Client) EditMessageMedia(media InputMedia) *EditMessageMediaCall {
 }
 
 // ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *EditMessageMediaCall) ChatID(chatId PeerID) *EditMessageMediaCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *EditMessageMediaCall) ChatID(chatID PeerID) *EditMessageMediaCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Required if inline_message_id is not specified. Identifier of the message to edit
-func (call *EditMessageMediaCall) MessageID(messageId int) *EditMessageMediaCall {
-	call.request.Int("message_id", messageId)
+func (call *EditMessageMediaCall) MessageID(messageID int) *EditMessageMediaCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
 // InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *EditMessageMediaCall) InlineMessageID(inlineMessageId string) *EditMessageMediaCall {
-	call.request.String("inline_message_id", inlineMessageId)
+func (call *EditMessageMediaCall) InlineMessageID(inlineMessageID string) *EditMessageMediaCall {
+	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
 
@@ -3888,60 +3888,60 @@ type EditMessageReplyMarkupCall struct {
 }
 
 // NewEditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
-// chatId - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageId - Required if inline_message_id is not specified. Identifier of the message to edit
-func NewEditMessageReplyMarkupCall(chatId PeerID, messageId int) *EditMessageReplyMarkupCall {
+// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Required if inline_message_id is not specified. Identifier of the message to edit
+func NewEditMessageReplyMarkupCall(chatID PeerID, messageID int) *EditMessageReplyMarkupCall {
 	return &EditMessageReplyMarkupCall{
 		Call[Message]{
 			request: NewRequest("editMessageReplyMarkup").
-				PeerID("chat_id", chatId).
-				Int("message_id", messageId),
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
 		},
 	}
 }
 
 // NewEditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
-// inlineMessageId - Required if chat_id and message_id are not specified. Identifier of the inline message
-func NewEditMessageReplyMarkupInlineCall(inlineMessageId string) *EditMessageReplyMarkupCall {
+// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
+func NewEditMessageReplyMarkupInlineCall(inlineMessageID string) *EditMessageReplyMarkupCall {
 	return &EditMessageReplyMarkupCall{
 		Call[Message]{
 			request: NewRequest("editMessageReplyMarkup").
-				String("inline_message_id", inlineMessageId),
+				String("inline_message_id", inlineMessageID),
 		},
 	}
 }
 
 // EditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
-func (client *Client) EditMessageReplyMarkup(chatId PeerID, messageId int) *EditMessageReplyMarkupCall {
+func (client *Client) EditMessageReplyMarkup(chatID PeerID, messageID int) *EditMessageReplyMarkupCall {
 	return callWithClient(
 		client,
-		NewEditMessageReplyMarkupCall(chatId, messageId),
+		NewEditMessageReplyMarkupCall(chatID, messageID),
 	)
 }
 
 // EditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
-func (client *Client) EditMessageReplyMarkupInline(inlineMessageId string) *EditMessageReplyMarkupCall {
+func (client *Client) EditMessageReplyMarkupInline(inlineMessageID string) *EditMessageReplyMarkupCall {
 	return callWithClient(
 		client,
-		NewEditMessageReplyMarkupInlineCall(inlineMessageId),
+		NewEditMessageReplyMarkupInlineCall(inlineMessageID),
 	)
 }
 
 // ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *EditMessageReplyMarkupCall) ChatID(chatId PeerID) *EditMessageReplyMarkupCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *EditMessageReplyMarkupCall) ChatID(chatID PeerID) *EditMessageReplyMarkupCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Required if inline_message_id is not specified. Identifier of the message to edit
-func (call *EditMessageReplyMarkupCall) MessageID(messageId int) *EditMessageReplyMarkupCall {
-	call.request.Int("message_id", messageId)
+func (call *EditMessageReplyMarkupCall) MessageID(messageID int) *EditMessageReplyMarkupCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
 // InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *EditMessageReplyMarkupCall) InlineMessageID(inlineMessageId string) *EditMessageReplyMarkupCall {
-	call.request.String("inline_message_id", inlineMessageId)
+func (call *EditMessageReplyMarkupCall) InlineMessageID(inlineMessageID string) *EditMessageReplyMarkupCall {
+	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
 
@@ -3959,35 +3959,35 @@ type StopPollCall struct {
 }
 
 // NewStopPollCall constructs a new StopPollCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageId - Identifier of the original message with the poll
-func NewStopPollCall(chatId PeerID, messageId int) *StopPollCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Identifier of the original message with the poll
+func NewStopPollCall(chatID PeerID, messageID int) *StopPollCall {
 	return &StopPollCall{
 		Call[Poll]{
 			request: NewRequest("stopPoll").
-				PeerID("chat_id", chatId).
-				Int("message_id", messageId),
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
 		},
 	}
 }
 
 // StopPollCall constructs a new StopPollCall with required parameters.
-func (client *Client) StopPoll(chatId PeerID, messageId int) *StopPollCall {
+func (client *Client) StopPoll(chatID PeerID, messageID int) *StopPollCall {
 	return callWithClient(
 		client,
-		NewStopPollCall(chatId, messageId),
+		NewStopPollCall(chatID, messageID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *StopPollCall) ChatID(chatId PeerID) *StopPollCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *StopPollCall) ChatID(chatID PeerID) *StopPollCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Identifier of the original message with the poll
-func (call *StopPollCall) MessageID(messageId int) *StopPollCall {
-	call.request.Int("message_id", messageId)
+func (call *StopPollCall) MessageID(messageID int) *StopPollCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
@@ -4003,35 +4003,35 @@ type DeleteMessageCall struct {
 }
 
 // NewDeleteMessageCall constructs a new DeleteMessageCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageId - Identifier of the message to delete
-func NewDeleteMessageCall(chatId PeerID, messageId int) *DeleteMessageCall {
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Identifier of the message to delete
+func NewDeleteMessageCall(chatID PeerID, messageID int) *DeleteMessageCall {
 	return &DeleteMessageCall{
 		CallNoResult{
 			request: NewRequest("deleteMessage").
-				PeerID("chat_id", chatId).
-				Int("message_id", messageId),
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
 		},
 	}
 }
 
 // DeleteMessageCall constructs a new DeleteMessageCall with required parameters.
-func (client *Client) DeleteMessage(chatId PeerID, messageId int) *DeleteMessageCall {
+func (client *Client) DeleteMessage(chatID PeerID, messageID int) *DeleteMessageCall {
 	return callWithClient(
 		client,
-		NewDeleteMessageCall(chatId, messageId),
+		NewDeleteMessageCall(chatID, messageID),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *DeleteMessageCall) ChatID(chatId PeerID) *DeleteMessageCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *DeleteMessageCall) ChatID(chatID PeerID) *DeleteMessageCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
 // MessageID Identifier of the message to delete
-func (call *DeleteMessageCall) MessageID(messageId int) *DeleteMessageCall {
-	call.request.Int("message_id", messageId)
+func (call *DeleteMessageCall) MessageID(messageID int) *DeleteMessageCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
@@ -4043,29 +4043,29 @@ type SendStickerCall struct {
 }
 
 // NewSendStickerCall constructs a new SendStickerCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // sticker - Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func NewSendStickerCall(chatId PeerID, sticker FileArg) *SendStickerCall {
+func NewSendStickerCall(chatID PeerID, sticker FileArg) *SendStickerCall {
 	return &SendStickerCall{
 		Call[Message]{
 			request: NewRequest("sendSticker").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				File("sticker", sticker),
 		},
 	}
 }
 
 // SendStickerCall constructs a new SendStickerCall with required parameters.
-func (client *Client) SendSticker(chatId PeerID, sticker FileArg) *SendStickerCall {
+func (client *Client) SendSticker(chatID PeerID, sticker FileArg) *SendStickerCall {
 	return callWithClient(
 		client,
-		NewSendStickerCall(chatId, sticker),
+		NewSendStickerCall(chatID, sticker),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendStickerCall) ChatID(chatId PeerID) *SendStickerCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendStickerCall) ChatID(chatID PeerID) *SendStickerCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -4088,8 +4088,8 @@ func (call *SendStickerCall) ProtectContent(protectContent bool) *SendStickerCal
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendStickerCall) ReplyToMessageID(replyToMessageId int) *SendStickerCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendStickerCall) ReplyToMessageID(replyToMessageID int) *SendStickerCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -4145,29 +4145,29 @@ type UploadStickerFileCall struct {
 }
 
 // NewUploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
-// userId - User identifier of sticker file owner
+// userID - User identifier of sticker file owner
 // pngSticker - PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More information on Sending Files »
-func NewUploadStickerFileCall(userId UserID, pngSticker InputFile) *UploadStickerFileCall {
+func NewUploadStickerFileCall(userID UserID, pngSticker InputFile) *UploadStickerFileCall {
 	return &UploadStickerFileCall{
 		Call[File]{
 			request: NewRequest("uploadStickerFile").
-				UserID("user_id", userId).
+				UserID("user_id", userID).
 				JSON("png_sticker", pngSticker),
 		},
 	}
 }
 
 // UploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
-func (client *Client) UploadStickerFile(userId UserID, pngSticker InputFile) *UploadStickerFileCall {
+func (client *Client) UploadStickerFile(userID UserID, pngSticker InputFile) *UploadStickerFileCall {
 	return callWithClient(
 		client,
-		NewUploadStickerFileCall(userId, pngSticker),
+		NewUploadStickerFileCall(userID, pngSticker),
 	)
 }
 
 // UserID User identifier of sticker file owner
-func (call *UploadStickerFileCall) UserID(userId UserID) *UploadStickerFileCall {
-	call.request.UserID("user_id", userId)
+func (call *UploadStickerFileCall) UserID(userID UserID) *UploadStickerFileCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -4186,15 +4186,15 @@ type CreateNewStickerSetCall struct {
 }
 
 // NewCreateNewStickerSetCall constructs a new CreateNewStickerSetCall with required parameters.
-// userId - User identifier of created sticker set owner
+// userID - User identifier of created sticker set owner
 // name - Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
 // title - Sticker set title, 1-64 characters
 // emojis - One or more emoji corresponding to the sticker
-func NewCreateNewStickerSetCall(userId UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
+func NewCreateNewStickerSetCall(userID UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
 	return &CreateNewStickerSetCall{
 		CallNoResult{
 			request: NewRequest("createNewStickerSet").
-				UserID("user_id", userId).
+				UserID("user_id", userID).
 				String("name", name).
 				String("title", title).
 				String("emojis", emojis),
@@ -4203,16 +4203,16 @@ func NewCreateNewStickerSetCall(userId UserID, name string, title string, emojis
 }
 
 // CreateNewStickerSetCall constructs a new CreateNewStickerSetCall with required parameters.
-func (client *Client) CreateNewStickerSet(userId UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
+func (client *Client) CreateNewStickerSet(userID UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
 	return callWithClient(
 		client,
-		NewCreateNewStickerSetCall(userId, name, title, emojis),
+		NewCreateNewStickerSetCall(userID, name, title, emojis),
 	)
 }
 
 // UserID User identifier of created sticker set owner
-func (call *CreateNewStickerSetCall) UserID(userId UserID) *CreateNewStickerSetCall {
-	call.request.UserID("user_id", userId)
+func (call *CreateNewStickerSetCall) UserID(userID UserID) *CreateNewStickerSetCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -4275,14 +4275,14 @@ type AddStickerToSetCall struct {
 }
 
 // NewAddStickerToSetCall constructs a new AddStickerToSetCall with required parameters.
-// userId - User identifier of sticker set owner
+// userID - User identifier of sticker set owner
 // name - Sticker set name
 // emojis - One or more emoji corresponding to the sticker
-func NewAddStickerToSetCall(userId UserID, name string, emojis string) *AddStickerToSetCall {
+func NewAddStickerToSetCall(userID UserID, name string, emojis string) *AddStickerToSetCall {
 	return &AddStickerToSetCall{
 		CallNoResult{
 			request: NewRequest("addStickerToSet").
-				UserID("user_id", userId).
+				UserID("user_id", userID).
 				String("name", name).
 				String("emojis", emojis),
 		},
@@ -4290,16 +4290,16 @@ func NewAddStickerToSetCall(userId UserID, name string, emojis string) *AddStick
 }
 
 // AddStickerToSetCall constructs a new AddStickerToSetCall with required parameters.
-func (client *Client) AddStickerToSet(userId UserID, name string, emojis string) *AddStickerToSetCall {
+func (client *Client) AddStickerToSet(userID UserID, name string, emojis string) *AddStickerToSetCall {
 	return callWithClient(
 		client,
-		NewAddStickerToSetCall(userId, name, emojis),
+		NewAddStickerToSetCall(userID, name, emojis),
 	)
 }
 
 // UserID User identifier of sticker set owner
-func (call *AddStickerToSetCall) UserID(userId UserID) *AddStickerToSetCall {
-	call.request.UserID("user_id", userId)
+func (call *AddStickerToSetCall) UserID(userID UserID) *AddStickerToSetCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -4419,22 +4419,22 @@ type SetStickerSetThumbCall struct {
 
 // NewSetStickerSetThumbCall constructs a new SetStickerSetThumbCall with required parameters.
 // name - Sticker set name
-// userId - User identifier of the sticker set owner
-func NewSetStickerSetThumbCall(name string, userId UserID) *SetStickerSetThumbCall {
+// userID - User identifier of the sticker set owner
+func NewSetStickerSetThumbCall(name string, userID UserID) *SetStickerSetThumbCall {
 	return &SetStickerSetThumbCall{
 		CallNoResult{
 			request: NewRequest("setStickerSetThumb").
 				String("name", name).
-				UserID("user_id", userId),
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // SetStickerSetThumbCall constructs a new SetStickerSetThumbCall with required parameters.
-func (client *Client) SetStickerSetThumb(name string, userId UserID) *SetStickerSetThumbCall {
+func (client *Client) SetStickerSetThumb(name string, userID UserID) *SetStickerSetThumbCall {
 	return callWithClient(
 		client,
-		NewSetStickerSetThumbCall(name, userId),
+		NewSetStickerSetThumbCall(name, userID),
 	)
 }
 
@@ -4445,8 +4445,8 @@ func (call *SetStickerSetThumbCall) Name(name string) *SetStickerSetThumbCall {
 }
 
 // UserID User identifier of the sticker set owner
-func (call *SetStickerSetThumbCall) UserID(userId UserID) *SetStickerSetThumbCall {
-	call.request.UserID("user_id", userId)
+func (call *SetStickerSetThumbCall) UserID(userID UserID) *SetStickerSetThumbCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -4464,29 +4464,29 @@ type AnswerInlineQueryCall struct {
 }
 
 // NewAnswerInlineQueryCall constructs a new AnswerInlineQueryCall with required parameters.
-// inlineQueryId - Unique identifier for the answered query
+// inlineQueryID - Unique identifier for the answered query
 // results - A JSON-serialized array of results for the inline query
-func NewAnswerInlineQueryCall(inlineQueryId string, results []InlineQueryResult) *AnswerInlineQueryCall {
+func NewAnswerInlineQueryCall(inlineQueryID string, results []InlineQueryResult) *AnswerInlineQueryCall {
 	return &AnswerInlineQueryCall{
 		CallNoResult{
 			request: NewRequest("answerInlineQuery").
-				String("inline_query_id", inlineQueryId).
+				String("inline_query_id", inlineQueryID).
 				JSON("results", results),
 		},
 	}
 }
 
 // AnswerInlineQueryCall constructs a new AnswerInlineQueryCall with required parameters.
-func (client *Client) AnswerInlineQuery(inlineQueryId string, results []InlineQueryResult) *AnswerInlineQueryCall {
+func (client *Client) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult) *AnswerInlineQueryCall {
 	return callWithClient(
 		client,
-		NewAnswerInlineQueryCall(inlineQueryId, results),
+		NewAnswerInlineQueryCall(inlineQueryID, results),
 	)
 }
 
 // InlineQueryID Unique identifier for the answered query
-func (call *AnswerInlineQueryCall) InlineQueryID(inlineQueryId string) *AnswerInlineQueryCall {
-	call.request.String("inline_query_id", inlineQueryId)
+func (call *AnswerInlineQueryCall) InlineQueryID(inlineQueryID string) *AnswerInlineQueryCall {
+	call.request.String("inline_query_id", inlineQueryID)
 	return call
 }
 
@@ -4534,29 +4534,29 @@ type AnswerWebAppQueryCall struct {
 }
 
 // NewAnswerWebAppQueryCall constructs a new AnswerWebAppQueryCall with required parameters.
-// webAppQueryId - Unique identifier for the query to be answered
+// webAppQueryID - Unique identifier for the query to be answered
 // result - A JSON-serialized object describing the message to be sent
-func NewAnswerWebAppQueryCall(webAppQueryId string, result InlineQueryResult) *AnswerWebAppQueryCall {
+func NewAnswerWebAppQueryCall(webAppQueryID string, result InlineQueryResult) *AnswerWebAppQueryCall {
 	return &AnswerWebAppQueryCall{
 		Call[SentWebAppMessage]{
 			request: NewRequest("answerWebAppQuery").
-				String("web_app_query_id", webAppQueryId).
+				String("web_app_query_id", webAppQueryID).
 				JSON("result", result),
 		},
 	}
 }
 
 // AnswerWebAppQueryCall constructs a new AnswerWebAppQueryCall with required parameters.
-func (client *Client) AnswerWebAppQuery(webAppQueryId string, result InlineQueryResult) *AnswerWebAppQueryCall {
+func (client *Client) AnswerWebAppQuery(webAppQueryID string, result InlineQueryResult) *AnswerWebAppQueryCall {
 	return callWithClient(
 		client,
-		NewAnswerWebAppQueryCall(webAppQueryId, result),
+		NewAnswerWebAppQueryCall(webAppQueryID, result),
 	)
 }
 
 // WebAppQueryID Unique identifier for the query to be answered
-func (call *AnswerWebAppQueryCall) WebAppQueryID(webAppQueryId string) *AnswerWebAppQueryCall {
-	call.request.String("web_app_query_id", webAppQueryId)
+func (call *AnswerWebAppQueryCall) WebAppQueryID(webAppQueryID string) *AnswerWebAppQueryCall {
+	call.request.String("web_app_query_id", webAppQueryID)
 	return call
 }
 
@@ -4574,18 +4574,18 @@ type SendInvoiceCall struct {
 }
 
 // NewSendInvoiceCall constructs a new SendInvoiceCall with required parameters.
-// chatId - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // title - Product name, 1-32 characters
 // description - Product description, 1-255 characters
 // payload - Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
 // providerToken - Payment provider token, obtained via @BotFather
 // currency - Three-letter ISO 4217 currency code, see more on currencies
 // prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
-func NewSendInvoiceCall(chatId PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
+func NewSendInvoiceCall(chatID PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
 	return &SendInvoiceCall{
 		Call[Message]{
 			request: NewRequest("sendInvoice").
-				PeerID("chat_id", chatId).
+				PeerID("chat_id", chatID).
 				String("title", title).
 				String("description", description).
 				String("payload", payload).
@@ -4597,16 +4597,16 @@ func NewSendInvoiceCall(chatId PeerID, title string, description string, payload
 }
 
 // SendInvoiceCall constructs a new SendInvoiceCall with required parameters.
-func (client *Client) SendInvoice(chatId PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
+func (client *Client) SendInvoice(chatID PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
 	return callWithClient(
 		client,
-		NewSendInvoiceCall(chatId, title, description, payload, providerToken, currency, prices),
+		NewSendInvoiceCall(chatID, title, description, payload, providerToken, currency, prices),
 	)
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *SendInvoiceCall) ChatID(chatId PeerID) *SendInvoiceCall {
-	call.request.PeerID("chat_id", chatId)
+func (call *SendInvoiceCall) ChatID(chatID PeerID) *SendInvoiceCall {
+	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
@@ -4671,8 +4671,8 @@ func (call *SendInvoiceCall) ProviderData(providerData string) *SendInvoiceCall 
 }
 
 // PhotoURL URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
-func (call *SendInvoiceCall) PhotoURL(photoUrl string) *SendInvoiceCall {
-	call.request.String("photo_url", photoUrl)
+func (call *SendInvoiceCall) PhotoURL(photoURL string) *SendInvoiceCall {
+	call.request.String("photo_url", photoURL)
 	return call
 }
 
@@ -4749,8 +4749,8 @@ func (call *SendInvoiceCall) ProtectContent(protectContent bool) *SendInvoiceCal
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendInvoiceCall) ReplyToMessageID(replyToMessageId int) *SendInvoiceCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendInvoiceCall) ReplyToMessageID(replyToMessageID int) *SendInvoiceCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -4857,8 +4857,8 @@ func (call *CreateInvoiceLinkCall) ProviderData(providerData string) *CreateInvo
 }
 
 // PhotoURL URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
-func (call *CreateInvoiceLinkCall) PhotoURL(photoUrl string) *CreateInvoiceLinkCall {
-	call.request.String("photo_url", photoUrl)
+func (call *CreateInvoiceLinkCall) PhotoURL(photoURL string) *CreateInvoiceLinkCall {
+	call.request.String("photo_url", photoURL)
 	return call
 }
 
@@ -4931,29 +4931,29 @@ type AnswerShippingQueryCall struct {
 }
 
 // NewAnswerShippingQueryCall constructs a new AnswerShippingQueryCall with required parameters.
-// shippingQueryId - Unique identifier for the query to be answered
+// shippingQueryID - Unique identifier for the query to be answered
 // ok - Specify True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
-func NewAnswerShippingQueryCall(shippingQueryId string, ok bool) *AnswerShippingQueryCall {
+func NewAnswerShippingQueryCall(shippingQueryID string, ok bool) *AnswerShippingQueryCall {
 	return &AnswerShippingQueryCall{
 		CallNoResult{
 			request: NewRequest("answerShippingQuery").
-				String("shipping_query_id", shippingQueryId).
+				String("shipping_query_id", shippingQueryID).
 				Bool("ok", ok),
 		},
 	}
 }
 
 // AnswerShippingQueryCall constructs a new AnswerShippingQueryCall with required parameters.
-func (client *Client) AnswerShippingQuery(shippingQueryId string, ok bool) *AnswerShippingQueryCall {
+func (client *Client) AnswerShippingQuery(shippingQueryID string, ok bool) *AnswerShippingQueryCall {
 	return callWithClient(
 		client,
-		NewAnswerShippingQueryCall(shippingQueryId, ok),
+		NewAnswerShippingQueryCall(shippingQueryID, ok),
 	)
 }
 
 // ShippingQueryID Unique identifier for the query to be answered
-func (call *AnswerShippingQueryCall) ShippingQueryID(shippingQueryId string) *AnswerShippingQueryCall {
-	call.request.String("shipping_query_id", shippingQueryId)
+func (call *AnswerShippingQueryCall) ShippingQueryID(shippingQueryID string) *AnswerShippingQueryCall {
+	call.request.String("shipping_query_id", shippingQueryID)
 	return call
 }
 
@@ -4985,29 +4985,29 @@ type AnswerPreCheckoutQueryCall struct {
 }
 
 // NewAnswerPreCheckoutQueryCall constructs a new AnswerPreCheckoutQueryCall with required parameters.
-// preCheckoutQueryId - Unique identifier for the query to be answered
+// preCheckoutQueryID - Unique identifier for the query to be answered
 // ok - Specify True if everything is alright (goods are available, etc.) and the bot is ready to proceed with the order. Use False if there are any problems.
-func NewAnswerPreCheckoutQueryCall(preCheckoutQueryId string, ok bool) *AnswerPreCheckoutQueryCall {
+func NewAnswerPreCheckoutQueryCall(preCheckoutQueryID string, ok bool) *AnswerPreCheckoutQueryCall {
 	return &AnswerPreCheckoutQueryCall{
 		CallNoResult{
 			request: NewRequest("answerPreCheckoutQuery").
-				String("pre_checkout_query_id", preCheckoutQueryId).
+				String("pre_checkout_query_id", preCheckoutQueryID).
 				Bool("ok", ok),
 		},
 	}
 }
 
 // AnswerPreCheckoutQueryCall constructs a new AnswerPreCheckoutQueryCall with required parameters.
-func (client *Client) AnswerPreCheckoutQuery(preCheckoutQueryId string, ok bool) *AnswerPreCheckoutQueryCall {
+func (client *Client) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool) *AnswerPreCheckoutQueryCall {
 	return callWithClient(
 		client,
-		NewAnswerPreCheckoutQueryCall(preCheckoutQueryId, ok),
+		NewAnswerPreCheckoutQueryCall(preCheckoutQueryID, ok),
 	)
 }
 
 // PreCheckoutQueryID Unique identifier for the query to be answered
-func (call *AnswerPreCheckoutQueryCall) PreCheckoutQueryID(preCheckoutQueryId string) *AnswerPreCheckoutQueryCall {
-	call.request.String("pre_checkout_query_id", preCheckoutQueryId)
+func (call *AnswerPreCheckoutQueryCall) PreCheckoutQueryID(preCheckoutQueryID string) *AnswerPreCheckoutQueryCall {
+	call.request.String("pre_checkout_query_id", preCheckoutQueryID)
 	return call
 }
 
@@ -5034,29 +5034,29 @@ type SetPassportDataErrorsCall struct {
 }
 
 // NewSetPassportDataErrorsCall constructs a new SetPassportDataErrorsCall with required parameters.
-// userId - User identifier
+// userID - User identifier
 // errors - A JSON-serialized array describing the errors
-func NewSetPassportDataErrorsCall(userId UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
+func NewSetPassportDataErrorsCall(userID UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
 	return &SetPassportDataErrorsCall{
 		CallNoResult{
 			request: NewRequest("setPassportDataErrors").
-				UserID("user_id", userId).
+				UserID("user_id", userID).
 				JSON("errors", errors),
 		},
 	}
 }
 
 // SetPassportDataErrorsCall constructs a new SetPassportDataErrorsCall with required parameters.
-func (client *Client) SetPassportDataErrors(userId UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
+func (client *Client) SetPassportDataErrors(userID UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
 	return callWithClient(
 		client,
-		NewSetPassportDataErrorsCall(userId, errors),
+		NewSetPassportDataErrorsCall(userID, errors),
 	)
 }
 
 // UserID User identifier
-func (call *SetPassportDataErrorsCall) UserID(userId UserID) *SetPassportDataErrorsCall {
-	call.request.UserID("user_id", userId)
+func (call *SetPassportDataErrorsCall) UserID(userID UserID) *SetPassportDataErrorsCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -5074,29 +5074,29 @@ type SendGameCall struct {
 }
 
 // NewSendGameCall constructs a new SendGameCall with required parameters.
-// chatId - Unique identifier for the target chat
+// chatID - Unique identifier for the target chat
 // gameShortName - Short name of the game, serves as the unique identifier for the game. Set up your games via @BotFather.
-func NewSendGameCall(chatId ChatID, gameShortName string) *SendGameCall {
+func NewSendGameCall(chatID ChatID, gameShortName string) *SendGameCall {
 	return &SendGameCall{
 		Call[Message]{
 			request: NewRequest("sendGame").
-				ChatID("chat_id", chatId).
+				ChatID("chat_id", chatID).
 				String("game_short_name", gameShortName),
 		},
 	}
 }
 
 // SendGameCall constructs a new SendGameCall with required parameters.
-func (client *Client) SendGame(chatId ChatID, gameShortName string) *SendGameCall {
+func (client *Client) SendGame(chatID ChatID, gameShortName string) *SendGameCall {
 	return callWithClient(
 		client,
-		NewSendGameCall(chatId, gameShortName),
+		NewSendGameCall(chatID, gameShortName),
 	)
 }
 
 // ChatID Unique identifier for the target chat
-func (call *SendGameCall) ChatID(chatId ChatID) *SendGameCall {
-	call.request.ChatID("chat_id", chatId)
+func (call *SendGameCall) ChatID(chatID ChatID) *SendGameCall {
+	call.request.ChatID("chat_id", chatID)
 	return call
 }
 
@@ -5119,8 +5119,8 @@ func (call *SendGameCall) ProtectContent(protectContent bool) *SendGameCall {
 }
 
 // ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendGameCall) ReplyToMessageID(replyToMessageId int) *SendGameCall {
-	call.request.Int("reply_to_message_id", replyToMessageId)
+func (call *SendGameCall) ReplyToMessageID(replyToMessageID int) *SendGameCall {
+	call.request.Int("reply_to_message_id", replyToMessageID)
 	return call
 }
 
@@ -5145,29 +5145,29 @@ type SetGameScoreCall struct {
 }
 
 // NewSetGameScoreCall constructs a new SetGameScoreCall with required parameters.
-// userId - User identifier
+// userID - User identifier
 // score - New score, must be non-negative
-func NewSetGameScoreCall(userId UserID, score int) *SetGameScoreCall {
+func NewSetGameScoreCall(userID UserID, score int) *SetGameScoreCall {
 	return &SetGameScoreCall{
 		Call[Message]{
 			request: NewRequest("setGameScore").
-				UserID("user_id", userId).
+				UserID("user_id", userID).
 				Int("score", score),
 		},
 	}
 }
 
 // SetGameScoreCall constructs a new SetGameScoreCall with required parameters.
-func (client *Client) SetGameScore(userId UserID, score int) *SetGameScoreCall {
+func (client *Client) SetGameScore(userID UserID, score int) *SetGameScoreCall {
 	return callWithClient(
 		client,
-		NewSetGameScoreCall(userId, score),
+		NewSetGameScoreCall(userID, score),
 	)
 }
 
 // UserID User identifier
-func (call *SetGameScoreCall) UserID(userId UserID) *SetGameScoreCall {
-	call.request.UserID("user_id", userId)
+func (call *SetGameScoreCall) UserID(userID UserID) *SetGameScoreCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
@@ -5190,20 +5190,20 @@ func (call *SetGameScoreCall) DisableEditMessage(disableEditMessage bool) *SetGa
 }
 
 // ChatID Required if inline_message_id is not specified. Unique identifier for the target chat
-func (call *SetGameScoreCall) ChatID(chatId ChatID) *SetGameScoreCall {
-	call.request.ChatID("chat_id", chatId)
+func (call *SetGameScoreCall) ChatID(chatID ChatID) *SetGameScoreCall {
+	call.request.ChatID("chat_id", chatID)
 	return call
 }
 
 // MessageID Required if inline_message_id is not specified. Identifier of the sent message
-func (call *SetGameScoreCall) MessageID(messageId int) *SetGameScoreCall {
-	call.request.Int("message_id", messageId)
+func (call *SetGameScoreCall) MessageID(messageID int) *SetGameScoreCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
 // InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *SetGameScoreCall) InlineMessageID(inlineMessageId string) *SetGameScoreCall {
-	call.request.String("inline_message_id", inlineMessageId)
+func (call *SetGameScoreCall) InlineMessageID(inlineMessageID string) *SetGameScoreCall {
+	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
 
@@ -5219,44 +5219,44 @@ type GetGameHighScoresCall struct {
 }
 
 // NewGetGameHighScoresCall constructs a new GetGameHighScoresCall with required parameters.
-// userId - Target user id
-func NewGetGameHighScoresCall(userId UserID) *GetGameHighScoresCall {
+// userID - Target user id
+func NewGetGameHighScoresCall(userID UserID) *GetGameHighScoresCall {
 	return &GetGameHighScoresCall{
 		Call[GameHighScore]{
 			request: NewRequest("getGameHighScores").
-				UserID("user_id", userId),
+				UserID("user_id", userID),
 		},
 	}
 }
 
 // GetGameHighScoresCall constructs a new GetGameHighScoresCall with required parameters.
-func (client *Client) GetGameHighScores(userId UserID) *GetGameHighScoresCall {
+func (client *Client) GetGameHighScores(userID UserID) *GetGameHighScoresCall {
 	return callWithClient(
 		client,
-		NewGetGameHighScoresCall(userId),
+		NewGetGameHighScoresCall(userID),
 	)
 }
 
 // UserID Target user id
-func (call *GetGameHighScoresCall) UserID(userId UserID) *GetGameHighScoresCall {
-	call.request.UserID("user_id", userId)
+func (call *GetGameHighScoresCall) UserID(userID UserID) *GetGameHighScoresCall {
+	call.request.UserID("user_id", userID)
 	return call
 }
 
 // ChatID Required if inline_message_id is not specified. Unique identifier for the target chat
-func (call *GetGameHighScoresCall) ChatID(chatId ChatID) *GetGameHighScoresCall {
-	call.request.ChatID("chat_id", chatId)
+func (call *GetGameHighScoresCall) ChatID(chatID ChatID) *GetGameHighScoresCall {
+	call.request.ChatID("chat_id", chatID)
 	return call
 }
 
 // MessageID Required if inline_message_id is not specified. Identifier of the sent message
-func (call *GetGameHighScoresCall) MessageID(messageId int) *GetGameHighScoresCall {
-	call.request.Int("message_id", messageId)
+func (call *GetGameHighScoresCall) MessageID(messageID int) *GetGameHighScoresCall {
+	call.request.Int("message_id", messageID)
 	return call
 }
 
 // InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *GetGameHighScoresCall) InlineMessageID(inlineMessageId string) *GetGameHighScoresCall {
-	call.request.String("inline_message_id", inlineMessageId)
+func (call *GetGameHighScoresCall) InlineMessageID(inlineMessageID string) *GetGameHighScoresCall {
+	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
