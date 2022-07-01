@@ -1,0 +1,2 @@
+ignore:
+  - methods_gen.go
