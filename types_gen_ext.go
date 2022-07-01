@@ -121,9 +121,6 @@ type PeerID interface {
 	PeerID() string
 }
 
-// MessageID it's unique identifier for a message in a chat.
-type MessageID int
-
 type FileID string
 
 type FileArg struct {
@@ -215,7 +212,7 @@ func NewInlineKeyboardButtonWebApp(text string, webApp WebAppInfo) InlineKeyboar
 }
 
 // InlineKeyboardMarkup represents button that open web page with auth data.
-func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginUrl) InlineKeyboardButton {
+func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginURL) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:     text,
 		LoginURL: &loginURL,
@@ -491,17 +488,17 @@ func (result InlineQueryResultCachedDocument) MarshalJSON() ([]byte, error) {
 	return json.Marshal(alias(result))
 }
 
-func (InlineQueryResultCachedGif) isInlineQueryResult() {}
-func (result InlineQueryResultCachedGif) MarshalJSON() ([]byte, error) {
+func (InlineQueryResultCachedGIF) isInlineQueryResult() {}
+func (result InlineQueryResultCachedGIF) MarshalJSON() ([]byte, error) {
 	result.Type = "gif"
-	type alias InlineQueryResultCachedGif
+	type alias InlineQueryResultCachedGIF
 	return json.Marshal(alias(result))
 }
 
-func (InlineQueryResultCachedMpeg4Gif) isInlineQueryResult() {}
-func (result InlineQueryResultCachedMpeg4Gif) MarshalJSON() ([]byte, error) {
+func (InlineQueryResultCachedMPEG4GIF) isInlineQueryResult() {}
+func (result InlineQueryResultCachedMPEG4GIF) MarshalJSON() ([]byte, error) {
 	result.Type = "mpeg4_gif"
-	type alias InlineQueryResultCachedMpeg4Gif
+	type alias InlineQueryResultCachedMPEG4GIF
 	return json.Marshal(alias(result))
 }
 
@@ -547,17 +544,17 @@ func (result InlineQueryResultDocument) MarshalJSON() ([]byte, error) {
 	return json.Marshal(alias(result))
 }
 
-func (InlineQueryResultGif) isInlineQueryResult() {}
-func (result InlineQueryResultGif) MarshalJSON() ([]byte, error) {
+func (InlineQueryResultGIF) isInlineQueryResult() {}
+func (result InlineQueryResultGIF) MarshalJSON() ([]byte, error) {
 	result.Type = "gif"
-	type alias InlineQueryResultGif
+	type alias InlineQueryResultGIF
 	return json.Marshal(alias(result))
 }
 
-func (InlineQueryResultMpeg4Gif) isInlineQueryResult() {}
-func (result InlineQueryResultMpeg4Gif) MarshalJSON() ([]byte, error) {
+func (InlineQueryResultMPEG4GIF) isInlineQueryResult() {}
+func (result InlineQueryResultMPEG4GIF) MarshalJSON() ([]byte, error) {
 	result.Type = "mpeg4_gif"
-	type alias InlineQueryResultMpeg4Gif
+	type alias InlineQueryResultMPEG4GIF
 	return json.Marshal(alias(result))
 }
 

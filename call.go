@@ -3,7 +3,6 @@ package tg
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"golang.org/x/exp/maps"
 )
@@ -71,20 +70,6 @@ func (call *CallNoResult) MarshalJSON() ([]byte, error) {
 
 func (call *CallNoResult) Bind(client *Client) {
 	call.client = client
-}
-
-func (call *CallNoResult) Do(ctx context.Context) (err error) {
-	var result bool
-
-	if err := call.client.Invoke(ctx, call.request, &result); err != nil {
-		return err
-	}
-
-	if !result {
-		return fmt.Errorf("call returns not True")
-	}
-
-	return
 }
 
 func (call *CallNoResult) DoVoid(ctx context.Context) (err error) {

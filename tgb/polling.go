@@ -104,7 +104,7 @@ func (poller *Poller) removeWebhookIfSet(ctx context.Context) error {
 
 	if info.URL != "" {
 		poller.log("removing webhook...")
-		if err := poller.client.DeleteWebhook().Do(ctx); err != nil {
+		if err := poller.client.DeleteWebhook().DoVoid(ctx); err != nil {
 			return fmt.Errorf("delete webhook: %w", err)
 		}
 	}

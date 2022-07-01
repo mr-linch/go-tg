@@ -155,7 +155,7 @@ func (webhook *Webhook) Setup(ctx context.Context) (err error) {
 		}
 
 		if webhook.ip != "" {
-			setWebhookCall = setWebhookCall.IpAddress(webhook.ip)
+			setWebhookCall = setWebhookCall.IPAddress(webhook.ip)
 		}
 
 		if webhook.securityToken != "" {
@@ -170,7 +170,7 @@ func (webhook *Webhook) Setup(ctx context.Context) (err error) {
 			setWebhookCall = setWebhookCall.AllowedUpdates(webhook.allowedUpdates)
 		}
 
-		return setWebhookCall.Do(ctx)
+		return setWebhookCall.DoVoid(ctx)
 	}
 
 	return nil

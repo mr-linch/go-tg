@@ -171,7 +171,7 @@ func (cbq *CallbackQueryUpdate) AnswerText(text string, alert bool) *tg.AnswerCa
 // AnswerURL with URL response and optional.
 // URL has limitations, see CallbackQuery.Url for more details.
 func (cbq *CallbackQueryUpdate) AnswerURL(url string) *tg.AnswerCallbackQueryCall {
-	return cbq.Client.AnswerCallbackQuery(cbq.ID).Url(url)
+	return cbq.Client.AnswerCallbackQuery(cbq.ID).URL(url)
 }
 
 type InlineQueryUpdate struct {
