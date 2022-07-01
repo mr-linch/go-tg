@@ -19,9 +19,12 @@ type Response struct {
 	// Optional. ErrorCode is the error code returned by Telegram Bot API.
 	ErrorCode int `json:"error_code"`
 
+	// Optional.
+	Parameters *ResponseParameters `json:"parameters"`
+
 	// Optional. Parameters describes why a request was unsuccessful in some cases.
 	// Parameters *ResponseParameters `json:"parameters"`
 
 	// HTTP response status code.
-	StatusCode int
+	StatusCode int `json:"-"`
 }

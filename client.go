@@ -231,9 +231,11 @@ func (client *Client) Invoke(ctx context.Context, req *Request, dst interface{})
 	}
 
 	if !res.Ok {
-		// TODO: handle bot api errors here
-
-		return fmt.Errorf("%d: %s", res.StatusCode, res.Description)
+		return &Error{
+			Code:       res.ErrorCode,
+			Message:    res.Description,
+			Parameters: res.Parameters,
+		}
 	}
 
 	if dst != nil {
