@@ -409,7 +409,7 @@ func (call *ForwardMessageCall) MessageID(messageID int) *ForwardMessageCall {
 // The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message
 // Returns the MessageId of the sent message on success.
 type CopyMessageCall struct {
-	Call[MessageId]
+	Call[MessageID]
 }
 
 // NewCopyMessageCall constructs a new CopyMessageCall with required parameters.
@@ -418,7 +418,7 @@ type CopyMessageCall struct {
 // messageID - Message identifier in the chat specified in from_chat_id
 func NewCopyMessageCall(chatID PeerID, fromChatID PeerID, messageID int) *CopyMessageCall {
 	return &CopyMessageCall{
-		Call[MessageId]{
+		Call[MessageID]{
 			request: NewRequest("copyMessage").
 				PeerID("chat_id", chatID).
 				PeerID("from_chat_id", fromChatID).

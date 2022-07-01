@@ -366,8 +366,8 @@ type Message struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 }
 
-// MessageId this object represents a unique message identifier.
-type MessageId struct {
+// MessageID this object represents a unique message identifier.
+type MessageID struct {
 	// Unique message identifier
 	MessageID int `json:"message_id"`
 }
@@ -849,7 +849,7 @@ type InlineKeyboardButton struct {
 	WebApp *WebAppInfo `json:"web_app,omitempty"`
 
 	// Optional. An HTTPS URL used to automatically authorize the user. Can be used as a replacement for the Telegram Login Widget.
-	LoginURL *LoginUrl `json:"login_url,omitempty"`
+	LoginURL *LoginURL `json:"login_url,omitempty"`
 
 	// Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. May be empty, in which case just the bot's username will be inserted.Note: This offers an easy way for users to start using your bot in inline mode when they are currently in a private chat with it. Especially useful when combined with switch_pm… actions - in this case the user will be automatically returned to the chat they switched from, skipping the chat selection screen.
 	SwitchInlineQuery string `json:"switch_inline_query,omitempty"`
@@ -864,8 +864,8 @@ type InlineKeyboardButton struct {
 	Pay bool `json:"pay,omitempty"`
 }
 
-// LoginUrl this object represents a parameter of the inline keyboard button used to automatically authorize a user. Serves as a great replacement for the Telegram Login Widget when the user is coming from Telegram. All the user needs to do is tap/click a button and confirm that they want to log in:
-type LoginUrl struct {
+// LoginURL this object represents a parameter of the inline keyboard button used to automatically authorize a user. Serves as a great replacement for the Telegram Login Widget when the user is coming from Telegram. All the user needs to do is tap/click a button and confirm that they want to log in:
+type LoginURL struct {
 	// An HTTPS URL to be opened with user authorization data added to the query string when the button is pressed. If the user refuses to provide authorization data, the original URL without information about the user will be opened. The data added is the same as described in Receiving authorization data.NOTE: You must always check the hash of the received data to verify the authentication and the integrity of the data as described in Checking authorization.
 	URL string `json:"url"`
 
@@ -1632,8 +1632,8 @@ type InlineQueryResultPhoto struct {
 	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
 }
 
-// InlineQueryResultGif represents a link to an animated GIF file. By default, this animated GIF file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
-type InlineQueryResultGif struct {
+// InlineQueryResultGIF represents a link to an animated GIF file. By default, this animated GIF file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
+type InlineQueryResultGIF struct {
 	// Type of the result, must be gif
 	Type string `json:"type"`
 
@@ -1641,16 +1641,16 @@ type InlineQueryResultGif struct {
 	ID string `json:"id"`
 
 	// A valid URL for the GIF file. File size must not exceed 1MB
-	GifURL string `json:"gif_url"`
+	GIFURL string `json:"gif_url"`
 
 	// Optional. Width of the GIF
-	GifWidth int `json:"gif_width,omitempty"`
+	GIFWidth int `json:"gif_width,omitempty"`
 
 	// Optional. Height of the GIF
-	GifHeight int `json:"gif_height,omitempty"`
+	GIFHeight int `json:"gif_height,omitempty"`
 
 	// Optional. Duration of the GIF in seconds
-	GifDuration int `json:"gif_duration,omitempty"`
+	GIFDuration int `json:"gif_duration,omitempty"`
 
 	// URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
 	ThumbURL string `json:"thumb_url"`
@@ -1677,8 +1677,8 @@ type InlineQueryResultGif struct {
 	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
 }
 
-// InlineQueryResultMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
-type InlineQueryResultMpeg4Gif struct {
+// InlineQueryResultMPEG4GIF represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
+type InlineQueryResultMPEG4GIF struct {
 	// Type of the result, must be mpeg4_gif
 	Type string `json:"type"`
 
@@ -1686,16 +1686,16 @@ type InlineQueryResultMpeg4Gif struct {
 	ID string `json:"id"`
 
 	// A valid URL for the MPEG4 file. File size must not exceed 1MB
-	Mpeg4URL string `json:"mpeg4_url"`
+	MPEG4URL string `json:"mpeg4_url"`
 
 	// Optional. Video width
-	Mpeg4Width int `json:"mpeg4_width,omitempty"`
+	MPEG4Width int `json:"mpeg4_width,omitempty"`
 
 	// Optional. Video height
-	Mpeg4Height int `json:"mpeg4_height,omitempty"`
+	MPEG4Height int `json:"mpeg4_height,omitempty"`
 
 	// Optional. Video duration in seconds
-	Mpeg4Duration int `json:"mpeg4_duration,omitempty"`
+	MPEG4Duration int `json:"mpeg4_duration,omitempty"`
 
 	// URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result
 	ThumbURL string `json:"thumb_url"`
@@ -2061,8 +2061,8 @@ type InlineQueryResultCachedPhoto struct {
 	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
 }
 
-// InlineQueryResultCachedGif represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
-type InlineQueryResultCachedGif struct {
+// InlineQueryResultCachedGIF represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
+type InlineQueryResultCachedGIF struct {
 	// Type of the result, must be gif
 	Type string `json:"type"`
 
@@ -2070,7 +2070,7 @@ type InlineQueryResultCachedGif struct {
 	ID string `json:"id"`
 
 	// A valid file identifier for the GIF file
-	GifFileID string `json:"gif_file_id"`
+	GIFFileID string `json:"gif_file_id"`
 
 	// Optional. Title for the result
 	Title string `json:"title,omitempty"`
@@ -2091,8 +2091,8 @@ type InlineQueryResultCachedGif struct {
 	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
 }
 
-// InlineQueryResultCachedMpeg4Gif represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
-type InlineQueryResultCachedMpeg4Gif struct {
+// InlineQueryResultCachedMPEG4GIF represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
+type InlineQueryResultCachedMPEG4GIF struct {
 	// Type of the result, must be mpeg4_gif
 	Type string `json:"type"`
 
@@ -2100,7 +2100,7 @@ type InlineQueryResultCachedMpeg4Gif struct {
 	ID string `json:"id"`
 
 	// A valid file identifier for the MPEG4 file
-	Mpeg4FileID string `json:"mpeg4_file_id"`
+	MPEG4FileID string `json:"mpeg4_file_id"`
 
 	// Optional. Title for the result
 	Title string `json:"title,omitempty"`
