@@ -23,8 +23,8 @@ func testWithClientLocal(
 	defer server.Close()
 
 	client := tg.New("12345:secret",
-		tg.WithServer(server.URL),
-		tg.WithDoer(http.DefaultClient),
+		tg.WithClient(server.URL),
+		tg.WithClientDoer(http.DefaultClient),
 	)
 
 	ctx := context.Background()

@@ -53,7 +53,7 @@ func run(ctx context.Context) error {
 	}
 
 	client := tg.New(flagToken,
-		tg.WithServer(flagServer),
+		tg.WithClient(flagServer),
 	)
 
 	me, err := client.Me(ctx)
@@ -85,7 +85,6 @@ func run(ctx context.Context) error {
 }
 
 func newBot() *tgb.Bot {
-
 	return tgb.New().
 		// handles /start and /help
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {

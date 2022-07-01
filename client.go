@@ -35,15 +35,15 @@ type Client struct {
 // ClientOption is a function that sets some option for Client.
 type ClientOption func(*Client)
 
-// WithServer sets custom server url for Client.
-func WithServer(server string) ClientOption {
+// WithClient sets custom server url for Client.
+func WithClient(server string) ClientOption {
 	return func(c *Client) {
 		c.server = server
 	}
 }
 
-// WithDoer sets custom http client for Client.
-func WithDoer(doer *http.Client) ClientOption {
+// WithClientDoer sets custom http client for Client.
+func WithClientDoer(doer *http.Client) ClientOption {
 	return func(c *Client) {
 		c.doer = doer
 	}
