@@ -4171,8 +4171,8 @@ func (call *UploadStickerFileCall) UserID(userID UserID) *UploadStickerFileCall 
 	return call
 }
 
-// PngSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More information on Sending Files »
-func (call *UploadStickerFileCall) PngSticker(pngSticker InputFile) *UploadStickerFileCall {
+// PNGSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More information on Sending Files »
+func (call *UploadStickerFileCall) PNGSticker(pngSticker InputFile) *UploadStickerFileCall {
 	call.request.JSON("png_sticker", pngSticker)
 	return call
 }
@@ -4228,20 +4228,20 @@ func (call *CreateNewStickerSetCall) Title(title string) *CreateNewStickerSetCal
 	return call
 }
 
-// PngSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *CreateNewStickerSetCall) PngSticker(pngSticker FileArg) *CreateNewStickerSetCall {
+// PNGSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
+func (call *CreateNewStickerSetCall) PNGSticker(pngSticker FileArg) *CreateNewStickerSetCall {
 	call.request.File("png_sticker", pngSticker)
 	return call
 }
 
-// TgsSticker TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
-func (call *CreateNewStickerSetCall) TgsSticker(tgsSticker InputFile) *CreateNewStickerSetCall {
+// TGSSticker TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
+func (call *CreateNewStickerSetCall) TGSSticker(tgsSticker InputFile) *CreateNewStickerSetCall {
 	call.request.JSON("tgs_sticker", tgsSticker)
 	return call
 }
 
-// WebmSticker WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
-func (call *CreateNewStickerSetCall) WebmSticker(webmSticker InputFile) *CreateNewStickerSetCall {
+// WEBMSticker WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+func (call *CreateNewStickerSetCall) WEBMSticker(webmSticker InputFile) *CreateNewStickerSetCall {
 	call.request.JSON("webm_sticker", webmSticker)
 	return call
 }
@@ -4309,20 +4309,20 @@ func (call *AddStickerToSetCall) Name(name string) *AddStickerToSetCall {
 	return call
 }
 
-// PngSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *AddStickerToSetCall) PngSticker(pngSticker FileArg) *AddStickerToSetCall {
+// PNGSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
+func (call *AddStickerToSetCall) PNGSticker(pngSticker FileArg) *AddStickerToSetCall {
 	call.request.File("png_sticker", pngSticker)
 	return call
 }
 
-// TgsSticker TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
-func (call *AddStickerToSetCall) TgsSticker(tgsSticker InputFile) *AddStickerToSetCall {
+// TGSSticker TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
+func (call *AddStickerToSetCall) TGSSticker(tgsSticker InputFile) *AddStickerToSetCall {
 	call.request.JSON("tgs_sticker", tgsSticker)
 	return call
 }
 
-// WebmSticker WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
-func (call *AddStickerToSetCall) WebmSticker(webmSticker InputFile) *AddStickerToSetCall {
+// WEBMSticker WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
+func (call *AddStickerToSetCall) WEBMSticker(webmSticker InputFile) *AddStickerToSetCall {
 	call.request.JSON("webm_sticker", webmSticker)
 	return call
 }
