@@ -170,7 +170,7 @@ func (webhook *Webhook) Setup(ctx context.Context) (err error) {
 			setWebhookCall = setWebhookCall.AllowedUpdates(webhook.allowedUpdates)
 		}
 
-		return setWebhookCall.Do(ctx)
+		return setWebhookCall.DoVoid(ctx)
 	}
 
 	return nil
