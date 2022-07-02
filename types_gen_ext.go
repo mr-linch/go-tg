@@ -162,9 +162,6 @@ type InputMedia interface {
 	getMedia() (media *FileArg, thumb *InputFile)
 }
 
-type BotCommandScope struct {
-}
-
 type CallbackGame struct{}
 
 // ReplyMarkup represents a custom keyboard.
@@ -658,4 +655,57 @@ func (media *InputMediaAnimation) MarshalJSON() ([]byte, error) {
 	media.Type = "animation"
 	type alias InputMediaAnimation
 	return json.Marshal(alias(*media))
+}
+
+type BotCommandScope interface {
+	isBotCommandScope()
+}
+
+func (BotCommandScopeDefault) isBotCommandScope() {}
+func (scope BotCommandScopeDefault) MarshalJSON() ([]byte, error) {
+	scope.Type = "default"
+	type alias BotCommandScopeDefault
+	return json.Marshal(alias(scope))
+}
+
+func (BotCommandScopeAllPrivateChats) isBotCommandScope() {}
+func (scope BotCommandScopeAllPrivateChats) MarshalJSON() ([]byte, error) {
+	scope.Type = "all_private_chats"
+	type alias BotCommandScopeAllPrivateChats
+	return json.Marshal(alias(scope))
+}
+
+func (BotCommandScopeAllGroupChats) isBotCommandScope() {}
+func (scope BotCommandScopeAllGroupChats) MarshalJSON() ([]byte, error) {
+	scope.Type = "all_group_chats"
+	type alias BotCommandScopeAllGroupChats
+	return json.Marshal(alias(scope))
+}
+
+func (BotCommandScopeAllChatAdministrators) isBotCommandScope() {}
+func (scope BotCommandScopeAllChatAdministrators) MarshalJSON() ([]byte, error) {
+	scope.Type = "all_chat_administrators"
+	type alias BotCommandScopeAllChatAdministrators
+	return json.Marshal(alias(scope))
+}
+
+func (BotCommandScopeChat) isBotCommandScope() {}
+func (scope BotCommandScopeChat) MarshalJSON() ([]byte, error) {
+	scope.Type = "chat"
+	type alias BotCommandScopeChat
+	return json.Marshal(alias(scope))
+}
+
+func (BotCommandScopeChatAdministrators) isBotCommandScope() {}
+func (scope BotCommandScopeChatAdministrators) MarshalJSON() ([]byte, error) {
+	scope.Type = "chat_administrators"
+	type alias BotCommandScopeChatAdministrators
+	return json.Marshal(alias(scope))
+}
+
+func (BotCommandScopeChatMember) isBotCommandScope() {}
+func (scope BotCommandScopeChatMember) MarshalJSON() ([]byte, error) {
+	scope.Type = "chat_member"
+	type alias BotCommandScopeChatMember
+	return json.Marshal(alias(scope))
 }
