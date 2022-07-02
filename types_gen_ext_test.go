@@ -533,3 +533,23 @@ func TestFileArg_getString(t *testing.T) {
 		assert.Equal(t, test.Want, test.FileArg.getString())
 	}
 }
+
+func TestBotCommandScope(t *testing.T) {
+	for _, test := range []struct {
+		Scope BotCommandScope
+		Want  string
+	}{
+		{BotCommandScopeDefault{}, `{"type":"default"}`},
+		{BotCommandScopeAllPrivateChats{}, `{"type":"all_private_chats"}`},
+		{BotCommandScopeAllGroupChats{}, `{"type":"all_group_chats"}`},
+		{BotCommandScopeAllChatAdministrators{}, `{"type":"all_chat_administrators"}`},
+		{BotCommandScopeChat{}, `{"type":"chat","chat_id":0}`},
+		{BotCommandScopeChatAdministrators{}, `{"type":"chat_administrators","chat_id":0}`},
+		{BotCommandScopeChatMember{}, `{"type":"chat_member","chat_id":0,"user_id":0}`},
+	} {
+		v, err := json.Marshal(test.Scope)
+		assert.NoError(t, err, "marshal json")
+		assert.Equal(t, test.Want, string(v))
+		test.Scope.isBotCommandScope()
+	}
+}
