@@ -1281,12 +1281,6 @@ type BotCommandScopeChatMember struct {
 	UserID int `json:"user_id"`
 }
 
-// MenuButton this object describes the bot's menu button in a private chat. It should be one of
-type MenuButton struct {
-	// Type of the button, must be commands
-	Type string `json:"type"`
-}
-
 // MenuButtonCommands represents a menu button, which opens the bot's list of commands.
 type MenuButtonCommands struct {
 	// Type of the button, must be commands

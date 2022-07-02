@@ -469,6 +469,7 @@ func (layout *ButtonLayout[T]) Row(buttons ...T) *ButtonLayout[T] {
 
 type InlineQueryResult interface {
 	isInlineQueryResult()
+	json.Marshaler
 }
 
 func (InlineQueryResultCachedAudio) isInlineQueryResult() {}
@@ -659,6 +660,7 @@ func (media *InputMediaAnimation) MarshalJSON() ([]byte, error) {
 
 type BotCommandScope interface {
 	isBotCommandScope()
+	json.Marshaler
 }
 
 func (BotCommandScopeDefault) isBotCommandScope() {}
@@ -708,4 +710,30 @@ func (scope BotCommandScopeChatMember) MarshalJSON() ([]byte, error) {
 	scope.Type = "chat_member"
 	type alias BotCommandScopeChatMember
 	return json.Marshal(alias(scope))
+}
+
+type MenuButton interface {
+	isMenuButton()
+	json.Marshaler
+}
+
+func (MenuButtonDefault) isMenuButton() {}
+func (button MenuButtonDefault) MarshalJSON() ([]byte, error) {
+	button.Type = "default"
+	type alias MenuButtonDefault
+	return json.Marshal(alias(button))
+}
+
+func (MenuButtonCommands) isMenuButton() {}
+func (button MenuButtonCommands) MarshalJSON() ([]byte, error) {
+	button.Type = "commands"
+	type alias MenuButtonCommands
+	return json.Marshal(alias(button))
+}
+
+func (MenuButtonWebApp) isMenuButton() {}
+func (button MenuButtonWebApp) MarshalJSON() ([]byte, error) {
+	button.Type = "web_app"
+	type alias MenuButtonWebApp
+	return json.Marshal(alias(button))
 }

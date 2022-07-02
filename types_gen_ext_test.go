@@ -553,3 +553,19 @@ func TestBotCommandScope(t *testing.T) {
 		test.Scope.isBotCommandScope()
 	}
 }
+
+func TestMenuButton(t *testing.T) {
+	for _, test := range []struct {
+		Scope MenuButton
+		Want  string
+	}{
+		{MenuButtonDefault{}, `{"type":"default"}`},
+		{MenuButtonCommands{}, `{"type":"commands"}`},
+		{MenuButtonWebApp{}, `{"type":"web_app","text":"","web_app":{"url":""}}`},
+	} {
+		v, err := json.Marshal(test.Scope)
+		assert.NoError(t, err, "marshal json")
+		assert.Equal(t, test.Want, string(v))
+		test.Scope.isMenuButton()
+	}
+}
