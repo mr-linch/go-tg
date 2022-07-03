@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Telegram Web App</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="main.css" />
+</head>
+
+<body>
+  <button id="expand"><code>expand()</code></button>
+  <hr />
+  <button id="backbutton"><code>BackButton.show()</code></button>
+  <hr />
+  <button id="mainbutton"><code>MainButton.show()</code></button>
+  <button id="mainbutton-state"><code>MainButton.disable()</code></button>
+  <button id="mainbutton-progress">
+    <code>MainButton.showProgress()</code>
+  </button>
+  <hr />
+  <button id="hapticfeedback-impact">
+    <code>HapticFeedback.impactOccurred('<span>light</span>')</code>
+  </button>
+  <button id="hapticfeedback-notification">
+    <code>HapticFeedback.notificationOccurred('<span>error</span>')</code>
+  </button>
+  <button id="hapticfeedback-selection">
+    <code>HapticFeedback.selectionChanged()</code>
+  </button>
+  <hr />
+  <script src="main.js"></script>
+</body>
+
+</html>
