@@ -224,7 +224,7 @@ func (client *Client) executeStreaming(
 	}
 }
 
-func (client *Client) Invoke(ctx context.Context, req *Request, dst interface{}) error {
+func (client *Client) Do(ctx context.Context, req *Request, dst interface{}) error {
 	res, err := client.execute(ctx, req)
 	if err != nil {
 		return fmt.Errorf("execute: %w", err)
