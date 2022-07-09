@@ -53,7 +53,7 @@ func run(ctx context.Context) error {
 	}
 
 	client := tg.New(flagToken,
-		tg.WithClient(flagServer),
+		tg.WithClientServerURL(flagServer),
 	)
 
 	me, err := client.Me(ctx)

@@ -260,7 +260,7 @@ func TestWebhook_Setup(t *testing.T) {
 
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
-			tg.New("1234:secret", tg.WithClient(server.URL), tg.WithClientDoer(server.Client())),
+			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 			"https://google.com",
 		)
 
@@ -300,7 +300,7 @@ func TestWebhook_Setup(t *testing.T) {
 
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
-			tg.New("1234:secret", tg.WithClient(server.URL), tg.WithClientDoer(server.Client())),
+			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 			"https://google.com",
 			WithDropPendingUpdates(true),
 			WithWebhookIP("1.1.1.1"),
@@ -342,7 +342,7 @@ func TestWebhook_Setup(t *testing.T) {
 
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
-			tg.New("1234:secret", tg.WithClient(server.URL), tg.WithClientDoer(server.Client())),
+			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 			"https://google.com",
 			WithWebhookAllowedUpdates("message"),
 			WithWebhookIP("1.1.1.1"),

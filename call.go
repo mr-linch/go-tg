@@ -31,7 +31,7 @@ func (call *Call[T]) Bind(client *Client) {
 }
 
 func (call *Call[T]) Do(ctx context.Context) (result T, err error) {
-	if err := call.client.Invoke(ctx, call.request, &result); err != nil {
+	if err := call.client.Do(ctx, call.request, &result); err != nil {
 		return result, err
 	}
 
@@ -39,7 +39,7 @@ func (call *Call[T]) Do(ctx context.Context) (result T, err error) {
 }
 
 func (call *Call[T]) DoVoid(ctx context.Context) (err error) {
-	return call.client.Invoke(ctx, call.request, nil)
+	return call.client.Do(ctx, call.request, nil)
 }
 
 func callWithClient[B interface {
@@ -73,5 +73,5 @@ func (call *CallNoResult) Bind(client *Client) {
 }
 
 func (call *CallNoResult) DoVoid(ctx context.Context) (err error) {
-	return call.client.Invoke(ctx, call.request, nil)
+	return call.client.Do(ctx, call.request, nil)
 }

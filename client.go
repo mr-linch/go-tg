@@ -35,8 +35,8 @@ type Client struct {
 // ClientOption is a function that sets some option for Client.
 type ClientOption func(*Client)
 
-// WithClient sets custom server url for Client.
-func WithClient(server string) ClientOption {
+// WithClientServerURL sets custom server url for Client.
+func WithClientServerURL(server string) ClientOption {
 	return func(c *Client) {
 		c.server = server
 	}
@@ -224,7 +224,7 @@ func (client *Client) executeStreaming(
 	}
 }
 
-func (client *Client) Invoke(ctx context.Context, req *Request, dst interface{}) error {
+func (client *Client) Do(ctx context.Context, req *Request, dst interface{}) error {
 	res, err := client.execute(ctx, req)
 	if err != nil {
 		return fmt.Errorf("execute: %w", err)

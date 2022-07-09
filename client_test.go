@@ -15,7 +15,7 @@ func TestNewClient(t *testing.T) {
 	doer := &http.Client{}
 
 	client := New("token",
-		WithClient("http://example.com"),
+		WithClientServerURL("http://example.com"),
 		WithClientDoer(doer),
 	)
 
@@ -34,7 +34,7 @@ func TestClientExecute(t *testing.T) {
 
 		defer ts.Close()
 
-		client := New("1234:secret", WithClientDoer(ts.Client()), WithClient(ts.URL))
+		client := New("1234:secret", WithClientDoer(ts.Client()), WithClientServerURL(ts.URL))
 		ctx := context.Background()
 
 		res, err := client.execute(ctx, NewRequest("getMe"))
@@ -59,7 +59,7 @@ func TestClientExecute(t *testing.T) {
 
 		defer ts.Close()
 
-		client := New("1234:secret", WithClientDoer(ts.Client()), WithClient(ts.URL))
+		client := New("1234:secret", WithClientDoer(ts.Client()), WithClientServerURL(ts.URL))
 		ctx := context.Background()
 
 		file := NewInputFileBytes("types.go", []byte("package tg"))
@@ -91,7 +91,7 @@ func TestClientExecute(t *testing.T) {
 
 		defer ts.Close()
 
-		client := New("1234:secret", WithClientDoer(ts.Client()), WithClient(ts.URL))
+		client := New("1234:secret", WithClientDoer(ts.Client()), WithClientServerURL(ts.URL))
 		ctx := context.Background()
 
 		file := NewInputFileBytes("types.go", []byte("package tg"))
