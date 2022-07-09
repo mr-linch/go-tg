@@ -66,7 +66,7 @@ func TestPoller(t *testing.T) {
 				cancel()
 				return nil
 			}),
-			tg.New("1234:secret", tg.WithClient(server.URL), tg.WithClientDoer(server.Client())),
+			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 		).Run(ctx)
 
 		assert.NoError(t, err)
@@ -122,7 +122,7 @@ func TestPoller(t *testing.T) {
 				cancel()
 				return nil
 			}),
-			tg.New("1234:secret", tg.WithClient(server.URL), tg.WithClientDoer(server.Client())),
+			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 			WithPollerRetryAfter(time.Millisecond),
 			WithPollerHandlerTimeout(time.Millisecond),
 			WithPollerAllowedUpdates([]string{"callback_query"}),
