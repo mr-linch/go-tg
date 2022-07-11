@@ -8,9 +8,17 @@
 [![codecov](https://codecov.io/gh/mr-linch/go-tg/branch/main/graph/badge.svg?token=9EI5CEIYXL)](https://codecov.io/gh/mr-linch/go-tg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mr-linch/go-tg)](https://goreportcard.com/report/github.com/mr-linch/go-tg) 
 
+- [Features](#features)
+- [Install](#install)
+- [Quick Example](#quick-example)
+- [API Client](#api-client)
+  * [Creating](#creating)
+  * [Bot API methods](#bot-api-methods)
+  * [Low-level Bot API methods call](#low-level-bot-api-methods-call)
+  * [Helper methods](#helper-methods)
+
+
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
-
-
 
 ## Features
  - Code for Bot API types and methods is generated with embedded official documentation.
@@ -29,17 +37,15 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
 go get -u github.com/mr-linch/go-tg
 ```
 
-## Usage
-
-### Quick Example
+## Quick Example
 
 TODO
 
-### API Client 
+## API Client 
 
-#### Creating
+### Creating
 
--Simple way:
+The simplest way for create client it's call `tg.New` with token. That constructor use `http.DefaultClient` as default client and `api.telegram.org` as server URL:
 
 ```go
 client := tg.New("<TOKEN>") // from @BotFather
@@ -74,7 +80,7 @@ client := tg.New("<TOKEN>",
 )
 ```
 
-#### Bot API methods
+### Bot API methods
 
 All API methods is supported with embedded official documentation.
 It's provided via Client methods. 
@@ -121,7 +127,7 @@ if err := client.SendChatAction(
 }
 ```
 
-#### Low-level Bot API methods call
+### Low-level Bot API methods call
 
 Client has method [`Do`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Do) for low-level [requests](https://pkg.go.dev/github.com/mr-linch/go-tg#Request) execution: 
 
@@ -136,7 +142,7 @@ if err := client.Do(ctx, req, nil); err != nil {
 
 ```
 
-#### Helper methods
+### Helper methods
 
 Method [`Client.Me()`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Me) fetches authorized bot info via [`Client.GetMe()`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.GetMe) and cache it between calls. 
 
@@ -147,3 +153,47 @@ if err != nil {
 }
 ```
 
+## Get Updates 
+
+Everything related to receiving and processing updates is in the [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package. There are two ways for getting events from the Telegram Bot API server: polling and webhook. In either case, you need an update handler - [tgb.Handler](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler). 
+
+You can create an event handler in three ways: 
+
+1. Declare the structure that implements the interface [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler): 
+
+```go
+type MyHandler struct {}
+
+func (h *MyHandler) Handle(ctx context.Context, update tgb.Update) error {
+  if update.Message != nil {
+    return nil
+  }
+
+  log.Printf("new message with #id %d", update.ID)
+
+  return nil
+}
+```
+
+2. Wrap the function to the type [`tgb.HandlerFunc`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#HandlerFunc): 
+
+```go
+var handler tgb.Handler = tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
+    // avoid null pointer panic
+    if update.Message == nil {
+        return nil
+    }
+
+  log.Printf("new message with id %d", update.ID)
+})
+```
+
+3. Wrap the function to the type `tgb.*Handler` for creating typed handlers with null pointer check: 
+
+```go
+var handler tgb.Handler = tgb.MessageHandler(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+    // that handler will be called only for messages
+    log.Printf("new message with id %d", update.ID)
+    return nil
+})
+```
