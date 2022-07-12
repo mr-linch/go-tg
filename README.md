@@ -7,6 +7,8 @@
 [![CI](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml/badge.svg)](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/mr-linch/go-tg/branch/main/graph/badge.svg?token=9EI5CEIYXL)](https://codecov.io/gh/mr-linch/go-tg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mr-linch/go-tg)](https://goreportcard.com/report/github.com/mr-linch/go-tg) 
+[![beta](https://img.shields.io/badge/-beta-yellow)](https://go-faster.org/docs/projects/status)
+
 
 - [Features](#features)
 - [Install](#install)
@@ -102,7 +104,7 @@ log.Printf("authorized as @%s", me.Username)
 peer := tg.Username("MrLinch")
 
 msg, err := client.SendMessage(peer, "<b>Hello, world!</b>").
-    ParseMode(tg.HTML). // optional
+    ParseMode(tg.HTML). // optional passed like this
     Do(ctx)
 if err != nil {
     return err
@@ -133,13 +135,12 @@ Client has method [`Do`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Do)
 
 ```go
 req := tg.NewRequest("sendChatAction").
-    PeerID("chat_id", tg.Username("@MrLinch")).
-    String("action", "typing")
+  PeerID("chat_id", tg.Username("@MrLinch")).
+  String("action", "typing")
 
 if err := client.Do(ctx, req, nil); err != nil {
-    return err
+  return err
 }
-
 ```
 
 ### Helper methods
@@ -153,18 +154,20 @@ if err != nil {
 }
 ```
 
-## Get Updates 
+## Get Updates
 
-Everything related to receiving and processing updates is in the [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package. There are two ways for getting events from the Telegram Bot API server: polling and webhook. In either case, you need an update handler - [tgb.Handler](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler). 
+Everything related to receiving and processing updates is in the [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package. 
 
-You can create an event handler in three ways: 
+### Handlers 
+
+You can create an update handler in three ways: 
 
 1. Declare the structure that implements the interface [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler): 
 
 ```go
 type MyHandler struct {}
 
-func (h *MyHandler) Handle(ctx context.Context, update tgb.Update) error {
+func (h *MyHandler) Handle(ctx context.Context, update *tgb.Update) error {
   if update.Message != nil {
     return nil
   }
@@ -179,21 +182,47 @@ func (h *MyHandler) Handle(ctx context.Context, update tgb.Update) error {
 
 ```go
 var handler tgb.Handler = tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
-    // avoid null pointer panic
+    // skip updates of other types
     if update.Message == nil {
         return nil
     }
 
-  log.Printf("new message with id %d", update.ID)
+  log.Printf("update id: %d, message id: %d", update.ID, update.Message.ID)
+
+  return nil
 })
 ```
 
 3. Wrap the function to the type `tgb.*Handler` for creating typed handlers with null pointer check: 
 
 ```go
+// that handler will be called only for messages
+// other updates will be ignored
 var handler tgb.Handler = tgb.MessageHandler(func(ctx context.Context, mu *tgb.MessageUpdate) error {
-    // that handler will be called only for messages
-    log.Printf("new message with id %d", update.ID)
-    return nil
+  log.Printf("update id: %d, message id: %d", mu.Update.ID, mu.ID)
+  return nil
 })
 ```
+
+### Typed Handlers
+
+For each subtype (field) of [`tg.Update`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Update) you can create a typed handler. 
+
+
+Typed handlers it's not about routing updates but about handling them.
+These handlers will only be called for updates of a certain type, the rest will be skipped. Also they impliment the [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) interface.
+
+
+List of typed handlers:
+  - [`tgb.MessageHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageHandler) with [`tgb.MessageUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageUpdate) for `message`, `edited_message`, `channel_post`, `edited_channel_post`;
+  - [`tgb.InlineQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryHandler) with [`tgb.InlineQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryUpdate) for `inline_query`
+  - [`tgb.ChosenInlineResult`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResult) with [`tgb.ChosenInlineResultUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultUpdate) for `chosen_inline_result`;
+  - [`tgb.CallbackQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryHandler) with [`tgb.CallbackQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryUpdate) for `callback_query`;
+  - [`tgb.ShippingQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryHandler) with [`tgb.ShippingQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryUpdate) for `shipping_query`;
+  - [`tgb.PreCheckoutQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryHandler) with [`tgb.PreCheckoutQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryUpdate) for `pre_checkout_query`;
+  - [`tgb.PollHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollHandler) with [`tgb.PollUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollUpdate) for `poll`;
+  - [`tgb.PollAnswerHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerHandler) with [`tgb.PollAnswerUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerUpdate) for `poll_answer`;
+  - [`tgb.ChatMemberUpdatedHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedHandler) with [`tgb.ChatMemberUpdatedUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedUpdate) for `my_chat_member`, `chat_member`;
+  - [`tgb.ChatJoinRequestHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestHandler) with [`tgb.ChatJoinRequestUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestUpdate) for `chat_join_request`;
+
+`tgb.*Updates` has many useful methods for "answer" the update, please checkout godoc by links above.
