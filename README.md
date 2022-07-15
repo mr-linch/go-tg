@@ -1,28 +1,13 @@
-# go-tg 
+# go-tg
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/mr-linch/go-tg.svg)](https://pkg.go.dev/github.com/mr-linch/go-tg) 
+[![Go Reference](https://pkg.go.dev/badge/github.com/mr-linch/go-tg.svg)](https://pkg.go.dev/github.com/mr-linch/go-tg)
 [![go.mod](https://img.shields.io/github/go-mod/go-version/mr-linch/go-tg)](go.mod)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/mr-linch/go-tg?label=latest%20release)](https://github.com/mr-linch/go-tg/releases/latest)
 ![Telegram Bot API](https://img.shields.io/badge/Telegram%20Bot%20API-6.1-blue?logo=telegram)
 [![CI](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml/badge.svg)](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/mr-linch/go-tg/branch/main/graph/badge.svg?token=9EI5CEIYXL)](https://codecov.io/gh/mr-linch/go-tg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/mr-linch/go-tg)](https://goreportcard.com/report/github.com/mr-linch/go-tg) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/mr-linch/go-tg)](https://goreportcard.com/report/github.com/mr-linch/go-tg)
 [![beta](https://img.shields.io/badge/-beta-yellow)](https://go-faster.org/docs/projects/status)
-
-
-- [Features](#features)
-- [Install](#install)
-- [Quick Example](#quick-example)
-- [API Client](#api-client)
- * [Creating](#creating)
- * [Bot API methods](#bot-api-methods)
- * [Low-level Bot API methods call](#low-level-bot-api-methods-call)
- * [Helper methods](#helper-methods)
-- [Updates](#updates)
- * [Handlers](#handlers)
- * [Typed Handlers](#typed-handlers)
- * [Recieve updates via Polling](#recieve-updates-via-polling)
- * [Recieve updates via Webhook](#recieve-updates-via-webhook)
 
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
@@ -30,8 +15,8 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
 ## Features
  - Code for Bot API types and methods is generated with embedded official documentation.
  - Support [context.Context](https://pkg.go.dev/context).
- - API Client and bot framework are strictly separated, you can use them independently. 
- - No runtime reflection overhead. 
+ - API Client and bot framework are strictly separated, you can use them independently.
+ - No runtime reflection overhead.
  - Supports Webhook and Polling natively;
  - Handlers, filters, and middleware are supported.
 
@@ -45,9 +30,134 @@ go get -u github.com/mr-linch/go-tg
 
 ## Quick Example
 
-TODO
+<details>
+  <summary>Echo Bot</summary>
 
-## API Client 
+```go
+package main
+
+import (
+	"context"
+	"flag"
+	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"regexp"
+	"syscall"
+	"time"
+
+	_ "embed"
+
+	"github.com/mr-linch/go-tg"
+	"github.com/mr-linch/go-tg/tgb"
+)
+
+var (
+	flagToken         string
+	flagServer        string
+	flagWebhookURL    string
+	flagWebhookListen string
+)
+
+var (
+	//go:embed resources/gopher.png
+	gopherPNG []byte
+)
+
+func main() {
+	flag.StringVar(&flagToken, "token", "", "Telegram Bot API token")
+	flag.StringVar(&flagServer, "server", "https://api.telegram.org", "Telegram Bot API server")
+	flag.StringVar(&flagWebhookURL, "webhook-url", "", "Telegram Bot API webhook URL, if not provdide run in longpoll mode")
+	flag.StringVar(&flagWebhookListen, "webhook-listen", ":8000", "Telegram Bot API webhook URL")
+	flag.Parse()
+
+	ctx := context.Background()
+
+	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, os.Kill, syscall.SIGTERM)
+	defer cancel()
+
+	if err := run(ctx); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run(ctx context.Context) error {
+	if flagToken == "" {
+		return fmt.Errorf("token is required")
+	}
+
+	client := tg.New(flagToken,
+		tg.WithClientServerURL(flagServer),
+	)
+
+	me, err := client.Me(ctx)
+	if err != nil {
+		return fmt.Errorf("get me: %w", err)
+	}
+	log.Printf("auth as https://t.me/%s", me.Username)
+
+	router := newRouter()
+
+	if flagWebhookURL != "" {
+		return tgb.NewWebhook(
+			router,
+			client,
+			flagWebhookURL,
+			tgb.WithDropPendingUpdates(true),
+			tgb.WithWebhookLogger(log.Default()),
+		).Run(
+			ctx,
+			flagWebhookListen,
+		)
+	} else {
+		return tgb.NewPoller(
+			router,
+			client,
+			tgb.WithPollerLogger(log.Default()),
+		).Run(ctx)
+	}
+}
+
+func newRouter() *tgb.Router {
+	return tgb.NewRouter().
+		// handles /start and /help
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+			return msg.Answer(
+				tg.HTML.Text(
+					tg.HTML.Bold("👋 Hi, I'm echo bot!"),
+					"",
+					tg.HTML.Italic("🚀 Powered by", tg.HTML.Spoiler(tg.HTML.Link("go-tg", "github.com/mr-linch/go-tg"))),
+				),
+			).ParseMode(tg.HTML).DoVoid(ctx)
+		}, tgb.Command("start", tgb.WithCommandAlias("help"))).
+		// handles gopher image
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+			if err := msg.Update.Respond(ctx, msg.AnswerChatAction(tg.ChatActionUploadPhoto)); err != nil {
+				return fmt.Errorf("answer chat action: %w", err)
+			}
+
+			time.Sleep(time.Second)
+
+			return msg.AnswerPhoto(tg.FileArg{
+				Upload: tg.NewInputFileBytes("gopher.png", gopherPNG),
+			}).DoVoid(ctx)
+
+		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
+		// handle other messages
+		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+			return msg.Copy(msg.Chat).DoVoid(ctx)
+		})
+
+}
+
+```
+</details>
+
+More examples can be found in [examples](https://github.com/mr-linch/go-tg/tree/main/examples).
+
+
+## API Client
 
 ### Creating
 
@@ -81,7 +191,7 @@ client := tg.New("<TOKEN>",
 With self hosted Bot API server:
 
 ```go
-client := tg.New("<TOKEN>", 
+client := tg.New("<TOKEN>",
  tg.WithClientServerURL("http://localhost:8080"),
 )
 ```
@@ -89,7 +199,7 @@ client := tg.New("<TOKEN>",
 ### Bot API methods
 
 All API methods are supported with embedded official documentation.
-It's provided via Client methods. 
+It's provided via Client methods.
 
 e.g. [`getMe`](https://core.telegram.org/bots/api#getme) call:
 
@@ -118,16 +228,16 @@ if err != nil {
 log.Printf("sended message id %d", msg.ID)
 ```
 
-Some Bot API methods do not return the object and just say `True`. So, you should use the `DoVoid` method to execute calls like that. 
+Some Bot API methods do not return the object and just say `True`. So, you should use the `DoVoid` method to execute calls like that.
 
-All calls with the returned object also have the `DoVoid` method. Use it when you do not care about the result, just ensure it's not an error (unmarshaling also be skipped). 
+All calls with the returned object also have the `DoVoid` method. Use it when you do not care about the result, just ensure it's not an error (unmarshaling also be skipped).
 
 
 ```go
 peer := tg.Username("MrLinch")
 
 if err := client.SendChatAction(
-  peer, 
+  peer,
   tg.ChatActionTyping
 ).DoVoid(ctx); err != nil {
   return err
@@ -136,7 +246,7 @@ if err := client.SendChatAction(
 
 ### Low-level Bot API methods call
 
-Client has method [`Do`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Do) for low-level [requests](https://pkg.go.dev/github.com/mr-linch/go-tg#Request) execution: 
+Client has method [`Do`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Do) for low-level [requests](https://pkg.go.dev/github.com/mr-linch/go-tg#Request) execution:
 
 ```go
 req := tg.NewRequest("sendChatAction").
@@ -150,9 +260,9 @@ if err := client.Do(ctx, req, nil); err != nil {
 
 ### Helper methods
 
-Method [`Client.Me()`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Me) fetches authorized bot info via [`Client.GetMe()`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.GetMe) and cache it between calls. 
+Method [`Client.Me()`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Me) fetches authorized bot info via [`Client.GetMe()`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.GetMe) and cache it between calls.
 
-```go 
+```go
 me, err := client.Me(ctx)
 if err != nil {
   return err
@@ -161,13 +271,13 @@ if err != nil {
 
 ## Updates
 
-Everything related to receiving and processing updates is in the [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package. 
+Everything related to receiving and processing updates is in the [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package.
 
-### Handlers 
+### Handlers
 
-You can create an update handler in three ways: 
+You can create an update handler in three ways:
 
-1. Declare the structure that implements the interface [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler): 
+1. Declare the structure that implements the interface [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler):
 
 ```go
 type MyHandler struct {}
@@ -183,7 +293,7 @@ func (h *MyHandler) Handle(ctx context.Context, update *tgb.Update) error {
 }
 ```
 
-2. Wrap the function to the type [`tgb.HandlerFunc`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#HandlerFunc): 
+2. Wrap the function to the type [`tgb.HandlerFunc`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#HandlerFunc):
 
 ```go
 var handler tgb.Handler = tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
@@ -198,7 +308,7 @@ var handler tgb.Handler = tgb.HandlerFunc(func(ctx context.Context, update *tgb.
 })
 ```
 
-3. Wrap the function to the type `tgb.*Handler` for creating typed handlers with null pointer check: 
+3. Wrap the function to the type `tgb.*Handler` for creating typed handlers with null pointer check:
 
 ```go
 // that handler will be called only for messages
@@ -211,7 +321,7 @@ var handler tgb.Handler = tgb.MessageHandler(func(ctx context.Context, mu *tgb.M
 
 ### Typed Handlers
 
-For each subtype (field) of [`tg.Update`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Update) you can create a typed handler. 
+For each subtype (field) of [`tg.Update`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Update) you can create a typed handler.
 
 Typed handlers it's not about routing updates but about handling them.
 These handlers will only be called for updates of a certain type, the rest will be skipped. Also, they implement the [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) interface.
@@ -255,19 +365,21 @@ if err := poller.Run(ctx); err != nil {
 ### Recieve updates via Webhook
 
 Webhook handler and server can be created by [`tgb.NewWebhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#NewWebhook).
-That function has following arguments: 
+That function has following arguments:
  - `handler` - [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) for handling updates;
  - `client` - [`tg.Client`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Client) for making setup requests;
- - `url` - full url of the webhook server 
+ - `url` - full url of the webhook server
  - optional `options` - [`tgb.WebhookOption`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#WebhookOption) for customizing the webhook.
 
-Webhook has several security checks that are enabled by default: 
+Webhook has several security checks that are enabled by default:
  - Check if the IP of the sender is in the [allowed ranges](https://core.telegram.org/bots/webhooks#the-short-version).
- - Check if the request has a valid security token [header](https://core.telegram.org/bots/api#setwebhook). By default, the token is the SHA256 hash of the Telegram Bot API token. 
+ - Check if the request has a valid security token [header](https://core.telegram.org/bots/api#setwebhook). By default, the token is the SHA256 hash of the Telegram Bot API token.
 
-> That checks can be disabled by passing `tgb.WithWebhookSecurityToken(""), tgb.WithWebhookSecuritySubnets()` when creating the webhook.
+> ℹ️ That checks can be disabled by passing `tgb.WithWebhookSecurityToken(""), tgb.WithWebhookSecuritySubnets()` when creating the webhook.
 
-```go 
+> ⚠️ At the moment, the webhook does not integrate custom certificate. So, you should handle HTTPS requests on load balancer.
+
+```go
 handler := tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
    // ...
 })
@@ -277,7 +389,7 @@ webhook := tgb.NewWebhook(handler, client, "https://bot.com/webhook",
   tgb.WithDropPendingUpdates(true),
 )
 
-// configure telegram webhook and start HTTP server. 
+// configure telegram webhook and start HTTP server.
 // the server will be stopped on context cancel.
 if err := webhook.Run(ctx, ":8080"); err != nil {
   return err
@@ -308,3 +420,7 @@ r.Get("/webhook", webhook)
 http.ListenAndServe(":8080", r)
 
 ```
+
+### Routing updates
+
+TODO
