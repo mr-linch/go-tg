@@ -14,15 +14,15 @@
 - [Install](#install)
 - [Quick Example](#quick-example)
 - [API Client](#api-client)
-  * [Creating](#creating)
-  * [Bot API methods](#bot-api-methods)
-  * [Low-level Bot API methods call](#low-level-bot-api-methods-call)
-  * [Helper methods](#helper-methods)
+ * [Creating](#creating)
+ * [Bot API methods](#bot-api-methods)
+ * [Low-level Bot API methods call](#low-level-bot-api-methods-call)
+ * [Helper methods](#helper-methods)
 - [Updates](#updates)
-  * [Handlers](#handlers)
-  * [Typed Handlers](#typed-handlers)
-  * [Recieve updates via Polling](#recieve-updates-via-polling)
-  * [Recieve updates via Webhook](#recieve-updates-via-webhook)
+ * [Handlers](#handlers)
+ * [Typed Handlers](#typed-handlers)
+ * [Recieve updates via Polling](#recieve-updates-via-polling)
+ * [Recieve updates via Webhook](#recieve-updates-via-webhook)
 
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
@@ -30,11 +30,10 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
 ## Features
  - Code for Bot API types and methods is generated with embedded official documentation.
  - Support [context.Context](https://pkg.go.dev/context).
- - Separte client and bot framework by packages, use only what you need.
- - API Client and bot framework are strictly separeted, you can use them independently. 
+ - API Client and bot framework are strictly separated, you can use them independently. 
  - No runtime reflection overhead. 
  - Supports Webhook and Polling natively;
- - Handlers, filters, and middlewares are supported.
+ - Handlers, filters, and middleware are supported.
 
 
 
@@ -74,7 +73,7 @@ httpClient := &http.Client{
 }
 
 client := tg.New("<TOKEN>",
-  tg.WithClientDoer(httpClient),
+ tg.WithClientDoer(httpClient),
 )
 ```
 
@@ -83,13 +82,13 @@ With self hosted Bot API server:
 
 ```go
 client := tg.New("<TOKEN>", 
-    tg.WithClientServerURL("http://localhost:8080"),
+ tg.WithClientServerURL("http://localhost:8080"),
 )
 ```
 
 ### Bot API methods
 
-All API methods is supported with embedded official documentation.
+All API methods are supported with embedded official documentation.
 It's provided via Client methods. 
 
 e.g. [`getMe`](https://core.telegram.org/bots/api#getme) call:
@@ -97,7 +96,7 @@ e.g. [`getMe`](https://core.telegram.org/bots/api#getme) call:
 ```go
 me, err := client.GetMe().Do(ctx)
 if err != nil {
-  return err
+ return err
 }
 
 log.Printf("authorized as @%s", me.Username)
@@ -109,10 +108,11 @@ log.Printf("authorized as @%s", me.Username)
 peer := tg.Username("MrLinch")
 
 msg, err := client.SendMessage(peer, "<b>Hello, world!</b>").
-    ParseMode(tg.HTML). // optional passed like this
-    Do(ctx)
+  ParseMode(tg.HTML). // optional passed like this
+  Do(ctx)
+
 if err != nil {
-    return err
+  return err
 }
 
 log.Printf("sended message id %d", msg.ID)
@@ -120,17 +120,17 @@ log.Printf("sended message id %d", msg.ID)
 
 Some Bot API methods do not return the object and just say `True`. So, you should use the `DoVoid` method to execute calls like that. 
 
-All calls with the returned object also have the `DoVoid` method. Use it when you do not care about the result, just be ensure it's not error (unmarshaling also be skipped). 
+All calls with the returned object also have the `DoVoid` method. Use it when you do not care about the result, just ensure it's not an error (unmarshaling also be skipped). 
 
 
 ```go
 peer := tg.Username("MrLinch")
 
 if err := client.SendChatAction(
-    peer, 
-    tg.ChatActionTyping
+  peer, 
+  tg.ChatActionTyping
 ).DoVoid(ctx); err != nil {
-    return err
+  return err
 }
 ```
 
@@ -155,7 +155,7 @@ Method [`Client.Me()`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Me) f
 ```go 
 me, err := client.Me(ctx)
 if err != nil {
-    return err
+  return err
 }
 ```
 
@@ -177,9 +177,9 @@ func (h *MyHandler) Handle(ctx context.Context, update *tgb.Update) error {
     return nil
   }
 
-  log.Printf("update id: %d, message id: %d", update.ID, update.Message.ID)
+ log.Printf("update id: %d, message id: %d", update.ID, update.Message.ID)
 
-  return nil
+ return nil
 }
 ```
 
@@ -187,14 +187,14 @@ func (h *MyHandler) Handle(ctx context.Context, update *tgb.Update) error {
 
 ```go
 var handler tgb.Handler = tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
-    // skip updates of other types
-    if update.Message == nil {
-        return nil
-    }
-
-  log.Printf("update id: %d, message id: %d", update.ID, update.Message.ID)
-
+ // skip updates of other types
+ if update.Message == nil {
   return nil
+ }
+
+ log.Printf("update id: %d, message id: %d", update.ID, update.Message.ID)
+
+ return nil
 })
 ```
 
@@ -214,20 +214,20 @@ var handler tgb.Handler = tgb.MessageHandler(func(ctx context.Context, mu *tgb.M
 For each subtype (field) of [`tg.Update`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Update) you can create a typed handler. 
 
 Typed handlers it's not about routing updates but about handling them.
-These handlers will only be called for updates of a certain type, the rest will be skipped. Also they impliment the [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) interface.
+These handlers will only be called for updates of a certain type, the rest will be skipped. Also, they implement the [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) interface.
 
 
 List of typed handlers:
-  - [`tgb.MessageHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageHandler) with [`tgb.MessageUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageUpdate) for `message`, `edited_message`, `channel_post`, `edited_channel_post`;
-  - [`tgb.InlineQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryHandler) with [`tgb.InlineQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryUpdate) for `inline_query`
-  - [`tgb.ChosenInlineResult`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResult) with [`tgb.ChosenInlineResultUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultUpdate) for `chosen_inline_result`;
-  - [`tgb.CallbackQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryHandler) with [`tgb.CallbackQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryUpdate) for `callback_query`;
-  - [`tgb.ShippingQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryHandler) with [`tgb.ShippingQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryUpdate) for `shipping_query`;
-  - [`tgb.PreCheckoutQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryHandler) with [`tgb.PreCheckoutQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryUpdate) for `pre_checkout_query`;
-  - [`tgb.PollHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollHandler) with [`tgb.PollUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollUpdate) for `poll`;
-  - [`tgb.PollAnswerHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerHandler) with [`tgb.PollAnswerUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerUpdate) for `poll_answer`;
-  - [`tgb.ChatMemberUpdatedHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedHandler) with [`tgb.ChatMemberUpdatedUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedUpdate) for `my_chat_member`, `chat_member`;
-  - [`tgb.ChatJoinRequestHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestHandler) with [`tgb.ChatJoinRequestUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestUpdate) for `chat_join_request`;
+ - [`tgb.MessageHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageHandler) with [`tgb.MessageUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageUpdate) for `message`, `edited_message`, `channel_post`, `edited_channel_post`;
+ - [`tgb.InlineQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryHandler) with [`tgb.InlineQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryUpdate) for `inline_query`
+ - [`tgb.ChosenInlineResult`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResult) with [`tgb.ChosenInlineResultUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultUpdate) for `chosen_inline_result`;
+ - [`tgb.CallbackQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryHandler) with [`tgb.CallbackQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryUpdate) for `callback_query`;
+ - [`tgb.ShippingQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryHandler) with [`tgb.ShippingQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryUpdate) for `shipping_query`;
+ - [`tgb.PreCheckoutQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryHandler) with [`tgb.PreCheckoutQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryUpdate) for `pre_checkout_query`;
+ - [`tgb.PollHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollHandler) with [`tgb.PollUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollUpdate) for `poll`;
+ - [`tgb.PollAnswerHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerHandler) with [`tgb.PollAnswerUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerUpdate) for `poll_answer`;
+ - [`tgb.ChatMemberUpdatedHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedHandler) with [`tgb.ChatMemberUpdatedUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedUpdate) for `my_chat_member`, `chat_member`;
+ - [`tgb.ChatJoinRequestHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestHandler) with [`tgb.ChatJoinRequestUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestUpdate) for `chat_join_request`;
 
 `tgb.*Updates` has many useful methods for "answer" the update, please checkout godoc by links above.
 
@@ -262,14 +262,14 @@ That function has following arguments:
  - optional `options` - [`tgb.WebhookOption`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#WebhookOption) for customizing the webhook.
 
 Webhook has several security checks that are enabled by default: 
- - Check if the IP of the sender in the [allowed ranges](https://core.telegram.org/bots/webhooks#the-short-version).
- - Check if the request has valid security token [header](https://core.telegram.org/bots/api#setwebhook). By default the token is SHA256 hash of Telegram Bot API token. 
+ - Check if the IP of the sender is in the [allowed ranges](https://core.telegram.org/bots/webhooks#the-short-version).
+ - Check if the request has a valid security token [header](https://core.telegram.org/bots/api#setwebhook). By default, the token is the SHA256 hash of the Telegram Bot API token. 
 
 > That checks can be disabled by passing `tgb.WithWebhookSecurityToken(""), tgb.WithWebhookSecuritySubnets()` when creating the webhook.
 
 ```go 
 handler := tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
-  // ...
+   // ...
 })
 
 
@@ -284,7 +284,7 @@ if err := webhook.Run(ctx, ":8080"); err != nil {
 }
 ```
 
-Webhook it is regular [`http.Handler`](https://pkg.go.dev/net/http#Handler) that can be used in any HTTP-compatible router. But you should call [`Webhook.Setup`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook.Setup) before starting the server to configure the webhook on Telegram side.
+Webhook is a regular [`http.Handler`](https://pkg.go.dev/net/http#Handler) that can be used in any HTTP-compatible router. But you should call [`Webhook.Setup`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook.Setup) before starting the server to configure the webhook on the Telegram side.
 
 **e.g. integration with [chi](https://pkg.go.dev/github.com/go-chi/chi/v5) router**
 ```go
