@@ -9,6 +9,24 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/mr-linch/go-tg)](https://goreportcard.com/report/github.com/mr-linch/go-tg)
 [![beta](https://img.shields.io/badge/-beta-yellow)](https://go-faster.org/docs/projects/status)
 
+- [Features](#features)
+- [Install](#install)
+- [Quick Example](#quick-example)
+- [API Client](#api-client)
+  * [Creating](#creating)
+  * [Bot API methods](#bot-api-methods)
+  * [Low-level Bot API methods call](#low-level-bot-api-methods-call)
+  * [Helper methods](#helper-methods)
+  * [Working with Files 🚧](#working-with-files---)
+- [Updates](#updates)
+  * [Handlers](#handlers)
+  * [Typed Handlers](#typed-handlers)
+  * [Receive updates via Polling](#receive-updates-via-polling)
+  * [Receive updates via Webhook](#receive-updates-via-webhook)
+  * [Routing updates 🚧](#routing-updates---)
+- [Parse Mode 🚧](#parse-mode---)
+- [Thanks 🚧](#thanks---)
+
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
 
@@ -30,97 +48,38 @@ go get -u github.com/mr-linch/go-tg
 
 ## Quick Example
 
-<details>
-  <summary>Echo Bot</summary>
-
 ```go
 package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"regexp"
 	"syscall"
 	"time"
 
-	_ "embed"
-
 	"github.com/mr-linch/go-tg"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
-var (
-	flagToken         string
-	flagServer        string
-	flagWebhookURL    string
-	flagWebhookListen string
-)
-
-var (
-	//go:embed resources/gopher.png
-	gopherPNG []byte
-)
-
 func main() {
-	flag.StringVar(&flagToken, "token", "", "Telegram Bot API token")
-	flag.StringVar(&flagServer, "server", "https://api.telegram.org", "Telegram Bot API server")
-	flag.StringVar(&flagWebhookURL, "webhook-url", "", "Telegram Bot API webhook URL, if not provdide run in longpoll mode")
-	flag.StringVar(&flagWebhookListen, "webhook-listen", ":8000", "Telegram Bot API webhook URL")
-	flag.Parse()
-
 	ctx := context.Background()
 
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, os.Kill, syscall.SIGTERM)
 	defer cancel()
 
 	if err := run(ctx); err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		defer os.Exit(1)
 	}
 }
 
 func run(ctx context.Context) error {
-	if flagToken == "" {
-		return fmt.Errorf("token is required")
-	}
+	client := tg.New(os.Getenv("BOT_TOKEN"))
 
-	client := tg.New(flagToken,
-		tg.WithClientServerURL(flagServer),
-	)
-
-	me, err := client.Me(ctx)
-	if err != nil {
-		return fmt.Errorf("get me: %w", err)
-	}
-	log.Printf("auth as https://t.me/%s", me.Username)
-
-	router := newRouter()
-
-	if flagWebhookURL != "" {
-		return tgb.NewWebhook(
-			router,
-			client,
-			flagWebhookURL,
-			tgb.WithDropPendingUpdates(true),
-			tgb.WithWebhookLogger(log.Default()),
-		).Run(
-			ctx,
-			flagWebhookListen,
-		)
-	} else {
-		return tgb.NewPoller(
-			router,
-			client,
-			tgb.WithPollerLogger(log.Default()),
-		).Run(ctx)
-	}
-}
-
-func newRouter() *tgb.Router {
-	return tgb.NewRouter().
+	router := tgb.NewRouter().
 		// handles /start and /help
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer(
@@ -137,10 +96,11 @@ func newRouter() *tgb.Router {
 				return fmt.Errorf("answer chat action: %w", err)
 			}
 
+			// emulate thinking :)
 			time.Sleep(time.Second)
 
 			return msg.AnswerPhoto(tg.FileArg{
-				Upload: tg.NewInputFileBytes("gopher.png", gopherPNG),
+				URL: "https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png",
 			}).DoVoid(ctx)
 
 		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
@@ -149,13 +109,15 @@ func newRouter() *tgb.Router {
 			return msg.Copy(msg.Chat).DoVoid(ctx)
 		})
 
+	return tgb.NewPoller(
+		router,
+		client,
+	).Run(ctx)
 }
 
 ```
-</details>
 
 More examples can be found in [examples](https://github.com/mr-linch/go-tg/tree/main/examples).
-
 
 ## API Client
 
@@ -269,6 +231,8 @@ if err != nil {
 }
 ```
 
+### Working with Files 🚧
+
 ## Updates
 
 Everything related to receiving and processing updates is in the [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package.
@@ -341,7 +305,7 @@ List of typed handlers:
 
 `tgb.*Updates` has many useful methods for "answer" the update, please checkout godoc by links above.
 
-### Recieve updates via Polling
+### Receive updates via Polling
 
 Use [`tgb.NewPoller`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#NewPoller) to create a poller with specified [`tg.Client`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Client) and [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler). Also accepts [`tgb.PollerOption`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollerOption) for customizing the poller.
 
@@ -362,7 +326,7 @@ if err := poller.Run(ctx); err != nil {
 
 ```
 
-### Recieve updates via Webhook
+### Receive updates via Webhook
 
 Webhook handler and server can be created by [`tgb.NewWebhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#NewWebhook).
 That function has following arguments:
@@ -421,6 +385,8 @@ http.ListenAndServe(":8080", r)
 
 ```
 
-### Routing updates
+### Routing updates 🚧
 
-TODO
+## Parse Mode 🚧
+
+## Thanks 🚧
