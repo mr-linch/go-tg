@@ -37,6 +37,7 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
  - No runtime reflection overhead.
  - Supports Webhook and Polling natively;
  - Handlers, filters, and middleware are supported.
+ - [WebApps](https://core.telegram.org/bots/webapps) and [Login Widget](https://core.telegram.org/widgets/login) helpers.
 
 
 
