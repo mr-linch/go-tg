@@ -46,7 +46,7 @@ func run(ctx context.Context) error {
 
 	const typingMessage = "use keyboard above for typing..."
 
-	bot := tgb.New().
+	router := tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer(tg.HTML.Italic(typingMessage)).
 				ParseMode(tg.HTML).
@@ -84,7 +84,7 @@ func run(ctx context.Context) error {
 		})
 
 	return tgb.NewPoller(
-		bot,
+		router,
 		client,
 	).Run(ctx)
 }

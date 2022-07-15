@@ -11,7 +11,7 @@ import (
 
 func TestBot(t *testing.T) {
 	t.Run("HandleEmpty", func(t *testing.T) {
-		err := New().Handle(context.Background(), &Update{
+		err := NewRouter().Handle(context.Background(), &Update{
 			Update: &tg.Update{
 				Message: &tg.Message{},
 			},
@@ -21,7 +21,7 @@ func TestBot(t *testing.T) {
 	t.Run("UpdateHanlder", func(t *testing.T) {
 		isMessageHandlerCalled := false
 		isUpdateHanlderCalled := false
-		err := New().
+		err := NewRouter().
 			Message(func(ctx context.Context, msg *MessageUpdate) error {
 				isMessageHandlerCalled = true
 				return nil
@@ -42,7 +42,7 @@ func TestBot(t *testing.T) {
 	})
 
 	t.Run("UnknownUpdateSubtype", func(t *testing.T) {
-		err := New().Message(func(ctx context.Context, msg *MessageUpdate) error {
+		err := NewRouter().Message(func(ctx context.Context, msg *MessageUpdate) error {
 			return nil
 		}).Handle(context.Background(), &Update{
 			Update: &tg.Update{},
@@ -52,7 +52,7 @@ func TestBot(t *testing.T) {
 	})
 	t.Run("AllowError", func(t *testing.T) {
 
-		err := New().
+		err := NewRouter().
 			Message(func(ctx context.Context, msg *MessageUpdate) error {
 				return nil
 			}, FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
@@ -67,12 +67,12 @@ func TestBot(t *testing.T) {
 	t.Run("Error", func(t *testing.T) {
 		handlerErr := fmt.Errorf("handler error")
 
-		bot := New().
+		router := NewRouter().
 			Message(func(ctx context.Context, msg *MessageUpdate) error {
 				return handlerErr
 			})
 
-		err := bot.Handle(context.Background(), &Update{
+		err := router.Handle(context.Background(), &Update{
 			Update: &tg.Update{
 				Message: &tg.Message{},
 			},
@@ -82,13 +82,13 @@ func TestBot(t *testing.T) {
 
 		isErrorHandlerCalled := false
 
-		bot.Error(func(ctx context.Context, update *Update, err error) error {
+		router.Error(func(ctx context.Context, update *Update, err error) error {
 			isErrorHandlerCalled = true
 			assert.Equal(t, handlerErr, err)
 			return nil
 		})
 
-		err = bot.Handle(context.Background(), &Update{
+		err = router.Handle(context.Background(), &Update{
 			Update: &tg.Update{
 				Message: &tg.Message{},
 			},
@@ -99,14 +99,14 @@ func TestBot(t *testing.T) {
 	})
 
 	t.Run("Handlers", func(t *testing.T) {
-		bot := New()
+		router := NewRouter()
 		ctx := context.Background()
 
-		assert.NotNil(t, bot, "bot should be not nil")
+		assert.NotNil(t, router, "bot should be not nil")
 
 		var isMiddelwareCallled bool
 
-		bot.Use(
+		router.Use(
 			func(next Handler) Handler {
 				return HandlerFunc(func(ctx context.Context, update *Update) error {
 					assert.NotNil(t, update)
@@ -120,13 +120,13 @@ func TestBot(t *testing.T) {
 		{
 			var isMessageHandlerCalled bool
 
-			bot.Message(func(ctx context.Context, msg *MessageUpdate) error {
+			router.Message(func(ctx context.Context, msg *MessageUpdate) error {
 				assert.NotNil(t, msg.Message)
 				isMessageHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				Message: &tg.Message{},
 			}})
 
@@ -138,13 +138,13 @@ func TestBot(t *testing.T) {
 		{
 			isEditedMessageHandlerCalled := false
 
-			bot.EditedMessage(func(ctx context.Context, msg *MessageUpdate) error {
+			router.EditedMessage(func(ctx context.Context, msg *MessageUpdate) error {
 				assert.NotNil(t, msg.Message)
 				isEditedMessageHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				EditedMessage: &tg.Message{},
 			}})
 
@@ -155,13 +155,13 @@ func TestBot(t *testing.T) {
 		{
 			isChannelPostHandlerCalled := false
 
-			bot.ChannelPost(func(ctx context.Context, msg *MessageUpdate) error {
+			router.ChannelPost(func(ctx context.Context, msg *MessageUpdate) error {
 				assert.NotNil(t, msg.Message)
 				isChannelPostHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				ChannelPost: &tg.Message{},
 			}})
 
@@ -172,13 +172,13 @@ func TestBot(t *testing.T) {
 		{
 			isEditedChannelPostHandlerCalled := false
 
-			bot.EditedChannelPost(func(ctx context.Context, msg *MessageUpdate) error {
+			router.EditedChannelPost(func(ctx context.Context, msg *MessageUpdate) error {
 				assert.NotNil(t, msg.Message)
 				isEditedChannelPostHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				EditedChannelPost: &tg.Message{},
 			}})
 
@@ -189,13 +189,13 @@ func TestBot(t *testing.T) {
 		{
 			isInlineQueryHandlerCalled := false
 
-			bot.InlineQuery(func(ctx context.Context, msg *InlineQueryUpdate) error {
+			router.InlineQuery(func(ctx context.Context, msg *InlineQueryUpdate) error {
 				assert.NotNil(t, msg.InlineQuery)
 				isInlineQueryHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				InlineQuery: &tg.InlineQuery{},
 			}})
 
@@ -206,13 +206,13 @@ func TestBot(t *testing.T) {
 		{
 			isChosenInlineResultHandlerCalled := false
 
-			bot.ChosenInlineResult(func(ctx context.Context, msg *ChosenInlineResultUpdate) error {
+			router.ChosenInlineResult(func(ctx context.Context, msg *ChosenInlineResultUpdate) error {
 				assert.NotNil(t, msg.ChosenInlineResult)
 				isChosenInlineResultHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				ChosenInlineResult: &tg.ChosenInlineResult{},
 			}})
 
@@ -223,13 +223,13 @@ func TestBot(t *testing.T) {
 		{
 			isCallbackQueryHandlerCalled := false
 
-			bot.CallbackQuery(func(ctx context.Context, msg *CallbackQueryUpdate) error {
+			router.CallbackQuery(func(ctx context.Context, msg *CallbackQueryUpdate) error {
 				assert.NotNil(t, msg.CallbackQuery)
 				isCallbackQueryHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				CallbackQuery: &tg.CallbackQuery{},
 			}})
 
@@ -240,13 +240,13 @@ func TestBot(t *testing.T) {
 		{
 			isShippingQueryHandlerCalled := false
 
-			bot.ShippingQuery(func(ctx context.Context, msg *ShippingQueryUpdate) error {
+			router.ShippingQuery(func(ctx context.Context, msg *ShippingQueryUpdate) error {
 				assert.NotNil(t, msg.ShippingQuery)
 				isShippingQueryHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				ShippingQuery: &tg.ShippingQuery{},
 			}})
 
@@ -257,13 +257,13 @@ func TestBot(t *testing.T) {
 		{
 			isPreCheckoutQueryHandlerCalled := false
 
-			bot.PreCheckoutQuery(func(ctx context.Context, msg *PreCheckoutQueryUpdate) error {
+			router.PreCheckoutQuery(func(ctx context.Context, msg *PreCheckoutQueryUpdate) error {
 				assert.NotNil(t, msg.PreCheckoutQuery)
 				isPreCheckoutQueryHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				PreCheckoutQuery: &tg.PreCheckoutQuery{},
 			}})
 
@@ -274,13 +274,13 @@ func TestBot(t *testing.T) {
 		{
 			isPollHandlerCalled := false
 
-			bot.Poll(func(ctx context.Context, msg *PollUpdate) error {
+			router.Poll(func(ctx context.Context, msg *PollUpdate) error {
 				assert.NotNil(t, msg.Poll)
 				isPollHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				Poll: &tg.Poll{},
 			}})
 
@@ -291,13 +291,13 @@ func TestBot(t *testing.T) {
 		{
 			isPollAnswerHandlerCalled := false
 
-			bot.PollAnswer(func(ctx context.Context, msg *PollAnswerUpdate) error {
+			router.PollAnswer(func(ctx context.Context, msg *PollAnswerUpdate) error {
 				assert.NotNil(t, msg.PollAnswer)
 				isPollAnswerHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				PollAnswer: &tg.PollAnswer{},
 			}})
 
@@ -309,13 +309,13 @@ func TestBot(t *testing.T) {
 		{
 			isMyChatMemberHandlerCalled := false
 
-			bot.MyChatMember(func(ctx context.Context, msg *ChatMemberUpdatedUpdate) error {
+			router.MyChatMember(func(ctx context.Context, msg *ChatMemberUpdatedUpdate) error {
 				assert.NotNil(t, msg.ChatMemberUpdated)
 				isMyChatMemberHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				MyChatMember: &tg.ChatMemberUpdated{},
 			}})
 
@@ -326,13 +326,13 @@ func TestBot(t *testing.T) {
 		{
 			isChatMemberHandlerCalled := false
 
-			bot.ChatMember(func(ctx context.Context, msg *ChatMemberUpdatedUpdate) error {
+			router.ChatMember(func(ctx context.Context, msg *ChatMemberUpdatedUpdate) error {
 				assert.NotNil(t, msg.ChatMemberUpdated)
 				isChatMemberHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				ChatMember: &tg.ChatMemberUpdated{},
 			}})
 
@@ -343,13 +343,13 @@ func TestBot(t *testing.T) {
 		{
 			isChatJoinRequestHandlerCalled := false
 
-			bot.ChatJoinRequest(func(ctx context.Context, msg *ChatJoinRequestUpdate) error {
+			router.ChatJoinRequest(func(ctx context.Context, msg *ChatJoinRequestUpdate) error {
 				assert.NotNil(t, msg.ChatJoinRequest)
 				isChatJoinRequestHandlerCalled = true
 				return nil
 			})
 
-			err := bot.Handle(ctx, &Update{Update: &tg.Update{
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				ChatJoinRequest: &tg.ChatJoinRequest{},
 			}})
 
@@ -363,7 +363,7 @@ func TestBot(t *testing.T) {
 		isGroupChatHandlerCalled := false
 		isGroupAndPrivateChatHandlerCalled := false
 
-		bot := New().
+		router := NewRouter().
 			Message(func(context.Context, *MessageUpdate) error {
 				isPrivateChatHandlerCalled = true
 				return nil
@@ -377,7 +377,7 @@ func TestBot(t *testing.T) {
 				return nil
 			}, ChatType(tg.ChatTypePrivate), ChatType(tg.ChatTypeGroup))
 
-		err := bot.Handle(context.Background(), &Update{
+		err := router.Handle(context.Background(), &Update{
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Chat: tg.Chat{
@@ -396,7 +396,7 @@ func TestBot(t *testing.T) {
 		isGroupChatHandlerCalled = false
 		isGroupAndPrivateChatHandlerCalled = false
 
-		err = bot.Handle(context.Background(), &Update{
+		err = router.Handle(context.Background(), &Update{
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Chat: tg.Chat{

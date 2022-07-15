@@ -52,7 +52,7 @@ func run(ctx context.Context) error {
 	}
 	log.Printf("auth as https://t.me/%s", me.Username)
 
-	bot := tgb.New().
+	router := tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer("how much items I should send?").DoVoid(ctx)
 		}, tgb.Command("start")).
@@ -86,7 +86,7 @@ func run(ctx context.Context) error {
 		})
 
 	return tgb.NewPoller(
-		bot,
+		router,
 		client,
 		tgb.WithPollerLogger(log.Default()),
 	).Run(ctx)

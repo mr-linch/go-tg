@@ -68,9 +68,9 @@ func run(ctx context.Context) error {
 	}
 	log.Printf("auth as https://t.me/%s", me.Username)
 
-	bot := newBot(flagBaseURL)
+	router := newRouter(flagBaseURL)
 
-	webhook := tgb.NewWebhook(bot, client, flagBaseURL+"/webhook",
+	webhook := tgb.NewWebhook(router, client, flagBaseURL+"/webhook",
 		tgb.WithWebhookLogger(log.Default()),
 	)
 
@@ -129,8 +129,8 @@ func run(ctx context.Context) error {
 	return runServer(ctx, mux, flagListen)
 }
 
-func newBot(baseURL string) *tgb.Bot {
-	return tgb.New().
+func newRouter(baseURL string) *tgb.Router {
+	return tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			err := msg.Answer("hey, this is buttons demo").ReplyMarkup(tg.NewInlineKeyboardMarkup(
 				tg.NewButtonColumn(

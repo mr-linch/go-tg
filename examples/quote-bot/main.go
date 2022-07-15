@@ -57,7 +57,7 @@ func run(ctx context.Context) error {
 		Doer: http.DefaultClient,
 	}
 
-	bot := tgb.New().
+	router := tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer("Hey! I'm inline bot, so click button below for start 👇").
 				ReplyMarkup(tg.NewInlineKeyboardMarkup(tg.NewButtonRow(
@@ -121,7 +121,7 @@ func run(ctx context.Context) error {
 		})
 
 	return tgb.NewPoller(
-		bot,
+		router,
 		client,
 	).Run(ctx)
 }
