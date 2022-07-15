@@ -154,7 +154,7 @@ if err != nil {
 }
 ```
 
-## Get Updates
+## Updates
 
 Everything related to receiving and processing updates is in the [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package. 
 
@@ -172,7 +172,7 @@ func (h *MyHandler) Handle(ctx context.Context, update *tgb.Update) error {
     return nil
   }
 
-  log.Printf("new message with #id %d", update.ID)
+  log.Printf("update id: %d, message id: %d", update.ID, update.Message.ID)
 
   return nil
 }
@@ -208,7 +208,6 @@ var handler tgb.Handler = tgb.MessageHandler(func(ctx context.Context, mu *tgb.M
 
 For each subtype (field) of [`tg.Update`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Update) you can create a typed handler. 
 
-
 Typed handlers it's not about routing updates but about handling them.
 These handlers will only be called for updates of a certain type, the rest will be skipped. Also they impliment the [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) interface.
 
@@ -226,3 +225,81 @@ List of typed handlers:
   - [`tgb.ChatJoinRequestHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestHandler) with [`tgb.ChatJoinRequestUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestUpdate) for `chat_join_request`;
 
 `tgb.*Updates` has many useful methods for "answer" the update, please checkout godoc by links above.
+
+### Recieve updates via Polling
+
+Use [`tgb.NewPoller`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#NewPoller) to create a poller with specified [`tg.Client`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Client) and [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler). Also accepts [`tgb.PollerOption`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollerOption) for customizing the poller.
+
+```go
+handler := tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
+  // ...
+})
+
+poller := tgb.NewPoller(handler, client,
+  // recieve max 100 updates in a batch
+  tgb.WithPollerLimit(100),
+)
+
+// polling will be stopped on context cancel
+if err := poller.Run(ctx); err != nil {
+  return err
+}
+
+```
+
+### Recieve updates via Webhook
+
+Webhook handler and server can be created by [`tgb.NewWebhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#NewWebhook).
+That function has following arguments: 
+ - `handler` - [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) for handling updates;
+ - `client` - [`tg.Client`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Client) for making setup requests;
+ - `url` - full url of the webhook server 
+ - optional `options` - [`tgb.WebhookOption`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#WebhookOption) for customizing the webhook.
+
+Webhook has several security checks that are enabled by default: 
+ - Check if the IP of the sender in the [allowed ranges](https://core.telegram.org/bots/webhooks#the-short-version).
+ - Check if the request has valid security token [header](https://core.telegram.org/bots/api#setwebhook). By default the token is SHA256 hash of Telegram Bot API token. 
+
+> That checks can be disabled by passing `tgb.WithWebhookSecurityToken(""), tgb.WithWebhookSecuritySubnets()` when creating the webhook.
+
+```go 
+handler := tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
+  // ...
+})
+
+
+webhook := tgb.NewWebhook(handler, client, "https://bot.com/webhook",
+  tgb.WithDropPendingUpdates(true),
+)
+
+// configure telegram webhook and start HTTP server. 
+// the server will be stopped on context cancel.
+if err := webhook.Run(ctx, ":8080"); err != nil {
+  return err
+}
+```
+
+Webhook it is regular [`http.Handler`](https://pkg.go.dev/net/http#Handler) that can be used in any HTTP-compatible router. But you should call [`Webhook.Setup`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook.Setup) before starting the server to configure the webhook on Telegram side.
+
+**e.g. integration with [chi](https://pkg.go.dev/github.com/go-chi/chi/v5) router**
+```go
+handler := tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
+  // ...
+})
+
+webhook := tgb.NewWebhook(handler, client, "https://bot.com/webhook",
+  tgb.WithDropPendingUpdates(true),
+)
+
+// get current webhook configuration and sync it if needed.
+if err := webhook.Setup(ctx); err != nil {
+  return err
+}
+
+r := chi.NewRouter()
+
+r.Get("/webhook", webhook)
+
+http.ListenAndServe(":8080", r)
+
+```
