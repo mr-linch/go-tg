@@ -18,6 +18,11 @@
   * [Bot API methods](#bot-api-methods)
   * [Low-level Bot API methods call](#low-level-bot-api-methods-call)
   * [Helper methods](#helper-methods)
+- [Updates](#updates)
+  * [Handlers](#handlers)
+  * [Typed Handlers](#typed-handlers)
+  * [Recieve updates via Polling](#recieve-updates-via-polling)
+  * [Recieve updates via Webhook](#recieve-updates-via-webhook)
 
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
