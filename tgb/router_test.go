@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBot(t *testing.T) {
+func TestRouter(t *testing.T) {
 	t.Run("HandleEmpty", func(t *testing.T) {
 		err := NewRouter().Handle(context.Background(), &Update{
 			Update: &tg.Update{
