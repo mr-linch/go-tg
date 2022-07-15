@@ -14,9 +14,9 @@ type registeredHandler struct {
 	Filter  Filter
 }
 
-// Bot is a router for incoming Updates.
+// Router is a router for incoming Updates.
 // tg.Update should be wrapped into tgb.Update with binded Client and Update.
-type Bot struct {
+type Router struct {
 	chain                     chain
 	messageHandler            []*registeredHandler
 	editedMessageHandler      []*registeredHandler
@@ -36,9 +36,9 @@ type Bot struct {
 	errorHandler              ErrorHandler
 }
 
-// New creates new Bot.
-func New() *Bot {
-	return &Bot{
+// NewRouter creates new Bot.
+func NewRouter() *Router {
+	return &Router{
 		chain: chain{},
 	}
 }
@@ -54,13 +54,13 @@ func compactFilter(filters ...Filter) Filter {
 
 // Use add middleware to chain handlers.
 // Should be called before any other register handler.
-func (bot *Bot) Use(mws ...Middleware) *Bot {
+func (bot *Router) Use(mws ...Middleware) *Router {
 	bot.chain = bot.chain.Append(mws...)
 	return bot
 }
 
 // Message register handlers for Update with not empty Message field.
-func (bot *Bot) Message(handler MessageHandler, filters ...Filter) *Bot {
+func (bot *Router) Message(handler MessageHandler, filters ...Filter) *Router {
 	bot.messageHandler = append(bot.messageHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -69,7 +69,7 @@ func (bot *Bot) Message(handler MessageHandler, filters ...Filter) *Bot {
 }
 
 // EditedMessage register handlers for Update with not empty EditedMessage field.
-func (bot *Bot) EditedMessage(handler MessageHandler, filters ...Filter) *Bot {
+func (bot *Router) EditedMessage(handler MessageHandler, filters ...Filter) *Router {
 	bot.editedMessageHandler = append(bot.editedMessageHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -78,7 +78,7 @@ func (bot *Bot) EditedMessage(handler MessageHandler, filters ...Filter) *Bot {
 }
 
 // ChannelPost register handlers for Update with not empty ChannelPost field.
-func (bot *Bot) ChannelPost(handler MessageHandler, filters ...Filter) *Bot {
+func (bot *Router) ChannelPost(handler MessageHandler, filters ...Filter) *Router {
 	bot.channelPostHandler = append(bot.channelPostHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -87,7 +87,7 @@ func (bot *Bot) ChannelPost(handler MessageHandler, filters ...Filter) *Bot {
 }
 
 // EditedChannelPost register handlers for Update with not empty EditedChannelPost field.
-func (bot *Bot) EditedChannelPost(handler MessageHandler, filters ...Filter) *Bot {
+func (bot *Router) EditedChannelPost(handler MessageHandler, filters ...Filter) *Router {
 	bot.editedChannelPostHandler = append(bot.editedChannelPostHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -96,7 +96,7 @@ func (bot *Bot) EditedChannelPost(handler MessageHandler, filters ...Filter) *Bo
 }
 
 // InlineQuery register handlers for Update with not empty InlineQuery field.
-func (bot *Bot) InlineQuery(handler InlineQueryHandler, filters ...Filter) *Bot {
+func (bot *Router) InlineQuery(handler InlineQueryHandler, filters ...Filter) *Router {
 	bot.inlineQueryHandler = append(bot.inlineQueryHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -105,7 +105,7 @@ func (bot *Bot) InlineQuery(handler InlineQueryHandler, filters ...Filter) *Bot 
 }
 
 // ChosenInlineResult register handlers for Update with not empty ChosenInlineResult field.
-func (bot *Bot) ChosenInlineResult(handler ChosenInlineResultHandler, filters ...Filter) *Bot {
+func (bot *Router) ChosenInlineResult(handler ChosenInlineResultHandler, filters ...Filter) *Router {
 	bot.chosenInlineResultHandler = append(bot.chosenInlineResultHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -114,7 +114,7 @@ func (bot *Bot) ChosenInlineResult(handler ChosenInlineResultHandler, filters ..
 }
 
 // CallbackQuery register handlers for Update with not empty CallbackQuery field.
-func (bot *Bot) CallbackQuery(handler CallbackQueryHandler, filters ...Filter) *Bot {
+func (bot *Router) CallbackQuery(handler CallbackQueryHandler, filters ...Filter) *Router {
 	bot.callbackQueryHandler = append(bot.callbackQueryHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -123,7 +123,7 @@ func (bot *Bot) CallbackQuery(handler CallbackQueryHandler, filters ...Filter) *
 }
 
 // ShippingQuery register handlers for Update with not empty ShippingQuery field.
-func (bot *Bot) ShippingQuery(handler ShippingQueryHandler, filters ...Filter) *Bot {
+func (bot *Router) ShippingQuery(handler ShippingQueryHandler, filters ...Filter) *Router {
 	bot.shippingQueryHandler = append(bot.shippingQueryHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -132,7 +132,7 @@ func (bot *Bot) ShippingQuery(handler ShippingQueryHandler, filters ...Filter) *
 }
 
 // PreCheckoutQuery register handlers for Update with not empty PreCheckoutQuery field.
-func (bot *Bot) PreCheckoutQuery(handler PreCheckoutQueryHandler, filters ...Filter) *Bot {
+func (bot *Router) PreCheckoutQuery(handler PreCheckoutQueryHandler, filters ...Filter) *Router {
 	bot.preCheckoutQueryHandler = append(bot.preCheckoutQueryHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -141,7 +141,7 @@ func (bot *Bot) PreCheckoutQuery(handler PreCheckoutQueryHandler, filters ...Fil
 }
 
 // Poll register handlers for Update with not empty Poll field.
-func (bot *Bot) Poll(handler PollHandler, filters ...Filter) *Bot {
+func (bot *Router) Poll(handler PollHandler, filters ...Filter) *Router {
 	bot.pollHandler = append(bot.pollHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -150,7 +150,7 @@ func (bot *Bot) Poll(handler PollHandler, filters ...Filter) *Bot {
 }
 
 // PollAnswer register handlers for Update with not empty PollAnswer field.
-func (bot *Bot) PollAnswer(handler PollAnswerHandler, filters ...Filter) *Bot {
+func (bot *Router) PollAnswer(handler PollAnswerHandler, filters ...Filter) *Router {
 	bot.pollAnswerHandler = append(bot.pollAnswerHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -159,7 +159,7 @@ func (bot *Bot) PollAnswer(handler PollAnswerHandler, filters ...Filter) *Bot {
 }
 
 // MyChatMember register handlers for Update with not empty MyChatMember field.
-func (bot *Bot) MyChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) *Bot {
+func (bot *Router) MyChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) *Router {
 	bot.myChatMemberHandler = append(bot.myChatMemberHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -168,7 +168,7 @@ func (bot *Bot) MyChatMember(handler ChatMemberUpdatedHandler, filters ...Filter
 }
 
 // ChatMember register handlers for Update with not empty ChatMember field.
-func (bot *Bot) ChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) *Bot {
+func (bot *Router) ChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) *Router {
 	bot.chatMemberHandler = append(bot.chatMemberHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -177,7 +177,7 @@ func (bot *Bot) ChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) 
 }
 
 // ChatJoinRequest register handlers for Update with not empty ChatJoinRequest field.
-func (bot *Bot) ChatJoinRequest(handler ChatJoinRequestHandler, filters ...Filter) *Bot {
+func (bot *Router) ChatJoinRequest(handler ChatJoinRequestHandler, filters ...Filter) *Router {
 	bot.chatJoinRequestHandler = append(bot.chatJoinRequestHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -189,7 +189,7 @@ func (bot *Bot) ChatJoinRequest(handler ChatJoinRequestHandler, filters ...Filte
 // If any error occurs in the chain, it will be passed to that handler.
 // By default, errors are returned back by handler method.
 // You can customize this behavior by passing a custom error handler.
-func (bot *Bot) Error(handler ErrorHandler) *Bot {
+func (bot *Router) Error(handler ErrorHandler) *Router {
 	bot.errorHandler = handler
 	return bot
 }
@@ -197,7 +197,7 @@ func (bot *Bot) Error(handler ErrorHandler) *Bot {
 // Update registers a generic Update handler.
 // It will be called as typed handlers only in filters match the update.
 // First check Update handler, then typed.
-func (bot *Bot) Update(handler HandlerFunc, filters ...Filter) *Bot {
+func (bot *Router) Update(handler HandlerFunc, filters ...Filter) *Router {
 	bot.updateHandler = append(bot.updateHandler, &registeredHandler{
 		Handler: bot.chain.Then(handler),
 		Filter:  compactFilter(filters...),
@@ -205,7 +205,7 @@ func (bot *Bot) Update(handler HandlerFunc, filters ...Filter) *Bot {
 	return bot
 }
 
-func (bot *Bot) pickAndHandle(ctx context.Context, update *Update, group []*registeredHandler) error {
+func (bot *Router) pickAndHandle(ctx context.Context, update *Update, group []*registeredHandler) error {
 	for _, item := range group {
 		if item.Filter != nil {
 			allow, err := item.Filter.Allow(ctx, update)
@@ -224,7 +224,7 @@ func (bot *Bot) pickAndHandle(ctx context.Context, update *Update, group []*regi
 }
 
 // Handle handles an Update.
-func (bot *Bot) Handle(ctx context.Context, update *Update) error {
+func (bot *Router) Handle(ctx context.Context, update *Update) error {
 	group := append([]*registeredHandler{}, bot.updateHandler...)
 
 	switch {

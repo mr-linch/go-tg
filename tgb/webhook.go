@@ -3,6 +3,7 @@ package tgb
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -100,7 +101,7 @@ func WithWebhookAllowedUpdates(updates ...string) WebhookOption {
 
 func NewWebhook(handler Handler, client *tg.Client, url string, options ...WebhookOption) *Webhook {
 	securityToken := sha256.Sum256([]byte(client.Token()))
-	token := fmt.Sprintf("%x", securityToken)
+	token := hex.EncodeToString(securityToken[:])
 
 	webhook := &Webhook{
 		url:            url,

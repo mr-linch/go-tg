@@ -62,11 +62,11 @@ func run(ctx context.Context) error {
 	}
 	log.Printf("auth as https://t.me/%s", me.Username)
 
-	bot := newBot()
+	router := newRouter()
 
 	if flagWebhookURL != "" {
 		return tgb.NewWebhook(
-			bot,
+			router,
 			client,
 			flagWebhookURL,
 			tgb.WithDropPendingUpdates(true),
@@ -77,15 +77,15 @@ func run(ctx context.Context) error {
 		)
 	} else {
 		return tgb.NewPoller(
-			bot,
+			router,
 			client,
 			tgb.WithPollerLogger(log.Default()),
 		).Run(ctx)
 	}
 }
 
-func newBot() *tgb.Bot {
-	return tgb.New().
+func newRouter() *tgb.Router {
+	return tgb.NewRouter().
 		// handles /start and /help
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer(

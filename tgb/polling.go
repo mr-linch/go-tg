@@ -55,7 +55,7 @@ func WithPollerLimit(limit int) PollerOption {
 }
 
 // WithPollerAllowedUpdates sets the allowed updates.
-func WithPollerAllowedUpdates(allowedUpdates []string) PollerOption {
+func WithPollerAllowedUpdates(allowedUpdates ...string) PollerOption {
 	return func(poller *Poller) {
 		poller.allowedUpdates = allowedUpdates
 	}

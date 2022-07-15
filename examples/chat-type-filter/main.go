@@ -43,7 +43,7 @@ func run(ctx context.Context) error {
 	}
 	log.Printf("auth as https://t.me/%s", me.Username)
 
-	bot := tgb.New().
+	router := tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer("this is private chat response").DoVoid(ctx)
 		}, tgb.ChatType(tg.ChatTypePrivate)).
@@ -52,7 +52,7 @@ func run(ctx context.Context) error {
 		}, tgb.ChatType(tg.ChatTypeGroup, tg.ChatTypeSupergroup))
 
 	return tgb.NewPoller(
-		bot,
+		router,
 		client,
 	).Run(ctx)
 }
