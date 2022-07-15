@@ -737,3 +737,46 @@ func (button MenuButtonWebApp) MarshalJSON() ([]byte, error) {
 	type alias MenuButtonWebApp
 	return json.Marshal(alias(button))
 }
+
+// ContentType it's type for describe content of Message.
+type ContentType int
+
+const (
+	ContentTypeText ContentType = iota
+	ContentTypeAudio
+	ContentTypeAnimation
+	ContentTypeDocument
+	ContentTypeGame
+	ContentTypePhoto
+	ContentTypeSticker
+	ContentTypeVideo
+	ContentTypeVideoNote
+	ContentTypeVoice
+	ContentTypeContact
+	ContentTypeVenue
+	ContentTypeLocation
+	ContentTypeNewChatMembers
+	ContentTypeLeftChatMember
+	ContentTypeInvoice
+	ContentTypeSuccefullPayment
+	ContentTypeConnectedWebsite
+	ContentTypeMigrateFromChatID
+	ContentTypeMigrateToChatID
+	ContentTypePinnedMessage
+	ContentTypeNewChatTitle
+	ContentTypeNewChatPhoto
+	ContentTypeDeleteChatPhoto
+	ContentTypeGroupChatCreated
+	ContentTypeSupergroupChatCreated
+	ContentTypeChannelChatCreated
+	ContentTypePassportData
+	ContentTypeProximityAlertTriggered
+	ContentTypePoll
+	ContentTypeDice
+	ContentTypeMessageAutoDeleteTimerChanged
+	ContentTypeVideoChatScheduled
+	ContentTypeVideoChatStarted
+	ContentTypeVideoChatEnded
+	ContentTypeVideoChatParticipantInvited
+	ContentTypeWebAppData
+)
