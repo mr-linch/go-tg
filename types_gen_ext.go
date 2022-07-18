@@ -738,45 +738,127 @@ func (button MenuButtonWebApp) MarshalJSON() ([]byte, error) {
 	return json.Marshal(alias(button))
 }
 
-// ContentType it's type for describe content of Message.
-type ContentType int
+// MessageType it's type for describe content of Message.
+type MessageType int
 
 const (
-	ContentTypeText ContentType = iota
-	ContentTypeAudio
-	ContentTypeAnimation
-	ContentTypeDocument
-	ContentTypeGame
-	ContentTypePhoto
-	ContentTypeSticker
-	ContentTypeVideo
-	ContentTypeVideoNote
-	ContentTypeVoice
-	ContentTypeContact
-	ContentTypeVenue
-	ContentTypeLocation
-	ContentTypeNewChatMembers
-	ContentTypeLeftChatMember
-	ContentTypeInvoice
-	ContentTypeSuccefullPayment
-	ContentTypeConnectedWebsite
-	ContentTypeMigrateFromChatID
-	ContentTypeMigrateToChatID
-	ContentTypePinnedMessage
-	ContentTypeNewChatTitle
-	ContentTypeNewChatPhoto
-	ContentTypeDeleteChatPhoto
-	ContentTypeGroupChatCreated
-	ContentTypeSupergroupChatCreated
-	ContentTypeChannelChatCreated
-	ContentTypePassportData
-	ContentTypeProximityAlertTriggered
-	ContentTypePoll
-	ContentTypeDice
-	ContentTypeMessageAutoDeleteTimerChanged
-	ContentTypeVideoChatScheduled
-	ContentTypeVideoChatStarted
-	ContentTypeVideoChatEnded
-	ContentTypeVideoChatParticipantInvited
-	ContentTypeWebAppData
+	MessageTypeUnknown MessageType = iota
+	MessageTypeText
+	MessageTypeAnimation
+	MessageTypeAudio
+	MessageTypeDocument
+	MessageTypePhoto
+	MessageTypeSticker
+	MessageTypeVideo
+	MessageTypeVideoNote
+	MessageTypeVoice
+	MessageTypeContact
+	MessageTypeDice
+	MessageTypeGame
+	MessageTypePoll
+	MessageTypeVenue
+	MessageTypeLocation
+	MessageTypeNewChatMembers
+	MessageTypeLeftChatMember
+	MessageTypeNewChatTitle
+	MessageTypeNewChatPhoto
+	MessageTypeDeleteChatPhoto
+	MessageTypeGroupChatCreated
+	MessageTypeSupergroupChatCreated
+	MessageTypeChannelChatCreated
+	MessageTypeMessageAutoDeleteTimerChanged
+	MessageTypeMigrateToChatID
+	MessageTypeMigrateFromChatID
+	MessageTypePinnedMessage
+	MessageTypeInvoice
+	MessageTypeSuccessfulPayment
+	MessageTypeConnectedWebsite
+	MessageTypePassportData
+	MessageTypeProximityAlertTriggered
+	MessageTypeVideoChatScheduled
+	MessageTypeVideoChatStarted
+	MessageTypeVideoChatEnded
+	MessageTypeVideoChatParticipantsInvited
+	MessageTypeWebAppData
 )
+
+func (msg *Message) Type() MessageType {
+	switch {
+	case msg.Text != "":
+		return MessageTypeText
+	case msg.Animation != nil:
+		return MessageTypeAnimation
+	case msg.Audio != nil:
+		return MessageTypeAudio
+	case msg.Document != nil:
+		return MessageTypeDocument
+	case msg.Photo != nil:
+		return MessageTypePhoto
+	case msg.Sticker != nil:
+		return MessageTypeSticker
+	case msg.Video != nil:
+		return MessageTypeVideo
+	case msg.VideoNote != nil:
+		return MessageTypeVideoNote
+	case msg.Voice != nil:
+		return MessageTypeVoice
+	case msg.Contact != nil:
+		return MessageTypeContact
+	case msg.Dice != nil:
+		return MessageTypeDice
+	case msg.Game != nil:
+		return MessageTypeGame
+	case msg.Poll != nil:
+		return MessageTypePoll
+	case msg.Venue != nil:
+		return MessageTypeVenue
+	case msg.Location != nil:
+		return MessageTypeLocation
+	case len(msg.NewChatMembers) > 0:
+		return MessageTypeNewChatMembers
+	case msg.LeftChatMember != nil:
+		return MessageTypeLeftChatMember
+	case msg.NewChatTitle != "":
+		return MessageTypeNewChatTitle
+	case len(msg.NewChatPhoto) > 0:
+		return MessageTypeNewChatPhoto
+	case msg.DeleteChatPhoto:
+		return MessageTypeDeleteChatPhoto
+	case msg.GroupChatCreated:
+		return MessageTypeGroupChatCreated
+	case msg.SupergroupChatCreated:
+		return MessageTypeSupergroupChatCreated
+	case msg.ChannelChatCreated:
+		return MessageTypeChannelChatCreated
+	case msg.MessageAutoDeleteTimerChanged != nil:
+		return MessageTypeMessageAutoDeleteTimerChanged
+	case msg.MigrateToChatID != 0:
+		return MessageTypeMigrateToChatID
+	case msg.MigrateFromChatID != 0:
+		return MessageTypeMigrateFromChatID
+	case msg.PinnedMessage != nil:
+		return MessageTypePinnedMessage
+	case msg.Invoice != nil:
+		return MessageTypeInvoice
+	case msg.SuccessfulPayment != nil:
+		return MessageTypeSuccessfulPayment
+	case msg.ConnectedWebsite != "":
+		return MessageTypeConnectedWebsite
+	case msg.PassportData != nil:
+		return MessageTypePassportData
+	case msg.ProximityAlertTriggered != nil:
+		return MessageTypeProximityAlertTriggered
+	case msg.VideoChatScheduled != nil:
+		return MessageTypeVideoChatScheduled
+	case msg.VideoChatStarted != nil:
+		return MessageTypeVideoChatStarted
+	case msg.VideoChatEnded != nil:
+		return MessageTypeVideoChatEnded
+	case msg.VideoChatParticipantsInvited != nil:
+		return MessageTypeVideoChatParticipantsInvited
+	case msg.WebAppData != nil:
+		return MessageTypeWebAppData
+	default:
+		return MessageTypeUnknown
+	}
+}
