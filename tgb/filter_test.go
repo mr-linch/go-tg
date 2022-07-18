@@ -467,3 +467,51 @@ func TestChatType(t *testing.T) {
 		})
 	}
 }
+
+func TestMessageType(t *testing.T) {
+	for _, test := range []struct {
+		Name    string
+		Update  *Update
+		Allowed []tg.MessageType
+		Want    bool
+	}{
+		{
+			Name: "CallbackQueryShouldBeNotAllowed",
+			Update: &Update{Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{},
+			}},
+			Allowed: []tg.MessageType{tg.MessageTypeText},
+			Want:    false,
+		},
+		{
+			Name: "MessageWithTextShouldBeAllowed",
+			Update: &Update{Update: &tg.Update{
+				Message: &tg.Message{
+					Text: "text",
+				},
+			}},
+			Allowed: []tg.MessageType{tg.MessageTypeText},
+			Want:    true,
+		},
+		{
+			Name: "MessageWithPhotoForTextFilterShouldBeNotAllowed",
+			Update: &Update{Update: &tg.Update{
+				Message: &tg.Message{
+					Photo: []tg.PhotoSize{{}},
+				},
+			}},
+			Allowed: []tg.MessageType{tg.MessageTypeText},
+			Want:    false,
+		},
+	} {
+		ctx := context.Background()
+
+		t.Run(test.Name, func(t *testing.T) {
+			filter := MessageType(test.Allowed...)
+
+			allow, err := filter.Allow(ctx, test.Update)
+			assert.Equal(t, test.Want, allow)
+			assert.NoError(t, err)
+		})
+	}
+}
