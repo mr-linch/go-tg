@@ -3,26 +3,15 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
-	"log"
-	"os"
-	"os/signal"
 	"regexp"
-	"syscall"
 	"time"
 
 	_ "embed"
 
 	"github.com/mr-linch/go-tg"
+	"github.com/mr-linch/go-tg/examples"
 	"github.com/mr-linch/go-tg/tgb"
-)
-
-var (
-	flagToken         string
-	flagServer        string
-	flagWebhookURL    string
-	flagWebhookListen string
 )
 
 var (
@@ -31,63 +20,9 @@ var (
 )
 
 func main() {
-	flag.StringVar(&flagToken, "token", "", "Telegram Bot API token")
-	flag.StringVar(&flagServer, "server", "https://api.telegram.org", "Telegram Bot API server")
-	flag.StringVar(&flagWebhookURL, "webhook-url", "", "Telegram Bot API webhook URL, if not provdide run in longpoll mode")
-	flag.StringVar(&flagWebhookListen, "webhook-listen", ":8000", "Telegram Bot API webhook URL")
-	flag.Parse()
-
-	ctx := context.Background()
-
-	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, os.Kill, syscall.SIGTERM)
-	defer cancel()
-
-	if err := run(ctx); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func run(ctx context.Context) error {
-	if flagToken == "" {
-		return fmt.Errorf("token is required")
-	}
-
-	client := tg.New(flagToken,
-		tg.WithClientServerURL(flagServer),
-	)
-
-	me, err := client.Me(ctx)
-	if err != nil {
-		return fmt.Errorf("get me: %w", err)
-	}
-	log.Printf("auth as https://t.me/%s", me.Username)
-
-	router := newRouter()
-
-	if flagWebhookURL != "" {
-		return tgb.NewWebhook(
-			router,
-			client,
-			flagWebhookURL,
-			tgb.WithDropPendingUpdates(true),
-			tgb.WithWebhookLogger(log.Default()),
-		).Run(
-			ctx,
-			flagWebhookListen,
-		)
-	} else {
-		return tgb.NewPoller(
-			router,
-			client,
-			tgb.WithPollerLogger(log.Default()),
-		).Run(ctx)
-	}
-}
-
-func newRouter() *tgb.Router {
-	return tgb.NewRouter().
-		// handles /start and /help
+	examples.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+			// handles /start and /help
 			return msg.Answer(
 				tg.HTML.Text(
 					tg.HTML.Bold("👋 Hi, I'm echo bot!"),
@@ -96,8 +31,8 @@ func newRouter() *tgb.Router {
 				),
 			).ParseMode(tg.HTML).DoVoid(ctx)
 		}, tgb.Command("start", tgb.WithCommandAlias("help"))).
-		// handles gopher image
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+			// handles gopher image
 			if err := msg.Update.Respond(ctx, msg.AnswerChatAction(tg.ChatActionUploadPhoto)); err != nil {
 				return fmt.Errorf("answer chat action: %w", err)
 			}
@@ -109,9 +44,9 @@ func newRouter() *tgb.Router {
 			}).DoVoid(ctx)
 
 		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
-		// handle other messages
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+			// handle other messages
 			return msg.Copy(msg.Chat).DoVoid(ctx)
-		})
-
+		}),
+	)
 }
