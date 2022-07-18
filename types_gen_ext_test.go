@@ -569,3 +569,165 @@ func TestMenuButton(t *testing.T) {
 		test.Scope.isMenuButton()
 	}
 }
+
+func TestMessage_Type(t *testing.T) {
+	for _, test := range []struct {
+		Message *Message
+		Want    MessageType
+	}{
+		{
+			Message: &Message{},
+			Want:    MessageTypeUnknown,
+		},
+		{
+			Message: &Message{Text: "hello"},
+			Want:    MessageTypeText,
+		},
+		{
+			Message: &Message{Animation: &Animation{}},
+			Want:    MessageTypeAnimation,
+		},
+		{
+			Message: &Message{Audio: &Audio{}},
+			Want:    MessageTypeAudio,
+		},
+		{
+			Message: &Message{Document: &Document{}},
+			Want:    MessageTypeDocument,
+		},
+		{
+			Message: &Message{Photo: []PhotoSize{{}}},
+			Want:    MessageTypePhoto,
+		},
+		{
+			Message: &Message{Sticker: &Sticker{}},
+			Want:    MessageTypeSticker,
+		},
+		{
+			Message: &Message{Video: &Video{}},
+			Want:    MessageTypeVideo,
+		},
+		{
+			Message: &Message{VideoNote: &VideoNote{}},
+			Want:    MessageTypeVideoNote,
+		},
+		{
+			Message: &Message{Voice: &Voice{}},
+			Want:    MessageTypeVoice,
+		},
+		{
+			Message: &Message{Contact: &Contact{}},
+			Want:    MessageTypeContact,
+		},
+		{
+			Message: &Message{Dice: &Dice{}},
+			Want:    MessageTypeDice,
+		},
+		{
+			Message: &Message{Game: &Game{}},
+			Want:    MessageTypeGame,
+		},
+		{
+			Message: &Message{Poll: &Poll{}},
+			Want:    MessageTypePoll,
+		},
+		{
+			Message: &Message{Venue: &Venue{}},
+			Want:    MessageTypeVenue,
+		},
+		{
+			Message: &Message{Location: &Location{}},
+			Want:    MessageTypeLocation,
+		},
+		{
+			Message: &Message{NewChatMembers: []User{{}}},
+			Want:    MessageTypeNewChatMembers,
+		},
+		{
+			Message: &Message{LeftChatMember: &User{}},
+			Want:    MessageTypeLeftChatMember,
+		},
+		{
+			Message: &Message{NewChatTitle: "hello"},
+			Want:    MessageTypeNewChatTitle,
+		},
+		{
+			Message: &Message{NewChatPhoto: []PhotoSize{{}}},
+			Want:    MessageTypeNewChatPhoto,
+		},
+		{
+			Message: &Message{DeleteChatPhoto: true},
+			Want:    MessageTypeDeleteChatPhoto,
+		},
+		{
+			Message: &Message{GroupChatCreated: true},
+			Want:    MessageTypeGroupChatCreated,
+		},
+		{
+			Message: &Message{SupergroupChatCreated: true},
+			Want:    MessageTypeSupergroupChatCreated,
+		},
+		{
+			Message: &Message{ChannelChatCreated: true},
+			Want:    MessageTypeChannelChatCreated,
+		},
+		{
+			Message: &Message{MessageAutoDeleteTimerChanged: &MessageAutoDeleteTimerChanged{}},
+			Want:    MessageTypeMessageAutoDeleteTimerChanged,
+		},
+		{
+			Message: &Message{MigrateToChatID: -10023123123},
+			Want:    MessageTypeMigrateToChatID,
+		},
+		{
+			Message: &Message{MigrateFromChatID: -10023123123},
+			Want:    MessageTypeMigrateFromChatID,
+		},
+		{
+			Message: &Message{PinnedMessage: &Message{}},
+			Want:    MessageTypePinnedMessage,
+		},
+		{
+			Message: &Message{Invoice: &Invoice{}},
+			Want:    MessageTypeInvoice,
+		},
+		{
+			Message: &Message{SuccessfulPayment: &SuccessfulPayment{}},
+			Want:    MessageTypeSuccessfulPayment,
+		},
+		{
+			Message: &Message{ConnectedWebsite: "telegram.me"},
+			Want:    MessageTypeConnectedWebsite,
+		},
+		{
+			Message: &Message{PassportData: &PassportData{}},
+			Want:    MessageTypePassportData,
+		},
+		{
+			Message: &Message{ProximityAlertTriggered: &ProximityAlertTriggered{}},
+			Want:    MessageTypeProximityAlertTriggered,
+		},
+		{
+			Message: &Message{VideoChatScheduled: &VideoChatScheduled{}},
+			Want:    MessageTypeVideoChatScheduled,
+		},
+		{
+			Message: &Message{VideoChatStarted: &VideoChatStarted{}},
+			Want:    MessageTypeVideoChatStarted,
+		},
+		{
+			Message: &Message{VideoChatEnded: &VideoChatEnded{}},
+			Want:    MessageTypeVideoChatEnded,
+		},
+		{
+			Message: &Message{VideoChatParticipantsInvited: &VideoChatParticipantsInvited{}},
+			Want:    MessageTypeVideoChatParticipantsInvited,
+		},
+		{
+			Message: &Message{WebAppData: &WebAppData{}},
+			Want:    MessageTypeWebAppData,
+		},
+	} {
+		assert.Equal(t, test.Want, test.Message.Type())
+	}
+}

@@ -226,6 +226,13 @@ func Regexp(re *regexp.Regexp) Filter {
 	})
 }
 
+// ChatType checks chat type in:
+// - Message, EditedMessage, ChannelPost, EditedChannelPost
+// - CallbackQuery.Message.Chat.Type (if not nil)
+// - InlineQuery.ChatType
+// - MyChatMember.Chat.Type
+// - ChatMember.Chat.Type
+// - ChatJoinRequest.Chat.Type
 func ChatType(types ...tg.ChatType) Filter {
 	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 		var typ tg.ChatType
@@ -250,5 +257,20 @@ func ChatType(types ...tg.ChatType) Filter {
 		}
 
 		return slices.Contains(types, typ), nil
+	})
+}
+
+// MessageType checks Message, EditedMessage, ChannelPost, EditedChannelPost
+// for matching type with specified.
+// If multiple types are specified, it checks if message type is one of them.
+func MessageType(types ...tg.MessageType) Filter {
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
+		msg := getUpdateMessage(update)
+
+		if msg != nil {
+			return slices.Contains(types, msg.Type()), nil
+		}
+
+		return false, nil
 	})
 }
