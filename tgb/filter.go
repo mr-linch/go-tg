@@ -54,10 +54,10 @@ func All(filters ...Filter) Filter {
 	})
 }
 
-// CommandFilter handles commands.
+// commandFilter handles commands.
 // Filter is registered only for Message updates.
 // Custuming filter using WithCommand... options.
-type CommandFilter struct {
+type commandFilter struct {
 	commands      []string
 	prefixies     string
 	ignoreMention bool
@@ -65,12 +65,12 @@ type CommandFilter struct {
 	ignoreCaption bool
 }
 
-type CommandFilterOption func(*CommandFilter)
+type CommandFilterOption func(*commandFilter)
 
 // WithCommandPrefix sets allowed command prefixies.
 // By default is '/'.
 func WithCommandPrefix(prefixes ...string) CommandFilterOption {
-	return func(filter *CommandFilter) {
+	return func(filter *commandFilter) {
 		filter.prefixies = strings.Join(prefixes, "")
 	}
 }
@@ -78,14 +78,14 @@ func WithCommandPrefix(prefixes ...string) CommandFilterOption {
 // WithCommandIgnoreMention sets ignore mention in command with mention (/command@username).
 // By default is false.
 func WithCommandIgnoreMention(ignoreMention bool) CommandFilterOption {
-	return func(filter *CommandFilter) {
+	return func(filter *commandFilter) {
 		filter.ignoreMention = ignoreMention
 	}
 }
 
 // WithCommandIgnoreCase sets ignore case in commands. By default is true.
 func WithCommandIgnoreCase(ignoreCase bool) CommandFilterOption {
-	return func(filter *CommandFilter) {
+	return func(filter *commandFilter) {
 		filter.ignoreCase = ignoreCase
 	}
 }
@@ -93,21 +93,21 @@ func WithCommandIgnoreCase(ignoreCase bool) CommandFilterOption {
 // WithCommandIgnoreCaption sets ignore caption as text source.
 // By default is true.
 func WithCommandIgnoreCaption(ignoreCaption bool) CommandFilterOption {
-	return func(filter *CommandFilter) {
+	return func(filter *commandFilter) {
 		filter.ignoreCaption = ignoreCaption
 	}
 }
 
 // WithCommandAlias adds alias to command.
 func WithCommandAlias(aliases ...string) CommandFilterOption {
-	return func(filter *CommandFilter) {
+	return func(filter *commandFilter) {
 		filter.commands = append(filter.commands, aliases...)
 	}
 }
 
 // Command adds filter for command with specified options.
-func Command(command string, opts ...CommandFilterOption) *CommandFilter {
-	filter := &CommandFilter{
+func Command(command string, opts ...CommandFilterOption) Filter {
+	filter := &commandFilter{
 		commands:      []string{command},
 		prefixies:     "/",
 		ignoreCase:    true,
@@ -139,7 +139,7 @@ func getUpdateMessage(update *Update) *tg.Message {
 }
 
 // Allow checks if update is allowed by filter.
-func (filter *CommandFilter) Allow(ctx context.Context, update *Update) (bool, error) {
+func (filter *commandFilter) Allow(ctx context.Context, update *Update) (bool, error) {
 	msg := getUpdateMessage(update)
 
 	if msg == nil {
@@ -185,6 +185,33 @@ func (filter *CommandFilter) Allow(ctx context.Context, update *Update) (bool, e
 	return true, nil
 }
 
+func extractUpdateText(update *Update) (string, bool) {
+	msg := getUpdateMessage(update)
+
+	switch {
+	case msg != nil:
+		switch {
+		case msg.Text != "":
+			return msg.Text, true
+		case msg.Caption != "":
+			return msg.Caption, true
+		case msg.Poll != nil && msg.Poll.Question != "":
+			return msg.Poll.Question, true
+		}
+
+	case update.CallbackQuery != nil && update.CallbackQuery.Data != "":
+		return update.CallbackQuery.Data, true
+	case update.InlineQuery != nil && update.InlineQuery.Query != "":
+		return update.InlineQuery.Query, true
+	case update.ChosenInlineResult != nil && update.ChosenInlineResult.Query != "":
+		return update.ChosenInlineResult.Query, true
+	case update.Poll != nil && update.Poll.Question != "":
+		return update.Poll.Question, true
+	}
+
+	return "", false
+}
+
 // RegexpFilter handles updates by regexp.
 // Checks following fields:
 // - Update.Message.Text
@@ -197,28 +224,8 @@ func Regexp(re *regexp.Regexp) Filter {
 	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 		var text string
 
-		msg := getUpdateMessage(update)
-
-		switch {
-		case msg != nil:
-			text = msg.Text
-
-			if text == "" && msg.Caption != "" {
-				text = msg.Caption
-			}
-
-			if text == "" && msg.Poll != nil {
-				text = msg.Poll.Question
-			}
-		case update.CallbackQuery != nil && update.CallbackQuery.Data != "":
-			text = update.CallbackQuery.Data
-		case update.InlineQuery != nil && update.InlineQuery.Query != "":
-			text = update.InlineQuery.Query
-		case update.ChosenInlineResult != nil && update.ChosenInlineResult.Query != "":
-			text = update.ChosenInlineResult.Query
-		case update.Poll != nil && update.Poll.Question != "":
-			text = update.Poll.Question
-		default:
+		text, ok := extractUpdateText(update)
+		if !ok {
 			return false, nil
 		}
 
@@ -273,4 +280,108 @@ func MessageType(types ...tg.MessageType) Filter {
 
 		return false, nil
 	})
+}
+
+// TextFuncFilterOption is a filter option for TextFuncFilter.
+type TextFuncFilterOption func(*textFuncFilter)
+
+func WithTextFuncIgnoreCase(v bool) TextFuncFilterOption {
+	return func(filter *textFuncFilter) {
+		filter.ignoreCase = v
+	}
+}
+
+// textFuncFilter it's base filter strings comparing filter.
+// Checkout constructors for more info.
+// All constructors can be customized by TextFuncFilterOption.
+type textFuncFilter struct {
+	ignoreCase bool
+	fn         func(text string, ignoreCase bool) bool
+}
+
+func (filter *textFuncFilter) Allow(ctx context.Context, update *Update) (bool, error) {
+	text, ok := extractUpdateText(update)
+	if !ok || text == "" {
+		return false, nil
+	}
+
+	return filter.fn(text, filter.ignoreCase), nil
+}
+
+// TextFunc creates a generic TextFuncFilter with specified function.
+func TextFunc(fn func(text string, ignoreCase bool) bool, opts ...TextFuncFilterOption) Filter {
+	filter := &textFuncFilter{
+		ignoreCase: false,
+		fn:         fn,
+	}
+
+	for _, opt := range opts {
+		opt(filter)
+	}
+
+	return filter
+}
+
+// TextEqual creates a TextFuncFilter that checks if text of update equals to specified.
+func TextEqual(v string, opts ...TextFuncFilterOption) Filter {
+	return TextFunc(func(text string, ignoreCase bool) bool {
+		if ignoreCase {
+			return strings.EqualFold(text, v)
+		}
+
+		return text == v
+	}, opts...)
+}
+
+// TextHasPrefix creates a TextFuncFilter that checks if text of update has prefix.
+func TextHasPrefix(v string, opts ...TextFuncFilterOption) Filter {
+	return TextFunc(func(text string, ignoreCase bool) bool {
+		if ignoreCase {
+			text = strings.ToLower(text)
+			v = strings.ToLower(v)
+		}
+
+		return strings.HasPrefix(text, v)
+	}, opts...)
+}
+
+// TextHasSuffix creates a TextFuncFilter that checks if text of update has suffix.
+func TextHasSuffix(v string, opts ...TextFuncFilterOption) Filter {
+	return TextFunc(func(text string, ignoreCase bool) bool {
+		if ignoreCase {
+			text = strings.ToLower(text)
+			v = strings.ToLower(v)
+		}
+
+		return strings.HasSuffix(text, v)
+	}, opts...)
+}
+
+// TextContains creates a TextFuncFilter that checks if text of update contains specified.
+func TextContains(v string, opts ...TextFuncFilterOption) Filter {
+	return TextFunc(func(text string, ignoreCase bool) bool {
+		if ignoreCase {
+			text = strings.ToLower(text)
+			v = strings.ToLower(v)
+		}
+
+		return strings.Contains(text, v)
+	}, opts...)
+}
+
+// TextIn creates a TextFuncFilter that checks if text of update is in specified slice.
+func TextIn(vs []string, opts ...TextFuncFilterOption) Filter {
+	return TextFunc(func(text string, ignoreCase bool) bool {
+		if ignoreCase {
+			for _, v := range vs {
+				if strings.EqualFold(text, v) {
+					return true
+				}
+			}
+
+			return false
+		}
+
+		return slices.Contains(vs, text)
+	}, opts...)
 }
