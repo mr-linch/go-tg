@@ -3,50 +3,19 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
-	"log"
-	"os"
-	"os/signal"
+	"regexp"
 	"strconv"
-	"syscall"
 
 	"github.com/mr-linch/go-tg"
+	"github.com/mr-linch/go-tg/examples"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
-var (
-	flagToken string
-)
-
 func main() {
-	flag.StringVar(&flagToken, "token", "", "Telegram Bot API token")
-	flag.Parse()
-
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGTERM)
-	defer cancel()
-
-	if err := run(ctx); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func run(ctx context.Context) error {
-	if flagToken == "" {
-		return fmt.Errorf("token is required")
-	}
-
-	client := tg.New(flagToken)
-
-	me, err := client.Me(ctx)
-	if err != nil {
-		return fmt.Errorf("get me: %w", err)
-	}
-	log.Printf("auth as https://t.me/%s", me.Username)
-
 	const typingMessage = "use keyboard above for typing..."
 
-	router := tgb.NewRouter().
+	examples.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer(tg.HTML.Italic(typingMessage)).
 				ParseMode(tg.HTML).
@@ -54,7 +23,11 @@ func run(ctx context.Context) error {
 				DoVoid(ctx)
 		}).
 		CallbackQuery(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate) error {
-
+			// handle special case of "=" button
+			return cbq.AnswerText("not implemented", true).DoVoid(ctx)
+		}, tgb.Regexp(regexp.MustCompile(`=`))).
+		CallbackQuery(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate) error {
+			// handle other buttons
 			var currentText string
 
 			if cbq.Message == nil {
@@ -81,12 +54,8 @@ func run(ctx context.Context) error {
 				cbq.Message.ID,
 				currentText,
 			).ReplyMarkup(newKeyboard()).DoVoid(ctx)
-		})
-
-	return tgb.NewPoller(
-		router,
-		client,
-	).Run(ctx)
+		}),
+	)
 }
 
 func newKeyboard() tg.InlineKeyboardMarkup {
