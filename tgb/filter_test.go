@@ -88,15 +88,15 @@ func TestCommandFilter(t *testing.T) {
 	t.Parallel()
 
 	for _, test := range []struct {
-		Name    string
-		Command *CommandFilter
-		Update  *tg.Update
-		Allow   bool
-		Error   error
+		Name   string
+		Filter Filter
+		Update *tg.Update
+		Allow  bool
+		Error  error
 	}{
 		{
-			Name:    "Default",
-			Command: Command("start"),
+			Name:   "Default",
+			Filter: Command("start"),
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Text: "/start azcv 5678",
@@ -105,14 +105,14 @@ func TestCommandFilter(t *testing.T) {
 			Allow: true,
 		},
 		{
-			Name:    "NotMessage",
-			Command: Command("start"),
-			Update:  &tg.Update{},
-			Allow:   false,
+			Name:   "NotMessage",
+			Filter: Command("start"),
+			Update: &tg.Update{},
+			Allow:  false,
 		},
 		{
-			Name:    "ChannelPost",
-			Command: Command("start"),
+			Name:   "ChannelPost",
+			Filter: Command("start"),
 			Update: &tg.Update{
 				ChannelPost: &tg.Message{
 					Text: "/start azcv 5678",
@@ -122,7 +122,7 @@ func TestCommandFilter(t *testing.T) {
 		},
 		{
 			Name: "InCaption",
-			Command: Command("start",
+			Filter: Command("start",
 				WithCommandIgnoreCaption(false),
 			),
 			Update: &tg.Update{
@@ -134,7 +134,7 @@ func TestCommandFilter(t *testing.T) {
 		},
 		{
 			Name: "NoTextOrCaption",
-			Command: Command("start",
+			Filter: Command("start",
 				WithCommandIgnoreCaption(false),
 			),
 			Update: &tg.Update{
@@ -143,8 +143,8 @@ func TestCommandFilter(t *testing.T) {
 			Allow: false,
 		},
 		{
-			Name:    "BadPrefix",
-			Command: Command("start"),
+			Name:   "BadPrefix",
+			Filter: Command("start"),
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Text: "!start azcv 5678",
@@ -154,7 +154,7 @@ func TestCommandFilter(t *testing.T) {
 		},
 		{
 			Name: "CustomPrefix",
-			Command: Command("start",
+			Filter: Command("start",
 				WithCommandPrefix("!"),
 			),
 			Update: &tg.Update{
@@ -165,8 +165,8 @@ func TestCommandFilter(t *testing.T) {
 			Allow: true,
 		},
 		{
-			Name:    "WithSelfMention",
-			Command: Command("start"),
+			Name:   "WithSelfMention",
+			Filter: Command("start"),
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Text: "/start@go_tg_test_bot azcv 5678",
@@ -175,8 +175,8 @@ func TestCommandFilter(t *testing.T) {
 			Allow: true,
 		},
 		{
-			Name:    "WithNotSelfMention",
-			Command: Command("start"),
+			Name:   "WithNotSelfMention",
+			Filter: Command("start"),
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Text: "/start@anybot azcv 5678",
@@ -185,8 +185,8 @@ func TestCommandFilter(t *testing.T) {
 			Allow: false,
 		},
 		{
-			Name:    "NotRegisteredCommand",
-			Command: Command("start"),
+			Name:   "NotRegisteredCommand",
+			Filter: Command("start"),
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Text: "/help azcv 5678",
@@ -195,8 +195,8 @@ func TestCommandFilter(t *testing.T) {
 			Allow: false,
 		},
 		{
-			Name:    "WithNotSelfMentionAndIgnore",
-			Command: Command("start", WithCommandIgnoreMention(true)),
+			Name:   "WithNotSelfMentionAndIgnore",
+			Filter: Command("start", WithCommandIgnoreMention(true)),
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Text: "/start@anybot azcv 5678",
@@ -205,8 +205,8 @@ func TestCommandFilter(t *testing.T) {
 			Allow: true,
 		},
 		{
-			Name:    "WithIgnoreCase",
-			Command: Command("start", WithCommandIgnoreCase(false)),
+			Name:   "WithIgnoreCase",
+			Filter: Command("start", WithCommandIgnoreCase(false)),
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Text: "/START azcv 5678",
@@ -215,8 +215,8 @@ func TestCommandFilter(t *testing.T) {
 			Allow: false,
 		},
 		{
-			Name:    "WithAlias",
-			Command: Command("start", WithCommandAlias("help")),
+			Name:   "WithAlias",
+			Filter: Command("start", WithCommandAlias("help")),
 			Update: &tg.Update{
 				Message: &tg.Message{
 					Text: "/help azcv 5678",
@@ -229,7 +229,7 @@ func TestCommandFilter(t *testing.T) {
 			testWithClientLocal(t, func(t *testing.T, ctx context.Context, client *tg.Client) {
 				update := &Update{Update: test.Update, Client: client}
 
-				allow, err := test.Command.Allow(ctx, update)
+				allow, err := test.Filter.Allow(ctx, update)
 				assert.Equal(t, test.Allow, allow)
 				assert.Equal(t, test.Error, err)
 			}, func(w http.ResponseWriter, r *http.Request) {
@@ -511,6 +511,161 @@ func TestMessageType(t *testing.T) {
 
 			allow, err := filter.Allow(ctx, test.Update)
 			assert.Equal(t, test.Want, allow)
+			assert.NoError(t, err)
+		})
+	}
+}
+
+func TestTextFuncFilter(t *testing.T) {
+	newUpdateMsg := func(text string) *Update {
+		return &Update{Update: &tg.Update{
+			Message: &tg.Message{
+				Text: text,
+			},
+		}}
+	}
+
+	for _, test := range []struct {
+		Name   string
+		Filter Filter
+		Update *Update
+		Allow  bool
+	}{
+		{
+			Name:   "NoText",
+			Filter: TextEqual(""),
+			Update: newUpdateMsg(""),
+		},
+		{
+			Name:   "TextEqual/Allow",
+			Filter: TextEqual("text"),
+			Update: newUpdateMsg("text"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextEqual/Disallow",
+			Filter: TextEqual("Text"),
+			Update: newUpdateMsg("txet"),
+			Allow:  false,
+		},
+		{
+			Name:   "TextEqual/CaseIgnore/Allow",
+			Filter: TextEqual("Text", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("text"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextEqual/CaseIgnore/Allow/UTF8",
+			Filter: TextEqual("Привіт", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("привіт"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextEqual/CaseIgnore/Disallow",
+			Filter: TextEqual("Tex t", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("text"),
+			Allow:  false,
+		},
+		{
+			Name:   "TextHasPrefix/Allow",
+			Filter: TextHasPrefix("foo"),
+			Update: newUpdateMsg("foobar"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextHasPrefix/Disallow",
+			Filter: TextHasPrefix("bar"),
+			Update: newUpdateMsg("foobar"),
+			Allow:  false,
+		},
+		{
+			Name:   "TextHasPrefix/CaseIgnore/Allow",
+			Filter: TextHasPrefix("foo", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("Foobar"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextHasPrefix/CaseIgnore/Allow/UTF8",
+			Filter: TextHasPrefix("При", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("привіт"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextHasPrefix/CaseIgnore/Disallow/UTF8",
+			Filter: TextHasPrefix("Хай", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("привіт"),
+			Allow:  false,
+		},
+		{
+			Name:   "TestHasSuffix/Allow",
+			Filter: TextHasSuffix("аша"),
+			Update: newUpdateMsg("привіташа"),
+			Allow:  true,
+		},
+		{
+			Name:   "TestHasSuffix/Disallow",
+			Filter: TextHasSuffix("привіт"),
+			Update: newUpdateMsg("привіташа"),
+			Allow:  false,
+		},
+		{
+			Name:   "TestHasSuffix/CaseIgnore/Allow",
+			Filter: TextHasSuffix("аша", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("ПривітАша"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextContains/Allow",
+			Filter: TextContains("каш"),
+			Update: newUpdateMsg("акашка"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextContains/Disallow",
+			Filter: TextContains("каш"),
+			Update: newUpdateMsg("саш"),
+			Allow:  false,
+		},
+		{
+			Name:   "TextContains/CaseIgnore/Allow",
+			Filter: TextContains("каш", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("Каша"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextContains/CaseIgnore/Disallow",
+			Filter: TextContains("каш", WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("Саша"),
+			Allow:  false,
+		},
+		{
+			Name:   "TextIn/Allow",
+			Filter: TextIn([]string{"1", "2", "3"}),
+			Update: newUpdateMsg("2"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextIn/Disallow",
+			Filter: TextIn([]string{"1", "2", "3"}),
+			Update: newUpdateMsg("4"),
+			Allow:  false,
+		},
+		{
+			Name:   "TextIn/CaseIgnore/Allow",
+			Filter: TextIn([]string{"A", "B", "C"}, WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("b"),
+			Allow:  true,
+		},
+		{
+			Name:   "TextIn/CaseIgnore/Disallow",
+			Filter: TextIn([]string{"A", "B", "C"}, WithTextFuncIgnoreCase(true)),
+			Update: newUpdateMsg("f"),
+			Allow:  false,
+		},
+	} {
+		t.Run(test.Name, func(t *testing.T) {
+			allow, err := test.Filter.Allow(context.Background(), test.Update)
+			assert.Equal(t, test.Allow, allow)
 			assert.NoError(t, err)
 		})
 	}
