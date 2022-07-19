@@ -8,7 +8,6 @@ import (
 	"image/jpeg"
 	_ "image/jpeg"
 	"io"
-	"log"
 	"strings"
 
 	"github.com/mr-linch/go-tg"
@@ -31,7 +30,6 @@ func main() {
 			})
 
 			photo := sizes[0]
-			log.Printf("%+v", photo)
 
 			if err := mu.Update.Respond(ctx,
 				tg.NewSendChatActionCall(mu.Message.Chat, tg.ChatActionUploadPhoto),
