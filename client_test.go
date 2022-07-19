@@ -17,9 +17,11 @@ func TestNewClient(t *testing.T) {
 	client := New("token",
 		WithClientServerURL("http://example.com"),
 		WithClientDoer(doer),
+		WithClientTestEnv(),
 	)
 
 	assert.Equal(t, "http://example.com", client.server)
+	assert.Equal(t, client.callURL, "%s/bot%s/test/%s")
 }
 
 func TestClientExecute(t *testing.T) {
