@@ -2077,17 +2077,17 @@ type GetFileCall struct {
 
 // NewGetFileCall constructs a new GetFileCall with required parameters.
 // fileID - File identifier to get information about
-func NewGetFileCall(fileID string) *GetFileCall {
+func NewGetFileCall(fileID FileID) *GetFileCall {
 	return &GetFileCall{
 		Call[File]{
 			request: NewRequest("getFile").
-				String("file_id", fileID),
+				FileID("file_id", fileID),
 		},
 	}
 }
 
 // GetFileCall constructs a new GetFileCall with required parameters.
-func (client *Client) GetFile(fileID string) *GetFileCall {
+func (client *Client) GetFile(fileID FileID) *GetFileCall {
 	return callWithClient(
 		client,
 		NewGetFileCall(fileID),
@@ -2095,8 +2095,8 @@ func (client *Client) GetFile(fileID string) *GetFileCall {
 }
 
 // FileID File identifier to get information about
-func (call *GetFileCall) FileID(fileID string) *GetFileCall {
-	call.request.String("file_id", fileID)
+func (call *GetFileCall) FileID(fileID FileID) *GetFileCall {
+	call.request.FileID("file_id", fileID)
 	return call
 }
 

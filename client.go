@@ -25,7 +25,8 @@ type Client struct {
 	// default values is https://api.telegram.org
 	server string
 
-	callURL string
+	callURL     string
+	downloadURL string
 
 	// http client,
 	// default values is http.DefaultClient
@@ -67,7 +68,8 @@ func New(token string, options ...ClientOption) *Client {
 		token:  token,
 		server: "https://api.telegram.org",
 
-		callURL: "%s/bot%s/%s",
+		callURL:     "%s/bot%s/%s",
+		downloadURL: "%s/file/bot%s/%s",
 
 		doer: http.DefaultClient,
 	}
@@ -102,6 +104,10 @@ func (client *Client) execute(ctx context.Context, r *Request) (*Response, error
 
 func (client *Client) buildCallURL(token, method string) string {
 	return fmt.Sprintf(client.callURL, client.server, token, method)
+}
+
+func (client *Client) buildDownloadURL(token, path string) string {
+	return fmt.Sprintf(client.downloadURL, client.server, token, path)
 }
 
 func (client *Client) buildHTTPRequest(
@@ -260,4 +266,22 @@ func (client *Client) Do(ctx context.Context, req *Request, dst interface{}) err
 	}
 
 	return nil
+}
+
+// Download file by path from Client.GetFile method.
+// Don't forget to close ReadCloser.
+func (client *Client) Download(ctx context.Context, path string) (io.ReadCloser, error) {
+	url := client.buildDownloadURL(client.token, path)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("new request: %w", err)
+	}
+
+	res, err := client.doer.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("do request: %w", err)
+	}
+
+	return res.Body, nil
 }
