@@ -69,6 +69,10 @@ func (r *Request) ChatID(name string, v ChatID) *Request {
 	return r.Int64(name, int64(v))
 }
 
+func (r *Request) FileID(name string, v FileID) *Request {
+	return r.String(name, string(v))
+}
+
 func (r *Request) File(name string, arg FileArg) *Request {
 	if arg.FileID != "" {
 		return r.String(name, string(arg.FileID))
