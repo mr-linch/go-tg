@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"sync"
 )
 
 type doer interface {
@@ -31,7 +32,8 @@ type Client struct {
 	doer doer
 
 	// contains cached bot info
-	me *User
+	me     *User
+	meLock sync.Mutex
 }
 
 // ClientOption is a function that sets some option for Client.
