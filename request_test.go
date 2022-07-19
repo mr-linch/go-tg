@@ -34,6 +34,8 @@ func TestRequestSetters(t *testing.T) {
 		Upload: NewInputFileBytes("file_name", []byte("file_content")),
 	})
 
+	r.FileID("file_id", FileID("file_id"))
+
 	r.InputMediaSlice("media", []InputMedia{
 		&InputMediaDocument{
 			Media: FileArg{
@@ -56,6 +58,7 @@ func TestRequestSetters(t *testing.T) {
 		"bool",
 		"chat",
 		"file_by_id",
+		"file_id",
 		"float64",
 		"foo",
 		"int",

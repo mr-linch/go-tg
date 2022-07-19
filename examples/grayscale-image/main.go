@@ -19,9 +19,11 @@ import (
 func main() {
 	examples.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+			// handle /start command
 			return mu.Answer("Hey, send me a photo for flip it!").DoVoid(ctx)
 		}, tgb.Command("start")).
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+			// handle photo
 			sizes := append([]tg.PhotoSize{}, mu.Message.Photo...)
 
 			// find the biggest photo
@@ -60,8 +62,13 @@ func main() {
 			}).DoVoid(ctx)
 		}, tgb.MessageType(tg.MessageTypePhoto)).
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+			// handle send as document
 			return mu.Answer("Please, send me photo as image, not as document").DoVoid(ctx)
-		}, isDocumentPhoto),
+		}, isDocumentPhoto).
+		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+			// handle other messages
+			return mu.Answer("Send me a photo").DoVoid(ctx)
+		}),
 	)
 }
 
@@ -91,12 +98,11 @@ func grayscaleImage(in io.Reader) (io.Reader, error) {
 	return buf, nil
 }
 
-var isDocumentPhoto = tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
-	if update.Message.Document == nil {
-		return false, nil
-	}
-
-	doc := update.Message.Document
-
-	return strings.HasPrefix(doc.MIMEType, "image/"), nil
-})
+// isDocumnentPhoto it's composite filter.
+// It's used to filter messages with type document and photo.
+var isDocumentPhoto = tgb.All(
+	tgb.MessageType(tg.MessageTypeDocument),
+	tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
+		return strings.HasPrefix(update.Message.Document.MIMEType, "image/"), nil
+	}),
+)

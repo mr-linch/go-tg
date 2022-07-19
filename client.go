@@ -283,5 +283,21 @@ func (client *Client) Download(ctx context.Context, path string) (io.ReadCloser,
 		return nil, fmt.Errorf("do request: %w", err)
 	}
 
+	if res.StatusCode != http.StatusOK {
+		defer res.Body.Close()
+
+		tgResponse := &Response{}
+
+		if err := json.NewDecoder(res.Body).Decode(tgResponse); err != nil {
+			return nil, fmt.Errorf("unmarshal: %w", err)
+		}
+
+		return nil, &Error{
+			Code:       tgResponse.ErrorCode,
+			Message:    tgResponse.Description,
+			Parameters: tgResponse.Parameters,
+		}
+	}
+
 	return res.Body, nil
 }

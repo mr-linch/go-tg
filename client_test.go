@@ -3,6 +3,7 @@ package tg
 import (
 	"context"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -24,7 +25,53 @@ func TestNewClient(t *testing.T) {
 	assert.Equal(t, client.callURL, "%s/bot%s/test/%s")
 }
 
-func TestClientExecute(t *testing.T) {
+func TestClient_Download(t *testing.T) {
+	t.Run("OK", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, http.MethodGet, r.Method)
+			assert.Equal(t, "/file/bot1234:secret/photos/file_1.jpg", r.URL.Path)
+
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`test`))
+		}))
+
+		client := New("1234:secret", WithClientServerURL(ts.URL))
+		ctx := context.Background()
+
+		body, err := client.Download(ctx, "photos/file_1.jpg")
+		assert.NoError(t, err)
+		defer body.Close()
+
+		data, err := ioutil.ReadAll(body)
+		assert.NoError(t, err)
+		assert.Equal(t, "test", string(data))
+
+		defer ts.Close()
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, http.MethodGet, r.Method)
+			assert.Equal(t, "/file/bot1234:secret/photos/file_1.jpg", r.URL.Path)
+
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = w.Write([]byte(`{"ok":false,"error_code":404,"description":"Not Found"}`))
+		}))
+
+		client := New("1234:secret", WithClientServerURL(ts.URL))
+		ctx := context.Background()
+
+		body, err := client.Download(ctx, "photos/file_1.jpg")
+		assert.Error(t, err)
+		assert.Nil(t, body)
+
+		assert.IsType(t, &Error{}, err)
+
+		defer ts.Close()
+	})
+}
+
+func TestClient_Execute(t *testing.T) {
 	t.Run("Simple", func(t *testing.T) {
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			assert.Equal(t, "POST", r.Method)
