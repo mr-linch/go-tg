@@ -24,6 +24,8 @@ type Client struct {
 	// default values is https://api.telegram.org
 	server string
 
+	callURL string
+
 	// http client,
 	// default values is http.DefaultClient
 	doer doer
@@ -49,12 +51,23 @@ func WithClientDoer(doer *http.Client) ClientOption {
 	}
 }
 
+// WithClientTestEnv switches bot to test environment.
+// See https://core.telegram.org/bots/webapps#using-bots-in-the-test-environment
+func WithClientTestEnv() ClientOption {
+	return func(c *Client) {
+		c.callURL = "%s/bot%s/test/%s"
+	}
+}
+
 // New creates new Client with given token and options.
 func New(token string, options ...ClientOption) *Client {
 	c := &Client{
 		token:  token,
 		server: "https://api.telegram.org",
-		doer:   http.DefaultClient,
+
+		callURL: "%s/bot%s/%s",
+
+		doer: http.DefaultClient,
 	}
 
 	for _, option := range options {
@@ -86,7 +99,7 @@ func (client *Client) execute(ctx context.Context, r *Request) (*Response, error
 }
 
 func (client *Client) buildCallURL(token, method string) string {
-	return fmt.Sprintf("%s/bot%s/%s", client.server, token, method)
+	return fmt.Sprintf(client.callURL, client.server, token, method)
 }
 
 func (client *Client) buildHTTPRequest(

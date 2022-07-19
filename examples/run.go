@@ -32,6 +32,7 @@ func run(ctx context.Context, handler tgb.Handler) error {
 	var (
 		flagToken         string
 		flagServer        string
+		flagTestEnv       bool
 		flagWebhookURL    string
 		flagWebhookListen string
 	)
@@ -39,6 +40,7 @@ func run(ctx context.Context, handler tgb.Handler) error {
 	// parse flags
 	flag.StringVar(&flagToken, "token", "", "Telegram Bot API token")
 	flag.StringVar(&flagServer, "server", "https://api.telegram.org", "Telegram Bot API server")
+	flag.BoolVar(&flagTestEnv, "test-env", false, "switch bot to test environment")
 	flag.StringVar(&flagWebhookURL, "webhook-url", "", "Telegram Bot API webhook URL, if not provdide run in longpoll mode")
 	flag.StringVar(&flagWebhookListen, "webhook-listen", ":8000", "Telegram Bot API webhook URL")
 	flag.Parse()
@@ -47,9 +49,15 @@ func run(ctx context.Context, handler tgb.Handler) error {
 		return fmt.Errorf("token is required, provide it with -token flag")
 	}
 
-	client := tg.New(flagToken,
+	opts := []tg.ClientOption{
 		tg.WithClientServerURL(flagServer),
-	)
+	}
+
+	if flagTestEnv {
+		opts = append(opts, tg.WithClientTestEnv())
+	}
+
+	client := tg.New(flagToken, opts...)
 
 	me, err := client.Me(ctx)
 	if err != nil {
