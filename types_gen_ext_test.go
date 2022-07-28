@@ -534,6 +534,21 @@ func TestFileArg_getString(t *testing.T) {
 	}
 }
 
+func TestNewFileArgUpload(t *testing.T) {
+	f := NewFileArgUpload(InputFile{Name: "file_name"})
+	assert.Equal(t, "file_name", f.Upload.Name)
+}
+
+func TestNewFileArgURL(t *testing.T) {
+	f := NewFileArgURL("https://picsum.photos/500")
+	assert.Equal(t, "https://picsum.photos/500", f.URL)
+}
+
+func TestNewFileArgID(t *testing.T) {
+	f := NewFileArgID("file_id")
+	assert.Equal(t, FileID("file_id"), f.FileID)
+}
+
 func TestBotCommandScope(t *testing.T) {
 	for _, test := range []struct {
 		Scope BotCommandScope

@@ -39,9 +39,9 @@ func main() {
 
 			time.Sleep(time.Second)
 
-			return msg.AnswerPhoto(tg.FileArg{
-				Upload: tg.NewInputFileBytes("gopher.png", gopherPNG),
-			}).DoVoid(ctx)
+			return msg.AnswerPhoto(tg.NewFileArgUpload(
+				tg.NewInputFileBytes("gopher.png", gopherPNG),
+			)).DoVoid(ctx)
 
 		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {

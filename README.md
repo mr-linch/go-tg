@@ -13,33 +13,32 @@
 - [Install](#install)
 - [Quick Example](#quick-example)
 - [API Client](#api-client)
-  * [Creating](#creating)
-  * [Bot API methods](#bot-api-methods)
-  * [Low-level Bot API methods call](#low-level-bot-api-methods-call)
-  * [Helper methods](#helper-methods)
-  * [Working with Files 🚧](#working-with-files---)
+  - [Creating](#creating)
+  - [Bot API methods](#bot-api-methods)
+  - [Low-level Bot API methods call](#low-level-bot-api-methods-call)
+  - [Helper methods](#helper-methods)
+  - [Sending files](#sending-files)
+  - [Downloading files](#downloading-files)
 - [Updates](#updates)
-  * [Handlers](#handlers)
-  * [Typed Handlers](#typed-handlers)
-  * [Receive updates via Polling](#receive-updates-via-polling)
-  * [Receive updates via Webhook](#receive-updates-via-webhook)
-  * [Routing updates 🚧](#routing-updates---)
+  - [Handlers](#handlers)
+  - [Typed Handlers](#typed-handlers)
+  - [Receive updates via Polling](#receive-updates-via-polling)
+  - [Receive updates via Webhook](#receive-updates-via-webhook)
+  - [Routing updates 🚧](#routing-updates---)
 - [Parse Mode 🚧](#parse-mode---)
 - [Thanks 🚧](#thanks---)
-
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
 
 ## Features
- - Code for Bot API types and methods is generated with embedded official documentation.
- - Support [context.Context](https://pkg.go.dev/context).
- - API Client and bot framework are strictly separated, you can use them independently.
- - No runtime reflection overhead.
- - Supports Webhook and Polling natively;
- - Handlers, filters, and middleware are supported.
- - [WebApps](https://core.telegram.org/bots/webapps) and [Login Widget](https://core.telegram.org/widgets/login) helpers.
 
-
+- Code for Bot API types and methods is generated with embedded official documentation.
+- Support [context.Context](https://pkg.go.dev/context).
+- API Client and bot framework are strictly separated, you can use them independently.
+- No runtime reflection overhead.
+- Supports Webhook and Polling natively;
+- Handlers, filters, and middleware are supported.
+- [WebApps](https://core.telegram.org/bots/webapps) and [Login Widget](https://core.telegram.org/widgets/login) helpers.
 
 ## Install
 
@@ -100,9 +99,9 @@ func run(ctx context.Context) error {
 			// emulate thinking :)
 			time.Sleep(time.Second)
 
-			return msg.AnswerPhoto(tg.FileArg{
-				URL: "https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png",
-			}).DoVoid(ctx)
+			return msg.AnswerPhoto(
+				tg.NewFileArgURL("https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png"),
+			).DoVoid(ctx)
 
 		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
 		// handle other messages
@@ -132,7 +131,6 @@ client := tg.New("<TOKEN>") // from @BotFather
 
 With custom [http.Client](https://pkg.go.dev/net/http#Client):
 
-
 ```go
 proxyURL, err := url.Parse("http://user:pass@ip:port")
 if err != nil {
@@ -149,7 +147,6 @@ client := tg.New("<TOKEN>",
  tg.WithClientDoer(httpClient),
 )
 ```
-
 
 With self hosted Bot API server:
 
@@ -195,7 +192,6 @@ Some Bot API methods do not return the object and just say `True`. So, you shoul
 
 All calls with the returned object also have the `DoVoid` method. Use it when you do not care about the result, just ensure it's not an error (unmarshaling also be skipped).
 
-
 ```go
 peer := tg.Username("MrLinch")
 
@@ -232,7 +228,110 @@ if err != nil {
 }
 ```
 
-### Working with Files 🚧
+### Sending files
+
+There are several ways to send files to Telegram:
+
+- uploading a file along with a method call;
+- sending a previously uploaded file by its identifier;
+- sending a file using a URL from the Internet;
+
+The [`FileArg`](https://pkg.go.dev/github.com/mr-linch/go-tg#FileArg) type is used to combine all these methods. It is an object that can be passed to client methods and depending on its contents the desired method will be chosen to send the file.
+
+Consider each method by example.
+
+**Uploading a file along with a method call:**
+
+For upload a file you need to create an object [`tg.InputFile`](https://pkg.go.dev/github.com/mr-linch/go-tg#InputFile). It is a structure with two fields: file name and [`io.Reader`](https://pkg.go.dev/io#Reader) with its contents.
+
+Type has some handy constructors, for example consider uploading a file from a local file system:
+
+```go
+inputFile, err := tg.NewInputFileLocal("/path/to/file.pdf")
+if err != nil {
+  return err
+}
+defer inputFile.Close()
+
+peer := tg.Username("MrLinch")
+
+if err := client.SendDocument(
+  peer,
+  tg.NewFileArgUpload(inputFile),
+).DoVoid(ctx); err != nil {
+	return err
+}
+```
+
+Loading a file from a buffer in memory:
+
+```go
+
+buf := bytes.NewBufferString("<html>...</html>")
+
+inputFile := tg.NewInputFile("index.html", buf)
+
+peer := tg.Username("MrLinch")
+
+if err := client.SendDocument(
+  peer,
+  tg.NewFileArgUpload(inputFile),
+).DoVoid(ctx); err != nil {
+	return err
+}
+```
+
+**Sending a file using a URL from the Internet:**
+
+```go
+peer := tg.Username("MrLinch")
+
+if err := client.SendPhoto(
+  peer,
+  tg.NewFileArgURL("https://picsum.photos/500"),
+).DoVoid(ctx); err != nil {
+	return err
+}
+```
+
+**Sending a previously uploaded file by its identifier:**
+
+```go
+peer := tg.Username("MrLinch")
+
+if err := client.SendPhoto(
+  peer,
+  tg.NewFileArgID(tg.FileID("AgACAgIAAxk...")),
+).DoVoid(ctx); err != nil {
+	return err
+}
+```
+
+Please checkout [examples](https://github.com/mr-linch/go-tg/tree/main/examples) with "File Upload" features for more usecases.
+
+### Downloading files
+
+To download a file you need to get its [`FileID`](https://pkg.go.dev/github.com/mr-linch/go-tg#FileID).
+After that you need to call method [`Client.GetFile`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.GetFile) to get metadata about the file.
+At the end we call method [`Client.Download`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Download) to fetch the contents of the file.
+
+```go
+
+fid := tg.FileID("AgACAgIAAxk...")
+
+file, err := client.GetFile(fid).Do(ctx)
+if err != nil {
+  return err
+}
+
+f, err := client.Download(ctx, file.FilePath)
+if err != nil {
+  return err
+}
+defer f.Close()
+
+// ...
+```
 
 ## Updates
 
@@ -291,18 +390,18 @@ For each subtype (field) of [`tg.Update`](https://pkg.go.dev/github.com/mr-linch
 Typed handlers it's not about routing updates but about handling them.
 These handlers will only be called for updates of a certain type, the rest will be skipped. Also, they implement the [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) interface.
 
-
 List of typed handlers:
- - [`tgb.MessageHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageHandler) with [`tgb.MessageUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageUpdate) for `message`, `edited_message`, `channel_post`, `edited_channel_post`;
- - [`tgb.InlineQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryHandler) with [`tgb.InlineQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryUpdate) for `inline_query`
- - [`tgb.ChosenInlineResult`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResult) with [`tgb.ChosenInlineResultUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultUpdate) for `chosen_inline_result`;
- - [`tgb.CallbackQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryHandler) with [`tgb.CallbackQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryUpdate) for `callback_query`;
- - [`tgb.ShippingQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryHandler) with [`tgb.ShippingQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryUpdate) for `shipping_query`;
- - [`tgb.PreCheckoutQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryHandler) with [`tgb.PreCheckoutQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryUpdate) for `pre_checkout_query`;
- - [`tgb.PollHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollHandler) with [`tgb.PollUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollUpdate) for `poll`;
- - [`tgb.PollAnswerHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerHandler) with [`tgb.PollAnswerUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerUpdate) for `poll_answer`;
- - [`tgb.ChatMemberUpdatedHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedHandler) with [`tgb.ChatMemberUpdatedUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedUpdate) for `my_chat_member`, `chat_member`;
- - [`tgb.ChatJoinRequestHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestHandler) with [`tgb.ChatJoinRequestUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestUpdate) for `chat_join_request`;
+
+- [`tgb.MessageHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageHandler) with [`tgb.MessageUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageUpdate) for `message`, `edited_message`, `channel_post`, `edited_channel_post`;
+- [`tgb.InlineQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryHandler) with [`tgb.InlineQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryUpdate) for `inline_query`
+- [`tgb.ChosenInlineResult`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResult) with [`tgb.ChosenInlineResultUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultUpdate) for `chosen_inline_result`;
+- [`tgb.CallbackQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryHandler) with [`tgb.CallbackQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryUpdate) for `callback_query`;
+- [`tgb.ShippingQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryHandler) with [`tgb.ShippingQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryUpdate) for `shipping_query`;
+- [`tgb.PreCheckoutQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryHandler) with [`tgb.PreCheckoutQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryUpdate) for `pre_checkout_query`;
+- [`tgb.PollHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollHandler) with [`tgb.PollUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollUpdate) for `poll`;
+- [`tgb.PollAnswerHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerHandler) with [`tgb.PollAnswerUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerUpdate) for `poll_answer`;
+- [`tgb.ChatMemberUpdatedHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedHandler) with [`tgb.ChatMemberUpdatedUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedUpdate) for `my_chat_member`, `chat_member`;
+- [`tgb.ChatJoinRequestHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestHandler) with [`tgb.ChatJoinRequestUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestUpdate) for `chat_join_request`;
 
 `tgb.*Updates` has many useful methods for "answer" the update, please checkout godoc by links above.
 
@@ -331,14 +430,16 @@ if err := poller.Run(ctx); err != nil {
 
 Webhook handler and server can be created by [`tgb.NewWebhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#NewWebhook).
 That function has following arguments:
- - `handler` - [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) for handling updates;
- - `client` - [`tg.Client`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Client) for making setup requests;
- - `url` - full url of the webhook server
- - optional `options` - [`tgb.WebhookOption`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#WebhookOption) for customizing the webhook.
+
+- `handler` - [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler) for handling updates;
+- `client` - [`tg.Client`](https://pkg.go.dev/github.com/mr-linch/go-tg/tg#Client) for making setup requests;
+- `url` - full url of the webhook server
+- optional `options` - [`tgb.WebhookOption`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#WebhookOption) for customizing the webhook.
 
 Webhook has several security checks that are enabled by default:
- - Check if the IP of the sender is in the [allowed ranges](https://core.telegram.org/bots/webhooks#the-short-version).
- - Check if the request has a valid security token [header](https://core.telegram.org/bots/api#setwebhook). By default, the token is the SHA256 hash of the Telegram Bot API token.
+
+- Check if the IP of the sender is in the [allowed ranges](https://core.telegram.org/bots/webhooks#the-short-version).
+- Check if the request has a valid security token [header](https://core.telegram.org/bots/api#setwebhook). By default, the token is the SHA256 hash of the Telegram Bot API token.
 
 > ℹ️ That checks can be disabled by passing `tgb.WithWebhookSecurityToken(""), tgb.WithWebhookSecuritySubnets()` when creating the webhook.
 
@@ -364,6 +465,7 @@ if err := webhook.Run(ctx, ":8080"); err != nil {
 Webhook is a regular [`http.Handler`](https://pkg.go.dev/net/http#Handler) that can be used in any HTTP-compatible router. But you should call [`Webhook.Setup`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook.Setup) before starting the server to configure the webhook on the Telegram side.
 
 **e.g. integration with [chi](https://pkg.go.dev/github.com/go-chi/chi/v5) router**
+
 ```go
 handler := tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
   // ...

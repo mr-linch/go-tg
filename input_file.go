@@ -39,6 +39,15 @@ func (file InputFile) Ptr() *InputFile {
 	return &file
 }
 
+// Close closes body, if body impliments io.Closer.
+func (file InputFile) Close() error {
+	closer, ok := file.Body.(io.Closer)
+	if ok {
+		return closer.Close()
+	}
+	return nil
+}
+
 // NewInputFile creates new InputFile with given name and body.
 func NewInputFile(name string, body io.Reader) InputFile {
 	return InputFile{
@@ -55,26 +64,26 @@ func NewInputFileBytes(name string, body []byte) InputFile {
 	return NewInputFile(name, bytes.NewReader(body))
 }
 
-// NewInputFileLocal creates the InputFile from provided local file.
+// NewInputFileLocal creates the InputFile from provided local file path.
 // This method just open file by provided path.
 // So, you should close it AFTER send.
 //
 // Example:
 //
-//   file, close, err := NewInputFileLocal("test.png")
+//   file, err := NewInputFileLocal("test.png")
 //   if err != nil {
 //       return err
 //   }
-//   defer close()
+//   defer  close()
 //
-func NewInputFileLocal(path string) (InputFile, func() error, error) {
+func NewInputFileLocal(path string) (InputFile, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return InputFile{}, nil, err
+		return InputFile{}, err
 	}
 
 	return NewInputFile(
 		filepath.Base(path),
 		file,
-	), file.Close, nil
+	), nil
 }

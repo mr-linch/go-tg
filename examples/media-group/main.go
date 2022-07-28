@@ -45,9 +45,9 @@ func main() {
 
 			for i := 0; i < count; i++ {
 				media[i] = &tg.InputMediaPhoto{
-					Media: tg.FileArg{
-						Upload: tg.NewInputFileBytes("gopher.png", gopherPNG),
-					},
+					Media: tg.NewFileArgUpload(
+						tg.NewInputFileBytes("gopher.png", gopherPNG),
+					),
 				}
 			}
 
