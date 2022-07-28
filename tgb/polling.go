@@ -19,7 +19,7 @@ type Poller struct {
 	timeout        time.Duration
 	retryAfter     time.Duration
 	limit          int
-	allowedUpdates []string
+	allowedUpdates []tg.UpdateType
 
 	wg sync.WaitGroup
 }
@@ -55,7 +55,7 @@ func WithPollerLimit(limit int) PollerOption {
 }
 
 // WithPollerAllowedUpdates sets the allowed updates.
-func WithPollerAllowedUpdates(allowedUpdates ...string) PollerOption {
+func WithPollerAllowedUpdates(allowedUpdates ...tg.UpdateType) PollerOption {
 	return func(poller *Poller) {
 		poller.allowedUpdates = allowedUpdates
 	}
@@ -78,7 +78,7 @@ func NewPoller(handler Handler, client *tg.Client, opts ...PollerOption) *Poller
 		timeout:    time.Second * 5,
 		retryAfter: time.Second * 5,
 
-		allowedUpdates: []string{},
+		allowedUpdates: []tg.UpdateType{},
 
 		limit: defaultPollerLimit,
 	}
