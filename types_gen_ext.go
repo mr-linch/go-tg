@@ -893,6 +893,44 @@ func (typ UpdateType) MarshalText() ([]byte, error) {
 	return nil, fmt.Errorf("unknown update type")
 }
 
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (typ *UpdateType) UnmarshalText(v []byte) error {
+	switch string(v) {
+	case "message":
+		*typ = UpdateTypeMessage
+	case "edited_message":
+		*typ = UpdateTypeEditedMessage
+	case "channel_post":
+		*typ = UpdateTypeChannelPost
+	case "edited_channel_post":
+		*typ = UpdateTypeEditedChannelPost
+	case "inline_query":
+		*typ = UpdateTypeInlineQuery
+	case "chosen_inline_result":
+		*typ = UpdateTypeChosenInlineResult
+	case "callback_query":
+		*typ = UpdateTypeCallbackQuery
+	case "shipping_query":
+		*typ = UpdateTypeShippingQuery
+	case "pre_checkout_query":
+		*typ = UpdateTypePreCheckoutQuery
+	case "poll":
+		*typ = UpdateTypePoll
+	case "poll_answer":
+		*typ = UpdateTypePollAnswer
+	case "my_chat_member":
+		*typ = UpdateTypeMyChatMember
+	case "chat_member":
+		*typ = UpdateTypeChatMember
+	case "chat_join_request":
+		*typ = UpdateTypeChatJoinRequest
+	default:
+		return fmt.Errorf("unknown update type")
+	}
+
+	return nil
+}
+
 // String returns string representation of UpdateType.
 func (typ UpdateType) String() string {
 	if typ > UpdateTypeUnknown && typ <= UpdateTypeChatJoinRequest {

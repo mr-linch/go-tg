@@ -757,6 +757,41 @@ func TestUpdateType_String(t *testing.T) {
 	}
 }
 
+func TestUpdateType_UnmarshalText(t *testing.T) {
+	for _, test := range []struct {
+		Text string
+		Want UpdateType
+		Err  bool
+	}{
+		{"message", UpdateTypeMessage, false},
+		{"edited_message", UpdateTypeEditedMessage, false},
+		{"channel_post", UpdateTypeChannelPost, false},
+		{"edited_channel_post", UpdateTypeEditedChannelPost, false},
+		{"inline_query", UpdateTypeInlineQuery, false},
+		{"chosen_inline_result", UpdateTypeChosenInlineResult, false},
+		{"callback_query", UpdateTypeCallbackQuery, false},
+		{"shipping_query", UpdateTypeShippingQuery, false},
+		{"pre_checkout_query", UpdateTypePreCheckoutQuery, false},
+		{"poll", UpdateTypePoll, false},
+		{"poll_answer", UpdateTypePollAnswer, false},
+		{"my_chat_member", UpdateTypeMyChatMember, false},
+		{"chat_member", UpdateTypeChatMember, false},
+		{"chat_join_request", UpdateTypeChatJoinRequest, false},
+		{"test", UpdateTypeUnknown, true},
+	} {
+		var typ UpdateType
+
+		err := typ.UnmarshalText([]byte(test.Text))
+
+		if test.Err {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+			assert.Equal(t, test.Want, typ)
+		}
+	}
+}
+
 func TestUpdateType_MarshalText(t *testing.T) {
 	v := UpdateTypeEditedMessage
 
