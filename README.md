@@ -17,7 +17,8 @@
   - [Bot API methods](#bot-api-methods)
   - [Low-level Bot API methods call](#low-level-bot-api-methods-call)
   - [Helper methods](#helper-methods)
-  - [Working with Files 🚧](#working-with-files---)
+  - [Sending files](#sending-files)
+  - [Downloading files](#downloading-files)
 - [Updates](#updates)
   - [Handlers](#handlers)
   - [Typed Handlers](#typed-handlers)
@@ -227,7 +228,7 @@ if err != nil {
 }
 ```
 
-### Send Files
+### Sending files
 
 There are several ways to send files to Telegram:
 
@@ -307,6 +308,30 @@ if err := client.SendPhoto(
 ```
 
 Please checkout [examples](https://github.com/mr-linch/go-tg/tree/main/examples) with "File Upload" features for more usecases.
+
+### Downloading files
+
+To download a file you need to get its [`FileID`](https://pkg.go.dev/github.com/mr-linch/go-tg#FileID).
+After that you need to call method [`Client.GetFile`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.GetFile) to get metadata about the file.
+At the end we call method [`Client.Download`](https://pkg.go.dev/github.com/mr-linch/go-tg#Client.Download) to fetch the contents of the file.
+
+```go
+
+fid := tg.FileID("AgACAgIAAxk...")
+
+file, err := client.GetFile(fid).Do(ctx)
+if err != nil {
+  return err
+}
+
+f, err := client.Download(ctx, file.FilePath)
+if err != nil {
+  return err
+}
+defer f.Close()
+
+// ...
+```
 
 ## Updates
 
