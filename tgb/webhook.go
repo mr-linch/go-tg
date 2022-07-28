@@ -25,7 +25,7 @@ type Webhook struct {
 	ip                 string
 	maxConnections     int
 	dropPendingUpdates bool
-	allowedUpdates     []string
+	allowedUpdates     []tg.UpdateType
 
 	securitySubnets []netip.Prefix
 	securityToken   string
@@ -93,7 +93,7 @@ func WithWebhookMaxConnections(maxConnections int) WebhookOption {
 // If not specified, the previous setting will be used.
 // Please note that this parameter doesn't affect updates created before the call to the setWebhook,
 // so unwanted updates may be received for a short period of time.
-func WithWebhookAllowedUpdates(updates ...string) WebhookOption {
+func WithWebhookAllowedUpdates(updates ...tg.UpdateType) WebhookOption {
 	return func(webhook *Webhook) {
 		webhook.allowedUpdates = updates
 	}
@@ -111,7 +111,7 @@ func NewWebhook(handler Handler, client *tg.Client, url string, options ...Webho
 
 		dropPendingUpdates: false,
 
-		allowedUpdates:  []string{},
+		allowedUpdates:  []tg.UpdateType{},
 		securitySubnets: defaultSubnets,
 		securityToken:   token,
 	}
