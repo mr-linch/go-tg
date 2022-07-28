@@ -862,3 +862,130 @@ func (msg *Message) Type() MessageType {
 		return MessageTypeUnknown
 	}
 }
+
+// UpdateType it's type for describe content of Update.
+type UpdateType int
+
+const (
+	UpdateTypeUnknown UpdateType = iota
+	UpdateTypeMessage
+	UpdateTypeEditedMessage
+	UpdateTypeChannelPost
+	UpdateTypeEditedChannelPost
+	UpdateTypeInlineQuery
+	UpdateTypeChosenInlineResult
+	UpdateTypeCallbackQuery
+	UpdateTypeShippingQuery
+	UpdateTypePreCheckoutQuery
+	UpdateTypePoll
+	UpdateTypePollAnswer
+	UpdateTypeMyChatMember
+	UpdateTypeChatMember
+	UpdateTypeChatJoinRequest
+)
+
+// MarshalText implements encoding.TextMarshaler.
+func (typ UpdateType) MarshalText() ([]byte, error) {
+	if typ != UpdateTypeUnknown {
+		return []byte(typ.String()), nil
+	}
+
+	return nil, fmt.Errorf("unknown update type")
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (typ *UpdateType) UnmarshalText(v []byte) error {
+	switch string(v) {
+	case "message":
+		*typ = UpdateTypeMessage
+	case "edited_message":
+		*typ = UpdateTypeEditedMessage
+	case "channel_post":
+		*typ = UpdateTypeChannelPost
+	case "edited_channel_post":
+		*typ = UpdateTypeEditedChannelPost
+	case "inline_query":
+		*typ = UpdateTypeInlineQuery
+	case "chosen_inline_result":
+		*typ = UpdateTypeChosenInlineResult
+	case "callback_query":
+		*typ = UpdateTypeCallbackQuery
+	case "shipping_query":
+		*typ = UpdateTypeShippingQuery
+	case "pre_checkout_query":
+		*typ = UpdateTypePreCheckoutQuery
+	case "poll":
+		*typ = UpdateTypePoll
+	case "poll_answer":
+		*typ = UpdateTypePollAnswer
+	case "my_chat_member":
+		*typ = UpdateTypeMyChatMember
+	case "chat_member":
+		*typ = UpdateTypeChatMember
+	case "chat_join_request":
+		*typ = UpdateTypeChatJoinRequest
+	default:
+		return fmt.Errorf("unknown update type")
+	}
+
+	return nil
+}
+
+// String returns string representation of UpdateType.
+func (typ UpdateType) String() string {
+	if typ > UpdateTypeUnknown && typ <= UpdateTypeChatJoinRequest {
+		return [...]string{
+			"message",
+			"edited_message",
+			"channel_post",
+			"edited_channel_post",
+			"inline_query",
+			"chosen_inline_result",
+			"callback_query",
+			"shipping_query",
+			"pre_checkout_query",
+			"poll",
+			"poll_answer",
+			"my_chat_member",
+			"chat_member",
+			"chat_join_request",
+		}[typ-1]
+	}
+
+	return "unknown"
+}
+
+func (update *Update) Type() UpdateType {
+	switch {
+	case update.Message != nil:
+		return UpdateTypeMessage
+	case update.EditedMessage != nil:
+		return UpdateTypeEditedMessage
+	case update.ChannelPost != nil:
+		return UpdateTypeChannelPost
+	case update.EditedChannelPost != nil:
+		return UpdateTypeEditedChannelPost
+	case update.InlineQuery != nil:
+		return UpdateTypeInlineQuery
+	case update.ChosenInlineResult != nil:
+		return UpdateTypeChosenInlineResult
+	case update.CallbackQuery != nil:
+		return UpdateTypeCallbackQuery
+	case update.ShippingQuery != nil:
+		return UpdateTypeShippingQuery
+	case update.PreCheckoutQuery != nil:
+		return UpdateTypePreCheckoutQuery
+	case update.Poll != nil:
+		return UpdateTypePoll
+	case update.PollAnswer != nil:
+		return UpdateTypePollAnswer
+	case update.MyChatMember != nil:
+		return UpdateTypeMyChatMember
+	case update.ChatMember != nil:
+		return UpdateTypeChatMember
+	case update.ChatJoinRequest != nil:
+		return UpdateTypeChatJoinRequest
+	default:
+		return UpdateTypeUnknown
+	}
+}

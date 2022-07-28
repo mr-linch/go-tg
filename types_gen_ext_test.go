@@ -731,3 +731,155 @@ func TestMessage_Type(t *testing.T) {
 		assert.Equal(t, test.Want, test.Message.Type())
 	}
 }
+
+func TestUpdateType_String(t *testing.T) {
+	for _, test := range []struct {
+		Type UpdateType
+		Want string
+	}{
+		{UpdateTypeUnknown, "unknown"},
+		{UpdateTypeMessage, "message"},
+		{UpdateTypeEditedMessage, "edited_message"},
+		{UpdateTypeChannelPost, "channel_post"},
+		{UpdateTypeEditedChannelPost, "edited_channel_post"},
+		{UpdateTypeInlineQuery, "inline_query"},
+		{UpdateTypeChosenInlineResult, "chosen_inline_result"},
+		{UpdateTypeCallbackQuery, "callback_query"},
+		{UpdateTypeShippingQuery, "shipping_query"},
+		{UpdateTypePreCheckoutQuery, "pre_checkout_query"},
+		{UpdateTypePoll, "poll"},
+		{UpdateTypePollAnswer, "poll_answer"},
+		{UpdateTypeMyChatMember, "my_chat_member"},
+		{UpdateTypeChatMember, "chat_member"},
+		{UpdateTypeChatJoinRequest, "chat_join_request"},
+	} {
+		assert.Equal(t, test.Want, test.Type.String())
+	}
+}
+
+func TestUpdateType_UnmarshalText(t *testing.T) {
+	for _, test := range []struct {
+		Text string
+		Want UpdateType
+		Err  bool
+	}{
+		{"message", UpdateTypeMessage, false},
+		{"edited_message", UpdateTypeEditedMessage, false},
+		{"channel_post", UpdateTypeChannelPost, false},
+		{"edited_channel_post", UpdateTypeEditedChannelPost, false},
+		{"inline_query", UpdateTypeInlineQuery, false},
+		{"chosen_inline_result", UpdateTypeChosenInlineResult, false},
+		{"callback_query", UpdateTypeCallbackQuery, false},
+		{"shipping_query", UpdateTypeShippingQuery, false},
+		{"pre_checkout_query", UpdateTypePreCheckoutQuery, false},
+		{"poll", UpdateTypePoll, false},
+		{"poll_answer", UpdateTypePollAnswer, false},
+		{"my_chat_member", UpdateTypeMyChatMember, false},
+		{"chat_member", UpdateTypeChatMember, false},
+		{"chat_join_request", UpdateTypeChatJoinRequest, false},
+		{"test", UpdateTypeUnknown, true},
+	} {
+		var typ UpdateType
+
+		err := typ.UnmarshalText([]byte(test.Text))
+
+		if test.Err {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+			assert.Equal(t, test.Want, typ)
+		}
+	}
+}
+
+func TestUpdateType_MarshalText(t *testing.T) {
+	v := UpdateTypeEditedMessage
+
+	b, err := v.MarshalText()
+	assert.NoError(t, err)
+	assert.Equal(t, []byte("edited_message"), b)
+
+	v = UpdateTypeUnknown
+	_, err = v.MarshalText()
+	assert.Error(t, err)
+
+	output, err := json.Marshal(struct {
+		Type []UpdateType `json:"type"`
+	}{
+		Type: []UpdateType{UpdateTypeCallbackQuery, UpdateTypeChannelPost},
+	})
+
+	assert.NoError(t, err)
+	assert.Equal(t, `{"type":["callback_query","channel_post"]}`, string(output))
+
+}
+
+func TestUpdate_Type(t *testing.T) {
+	for _, test := range []struct {
+		Update *Update
+		Want   UpdateType
+	}{
+		{
+			Update: &Update{},
+			Want:   UpdateTypeUnknown,
+		},
+		{
+			Update: &Update{Message: &Message{}},
+			Want:   UpdateTypeMessage,
+		},
+		{
+			Update: &Update{EditedMessage: &Message{}},
+			Want:   UpdateTypeEditedMessage,
+		},
+		{
+			Update: &Update{ChannelPost: &Message{}},
+			Want:   UpdateTypeChannelPost,
+		},
+		{
+			Update: &Update{EditedChannelPost: &Message{}},
+			Want:   UpdateTypeEditedChannelPost,
+		},
+		{
+			Update: &Update{InlineQuery: &InlineQuery{}},
+			Want:   UpdateTypeInlineQuery,
+		},
+		{
+			Update: &Update{ChosenInlineResult: &ChosenInlineResult{}},
+			Want:   UpdateTypeChosenInlineResult,
+		},
+		{
+			Update: &Update{CallbackQuery: &CallbackQuery{}},
+			Want:   UpdateTypeCallbackQuery,
+		},
+		{
+			Update: &Update{ShippingQuery: &ShippingQuery{}},
+			Want:   UpdateTypeShippingQuery,
+		},
+		{
+			Update: &Update{PreCheckoutQuery: &PreCheckoutQuery{}},
+			Want:   UpdateTypePreCheckoutQuery,
+		},
+		{
+			Update: &Update{Poll: &Poll{}},
+			Want:   UpdateTypePoll,
+		},
+		{
+			Update: &Update{PollAnswer: &PollAnswer{}},
+			Want:   UpdateTypePollAnswer,
+		},
+		{
+			Update: &Update{MyChatMember: &ChatMemberUpdated{}},
+			Want:   UpdateTypeMyChatMember,
+		},
+		{
+			Update: &Update{ChatJoinRequest: &ChatJoinRequest{}},
+			Want:   UpdateTypeChatJoinRequest,
+		},
+		{
+			Update: &Update{ChatMember: &ChatMemberUpdated{}},
+			Want:   UpdateTypeChatMember,
+		},
+	} {
+		assert.Equal(t, test.Want, test.Update.Type())
+	}
+}

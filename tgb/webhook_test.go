@@ -344,7 +344,7 @@ func TestWebhook_Setup(t *testing.T) {
 			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
 			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 			"https://google.com",
-			WithWebhookAllowedUpdates("message"),
+			WithWebhookAllowedUpdates(tg.UpdateTypeMessage),
 			WithWebhookIP("1.1.1.1"),
 		)
 

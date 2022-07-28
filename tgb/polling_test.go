@@ -125,7 +125,7 @@ func TestPoller(t *testing.T) {
 			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 			WithPollerRetryAfter(time.Millisecond),
 			WithPollerHandlerTimeout(time.Millisecond),
-			WithPollerAllowedUpdates("callback_query"),
+			WithPollerAllowedUpdates(tg.UpdateTypeCallbackQuery),
 			WithPollerLimit(50),
 			WithPollerTimeout(time.Second*2),
 		).Run(ctx)
