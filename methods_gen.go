@@ -46,7 +46,7 @@ func (call *GetUpdatesCall) Timeout(timeout int) *GetUpdatesCall {
 }
 
 // AllowedUpdates A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all update types except chat_member (default). If not specified, the previous setting will be used.Please note that this parameter doesn't affect updates created before the call to the getUpdates, so unwanted updates may be received for a short period of time.
-func (call *GetUpdatesCall) AllowedUpdates(allowedUpdates []string) *GetUpdatesCall {
+func (call *GetUpdatesCall) AllowedUpdates(allowedUpdates []UpdateType) *GetUpdatesCall {
 	call.request.JSON("allowed_updates", allowedUpdates)
 	return call
 }
@@ -105,7 +105,7 @@ func (call *SetWebhookCall) MaxConnections(maxConnections int) *SetWebhookCall {
 }
 
 // AllowedUpdates A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all update types except chat_member (default). If not specified, the previous setting will be used.Please note that this parameter doesn't affect updates created before the call to the setWebhook, so unwanted updates may be received for a short period of time.
-func (call *SetWebhookCall) AllowedUpdates(allowedUpdates []string) *SetWebhookCall {
+func (call *SetWebhookCall) AllowedUpdates(allowedUpdates []UpdateType) *SetWebhookCall {
 	call.request.JSON("allowed_updates", allowedUpdates)
 	return call
 }
