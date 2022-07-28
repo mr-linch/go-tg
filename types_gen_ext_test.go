@@ -541,12 +541,12 @@ func TestNewFileArgUpload(t *testing.T) {
 
 func TestNewFileArgURL(t *testing.T) {
 	f := NewFileArgURL("https://picsum.photos/500")
-	assert.Equal(t, "https://picsum.photos/200", f.URL)
+	assert.Equal(t, "https://picsum.photos/500", f.URL)
 }
 
 func TestNewFileArgID(t *testing.T) {
 	f := NewFileArgID("file_id")
-	assert.Equal(t, "file_id", f.FileID)
+	assert.Equal(t, FileID("file_id"), f.FileID)
 }
 
 func TestBotCommandScope(t *testing.T) {
