@@ -57,9 +57,9 @@ func main() {
 				return fmt.Errorf("process image: %w", err)
 			}
 
-			return mu.AnswerPhoto(tg.FileArg{
-				Upload: tg.NewInputFile("image.jpg", grayscaledImage),
-			}).DoVoid(ctx)
+			return mu.AnswerPhoto(tg.NewFileArgUpload(
+				tg.NewInputFile("image.jpg", grayscaledImage),
+			)).DoVoid(ctx)
 		}, tgb.MessageType(tg.MessageTypePhoto)).
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 			// handle send as document

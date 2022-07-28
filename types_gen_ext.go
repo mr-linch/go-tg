@@ -123,12 +123,39 @@ type PeerID interface {
 
 type FileID string
 
+// FileArg it's union type for different ways of sending files.
 type FileArg struct {
+	// Send already uploaded file by its file_id.
 	FileID FileID
-	URL    string
+
+	// Send remote file by URL.
+	URL string
+
+	// Upload file
 	Upload InputFile
 
 	addr string
+}
+
+// NewFileArgUpload creates a new FileArg for uploading a file by content.
+func NewFileArgUpload(file InputFile) FileArg {
+	return FileArg{
+		Upload: file,
+	}
+}
+
+// NewFileArgURL creates a new FileArg for sending a file by URL.
+func NewFileArgURL(url string) FileArg {
+	return FileArg{
+		URL: url,
+	}
+}
+
+// NewFileArgID creates a new FileArg for sending a file by file_id.
+func NewFileArgID(id FileID) FileArg {
+	return FileArg{
+		FileID: id,
+	}
 }
 
 func (arg FileArg) MarshalJSON() ([]byte, error) {
