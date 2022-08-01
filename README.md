@@ -25,6 +25,7 @@
   - [Receive updates via Polling](#receive-updates-via-polling)
   - [Receive updates via Webhook](#receive-updates-via-webhook)
   - [Routing updates](#routing-updates)
+- [Related Projects](#related-projects)
 - [Thanks](#thanks)
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
@@ -628,6 +629,11 @@ router.Error(func(ctx context.Context, update *tgb.Update, err error) error {
 
 That example is not useful and just demonstrates the error handler.
 The better way to achieve this is simply to enable logging in [`Webhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook) or [`Poller`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Poller).
+
+## Related Projects
+
+- [`mr-linch/go-tg-bot`](https://github.com/mr-linch/go-tg-bot) - one click boilerplate for creating Telegram bots with PostgreSQL database and clean architecture;
+- [`bots-house/docker-telegram-bot-api`](https://github.com/bots-house/docker-telegram-bot-api) - docker image for running self-hosted Telegram Bot API with automated CI build;
 
 ## Thanks
 
