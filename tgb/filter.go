@@ -138,6 +138,20 @@ func getUpdateMessage(update *Update) *tg.Message {
 	)
 }
 
+func getMessageEntities(message *tg.Message) (entities []tg.MessageEntity) {
+	if len(message.Entities) > 0 {
+		entities = message.Entities
+	} else if len(message.CaptionEntities) > 0 {
+		entities = message.CaptionEntities
+	} else if message.Poll != nil {
+		entities = message.Poll.ExplanationEntities
+	} else if message.Game != nil {
+		entities = message.Game.TextEntities
+	}
+
+	return
+}
+
 // Allow checks if update is allowed by filter.
 func (filter *commandFilter) Allow(ctx context.Context, update *Update) (bool, error) {
 	msg := getUpdateMessage(update)
@@ -276,6 +290,38 @@ func MessageType(types ...tg.MessageType) Filter {
 
 		if msg != nil {
 			return slices.Contains(types, msg.Type()), nil
+		}
+
+		return false, nil
+	})
+}
+
+// MessageEntity checks Message, EditedMessage, ChannelPost, EditedChannelPost .Entities, .CaptionEntities, .Poll.ExplanationEntities or .Game.TextEntities
+// for matching type with specified.
+// If multiple types are specified, it checks if message entity type is one of them.
+func MessageEntity(types ...tg.MessageEntityType) Filter {
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
+		var entities []tg.MessageEntity
+
+		if update.Poll != nil {
+			entities = update.Poll.ExplanationEntities
+		} else {
+			msg := getUpdateMessage(update)
+			if msg == nil {
+				return false, nil
+			}
+
+			entities = getMessageEntities(msg)
+		}
+
+		if len(entities) == 0 {
+			return false, nil
+		}
+
+		for _, entity := range entities {
+			if slices.Contains(types, entity.Type) {
+				return true, nil
+			}
 		}
 
 		return false, nil

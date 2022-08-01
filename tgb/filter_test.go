@@ -670,3 +670,144 @@ func TestTextFuncFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestMessageEntity(t *testing.T) {
+	for _, test := range []struct {
+		Name   string
+		Update *Update
+		Filter Filter
+		Allow  bool
+	}{
+		{
+			Name: "NotMessage",
+			Update: &Update{Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{},
+			}},
+			Filter: MessageEntity(tg.MessageEntityTypeEmail),
+			Allow:  false,
+		},
+		{
+			Name: "MessageWithoutEntity",
+			Update: &Update{Update: &tg.Update{
+				Message: &tg.Message{
+					Text: "text",
+				},
+			}},
+			Filter: MessageEntity(tg.MessageEntityTypeEmail),
+			Allow:  false,
+		},
+		{
+			Name: "MessageWithoutSpecifiedEntity",
+			Update: &Update{Update: &tg.Update{
+				Message: &tg.Message{
+					Text: "test@test.com",
+					Entities: []tg.MessageEntity{
+						{
+							Type:   tg.MessageEntityTypeEmail,
+							Offset: 0,
+							Length: 13,
+						},
+					},
+				},
+			}},
+			Filter: MessageEntity(tg.MessageEntityTypeHashtag),
+			Allow:  false,
+		},
+		{
+			Name: "MessageWithSpecifiedEntity",
+			Update: &Update{Update: &tg.Update{
+				Message: &tg.Message{
+					Text: "test@test.com",
+					Entities: []tg.MessageEntity{
+						{
+							Type:   tg.MessageEntityTypeEmail,
+							Offset: 0,
+							Length: 13,
+						},
+					},
+				},
+			}},
+			Filter: MessageEntity(tg.MessageEntityTypeEmail),
+			Allow:  true,
+		},
+		{
+			Name: "MessageWithSpecifiedCaptionEntity",
+			Update: &Update{Update: &tg.Update{
+				Message: &tg.Message{
+					Caption: "test@test.com",
+					CaptionEntities: []tg.MessageEntity{
+						{
+							Type:   tg.MessageEntityTypeEmail,
+							Offset: 0,
+							Length: 13,
+						},
+					},
+				},
+			}},
+			Filter: MessageEntity(tg.MessageEntityTypeEmail, tg.MessageEntityTypeBold),
+			Allow:  true,
+		},
+		{
+			Name: "PollWithSpecifiedEntity",
+			Update: &Update{Update: &tg.Update{
+				Poll: &tg.Poll{
+					Explanation: "test@test.com",
+					ExplanationEntities: []tg.MessageEntity{
+						{
+							Type:   tg.MessageEntityTypeEmail,
+							Offset: 0,
+							Length: 13,
+						},
+					},
+				},
+			}},
+			Filter: MessageEntity(tg.MessageEntityTypeEmail),
+			Allow:  true,
+		},
+		{
+			Name: "MessageGameWithSpecifiedEntity",
+			Update: &Update{Update: &tg.Update{
+				Message: &tg.Message{
+					Game: &tg.Game{
+						Text: "test@test.com",
+						TextEntities: []tg.MessageEntity{
+							{
+								Type:   tg.MessageEntityTypeEmail,
+								Offset: 0,
+								Length: 13,
+							},
+						},
+					},
+				},
+			}},
+			Filter: MessageEntity(tg.MessageEntityTypeEmail),
+			Allow:  true,
+		},
+		{
+			Name: "MessagePollWithSpecifiedEntity",
+			Update: &Update{Update: &tg.Update{
+				Message: &tg.Message{
+					Poll: &tg.Poll{
+						Explanation: "test@test.com",
+						ExplanationEntities: []tg.MessageEntity{
+							{
+								Type:   tg.MessageEntityTypeEmail,
+								Offset: 0,
+								Length: 13,
+							},
+						},
+					},
+				},
+			}},
+			Filter: MessageEntity(tg.MessageEntityTypeEmail),
+			Allow:  true,
+		},
+	} {
+		t.Run(test.Name, func(t *testing.T) {
+			allow, err := test.Filter.Allow(context.Background(), test.Update)
+
+			assert.Equal(t, test.Allow, allow)
+			assert.NoError(t, err)
+		})
+	}
+}
