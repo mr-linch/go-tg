@@ -1016,3 +1016,134 @@ func (update *Update) Type() UpdateType {
 		return UpdateTypeUnknown
 	}
 }
+
+// MessageEntityType it's type for describe content of MessageEntity.
+type MessageEntityType int
+
+const (
+	MessageEntityTypeUnknown MessageEntityType = iota
+	// @username
+	MessageEntityTypeMention
+
+	// #hashtag
+	MessageEntityTypeHashtag
+
+	// $USD
+	MessageEntityTypeCashtag
+
+	// /start@jobs_bot
+	MessageEntityTypeBotCommand
+
+	// https://telegram.org
+	MessageEntityTypeURL
+
+	// do-not-reply@telegram.org
+	MessageEntityTypeEmail
+
+	// +1-212-555-0123
+	MessageEntityTypePhoneNumber
+
+	// <strong>bold</strong>
+	MessageEntityTypeBold
+
+	// <i>italic</i>
+	MessageEntityTypeItalic
+
+	// <u>underline</u>
+	MessageEntityTypeUnderline
+
+	// <strike>strike</strike>
+	MessageEntityTypeStrikethrough
+
+	// <tg-spoiler>spoiler</tg-spoiler>
+	MessageEntityTypeSpoiler
+
+	// <code>code</code>
+	MessageEntityTypeCode
+
+	// <pre>pre</pre>
+	MessageEntityTypePre
+
+	// <a href="https://telegram.org">link</a>
+	MessageEntityTypeTextLink
+
+	// for users without usernames
+	MessageEntityTypeTextMention
+)
+
+// String returns string representation of MessageEntityType.
+func (met MessageEntityType) String() string {
+	if met > MessageEntityTypeUnknown && met <= MessageEntityTypeTextMention {
+		return [...]string{
+			"mention",
+			"hashtag",
+			"cashtag",
+			"bot_command",
+			"url",
+			"email",
+			"phone_number",
+			"bold",
+			"italic",
+			"underline",
+			"strikethrough",
+			"spoiler",
+			"code",
+			"pre",
+			"text_link",
+			"text_mention",
+		}[met-1]
+	}
+
+	return "unknown"
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (met MessageEntityType) MarshalText() ([]byte, error) {
+	if met != MessageEntityTypeUnknown {
+		return []byte(met.String()), nil
+	}
+
+	return nil, fmt.Errorf("unknown message entity type")
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (met *MessageEntityType) UnmarshalText(v []byte) error {
+	switch string(v) {
+	case "mention":
+		*met = MessageEntityTypeMention
+	case "hashtag":
+		*met = MessageEntityTypeHashtag
+	case "cashtag":
+		*met = MessageEntityTypeCashtag
+	case "bot_command":
+		*met = MessageEntityTypeBotCommand
+	case "url":
+		*met = MessageEntityTypeURL
+	case "email":
+		*met = MessageEntityTypeEmail
+	case "phone_number":
+		*met = MessageEntityTypePhoneNumber
+	case "bold":
+		*met = MessageEntityTypeBold
+	case "italic":
+		*met = MessageEntityTypeItalic
+	case "underline":
+		*met = MessageEntityTypeUnderline
+	case "strikethrough":
+		*met = MessageEntityTypeStrikethrough
+	case "spoiler":
+		*met = MessageEntityTypeSpoiler
+	case "code":
+		*met = MessageEntityTypeCode
+	case "pre":
+		*met = MessageEntityTypePre
+	case "text_link":
+		*met = MessageEntityTypeTextLink
+	case "text_mention":
+		*met = MessageEntityTypeTextMention
+	default:
+		return fmt.Errorf("unknown message entity type")
+	}
+
+	return nil
+}

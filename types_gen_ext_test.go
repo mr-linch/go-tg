@@ -1,6 +1,7 @@
 package tg
 
 import (
+	"encoding"
 	"encoding/json"
 	"testing"
 
@@ -896,5 +897,102 @@ func TestUpdate_Type(t *testing.T) {
 		},
 	} {
 		assert.Equal(t, test.Want, test.Update.Type())
+	}
+}
+
+func TestMessageEntityType_String(t *testing.T) {
+	for _, test := range []struct {
+		Type MessageEntityType
+		Want string
+	}{
+		{MessageEntityTypeUnknown, "unknown"},
+		{MessageEntityTypeMention, "mention"},
+		{MessageEntityTypeHashtag, "hashtag"},
+		{MessageEntityTypeCashtag, "cashtag"},
+		{MessageEntityTypeBotCommand, "bot_command"},
+		{MessageEntityTypeURL, "url"},
+		{MessageEntityTypeEmail, "email"},
+		{MessageEntityTypePhoneNumber, "phone_number"},
+		{MessageEntityTypeBold, "bold"},
+		{MessageEntityTypeItalic, "italic"},
+		{MessageEntityTypeUnderline, "underline"},
+		{MessageEntityTypeStrikethrough, "strikethrough"},
+		{MessageEntityTypeSpoiler, "spoiler"},
+		{MessageEntityTypeCode, "code"},
+		{MessageEntityTypePre, "pre"},
+		{MessageEntityTypeTextLink, "text_link"},
+		{MessageEntityTypeTextMention, "text_mention"},
+	} {
+		assert.Equal(t, test.Want, test.Type.String())
+	}
+}
+
+func TestMessageEntityType_MarshalText(t *testing.T) {
+	for _, test := range []struct {
+		Type encoding.TextMarshaler
+		Want []byte
+		Err  bool
+	}{
+		{MessageEntityTypeUnknown, nil, true},
+		{MessageEntityTypeMention, []byte("mention"), false},
+		{MessageEntityTypeHashtag, []byte("hashtag"), false},
+		{MessageEntityTypeCashtag, []byte("cashtag"), false},
+		{MessageEntityTypeBotCommand, []byte("bot_command"), false},
+		{MessageEntityTypeURL, []byte("url"), false},
+		{MessageEntityTypeEmail, []byte("email"), false},
+		{MessageEntityTypePhoneNumber, []byte("phone_number"), false},
+		{MessageEntityTypeBold, []byte("bold"), false},
+		{MessageEntityTypeItalic, []byte("italic"), false},
+		{MessageEntityTypeUnderline, []byte("underline"), false},
+		{MessageEntityTypeStrikethrough, []byte("strikethrough"), false},
+		{MessageEntityTypeSpoiler, []byte("spoiler"), false},
+		{MessageEntityTypeCode, []byte("code"), false},
+		{MessageEntityTypePre, []byte("pre"), false},
+		{MessageEntityTypeTextLink, []byte("text_link"), false},
+		{MessageEntityTypeTextMention, []byte("text_mention"), false},
+	} {
+		b, err := test.Type.MarshalText()
+		if test.Err {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+			assert.Equal(t, test.Want, b)
+		}
+	}
+}
+
+func TestMessageEntityType_UnmarshalText(t *testing.T) {
+	for _, test := range []struct {
+		Input string
+		Want  MessageEntityType
+		Err   bool
+	}{
+		{"unknown", MessageEntityTypeUnknown, true},
+		{"mention", MessageEntityTypeMention, false},
+		{"hashtag", MessageEntityTypeHashtag, false},
+		{"cashtag", MessageEntityTypeCashtag, false},
+		{"bot_command", MessageEntityTypeBotCommand, false},
+		{"url", MessageEntityTypeURL, false},
+		{"email", MessageEntityTypeEmail, false},
+		{"phone_number", MessageEntityTypePhoneNumber, false},
+		{"bold", MessageEntityTypeBold, false},
+		{"italic", MessageEntityTypeItalic, false},
+		{"underline", MessageEntityTypeUnderline, false},
+		{"strikethrough", MessageEntityTypeStrikethrough, false},
+		{"spoiler", MessageEntityTypeSpoiler, false},
+		{"code", MessageEntityTypeCode, false},
+		{"pre", MessageEntityTypePre, false},
+		{"text_link", MessageEntityTypeTextLink, false},
+		{"text_mention", MessageEntityTypeTextMention, false},
+	} {
+		var e MessageEntityType
+
+		err := e.UnmarshalText([]byte(test.Input))
+		if test.Err {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+			assert.Equal(t, test.Want, e)
+		}
 	}
 }
