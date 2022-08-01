@@ -6,6 +6,7 @@ This document describes how to prepare a PR for a change in the main repository.
 
 - [Prerequisites](#prerequisites)
 - [Making changes](#making-changes)
+- [Submit changes](#submit-changes)
 
 ## Prerequisites
 
@@ -36,3 +37,7 @@ git clone https://github.com/your_username/go-tg.git
   ```sh
   golangci-lint run  ./...
   ```
+
+## Submit Changes
+
+After the change is ready, create a draft pull request, wait until all checks have passed, and also check the Codecov report for degradation of coverage by tests. After all the checks are passed, move the pull request from draft to ready and request review.
