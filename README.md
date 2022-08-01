@@ -52,69 +52,68 @@ go get -u github.com/mr-linch/go-tg
 package main
 
 import (
-	"context"
-	"fmt"
-	"os"
-	"os/signal"
-	"regexp"
-	"syscall"
-	"time"
+  "context"
+  "fmt"
+  "os"
+  "os/signal"
+  "regexp"
+  "syscall"
+  "time"
 
-	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/tgb"
+  "github.com/mr-linch/go-tg"
+  "github.com/mr-linch/go-tg/tgb"
 )
 
 func main() {
-	ctx := context.Background()
+  ctx := context.Background()
 
-	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, os.Kill, syscall.SIGTERM)
-	defer cancel()
+  ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, os.Kill, syscall.SIGTERM)
+  defer cancel()
 
-	if err := run(ctx); err != nil {
-		fmt.Println(err)
-		defer os.Exit(1)
-	}
+  if err := run(ctx); err != nil {
+    fmt.Println(err)
+    defer os.Exit(1)
+  }
 }
 
 func run(ctx context.Context) error {
-	client := tg.New(os.Getenv("BOT_TOKEN"))
+  client := tg.New(os.Getenv("BOT_TOKEN"))
 
-	router := tgb.NewRouter().
-		// handles /start and /help
-		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
-			return msg.Answer(
-				tg.HTML.Text(
-					tg.HTML.Bold("👋 Hi, I'm echo bot!"),
-					"",
-					tg.HTML.Italic("🚀 Powered by", tg.HTML.Spoiler(tg.HTML.Link("go-tg", "github.com/mr-linch/go-tg"))),
-				),
-			).ParseMode(tg.HTML).DoVoid(ctx)
-		}, tgb.Command("start", tgb.WithCommandAlias("help"))).
-		// handles gopher image
-		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
-			if err := msg.Update.Respond(ctx, msg.AnswerChatAction(tg.ChatActionUploadPhoto)); err != nil {
-				return fmt.Errorf("answer chat action: %w", err)
-			}
+  router := tgb.NewRouter().
+    // handles /start and /help
+    Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+      return msg.Answer(
+        tg.HTML.Text(
+          tg.HTML.Bold("👋 Hi, I'm echo bot!"),
+          "",
+          tg.HTML.Italic("🚀 Powered by", tg.HTML.Spoiler(tg.HTML.Link("go-tg", "github.com/mr-linch/go-tg"))),
+        ),
+      ).ParseMode(tg.HTML).DoVoid(ctx)
+    }, tgb.Command("start", tgb.WithCommandAlias("help"))).
+    // handles gopher image
+    Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+      if err := msg.Update.Respond(ctx, msg.AnswerChatAction(tg.ChatActionUploadPhoto)); err != nil {
+        return fmt.Errorf("answer chat action: %w", err)
+      }
 
-			// emulate thinking :)
-			time.Sleep(time.Second)
+      // emulate thinking :)
+      time.Sleep(time.Second)
 
-			return msg.AnswerPhoto(
-				tg.NewFileArgURL("https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png"),
-			).DoVoid(ctx)
+      return msg.AnswerPhoto(
+        tg.NewFileArgURL("https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png"),
+      ).DoVoid(ctx)
 
-		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
-		// handle other messages
-		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
-			return msg.Copy(msg.Chat).DoVoid(ctx)
-		})
+    }, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
+    // handle other messages
+    Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+      return msg.Copy(msg.Chat).DoVoid(ctx)
+    })
 
-	return tgb.NewPoller(
-		router,
-		client,
-	).Run(ctx)
+  return tgb.NewPoller(
+    router,
+    client,
+  ).Run(ctx)
 }
-
 ```
 
 More examples can be found in [examples](https://github.com/mr-linch/go-tg/tree/main/examples).
