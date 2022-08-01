@@ -143,6 +143,10 @@ func getMessageEntities(message *tg.Message) (entities []tg.MessageEntity) {
 		entities = message.Entities
 	} else if len(message.CaptionEntities) > 0 {
 		entities = message.CaptionEntities
+	} else if message.Poll != nil {
+		entities = message.Poll.ExplanationEntities
+	} else if message.Game != nil {
+		entities = message.Game.TextEntities
 	}
 
 	return
@@ -292,17 +296,24 @@ func MessageType(types ...tg.MessageType) Filter {
 	})
 }
 
-// MessageEntity checks Message, EditedMessage, ChannelPost, EditedChannelPost .Entities or .CaptionEntities
+// MessageEntity checks Message, EditedMessage, ChannelPost, EditedChannelPost .Entities, .CaptionEntities, .Poll.ExplanationEntities or .Game.TextEntities
 // for matching type with specified.
 // If multiple types are specified, it checks if message entity type is one of them.
 func MessageEntity(types ...tg.MessageEntityType) Filter {
 	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
-		msg := getUpdateMessage(update)
-		if msg == nil {
-			return false, nil
+		var entities []tg.MessageEntity
+
+		if update.Poll != nil {
+			entities = update.Poll.ExplanationEntities
+		} else {
+			msg := getUpdateMessage(update)
+			if msg == nil {
+				return false, nil
+			}
+
+			entities = getMessageEntities(msg)
 		}
 
-		entities := getMessageEntities(msg)
 		if len(entities) == 0 {
 			return false, nil
 		}
