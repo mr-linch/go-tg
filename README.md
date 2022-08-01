@@ -45,6 +45,7 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
 ## Install
 
 ```bash
+# go 1.18+
 go get -u github.com/mr-linch/go-tg
 ```
 
