@@ -217,7 +217,7 @@ func TestRouter(t *testing.T) {
 			}})
 
 			assert.NoError(t, err)
-			assert.True(t, isChosenInlineResultHandlerCalled, "choosen inline result handler should be called")
+			assert.True(t, isChosenInlineResultHandlerCalled, "chosen inline result handler should be called")
 		}
 
 		{

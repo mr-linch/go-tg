@@ -10,7 +10,7 @@ type Response struct {
 
 	// A human-readable description of the result.
 	// Empty if Ok is true.
-	// Containes error message if Ok is false.
+	// Contains error message if Ok is false.
 	Description string `json:"description"`
 
 	// Optional. The result of the request
