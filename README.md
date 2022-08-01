@@ -30,6 +30,8 @@
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
 
+> ⚠️ Although the API definitions are considered stable, please keep in mind that go-tg is still under active development and therefore full backward compatibility is not guaranteed before reaching v1.0.0.
+
 ## Features
 
 - Code for Bot API types and methods is generated with embedded official documentation.
