@@ -996,3 +996,23 @@ func TestMessageEntityType_UnmarshalText(t *testing.T) {
 		}
 	}
 }
+
+func TestMessageEntity_Extract(t *testing.T) {
+	text := "Lorem Ipsum - це текст-\"риба\", що використовується в друкарстві та дизайні. Lorem Ipsum є, фактично, стандартною \"рибою\" аж з XVI сторіччя, коли невідомий друкар взяв шрифтову гранку та склав на ній підбірку зразків шрифтів. Пишить мені на hey@lipsum.com"
+
+	boldEntity := MessageEntity{
+		Type:   MessageEntityTypeBold,
+		Offset: 0,
+		Length: 11,
+	}
+
+	assert.Equal(t, "Lorem Ipsum", boldEntity.Extract(text))
+
+	emailEntity := MessageEntity{
+		Type:   MessageEntityTypeEmail,
+		Offset: 240,
+		Length: 14,
+	}
+
+	assert.Equal(t, "hey@lipsum.com", emailEntity.Extract(text))
+}

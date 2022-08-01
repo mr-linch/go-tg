@@ -1022,6 +1022,7 @@ type MessageEntityType int
 
 const (
 	MessageEntityTypeUnknown MessageEntityType = iota
+
 	// @username
 	MessageEntityTypeMention
 
@@ -1146,4 +1147,9 @@ func (met *MessageEntityType) UnmarshalText(v []byte) error {
 	}
 
 	return nil
+}
+
+// Extract entitie value from plain text.
+func (me MessageEntity) Extract(text string) string {
+	return string([]rune(text)[me.Offset : me.Offset+me.Length])
 }
