@@ -579,17 +579,17 @@ router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 All filters are universal. e.g. the command filter can be used in the `Message`, `EditedMessage`, `ChannelPost`, `EditedChannelPost` handlers.
 Please checkout [`tgb.Filter`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Filter) constructors for more information about built-in filters.
 
-For define a custom filter you should implement the [`tgb.Filter`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Filter) interface. Also you can use [`tgb.FilterFunc`] wrapper to define a filter in function form.
+For define a custom filter you should implement the [`tgb.Filter`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Filter) interface. Also you can use [`tgb.FilterFunc`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#FilterFunc) wrapper to define a filter in functional way.
 
 e.g. filter for messages with document attachments with image type
 
 ```go
 // tgb.All works like boolean `and` operator.
 var isDocumentPhoto = tgb.All(
-	tgb.MessageType(tg.MessageTypeDocument),
-	tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
-		return strings.HasPrefix(update.Message.Document.MIMEType, "image/"), nil
-	}),
+  tgb.MessageType(tg.MessageTypeDocument),
+  tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
+    return strings.HasPrefix(update.Message.Document.MIMEType, "image/"), nil
+  }),
 )
 ```
 
