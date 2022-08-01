@@ -227,13 +227,14 @@ func extractUpdateText(update *Update) (string, bool) {
 }
 
 // RegexpFilter handles updates by regexp.
+//
 // Checks following fields:
-// - Update.Message.Text
-// - Update.Message.Caption
-// - Update.CallbackQuery.Data
-// - Update.InlineQuery.Query
-// - Update.ChosenInlineResult.Query
-// - Update.Poll.Question
+//   - Update.Message.Text
+//   - Update.Message.Caption
+//   - Update.CallbackQuery.Data
+//   - Update.InlineQuery.Query
+//   - Update.ChosenInlineResult.Query
+//   - Update.Poll.Question
 func Regexp(re *regexp.Regexp) Filter {
 	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 		var text string
@@ -247,13 +248,15 @@ func Regexp(re *regexp.Regexp) Filter {
 	})
 }
 
-// ChatType checks chat type in:
-// - Message, EditedMessage, ChannelPost, EditedChannelPost
-// - CallbackQuery.Message.Chat.Type (if not nil)
-// - InlineQuery.ChatType
-// - MyChatMember.Chat.Type
-// - ChatMember.Chat.Type
-// - ChatJoinRequest.Chat.Type
+// ChatType filter checks if chat type is in specified list.
+//
+// Check is performed in:
+//   - Message, EditedMessage, ChannelPost, EditedChannelPost
+//   - CallbackQuery.Message.Chat.Type (if not nil)
+//   - InlineQuery.ChatType
+//   - MyChatMember.Chat.Type
+//   - ChatMember.Chat.Type
+//   - ChatJoinRequest.Chat.Type
 func ChatType(types ...tg.ChatType) Filter {
 	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
 		var typ tg.ChatType
