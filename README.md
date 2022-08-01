@@ -612,6 +612,26 @@ router.Use(func(next tgb.Handler) tgb.Handler {
 })
 ```
 
+#### Error Handler
+
+As you all handlers returns an `error`. If any error occurs in the chain, it will be passed to that handler. By default, errors are returned back by handler method. You can customize this behavior by passing a custom error handler.
+
+e.g. log all errors
+
+```go
+router.Error(func(ctx context.Context, update *tgb.Update, err error) error {
+  log.Printf("error when handling update #%d: %v", update.ID, err)
+  return nil
+})
+```
+
+That example is not useful and just demonstrates the error handler.
+The better way to achieve this is simply to enable logging in [`Webhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook) or [`Poller`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Poller).
+
 ## Parse Mode 🚧
 
 ## Thanks 🚧
+
+```
+
+```
