@@ -25,8 +25,7 @@
   - [Receive updates via Polling](#receive-updates-via-polling)
   - [Receive updates via Webhook](#receive-updates-via-webhook)
   - [Routing updates](#routing-updates)
-- [Parse Mode 🚧](#parse-mode---)
-- [Thanks 🚧](#thanks---)
+- [Thanks](#thanks)
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
 
@@ -39,6 +38,7 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
 - API Client and bot framework are strictly separated, you can use them independently.
 - No runtime reflection overhead.
 - Supports Webhook and Polling natively;
+- [Webhook reply](https://core.telegram.org/bots/faq#how-can-i-make-requests-in-response-to-updates) for high load bots;
 - Handlers, filters, and middleware are supported.
 - [WebApps](https://core.telegram.org/bots/webapps) and [Login Widget](https://core.telegram.org/widgets/login) helpers.
 
@@ -628,10 +628,7 @@ router.Error(func(ctx context.Context, update *tgb.Update, err error) error {
 That example is not useful and just demonstrates the error handler.
 The better way to achieve this is simply to enable logging in [`Webhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook) or [`Poller`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Poller).
 
-## Parse Mode 🚧
+## Thanks
 
-## Thanks 🚧
-
-```
-
-```
+- [gotd/td](https://github.com/gotd/td) for inspiration for the use of codegen;
+- [aiogram/aiogram](https://github.com/aiogram/aiogram) for handlers, middlewares, filters concepts;
