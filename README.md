@@ -7,6 +7,8 @@
 [![CI](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml/badge.svg)](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/mr-linch/go-tg/branch/main/graph/badge.svg?token=9EI5CEIYXL)](https://codecov.io/gh/mr-linch/go-tg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mr-linch/go-tg)](https://goreportcard.com/report/github.com/mr-linch/go-tg)
+[![[Telegram]](https://img.shields.io/badge/%20chat-@go__tg__devs-blue.svg?style=flat-square)](https://t.me/go_tg_devs)
+
 [![beta](https://img.shields.io/badge/-beta-yellow)](https://go-faster.org/docs/projects/status)
 
 - [Features](#features)
