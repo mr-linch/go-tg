@@ -24,13 +24,13 @@
   - [Typed Handlers](#typed-handlers)
   - [Receive updates via Polling](#receive-updates-via-polling)
   - [Receive updates via Webhook](#receive-updates-via-webhook)
-  - [Routing updates 🚧](#routing-updates---)
+  - [Routing updates](#routing-updates)
 - [Parse Mode 🚧](#parse-mode---)
 - [Thanks 🚧](#thanks---)
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
 
-> ⚠️ Although the API definitions are considered stable, please keep in mind that go-tg is still under active development and therefore full backward compatibility is not guaranteed before reaching v1.0.0.
+> ⚠️ Although the API definitions are considered stable package is well tested and used in production, please keep in mind that go-tg is still under active development and therefore full backward compatibility is not guaranteed before reaching v1.0.0.
 
 ## Features
 
@@ -489,7 +489,128 @@ http.ListenAndServe(":8080", r)
 
 ```
 
-### Routing updates 🚧
+### Routing updates
+
+When building complex bots, routing updates is one of the most boilerplate parts of the code.
+The [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package contains a number of primitives to simplify this.
+
+#### [`tgb.Router`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Router)
+
+This is an implementation of [`tgb.Handler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Handler), which provides the ability to route updates between multiple related handlers.
+It is useful for handling updates in different ways depending on the update subtype.
+
+```go
+router := tgb.NewRouter()
+
+router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+  // will be called for every Update with not nil `Message` field
+})
+
+router.EditedMessage(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+  // will be called for every Update with not nil `EditedMessage` field
+})
+
+router.CallbackQuery(func(ctx context.Context, update *tgb.CallbackQueryUpdate) error {
+  // will be called for every Update with not nil `CallbackQuery` field
+})
+
+client := tg.NewClient(...)
+
+// e.g. run in long polling mode
+if err := tgb.NewPoller(router, client).Run(ctx); err != nil {
+  return err
+}
+```
+
+#### [tgb.Filter](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Filter)
+
+Routing by update subtype is first level of the routing. Second is **filters**. Filters are needed to determine more precisely which handler to call, for which update, depending on its contents.
+
+In essence, filters are predicates. Functions that return a boolean value.
+If the value is `true`, then the given update corresponds to a handler and the handler will be called.
+If the value is `false`, check the subsequent handlers.
+
+The [`tgb`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb) package contains many built-in filters.
+
+e.g. [command filter](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Command) (can be customized via [`CommandFilterOption`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CommandFilterOption))
+
+```go
+router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+  // will be called for every Update with not nil `Message` field and if the message text contains "/start"
+}, tgb.Command("start", ))
+```
+
+The handler registration function accepts any number of filters.
+They will be combined using the boolean operator `and`
+
+e.g. handle /start command in private chats only
+
+```go
+router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+  // will be called for every Update with not nil `Message` field
+  //  and
+  // if the message text contains "/start"
+  //  and
+  // if the Message.Chat.Type is private
+}, tgb.Command("start"), tgb.ChatType(tg.ChatTypePrivate))
+```
+
+Logical operator `or` also supported.
+
+e.g. handle /start command in groups or supergroups only
+
+```go
+isGroupOrSupergroup := tgb.Any(
+  tgb.ChatType(tg.ChatTypeGroup),
+  tgb.ChatType(tg.ChatTypeSupergroup),
+)
+
+router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+  // will be called for every Update with not nil `Message` field
+  //  and
+  // if the message text contains "/start"
+  //  and
+  //    if the Message.Chat.Type is group
+  //      or
+  //    if the Message.Chat.Type is supergroup
+}, tgb.Command("start"), isGroupOrSupergroup)
+```
+
+All filters are universal. e.g. the command filter can be used in the `Message`, `EditedMessage`, `ChannelPost`, `EditedChannelPost` handlers.
+Please checkout [`tgb.Filter`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Filter) constructors for more information about built-in filters.
+
+For define a custom filter you should implement the [`tgb.Filter`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Filter) interface. Also you can use [`tgb.FilterFunc`] wrapper to define a filter in function form.
+
+e.g. filter for messages with document attachments with image type
+
+```go
+// tgb.All works like boolean `and` operator.
+var isDocumentPhoto = tgb.All(
+	tgb.MessageType(tg.MessageTypeDocument),
+	tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
+		return strings.HasPrefix(update.Message.Document.MIMEType, "image/"), nil
+	}),
+)
+```
+
+#### [tgb.Middleware](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Middleware)
+
+Middleware is used to modify or process the Update before it is passed to the handler.
+All middleware should be registered before the handlers registration.
+
+e.g. log all updates
+
+```go
+router.Use(func(next tgb.Handler) tgb.Handler {
+  return tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
+    defer func(started time.Time) {
+      log.Printf("%#v [%s]", update, time.Since(started))
+    }(time.Now())
+
+    return next(ctx, update)
+  })
+})
+```
 
 ## Parse Mode 🚧
 
