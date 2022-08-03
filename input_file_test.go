@@ -2,10 +2,15 @@ package tg
 
 import (
 	"encoding/json"
+	"io/fs"
 	"strings"
 	"testing"
+	"testing/fstest"
+
+	_ "embed"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestInputFile_WithName(t *testing.T) {
@@ -53,6 +58,38 @@ func TestNewInputFileLocal(t *testing.T) {
 		assert.Zero(t, file)
 		assert.Nil(t, file.Close())
 	}
+}
+
+type MockFS struct {
+	mock.Mock
+}
+
+func (mfs *MockFS) Open(path string) (fs.File, error) {
+	args := mfs.Called(path)
+
+	return args.Get(0).(fs.File), args.Error(1)
+}
+
+func TestNewInputFileFS(t *testing.T) {
+	fs := fstest.MapFS{
+		"hello.txt": {
+			Data: []byte("hello, world"),
+		},
+	}
+
+	t.Run("OK", func(t *testing.T) {
+		file, err := NewInputFileFS(fs, "hello.txt")
+		assert.NoError(t, err)
+		assert.NotNil(t, file)
+		assert.NoError(t, file.Close())
+	})
+
+	t.Run("NotExist", func(t *testing.T) {
+		file, err := NewInputFileFS(fs, "not-exist.txt")
+		assert.Error(t, err)
+		assert.Zero(t, file)
+		assert.Nil(t, file.Close())
+	})
 }
 
 func TestInputFile_MarshalJSON(t *testing.T) {
