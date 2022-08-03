@@ -54,9 +54,7 @@ func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
 		return nil
 	}
 
-	v.Bind(update.Client)
-
-	return v.DoVoid(ctx)
+	return tg.BindClient(v, update.Client).DoVoid(ctx)
 }
 
 // MessageUpdate it's extend wrapper around tg.Message.
