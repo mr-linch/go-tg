@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 )
@@ -80,6 +81,28 @@ func NewInputFileLocal(path string) (InputFile, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return InputFile{}, err
+	}
+
+	return NewInputFile(
+		filepath.Base(path),
+		file,
+	), nil
+}
+
+// NewInputFileFS creates the InputFile from provided FS and file path.
+//
+// Usage:
+//  //go:embed assets/*
+//  var assets embed.FS
+//  file, err := NewInputFileFS(assets, "images/test.png")
+//  if err != nil {
+//    return err
+//  }
+//  defer file.Close()
+func NewInputFileFS(fs fs.FS, path string) (InputFile, error) {
+	file, err := fs.Open(path)
+	if err != nil {
+		return InputFile{}, fmt.Errorf("open file: %w", err)
 	}
 
 	return NewInputFile(
