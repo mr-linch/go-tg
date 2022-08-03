@@ -3,6 +3,7 @@ package tgb
 import (
 	"context"
 	"encoding/json"
+	"sync"
 
 	"github.com/mr-linch/go-tg"
 )
@@ -13,11 +14,30 @@ type Update struct {
 	*tg.Update
 	Client *tg.Client
 
-	webhookResponse chan json.Marshaler
+	webhookResponse     chan json.Marshaler
+	webhookResponseLock sync.Mutex
+}
+
+func newWebhookUpdate(update *tg.Update, client *tg.Client) *Update {
+	return &Update{
+		Update:          update,
+		Client:          client,
+		webhookResponse: make(chan json.Marshaler),
+	}
 }
 
 func (update *Update) isWebhook() bool {
+	update.webhookResponseLock.Lock()
+	defer update.webhookResponseLock.Unlock()
+
 	return update.webhookResponse != nil
+}
+
+func (update *Update) disableWebhookResponse() {
+	update.webhookResponseLock.Lock()
+	defer update.webhookResponseLock.Unlock()
+
+	update.webhookResponse = nil
 }
 
 // UpdateRespond defines interface for responding to an update via Webhook.

@@ -214,7 +214,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("HandleOKResponse", func(t *testing.T) {
+	t.Run("HandleOKOneRespondCall", func(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(`{"update_id": 123456, "message": {"chat": {"id": 1234}}}`))
@@ -223,8 +223,11 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		req.RemoteAddr = "1.1.1.1"
 		req.Header.Set("Content-Type", "application/json")
 
+		isHandlerCalled := false
+
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error {
+				isHandlerCalled = true
 				return update.Respond(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
 			}),
 			&tg.Client{},
@@ -235,12 +238,71 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook.ServeHTTP(w, req)
 
+		assert.True(t, isHandlerCalled, "handler should be called")
+
 		assert.Equal(t, http.StatusOK, w.Code)
 
 		body, err := io.ReadAll(w.Body)
 		assert.NoError(t, err)
 
 		assert.Equal(t, `{"chat_id":"1234","method":"sendMessage","text":"test"}`, string(body))
+	})
+
+	t.Run("HandleOKTwoRespondCall", func(t *testing.T) {
+
+		isHandlerCalled := false
+
+		handlerDone := make(chan struct{})
+
+		webhook := NewWebhook(
+			HandlerFunc(func(ctx context.Context, update *Update) error {
+				// first call should be send response to webhook
+				err := update.Respond(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
+				assert.NoError(t, err)
+
+				// second call should call UpdateRespond.DoVoid()
+				ur := &MockUpdateRespond{}
+
+				ur.On("Bind", mock.Anything).Return()
+				ur.On("DoVoid", mock.Anything).Return(nil)
+
+				err = update.Respond(ctx, ur)
+				assert.NoError(t, err)
+
+				ur.AssertExpectations(t)
+
+				isHandlerCalled = true
+
+				close(handlerDone)
+
+				return nil
+			}),
+			&tg.Client{},
+			"http://test.io/",
+			WithWebhookSecuritySubnets(),
+			WithWebhookSecurityToken(""),
+		)
+
+		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(`{"update_id": 123456, "message": {"chat": {"id": 1234}}}`))
+		assert.NoError(t, err)
+		req.RemoteAddr = "1.1.1.1"
+		req.Header.Set("Content-Type", "application/json")
+
+		w := httptest.NewRecorder()
+
+		webhook.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+
+		body, err := io.ReadAll(w.Body)
+		assert.NoError(t, err)
+
+		assert.Equal(t, `{"chat_id":"1234","method":"sendMessage","text":"test"}`, string(body))
+
+		<-handlerDone
+
+		assert.True(t, isHandlerCalled, "handler is not called")
+
 	})
 }
 

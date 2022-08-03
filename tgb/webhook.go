@@ -248,37 +248,25 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseChan := make(chan json.Marshaler)
-
-	update := &Update{
-		webhookResponse: responseChan,
-		Update:          baseUpdate,
-		Client:          webhook.client,
-	}
+	update := newWebhookUpdate(baseUpdate, webhook.client)
+	defer update.disableWebhookResponse()
 
 	handlerDoneChan := make(chan struct{})
 
-	var handlerClose context.CancelFunc
 	go func() {
-		handlerCtx := context.Background()
-
-		handlerCtx, handlerClose = context.WithCancel(handlerCtx)
-		defer handlerClose()
+		handlerCtx, handlerCtxClose := context.WithCancel(context.Background())
+		defer handlerCtxClose()
 
 		// handle update
 		if err := webhook.handler.Handle(handlerCtx, update); err != nil {
 			webhook.log("handler error: %v", err)
 		}
 
-		handlerDoneChan <- struct{}{}
+		close(handlerDoneChan)
 	}()
 
 	select {
-	case <-r.Context().Done():
-		webhook.log("shutdown...")
-		handlerClose()
-		return
-	case response := <-responseChan:
+	case response := <-update.webhookResponse:
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		if response != nil {
@@ -298,6 +286,7 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	case <-handlerDoneChan:
 		w.WriteHeader(http.StatusOK)
+		return
 	}
 }
 
