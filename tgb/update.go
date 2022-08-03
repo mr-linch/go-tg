@@ -14,30 +14,19 @@ type Update struct {
 	*tg.Update
 	Client *tg.Client
 
-	webhookResponse     chan json.Marshaler
 	webhookResponseLock sync.Mutex
+	webhookResponse     chan json.Marshaler
+	webhookResponseSent bool
 }
 
-func newWebhookUpdate(update *tg.Update, client *tg.Client) *Update {
+func newUpdateWebhook(update *tg.Update, client *tg.Client) *Update {
 	return &Update{
-		Update:          update,
-		Client:          client,
-		webhookResponse: make(chan json.Marshaler),
+		Update: update,
+		Client: client,
+
+		webhookResponse:     make(chan json.Marshaler),
+		webhookResponseSent: false,
 	}
-}
-
-func (update *Update) isWebhook() bool {
-	update.webhookResponseLock.Lock()
-	defer update.webhookResponseLock.Unlock()
-
-	return update.webhookResponse != nil
-}
-
-func (update *Update) disableWebhookResponse() {
-	update.webhookResponseLock.Lock()
-	defer update.webhookResponseLock.Unlock()
-
-	update.webhookResponse = nil
 }
 
 // UpdateRespond defines interface for responding to an update via Webhook.
@@ -48,8 +37,14 @@ type UpdateRespond interface {
 }
 
 // Respond to Webhook, if possible or make usual call via Client.
+//
+// NOTE: This method is not thread-safe.
 func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
-	if update.isWebhook() {
+	update.webhookResponseLock.Lock()
+	defer update.webhookResponseLock.Unlock()
+
+	if update.webhookResponse != nil && !update.webhookResponseSent {
+		update.webhookResponseSent = true
 		update.webhookResponse <- v
 		return nil
 	}
@@ -57,6 +52,13 @@ func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
 	v.Bind(update.Client)
 
 	return v.DoVoid(ctx)
+}
+
+func (update *Update) disableWebhookResponse() {
+	update.webhookResponseLock.Lock()
+	defer update.webhookResponseLock.Unlock()
+
+	update.webhookResponseSent = true
 }
 
 // MessageUpdate it's extend wrapper around tg.Message.
