@@ -111,12 +111,21 @@ func (id UserID) PeerID() string {
 	return strconv.FormatInt(int64(id), 10)
 }
 
+// Username represents a Telegram username.
 type Username string
 
 func (un Username) PeerID() string {
 	return "@" + string(un)
 }
 
+// PeerID represents generic Telegram peer.
+//
+// Known implementations:
+//   - [UserID]
+//   - [ChatID]
+//   - [Username]
+//   - [Chat]
+//   - [User]
 type PeerID interface {
 	PeerID() string
 }
@@ -185,13 +194,31 @@ func (chat Chat) PeerID() string {
 	return chat.ID.PeerID()
 }
 
+func (user User) PeerID() string {
+	return user.ID.PeerID()
+}
+
+// InputMedia generic interface for InputMedia*.
+//
+// Known implementations:
+//   - [InputMediaPhoto]
+//   - [InputMediaVideo]
+//   - [InputMediaAudio]
+//   - [InputMediaDocument]
+//   - [InputMediaAnimation]
 type InputMedia interface {
 	getMedia() (media *FileArg, thumb *InputFile)
 }
 
 type CallbackGame struct{}
 
-// ReplyMarkup represents a custom keyboard.
+// ReplyMarkup generic for keyboards.
+//
+// Known implementations:
+//  - [ReplyKeyboardMarkup]
+//  - [InlineKeyboardMarkup]
+//  - [ReplyKeyboardRemove]
+//  - [ForceReply]
 type ReplyMarkup interface {
 	isReplyMarkup()
 }
@@ -494,6 +521,29 @@ func (layout *ButtonLayout[T]) Row(buttons ...T) *ButtonLayout[T] {
 	return layout
 }
 
+// InlineQueryResult it's a generic interface for all inline query results.
+//
+// Known implementations:
+//   - [InlineQueryResultCachedAudio]
+//   - [InlineQueryResultCachedDocument]
+//   - [InlineQueryResultCachedGIF]
+//   - [InlineQueryResultCachedMPEG4GIF]
+//   - [InlineQueryResultCachedPhoto]
+//   - [InlineQueryResultCachedSticker]
+//   - [InlineQueryResultCachedVideo]
+//   - [InlineQueryResultCachedVoice]
+//   - [InlineQueryResultAudio]
+//   - [InlineQueryResultDocument]
+//   - [InlineQueryResultGIF]
+//   - [InlineQueryResultMPEG4GIF]
+//   - [InlineQueryResultPhoto]
+//   - [InlineQueryResultVideo]
+//   - [InlineQueryResultVoice]
+//   - [InlineQueryResultArticle]
+//   - [InlineQueryResultContact]
+//   - [InlineQueryResultGame]
+//   - [InlineQueryResultLocation]
+//   - [InlineQueryResultVenue]
 type InlineQueryResult interface {
 	isInlineQueryResult()
 	json.Marshaler
@@ -639,6 +689,14 @@ func (result InlineQueryResultVenue) MarshalJSON() ([]byte, error) {
 	return json.Marshal(alias(result))
 }
 
+// InputMessageContent it's generic interface for all types of input message content.
+//
+// Known implementations:
+//  - [InputTextMessageContent]
+//  - [InputLocationMessageContent]
+//  - [InputVenueMessageContent]
+//  - [InputContactMessageContent]
+//  - [InputInvoiceMessageContent]
 type InputMessageContent interface {
 	isInputMessageContent()
 }
@@ -685,6 +743,16 @@ func (media *InputMediaAnimation) MarshalJSON() ([]byte, error) {
 	return json.Marshal(alias(*media))
 }
 
+// BotCommandScope it's generic interface for all types of bot command scope.
+//
+// Known implementations:
+//   - [BotCommandScopeDefault]
+//   - [BotCommandScopeAllPrivateChats]
+//   - [BotCommandScopeAllGroupChats]
+//   - [BotCommandScopeAllChatAdministrators]
+//   - [BotCommandScopeChat]
+//   - [BotCommandScopeChatAdministrators]
+//   - [BotCommandScopeChatMember]
 type BotCommandScope interface {
 	isBotCommandScope()
 	json.Marshaler
@@ -739,6 +807,12 @@ func (scope BotCommandScopeChatMember) MarshalJSON() ([]byte, error) {
 	return json.Marshal(alias(scope))
 }
 
+// MenuButton it's generic interface for all types of menu button.
+//
+// Known implementations:
+//   - [MenuButtonDefault]
+//   - [MenuButtonCommands]
+//   - [MenubuttonWebApp]
 type MenuButton interface {
 	isMenuButton()
 	json.Marshaler
