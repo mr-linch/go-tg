@@ -253,11 +253,8 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	handlerDoneChan := make(chan struct{})
 
-	handlerCtxClose := context.CancelFunc(func() {})
 	go func() {
-		handlerCtx := context.Background()
-
-		handlerCtx, handlerCtxClose = context.WithCancel(handlerCtx)
+		handlerCtx, handlerCtxClose := context.WithCancel(context.Background())
 		defer handlerCtxClose()
 
 		// handle update
@@ -265,14 +262,10 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			webhook.log("handler error: %v", err)
 		}
 
-		handlerDoneChan <- struct{}{}
+		close(handlerDoneChan)
 	}()
 
 	select {
-	case <-r.Context().Done():
-		webhook.log("shutdown...")
-		handlerCtxClose()
-		return
 	case response := <-update.webhookResponse:
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -293,6 +286,7 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	case <-handlerDoneChan:
 		w.WriteHeader(http.StatusOK)
+		return
 	}
 }
 
