@@ -10,21 +10,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestUpdate_isWebhook(t *testing.T) {
-	{
-		update := &Update{}
-		assert.False(t, update.isWebhook())
-	}
-
-	{
-		update := &Update{
-			webhookResponse: make(chan json.Marshaler, 1),
-		}
-
-		assert.True(t, update.isWebhook())
-	}
-}
-
 var _ UpdateRespond = (*MockUpdateRespond)(nil)
 
 type MockUpdateRespond struct {
