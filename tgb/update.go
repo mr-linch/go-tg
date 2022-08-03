@@ -37,8 +37,6 @@ type UpdateRespond interface {
 }
 
 // Respond to Webhook, if possible or make usual call via Client.
-//
-// NOTE: This method is not thread-safe.
 func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
 	update.webhookResponseLock.Lock()
 	defer update.webhookResponseLock.Unlock()
