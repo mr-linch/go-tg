@@ -42,14 +42,18 @@ func (call *Call[T]) DoVoid(ctx context.Context) (err error) {
 	return call.client.Do(ctx, call.request, nil)
 }
 
-func callWithClient[B interface {
+// BindClient binds Client to the Call.
+// It's useful for chaining calls.
+//
+//   return tg.BindClient(tg.NewGetMeCall(), client).DoVoid(ctx)
+func BindClient[C interface {
 	Bind(client *Client)
 }](
+	call C,
 	client *Client,
-	b B,
-) B {
-	b.Bind(client)
-	return b
+) C {
+	call.Bind(client)
+	return call
 }
 
 type CallNoResult struct {

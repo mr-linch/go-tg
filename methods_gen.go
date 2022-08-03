@@ -21,9 +21,9 @@ func NewGetUpdatesCall() *GetUpdatesCall {
 
 // GetUpdatesCall constructs a new GetUpdatesCall with required parameters.
 func (client *Client) GetUpdates() *GetUpdatesCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetUpdatesCall(),
+		client,
 	)
 }
 
@@ -74,9 +74,9 @@ func NewSetWebhookCall(url string) *SetWebhookCall {
 
 // SetWebhookCall constructs a new SetWebhookCall with required parameters.
 func (client *Client) SetWebhook(url string) *SetWebhookCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetWebhookCall(url),
+		client,
 	)
 }
 
@@ -139,9 +139,9 @@ func NewDeleteWebhookCall() *DeleteWebhookCall {
 
 // DeleteWebhookCall constructs a new DeleteWebhookCall with required parameters.
 func (client *Client) DeleteWebhook() *DeleteWebhookCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewDeleteWebhookCall(),
+		client,
 	)
 }
 
@@ -171,9 +171,9 @@ func NewGetWebhookInfoCall() *GetWebhookInfoCall {
 
 // GetWebhookInfoCall constructs a new GetWebhookInfoCall with required parameters.
 func (client *Client) GetWebhookInfo() *GetWebhookInfoCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetWebhookInfoCall(),
+		client,
 	)
 }
 
@@ -196,9 +196,9 @@ func NewGetMeCall() *GetMeCall {
 
 // GetMeCall constructs a new GetMeCall with required parameters.
 func (client *Client) GetMe() *GetMeCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetMeCall(),
+		client,
 	)
 }
 
@@ -222,9 +222,9 @@ func NewLogOutCall() *LogOutCall {
 
 // LogOutCall constructs a new LogOutCall with required parameters.
 func (client *Client) LogOut() *LogOutCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewLogOutCall(),
+		client,
 	)
 }
 
@@ -248,9 +248,9 @@ func NewCloseCall() *CloseCall {
 
 // CloseCall constructs a new CloseCall with required parameters.
 func (client *Client) Close() *CloseCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewCloseCall(),
+		client,
 	)
 }
 
@@ -276,9 +276,9 @@ func NewSendMessageCall(chatID PeerID, text string) *SendMessageCall {
 
 // SendMessageCall constructs a new SendMessageCall with required parameters.
 func (client *Client) SendMessage(chatID PeerID, text string) *SendMessageCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendMessageCall(chatID, text),
+		client,
 	)
 }
 
@@ -367,9 +367,9 @@ func NewForwardMessageCall(chatID PeerID, fromChatID PeerID, messageID int) *For
 
 // ForwardMessageCall constructs a new ForwardMessageCall with required parameters.
 func (client *Client) ForwardMessage(chatID PeerID, fromChatID PeerID, messageID int) *ForwardMessageCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewForwardMessageCall(chatID, fromChatID, messageID),
+		client,
 	)
 }
 
@@ -429,9 +429,9 @@ func NewCopyMessageCall(chatID PeerID, fromChatID PeerID, messageID int) *CopyMe
 
 // CopyMessageCall constructs a new CopyMessageCall with required parameters.
 func (client *Client) CopyMessage(chatID PeerID, fromChatID PeerID, messageID int) *CopyMessageCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewCopyMessageCall(chatID, fromChatID, messageID),
+		client,
 	)
 }
 
@@ -523,9 +523,9 @@ func NewSendPhotoCall(chatID PeerID, photo FileArg) *SendPhotoCall {
 
 // SendPhotoCall constructs a new SendPhotoCall with required parameters.
 func (client *Client) SendPhoto(chatID PeerID, photo FileArg) *SendPhotoCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendPhotoCall(chatID, photo),
+		client,
 	)
 }
 
@@ -614,9 +614,9 @@ func NewSendAudioCall(chatID PeerID, audio FileArg) *SendAudioCall {
 
 // SendAudioCall constructs a new SendAudioCall with required parameters.
 func (client *Client) SendAudio(chatID PeerID, audio FileArg) *SendAudioCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendAudioCall(chatID, audio),
+		client,
 	)
 }
 
@@ -727,9 +727,9 @@ func NewSendDocumentCall(chatID PeerID, document FileArg) *SendDocumentCall {
 
 // SendDocumentCall constructs a new SendDocumentCall with required parameters.
 func (client *Client) SendDocument(chatID PeerID, document FileArg) *SendDocumentCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendDocumentCall(chatID, document),
+		client,
 	)
 }
 
@@ -828,9 +828,9 @@ func NewSendVideoCall(chatID PeerID, video FileArg) *SendVideoCall {
 
 // SendVideoCall constructs a new SendVideoCall with required parameters.
 func (client *Client) SendVideo(chatID PeerID, video FileArg) *SendVideoCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendVideoCall(chatID, video),
+		client,
 	)
 }
 
@@ -947,9 +947,9 @@ func NewSendAnimationCall(chatID PeerID, animation FileArg) *SendAnimationCall {
 
 // SendAnimationCall constructs a new SendAnimationCall with required parameters.
 func (client *Client) SendAnimation(chatID PeerID, animation FileArg) *SendAnimationCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendAnimationCall(chatID, animation),
+		client,
 	)
 }
 
@@ -1061,9 +1061,9 @@ func NewSendVoiceCall(chatID PeerID, voice FileArg) *SendVoiceCall {
 
 // SendVoiceCall constructs a new SendVoiceCall with required parameters.
 func (client *Client) SendVoice(chatID PeerID, voice FileArg) *SendVoiceCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendVoiceCall(chatID, voice),
+		client,
 	)
 }
 
@@ -1156,9 +1156,9 @@ func NewSendVideoNoteCall(chatID PeerID, videoNote FileArg) *SendVideoNoteCall {
 
 // SendVideoNoteCall constructs a new SendVideoNoteCall with required parameters.
 func (client *Client) SendVideoNote(chatID PeerID, videoNote FileArg) *SendVideoNoteCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendVideoNoteCall(chatID, videoNote),
+		client,
 	)
 }
 
@@ -1245,9 +1245,9 @@ func NewSendMediaGroupCall(chatID PeerID, media []InputMedia) *SendMediaGroupCal
 
 // SendMediaGroupCall constructs a new SendMediaGroupCall with required parameters.
 func (client *Client) SendMediaGroup(chatID PeerID, media []InputMedia) *SendMediaGroupCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendMediaGroupCall(chatID, media),
+		client,
 	)
 }
 
@@ -1311,9 +1311,9 @@ func NewSendLocationCall(chatID PeerID, latitude float64, longitude float64) *Se
 
 // SendLocationCall constructs a new SendLocationCall with required parameters.
 func (client *Client) SendLocation(chatID PeerID, latitude float64, longitude float64) *SendLocationCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendLocationCall(chatID, latitude, longitude),
+		client,
 	)
 }
 
@@ -1423,17 +1423,17 @@ func NewEditMessageLiveLocationInlineCall(inlineMessageID string) *EditMessageLi
 
 // EditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
 func (client *Client) EditMessageLiveLocation(chatID PeerID, messageID int) *EditMessageLiveLocationCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageLiveLocationCall(chatID, messageID),
+		client,
 	)
 }
 
 // EditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
 func (client *Client) EditMessageLiveLocationInline(inlineMessageID string) *EditMessageLiveLocationCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageLiveLocationInlineCall(inlineMessageID),
+		client,
 	)
 }
 
@@ -1524,17 +1524,17 @@ func NewStopMessageLiveLocationInlineCall(inlineMessageID string) *StopMessageLi
 
 // StopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
 func (client *Client) StopMessageLiveLocation(chatID PeerID, messageID int) *StopMessageLiveLocationCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewStopMessageLiveLocationCall(chatID, messageID),
+		client,
 	)
 }
 
 // StopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
 func (client *Client) StopMessageLiveLocationInline(inlineMessageID string) *StopMessageLiveLocationCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewStopMessageLiveLocationInlineCall(inlineMessageID),
+		client,
 	)
 }
 
@@ -1590,9 +1590,9 @@ func NewSendVenueCall(chatID PeerID, latitude float64, longitude float64, title 
 
 // SendVenueCall constructs a new SendVenueCall with required parameters.
 func (client *Client) SendVenue(chatID PeerID, latitude float64, longitude float64, title string, address string) *SendVenueCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendVenueCall(chatID, latitude, longitude, title, address),
+		client,
 	)
 }
 
@@ -1704,9 +1704,9 @@ func NewSendContactCall(chatID PeerID, phoneNumber string, firstName string) *Se
 
 // SendContactCall constructs a new SendContactCall with required parameters.
 func (client *Client) SendContact(chatID PeerID, phoneNumber string, firstName string) *SendContactCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendContactCall(chatID, phoneNumber, firstName),
+		client,
 	)
 }
 
@@ -1794,9 +1794,9 @@ func NewSendPollCall(chatID PeerID, question string, options []string) *SendPoll
 
 // SendPollCall constructs a new SendPollCall with required parameters.
 func (client *Client) SendPoll(chatID PeerID, question string, options []string) *SendPollCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendPollCall(chatID, question, options),
+		client,
 	)
 }
 
@@ -1928,9 +1928,9 @@ func NewSendDiceCall(chatID PeerID) *SendDiceCall {
 
 // SendDiceCall constructs a new SendDiceCall with required parameters.
 func (client *Client) SendDice(chatID PeerID) *SendDiceCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendDiceCall(chatID),
+		client,
 	)
 }
 
@@ -2002,9 +2002,9 @@ func NewSendChatActionCall(chatID PeerID, action ChatAction) *SendChatActionCall
 
 // SendChatActionCall constructs a new SendChatActionCall with required parameters.
 func (client *Client) SendChatAction(chatID PeerID, action ChatAction) *SendChatActionCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendChatActionCall(chatID, action),
+		client,
 	)
 }
 
@@ -2040,9 +2040,9 @@ func NewGetUserProfilePhotosCall(userID UserID) *GetUserProfilePhotosCall {
 
 // GetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall with required parameters.
 func (client *Client) GetUserProfilePhotos(userID UserID) *GetUserProfilePhotosCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetUserProfilePhotosCall(userID),
+		client,
 	)
 }
 
@@ -2088,9 +2088,9 @@ func NewGetFileCall(fileID FileID) *GetFileCall {
 
 // GetFileCall constructs a new GetFileCall with required parameters.
 func (client *Client) GetFile(fileID FileID) *GetFileCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetFileCall(fileID),
+		client,
 	)
 }
 
@@ -2123,9 +2123,9 @@ func NewBanChatMemberCall(chatID PeerID, userID UserID) *BanChatMemberCall {
 
 // BanChatMemberCall constructs a new BanChatMemberCall with required parameters.
 func (client *Client) BanChatMember(chatID PeerID, userID UserID) *BanChatMemberCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewBanChatMemberCall(chatID, userID),
+		client,
 	)
 }
 
@@ -2179,9 +2179,9 @@ func NewUnbanChatMemberCall(chatID PeerID, userID UserID) *UnbanChatMemberCall {
 
 // UnbanChatMemberCall constructs a new UnbanChatMemberCall with required parameters.
 func (client *Client) UnbanChatMember(chatID PeerID, userID UserID) *UnbanChatMemberCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewUnbanChatMemberCall(chatID, userID),
+		client,
 	)
 }
 
@@ -2228,9 +2228,9 @@ func NewRestrictChatMemberCall(chatID PeerID, userID UserID, permissions ChatPer
 
 // RestrictChatMemberCall constructs a new RestrictChatMemberCall with required parameters.
 func (client *Client) RestrictChatMember(chatID PeerID, userID UserID, permissions ChatPermissions) *RestrictChatMemberCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewRestrictChatMemberCall(chatID, userID, permissions),
+		client,
 	)
 }
 
@@ -2281,9 +2281,9 @@ func NewPromoteChatMemberCall(chatID PeerID, userID UserID) *PromoteChatMemberCa
 
 // PromoteChatMemberCall constructs a new PromoteChatMemberCall with required parameters.
 func (client *Client) PromoteChatMember(chatID PeerID, userID UserID) *PromoteChatMemberCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewPromoteChatMemberCall(chatID, userID),
+		client,
 	)
 }
 
@@ -2388,9 +2388,9 @@ func NewSetChatAdministratorCustomTitleCall(chatID PeerID, userID UserID, custom
 
 // SetChatAdministratorCustomTitleCall constructs a new SetChatAdministratorCustomTitleCall with required parameters.
 func (client *Client) SetChatAdministratorCustomTitle(chatID PeerID, userID UserID, customTitle string) *SetChatAdministratorCustomTitleCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetChatAdministratorCustomTitleCall(chatID, userID, customTitle),
+		client,
 	)
 }
 
@@ -2435,9 +2435,9 @@ func NewBanChatSenderChatCall(chatID PeerID, senderChatID int) *BanChatSenderCha
 
 // BanChatSenderChatCall constructs a new BanChatSenderChatCall with required parameters.
 func (client *Client) BanChatSenderChat(chatID PeerID, senderChatID int) *BanChatSenderChatCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewBanChatSenderChatCall(chatID, senderChatID),
+		client,
 	)
 }
 
@@ -2475,9 +2475,9 @@ func NewUnbanChatSenderChatCall(chatID PeerID, senderChatID int) *UnbanChatSende
 
 // UnbanChatSenderChatCall constructs a new UnbanChatSenderChatCall with required parameters.
 func (client *Client) UnbanChatSenderChat(chatID PeerID, senderChatID int) *UnbanChatSenderChatCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewUnbanChatSenderChatCall(chatID, senderChatID),
+		client,
 	)
 }
 
@@ -2515,9 +2515,9 @@ func NewSetChatPermissionsCall(chatID PeerID, permissions ChatPermissions) *SetC
 
 // SetChatPermissionsCall constructs a new SetChatPermissionsCall with required parameters.
 func (client *Client) SetChatPermissions(chatID PeerID, permissions ChatPermissions) *SetChatPermissionsCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetChatPermissionsCall(chatID, permissions),
+		client,
 	)
 }
 
@@ -2554,9 +2554,9 @@ func NewExportChatInviteLinkCall(chatID PeerID) *ExportChatInviteLinkCall {
 
 // ExportChatInviteLinkCall constructs a new ExportChatInviteLinkCall with required parameters.
 func (client *Client) ExportChatInviteLink(chatID PeerID) *ExportChatInviteLinkCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewExportChatInviteLinkCall(chatID),
+		client,
 	)
 }
 
@@ -2588,9 +2588,9 @@ func NewCreateChatInviteLinkCall(chatID PeerID) *CreateChatInviteLinkCall {
 
 // CreateChatInviteLinkCall constructs a new CreateChatInviteLinkCall with required parameters.
 func (client *Client) CreateChatInviteLink(chatID PeerID) *CreateChatInviteLinkCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewCreateChatInviteLinkCall(chatID),
+		client,
 	)
 }
 
@@ -2647,9 +2647,9 @@ func NewEditChatInviteLinkCall(chatID PeerID, inviteLink string) *EditChatInvite
 
 // EditChatInviteLinkCall constructs a new EditChatInviteLinkCall with required parameters.
 func (client *Client) EditChatInviteLink(chatID PeerID, inviteLink string) *EditChatInviteLinkCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditChatInviteLinkCall(chatID, inviteLink),
+		client,
 	)
 }
 
@@ -2713,9 +2713,9 @@ func NewRevokeChatInviteLinkCall(chatID PeerID, inviteLink string) *RevokeChatIn
 
 // RevokeChatInviteLinkCall constructs a new RevokeChatInviteLinkCall with required parameters.
 func (client *Client) RevokeChatInviteLink(chatID PeerID, inviteLink string) *RevokeChatInviteLinkCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewRevokeChatInviteLinkCall(chatID, inviteLink),
+		client,
 	)
 }
 
@@ -2753,9 +2753,9 @@ func NewApproveChatJoinRequestCall(chatID PeerID, userID UserID) *ApproveChatJoi
 
 // ApproveChatJoinRequestCall constructs a new ApproveChatJoinRequestCall with required parameters.
 func (client *Client) ApproveChatJoinRequest(chatID PeerID, userID UserID) *ApproveChatJoinRequestCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewApproveChatJoinRequestCall(chatID, userID),
+		client,
 	)
 }
 
@@ -2793,9 +2793,9 @@ func NewDeclineChatJoinRequestCall(chatID PeerID, userID UserID) *DeclineChatJoi
 
 // DeclineChatJoinRequestCall constructs a new DeclineChatJoinRequestCall with required parameters.
 func (client *Client) DeclineChatJoinRequest(chatID PeerID, userID UserID) *DeclineChatJoinRequestCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewDeclineChatJoinRequestCall(chatID, userID),
+		client,
 	)
 }
 
@@ -2834,9 +2834,9 @@ func NewSetChatPhotoCall(chatID PeerID, photo InputFile) *SetChatPhotoCall {
 
 // SetChatPhotoCall constructs a new SetChatPhotoCall with required parameters.
 func (client *Client) SetChatPhoto(chatID PeerID, photo InputFile) *SetChatPhotoCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetChatPhotoCall(chatID, photo),
+		client,
 	)
 }
 
@@ -2873,9 +2873,9 @@ func NewDeleteChatPhotoCall(chatID PeerID) *DeleteChatPhotoCall {
 
 // DeleteChatPhotoCall constructs a new DeleteChatPhotoCall with required parameters.
 func (client *Client) DeleteChatPhoto(chatID PeerID) *DeleteChatPhotoCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewDeleteChatPhotoCall(chatID),
+		client,
 	)
 }
 
@@ -2908,9 +2908,9 @@ func NewSetChatTitleCall(chatID PeerID, title string) *SetChatTitleCall {
 
 // SetChatTitleCall constructs a new SetChatTitleCall with required parameters.
 func (client *Client) SetChatTitle(chatID PeerID, title string) *SetChatTitleCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetChatTitleCall(chatID, title),
+		client,
 	)
 }
 
@@ -2946,9 +2946,9 @@ func NewSetChatDescriptionCall(chatID PeerID) *SetChatDescriptionCall {
 
 // SetChatDescriptionCall constructs a new SetChatDescriptionCall with required parameters.
 func (client *Client) SetChatDescription(chatID PeerID) *SetChatDescriptionCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetChatDescriptionCall(chatID),
+		client,
 	)
 }
 
@@ -2986,9 +2986,9 @@ func NewPinChatMessageCall(chatID PeerID, messageID int) *PinChatMessageCall {
 
 // PinChatMessageCall constructs a new PinChatMessageCall with required parameters.
 func (client *Client) PinChatMessage(chatID PeerID, messageID int) *PinChatMessageCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewPinChatMessageCall(chatID, messageID),
+		client,
 	)
 }
 
@@ -3030,9 +3030,9 @@ func NewUnpinChatMessageCall(chatID PeerID) *UnpinChatMessageCall {
 
 // UnpinChatMessageCall constructs a new UnpinChatMessageCall with required parameters.
 func (client *Client) UnpinChatMessage(chatID PeerID) *UnpinChatMessageCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewUnpinChatMessageCall(chatID),
+		client,
 	)
 }
 
@@ -3068,9 +3068,9 @@ func NewUnpinAllChatMessagesCall(chatID PeerID) *UnpinAllChatMessagesCall {
 
 // UnpinAllChatMessagesCall constructs a new UnpinAllChatMessagesCall with required parameters.
 func (client *Client) UnpinAllChatMessages(chatID PeerID) *UnpinAllChatMessagesCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewUnpinAllChatMessagesCall(chatID),
+		client,
 	)
 }
 
@@ -3099,9 +3099,9 @@ func NewLeaveChatCall(chatID PeerID) *LeaveChatCall {
 
 // LeaveChatCall constructs a new LeaveChatCall with required parameters.
 func (client *Client) LeaveChat(chatID PeerID) *LeaveChatCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewLeaveChatCall(chatID),
+		client,
 	)
 }
 
@@ -3131,9 +3131,9 @@ func NewGetChatCall(chatID PeerID) *GetChatCall {
 
 // GetChatCall constructs a new GetChatCall with required parameters.
 func (client *Client) GetChat(chatID PeerID) *GetChatCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetChatCall(chatID),
+		client,
 	)
 }
 
@@ -3164,9 +3164,9 @@ func NewGetChatAdministratorsCall(chatID PeerID) *GetChatAdministratorsCall {
 
 // GetChatAdministratorsCall constructs a new GetChatAdministratorsCall with required parameters.
 func (client *Client) GetChatAdministrators(chatID PeerID) *GetChatAdministratorsCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetChatAdministratorsCall(chatID),
+		client,
 	)
 }
 
@@ -3196,9 +3196,9 @@ func NewGetChatMemberCountCall(chatID PeerID) *GetChatMemberCountCall {
 
 // GetChatMemberCountCall constructs a new GetChatMemberCountCall with required parameters.
 func (client *Client) GetChatMemberCount(chatID PeerID) *GetChatMemberCountCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetChatMemberCountCall(chatID),
+		client,
 	)
 }
 
@@ -3230,9 +3230,9 @@ func NewGetChatMemberCall(chatID PeerID, userID UserID) *GetChatMemberCall {
 
 // GetChatMemberCall constructs a new GetChatMemberCall with required parameters.
 func (client *Client) GetChatMember(chatID PeerID, userID UserID) *GetChatMemberCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetChatMemberCall(chatID, userID),
+		client,
 	)
 }
 
@@ -3271,9 +3271,9 @@ func NewSetChatStickerSetCall(chatID PeerID, stickerSetName string) *SetChatStic
 
 // SetChatStickerSetCall constructs a new SetChatStickerSetCall with required parameters.
 func (client *Client) SetChatStickerSet(chatID PeerID, stickerSetName string) *SetChatStickerSetCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetChatStickerSetCall(chatID, stickerSetName),
+		client,
 	)
 }
 
@@ -3310,9 +3310,9 @@ func NewDeleteChatStickerSetCall(chatID PeerID) *DeleteChatStickerSetCall {
 
 // DeleteChatStickerSetCall constructs a new DeleteChatStickerSetCall with required parameters.
 func (client *Client) DeleteChatStickerSet(chatID PeerID) *DeleteChatStickerSetCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewDeleteChatStickerSetCall(chatID),
+		client,
 	)
 }
 
@@ -3346,9 +3346,9 @@ func NewAnswerCallbackQueryCall(callbackQueryID string) *AnswerCallbackQueryCall
 
 // AnswerCallbackQueryCall constructs a new AnswerCallbackQueryCall with required parameters.
 func (client *Client) AnswerCallbackQuery(callbackQueryID string) *AnswerCallbackQueryCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewAnswerCallbackQueryCall(callbackQueryID),
+		client,
 	)
 }
 
@@ -3402,9 +3402,9 @@ func NewSetMyCommandsCall(commands []BotCommand) *SetMyCommandsCall {
 
 // SetMyCommandsCall constructs a new SetMyCommandsCall with required parameters.
 func (client *Client) SetMyCommands(commands []BotCommand) *SetMyCommandsCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetMyCommandsCall(commands),
+		client,
 	)
 }
 
@@ -3444,9 +3444,9 @@ func NewDeleteMyCommandsCall() *DeleteMyCommandsCall {
 
 // DeleteMyCommandsCall constructs a new DeleteMyCommandsCall with required parameters.
 func (client *Client) DeleteMyCommands() *DeleteMyCommandsCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewDeleteMyCommandsCall(),
+		client,
 	)
 }
 
@@ -3481,9 +3481,9 @@ func NewGetMyCommandsCall() *GetMyCommandsCall {
 
 // GetMyCommandsCall constructs a new GetMyCommandsCall with required parameters.
 func (client *Client) GetMyCommands() *GetMyCommandsCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetMyCommandsCall(),
+		client,
 	)
 }
 
@@ -3516,9 +3516,9 @@ func NewSetChatMenuButtonCall() *SetChatMenuButtonCall {
 
 // SetChatMenuButtonCall constructs a new SetChatMenuButtonCall with required parameters.
 func (client *Client) SetChatMenuButton() *SetChatMenuButtonCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetChatMenuButtonCall(),
+		client,
 	)
 }
 
@@ -3552,9 +3552,9 @@ func NewGetChatMenuButtonCall() *GetChatMenuButtonCall {
 
 // GetChatMenuButtonCall constructs a new GetChatMenuButtonCall with required parameters.
 func (client *Client) GetChatMenuButton() *GetChatMenuButtonCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetChatMenuButtonCall(),
+		client,
 	)
 }
 
@@ -3582,9 +3582,9 @@ func NewSetMyDefaultAdministratorRightsCall() *SetMyDefaultAdministratorRightsCa
 
 // SetMyDefaultAdministratorRightsCall constructs a new SetMyDefaultAdministratorRightsCall with required parameters.
 func (client *Client) SetMyDefaultAdministratorRights() *SetMyDefaultAdministratorRightsCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetMyDefaultAdministratorRightsCall(),
+		client,
 	)
 }
 
@@ -3618,9 +3618,9 @@ func NewGetMyDefaultAdministratorRightsCall() *GetMyDefaultAdministratorRightsCa
 
 // GetMyDefaultAdministratorRightsCall constructs a new GetMyDefaultAdministratorRightsCall with required parameters.
 func (client *Client) GetMyDefaultAdministratorRights() *GetMyDefaultAdministratorRightsCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetMyDefaultAdministratorRightsCall(),
+		client,
 	)
 }
 
@@ -3667,17 +3667,17 @@ func NewEditMessageTextInlineCall(inlineMessageID string, text string) *EditMess
 
 // EditMessageTextCall constructs a new EditMessageTextCall with required parameters.
 func (client *Client) EditMessageText(chatID PeerID, messageID int, text string) *EditMessageTextCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageTextCall(chatID, messageID, text),
+		client,
 	)
 }
 
 // EditMessageTextCall constructs a new EditMessageTextCall with required parameters.
 func (client *Client) EditMessageTextInline(inlineMessageID string, text string) *EditMessageTextCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageTextInlineCall(inlineMessageID, text),
+		client,
 	)
 }
 
@@ -3766,17 +3766,17 @@ func NewEditMessageCaptionInlineCall(inlineMessageID string, caption string) *Ed
 
 // EditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
 func (client *Client) EditMessageCaption(chatID PeerID, messageID int, caption string) *EditMessageCaptionCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageCaptionCall(chatID, messageID, caption),
+		client,
 	)
 }
 
 // EditMessageCaptionCall constructs a new EditMessageCaptionCall with required parameters.
 func (client *Client) EditMessageCaptionInline(inlineMessageID string, caption string) *EditMessageCaptionCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageCaptionInlineCall(inlineMessageID, caption),
+		client,
 	)
 }
 
@@ -3844,9 +3844,9 @@ func NewEditMessageMediaCall(media InputMedia) *EditMessageMediaCall {
 
 // EditMessageMediaCall constructs a new EditMessageMediaCall with required parameters.
 func (client *Client) EditMessageMedia(media InputMedia) *EditMessageMediaCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageMediaCall(media),
+		client,
 	)
 }
 
@@ -3913,17 +3913,17 @@ func NewEditMessageReplyMarkupInlineCall(inlineMessageID string) *EditMessageRep
 
 // EditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
 func (client *Client) EditMessageReplyMarkup(chatID PeerID, messageID int) *EditMessageReplyMarkupCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageReplyMarkupCall(chatID, messageID),
+		client,
 	)
 }
 
 // EditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall with required parameters.
 func (client *Client) EditMessageReplyMarkupInline(inlineMessageID string) *EditMessageReplyMarkupCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewEditMessageReplyMarkupInlineCall(inlineMessageID),
+		client,
 	)
 }
 
@@ -3973,9 +3973,9 @@ func NewStopPollCall(chatID PeerID, messageID int) *StopPollCall {
 
 // StopPollCall constructs a new StopPollCall with required parameters.
 func (client *Client) StopPoll(chatID PeerID, messageID int) *StopPollCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewStopPollCall(chatID, messageID),
+		client,
 	)
 }
 
@@ -4017,9 +4017,9 @@ func NewDeleteMessageCall(chatID PeerID, messageID int) *DeleteMessageCall {
 
 // DeleteMessageCall constructs a new DeleteMessageCall with required parameters.
 func (client *Client) DeleteMessage(chatID PeerID, messageID int) *DeleteMessageCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewDeleteMessageCall(chatID, messageID),
+		client,
 	)
 }
 
@@ -4057,9 +4057,9 @@ func NewSendStickerCall(chatID PeerID, sticker FileArg) *SendStickerCall {
 
 // SendStickerCall constructs a new SendStickerCall with required parameters.
 func (client *Client) SendSticker(chatID PeerID, sticker FileArg) *SendStickerCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendStickerCall(chatID, sticker),
+		client,
 	)
 }
 
@@ -4125,9 +4125,9 @@ func NewGetStickerSetCall(name string) *GetStickerSetCall {
 
 // GetStickerSetCall constructs a new GetStickerSetCall with required parameters.
 func (client *Client) GetStickerSet(name string) *GetStickerSetCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetStickerSetCall(name),
+		client,
 	)
 }
 
@@ -4159,9 +4159,9 @@ func NewUploadStickerFileCall(userID UserID, pngSticker InputFile) *UploadSticke
 
 // UploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
 func (client *Client) UploadStickerFile(userID UserID, pngSticker InputFile) *UploadStickerFileCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewUploadStickerFileCall(userID, pngSticker),
+		client,
 	)
 }
 
@@ -4204,9 +4204,9 @@ func NewCreateNewStickerSetCall(userID UserID, name string, title string, emojis
 
 // CreateNewStickerSetCall constructs a new CreateNewStickerSetCall with required parameters.
 func (client *Client) CreateNewStickerSet(userID UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewCreateNewStickerSetCall(userID, name, title, emojis),
+		client,
 	)
 }
 
@@ -4291,9 +4291,9 @@ func NewAddStickerToSetCall(userID UserID, name string, emojis string) *AddStick
 
 // AddStickerToSetCall constructs a new AddStickerToSetCall with required parameters.
 func (client *Client) AddStickerToSet(userID UserID, name string, emojis string) *AddStickerToSetCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewAddStickerToSetCall(userID, name, emojis),
+		client,
 	)
 }
 
@@ -4360,9 +4360,9 @@ func NewSetStickerPositionInSetCall(sticker string, position int) *SetStickerPos
 
 // SetStickerPositionInSetCall constructs a new SetStickerPositionInSetCall with required parameters.
 func (client *Client) SetStickerPositionInSet(sticker string, position int) *SetStickerPositionInSetCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetStickerPositionInSetCall(sticker, position),
+		client,
 	)
 }
 
@@ -4397,9 +4397,9 @@ func NewDeleteStickerFromSetCall(sticker string) *DeleteStickerFromSetCall {
 
 // DeleteStickerFromSetCall constructs a new DeleteStickerFromSetCall with required parameters.
 func (client *Client) DeleteStickerFromSet(sticker string) *DeleteStickerFromSetCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewDeleteStickerFromSetCall(sticker),
+		client,
 	)
 }
 
@@ -4432,9 +4432,9 @@ func NewSetStickerSetThumbCall(name string, userID UserID) *SetStickerSetThumbCa
 
 // SetStickerSetThumbCall constructs a new SetStickerSetThumbCall with required parameters.
 func (client *Client) SetStickerSetThumb(name string, userID UserID) *SetStickerSetThumbCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetStickerSetThumbCall(name, userID),
+		client,
 	)
 }
 
@@ -4478,9 +4478,9 @@ func NewAnswerInlineQueryCall(inlineQueryID string, results []InlineQueryResult)
 
 // AnswerInlineQueryCall constructs a new AnswerInlineQueryCall with required parameters.
 func (client *Client) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult) *AnswerInlineQueryCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewAnswerInlineQueryCall(inlineQueryID, results),
+		client,
 	)
 }
 
@@ -4548,9 +4548,9 @@ func NewAnswerWebAppQueryCall(webAppQueryID string, result InlineQueryResult) *A
 
 // AnswerWebAppQueryCall constructs a new AnswerWebAppQueryCall with required parameters.
 func (client *Client) AnswerWebAppQuery(webAppQueryID string, result InlineQueryResult) *AnswerWebAppQueryCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewAnswerWebAppQueryCall(webAppQueryID, result),
+		client,
 	)
 }
 
@@ -4598,9 +4598,9 @@ func NewSendInvoiceCall(chatID PeerID, title string, description string, payload
 
 // SendInvoiceCall constructs a new SendInvoiceCall with required parameters.
 func (client *Client) SendInvoice(chatID PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendInvoiceCall(chatID, title, description, payload, providerToken, currency, prices),
+		client,
 	)
 }
 
@@ -4796,9 +4796,9 @@ func NewCreateInvoiceLinkCall(title string, description string, payload string, 
 
 // CreateInvoiceLinkCall constructs a new CreateInvoiceLinkCall with required parameters.
 func (client *Client) CreateInvoiceLink(title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewCreateInvoiceLinkCall(title, description, payload, providerToken, currency, prices),
+		client,
 	)
 }
 
@@ -4945,9 +4945,9 @@ func NewAnswerShippingQueryCall(shippingQueryID string, ok bool) *AnswerShipping
 
 // AnswerShippingQueryCall constructs a new AnswerShippingQueryCall with required parameters.
 func (client *Client) AnswerShippingQuery(shippingQueryID string, ok bool) *AnswerShippingQueryCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewAnswerShippingQueryCall(shippingQueryID, ok),
+		client,
 	)
 }
 
@@ -4999,9 +4999,9 @@ func NewAnswerPreCheckoutQueryCall(preCheckoutQueryID string, ok bool) *AnswerPr
 
 // AnswerPreCheckoutQueryCall constructs a new AnswerPreCheckoutQueryCall with required parameters.
 func (client *Client) AnswerPreCheckoutQuery(preCheckoutQueryID string, ok bool) *AnswerPreCheckoutQueryCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewAnswerPreCheckoutQueryCall(preCheckoutQueryID, ok),
+		client,
 	)
 }
 
@@ -5048,9 +5048,9 @@ func NewSetPassportDataErrorsCall(userID UserID, errors []PassportElementError) 
 
 // SetPassportDataErrorsCall constructs a new SetPassportDataErrorsCall with required parameters.
 func (client *Client) SetPassportDataErrors(userID UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetPassportDataErrorsCall(userID, errors),
+		client,
 	)
 }
 
@@ -5088,9 +5088,9 @@ func NewSendGameCall(chatID ChatID, gameShortName string) *SendGameCall {
 
 // SendGameCall constructs a new SendGameCall with required parameters.
 func (client *Client) SendGame(chatID ChatID, gameShortName string) *SendGameCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSendGameCall(chatID, gameShortName),
+		client,
 	)
 }
 
@@ -5159,9 +5159,9 @@ func NewSetGameScoreCall(userID UserID, score int) *SetGameScoreCall {
 
 // SetGameScoreCall constructs a new SetGameScoreCall with required parameters.
 func (client *Client) SetGameScore(userID UserID, score int) *SetGameScoreCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewSetGameScoreCall(userID, score),
+		client,
 	)
 }
 
@@ -5231,9 +5231,9 @@ func NewGetGameHighScoresCall(userID UserID) *GetGameHighScoresCall {
 
 // GetGameHighScoresCall constructs a new GetGameHighScoresCall with required parameters.
 func (client *Client) GetGameHighScores(userID UserID) *GetGameHighScoresCall {
-	return callWithClient(
-		client,
+	return BindClient(
 		NewGetGameHighScoresCall(userID),
+		client,
 	)
 }
 
