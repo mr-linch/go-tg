@@ -7,8 +7,6 @@ import (
 	"testing"
 	"testing/fstest"
 
-	_ "embed"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
