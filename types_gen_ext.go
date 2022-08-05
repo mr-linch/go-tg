@@ -1091,6 +1091,43 @@ func (update *Update) Type() UpdateType {
 	}
 }
 
+// Msg returns message from whever possible.
+// It returns nil if message is not found.
+func (update *Update) Msg() *Message {
+	switch {
+	case update.Message != nil:
+		return update.Message
+	case update.EditedMessage != nil:
+		return update.EditedMessage
+	case update.ChannelPost != nil:
+		return update.ChannelPost
+	case update.EditedChannelPost != nil:
+		return update.EditedChannelPost
+	case update.CallbackQuery != nil && update.CallbackQuery.Message != nil:
+		return update.CallbackQuery.Message
+	default:
+		return nil
+	}
+}
+
+// Chat returns chat from whever possible.
+func (update *Update) Chat() *Chat {
+	if msg := update.Msg(); msg != nil {
+		return &msg.Chat
+	}
+
+	switch {
+	case update.ChatMember != nil:
+		return &update.ChatMember.Chat
+	case update.MyChatMember != nil:
+		return &update.MyChatMember.Chat
+	case update.ChatJoinRequest != nil:
+		return &update.ChatJoinRequest.Chat
+	}
+
+	return nil
+}
+
 // MessageEntityType it's type for describe content of MessageEntity.
 type MessageEntityType int
 
