@@ -18,7 +18,8 @@ func TestRouter(t *testing.T) {
 		})
 		assert.NoError(t, err)
 	})
-	t.Run("UpdateHanlder", func(t *testing.T) {
+
+	t.Run("UpdateAndMessageHanlder", func(t *testing.T) {
 		isMessageHandlerCalled := false
 		isUpdateHanlderCalled := false
 		err := NewRouter().
@@ -39,6 +40,23 @@ func TestRouter(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, isMessageHandlerCalled)
 		assert.True(t, isUpdateHanlderCalled)
+	})
+
+	t.Run("UpdateOnlyHandler", func(t *testing.T) {
+		isUpdateHanlderCalled := false
+		err := NewRouter().
+			Update(func(ctx context.Context, update *Update) error {
+				isUpdateHanlderCalled = true
+				return nil
+			}).
+			Handle(context.Background(), &Update{
+				Update: &tg.Update{
+					Message: &tg.Message{},
+				},
+			})
+
+		assert.NoError(t, err)
+		assert.True(t, isUpdateHanlderCalled, "update handler is not called")
 	})
 
 	t.Run("UnknownUpdateSubtype", func(t *testing.T) {

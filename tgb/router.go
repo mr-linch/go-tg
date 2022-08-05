@@ -177,11 +177,9 @@ func (bot *Router) Handle(ctx context.Context, update *Update) error {
 	group := append([]Handler{}, bot.updateHandlers...)
 
 	typed, ok := bot.typedHandlers[update.Type()]
-	if !ok {
-		return nil
+	if ok {
+		group = append(group, typed...)
 	}
-
-	group = append(group, typed...)
 
 	for _, handler := range group {
 		err := handler.Handle(ctx, update)
