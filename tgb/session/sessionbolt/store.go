@@ -1,3 +1,4 @@
+// Package sessionbolt provides a BoltDB store for sessions.
 package sessionbolt
 
 import (
