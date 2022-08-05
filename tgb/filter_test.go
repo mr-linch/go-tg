@@ -811,3 +811,28 @@ func TestMessageEntity(t *testing.T) {
 		})
 	}
 }
+
+func TestNot(t *testing.T) {
+	constFilter := func(v bool, err error) Filter {
+		return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
+			return v, err
+		})
+	}
+
+	trueFilter := constFilter(true, nil)
+
+	allow, err := Not(trueFilter).Allow(context.Background(), &Update{})
+	assert.False(t, allow)
+	assert.NoError(t, err)
+
+	falseFilter := constFilter(false, nil)
+
+	allow, err = Not(falseFilter).Allow(context.Background(), &Update{})
+	assert.True(t, allow)
+	assert.NoError(t, err)
+
+	errFilter := constFilter(true, errors.New("test"))
+	allow, err = Not(errFilter).Allow(context.Background(), &Update{})
+	assert.False(t, allow)
+	assert.Error(t, err)
+}

@@ -54,6 +54,17 @@ func All(filters ...Filter) Filter {
 	})
 }
 
+// Not pass update to handler, if specified filter does not allow it.
+func Not(filter Filter) Filter {
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
+		allow, err := filter.Allow(ctx, update)
+		if err != nil {
+			return false, err
+		}
+		return !allow, nil
+	})
+}
+
 // commandFilter handles commands.
 // Filter is registered only for Message updates.
 // Custuming filter using WithCommand... options.
