@@ -40,7 +40,7 @@ func compactFilters(filters ...Filter) Filter {
 	return nil
 }
 
-var errFilterNoAllow = fmt.Errorf("no filter match")
+var errFilterNoAllow = fmt.Errorf("filter does not allow update")
 
 func filterMiddleware(filter Filter) Middleware {
 	return MiddlewareFunc(func(next Handler) Handler {
