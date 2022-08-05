@@ -448,3 +448,49 @@ func TestKeyFuncChat(t *testing.T) {
 
 	assert.Equal(t, "", key)
 }
+
+func TestManager_Filter(t *testing.T) {
+	t.Run("NoSession", func(t *testing.T) {
+		type Session struct{}
+
+		manager := NewManager(Session{})
+
+		isFilterCalled := false
+
+		filter := manager.Filter(func(s *Session) bool {
+			isFilterCalled = true
+			return true
+		})
+
+		allow, err := filter.Allow(context.Background(), &tgb.Update{})
+		assert.False(t, allow)
+		assert.NoError(t, err)
+
+		assert.False(t, isFilterCalled)
+	})
+
+	t.Run("HasSession", func(t *testing.T) {
+		type Session struct {
+			Counter int
+		}
+
+		manager := NewManager(Session{})
+
+		isFilterCalled := false
+
+		filter := manager.Filter(func(s *Session) bool {
+			isFilterCalled = true
+			return s.Counter == 2
+		})
+
+		ctx := context.WithValue(context.Background(), sessionContextKey, &Session{
+			Counter: 2,
+		})
+
+		allow, err := filter.Allow(ctx, &tgb.Update{})
+		assert.True(t, allow)
+		assert.NoError(t, err)
+
+		assert.True(t, isFilterCalled)
+	})
+}
