@@ -23,6 +23,67 @@ func KeyFuncChat(update *tgb.Update) string {
 	return ""
 }
 
+type managerSettings interface {
+	setKeyFunc(KeyFunc)
+	setStore(Store)
+
+	setEncoding(
+		func(v any) ([]byte, error),
+		func(data []byte, v any) error,
+	)
+}
+
+// ManagerOption is a function that sets options for a session manager.
+type ManagerOption func(managerSettings)
+
+// WithKeyFunc sets a key function for a get session.
+// By default, it uses [KeyFuncChat].
+func WithKeyFunc(keyFunc KeyFunc) ManagerOption {
+	return func(settings managerSettings) {
+		settings.setKeyFunc(keyFunc)
+	}
+}
+
+// WithStore sets a storage for sessions.
+// By default, it uses [StoreMemory].
+func WithStore(storage Store) ManagerOption {
+	return func(settings managerSettings) {
+		settings.setStore(storage)
+	}
+}
+
+// WithEncoding sets a encoding for sessions.
+// By default, it uses [json.Marshal] and [json.Unmarshal].
+func WithEncoding(
+	encode func(v any) ([]byte, error),
+	decode func(data []byte, v any) error,
+) ManagerOption {
+	return func(settings managerSettings) {
+		settings.setEncoding(encode, decode)
+	}
+}
+
+// Manager provides a persistent data storage for bot.
+// You can use it to store chat-specific data persistently.
+//
+// # What is the session?
+// The session of a chat is a persistent storage with user defined structure.
+// As example, you can store user input in the multi-step form, counters, etc.
+//
+// # Where data is stored?
+// By default, the data is stored in memory (see [StoreMemory]).
+// It's not good, because it's not persistent and you can lose data if the bot is restarted.
+// You can use any provided storage, see subpackages of current package for list.
+// Or you can use your own storage by implementing [Store] interface.
+//
+// # How it works?
+// Manager impliments [github.com/mr-linch/go-tg/tgb.Middleware] interface
+// and should be passed to [github.com/mr-linch/go-tg/tgb.Router.Use] method.
+//
+// Internally, before handler called, [Manager] fetches session data from [Store]
+// and put it to [context.Context].
+// After handler called, [Manager] checks if session data was changed and update it in store
+// if it was.
 type Manager[T comparable] struct {
 	intial  T
 	keyFunc KeyFunc
@@ -48,12 +109,18 @@ func (manager *Manager[T]) setEncoding(
 	manager.decodeFunc = decode
 }
 
+// NewManager creates a new session manager with session initial value.
+// Settings of the manager can be changed by passing [ManagerOption] functions.
+//
+// Options can be passed later with [Manager.Init] method.
+// It is useful if you want to define [Manager] globally and init with e.g. store later.
 func NewManager[T comparable](initial T, opts ...ManagerOption) *Manager[T] {
 	manager := &Manager[T]{
 		intial: initial,
 
-		keyFunc:    KeyFuncChat,
-		store:      NewStoreMemory(),
+		keyFunc: KeyFuncChat,
+		store:   NewStoreMemory(),
+
 		encodeFunc: json.Marshal,
 		decodeFunc: json.Unmarshal,
 	}
@@ -65,6 +132,7 @@ func NewManager[T comparable](initial T, opts ...ManagerOption) *Manager[T] {
 	return manager
 }
 
+// Init overrides settings of the manager.
 func (manager *Manager[T]) Init(opt ManagerOption, opts ...ManagerOption) {
 	for _, opt := range append([]ManagerOption{opt}, opts...) {
 		opt(manager)
@@ -100,6 +168,8 @@ func (manager *Manager[T]) getSession(ctx context.Context, key string) (*T, erro
 	return &session, nil
 }
 
+// Get returns Session from context.
+// If session doesn't exist, it returns nil.
 func (manager *Manager[T]) Get(ctx context.Context) *T {
 	v := ctx.Value(sessionContextKey)
 	if v == nil {
@@ -108,10 +178,18 @@ func (manager *Manager[T]) Get(ctx context.Context) *T {
 	return v.(*T)
 }
 
+// Reset resets session value to initial value.
+// Session will be removed from store.
 func (manager *Manager[T]) Reset(session *T) {
 	*session = manager.intial
 }
 
+// Filter creates a [github.com/mr-linch/go-tg/tgb.Filter] based on Session data.
+//
+// Example:
+//  manager.Filter(func(session *Session) bool {
+// 		return session.Step == "name"
+//  })
 func (manager *Manager[T]) Filter(fn func(*T) bool) tgb.Filter {
 	return tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
 		session := manager.Get(ctx)
@@ -124,6 +202,7 @@ func (manager *Manager[T]) Filter(fn func(*T) bool) tgb.Filter {
 	})
 }
 
+// Wrap implements [github.com/mr-linch/go-tg/tgb.Middleware] interface.
 func (manager *Manager[T]) Wrap(next tgb.Handler) tgb.Handler {
 	return tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
 		key := manager.keyFunc(update)

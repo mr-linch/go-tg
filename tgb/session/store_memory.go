@@ -5,6 +5,8 @@ import (
 	"sync"
 )
 
+// StoreMemory is a memory storage for sessions.
+// It implements [Store] and is thread-safe.
 type StoreMemory struct {
 	kv   map[string][]byte
 	lock sync.Mutex

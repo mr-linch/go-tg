@@ -1095,6 +1095,8 @@ func (update *Update) Type() UpdateType {
 // It returns nil if message is not found.
 func (update *Update) Msg() *Message {
 	switch {
+	case update == nil:
+		return nil
 	case update.Message != nil:
 		return update.Message
 	case update.EditedMessage != nil:
@@ -1112,6 +1114,10 @@ func (update *Update) Msg() *Message {
 
 // Chat returns chat from whever possible.
 func (update *Update) Chat() *Chat {
+	if update == nil {
+		return nil
+	}
+
 	if msg := update.Msg(); msg != nil {
 		return &msg.Chat
 	}
