@@ -51,7 +51,7 @@ func filterMiddleware(filter Filter) Middleware {
 
 			allow, err := filter.Allow(ctx, update)
 			if err != nil {
-				return err
+				return fmt.Errorf("filter error: %w", err)
 			}
 
 			if allow {
@@ -187,7 +187,10 @@ func (bot *Router) Handle(ctx context.Context, update *Update) error {
 		err := handler.Handle(ctx, update)
 		if errors.Is(err, errFilterNoAllow) {
 			continue
+		} else if err != nil && bot.errorHandler != nil {
+			return bot.errorHandler(ctx, update, err)
 		}
+
 		return err
 	}
 

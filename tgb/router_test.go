@@ -61,7 +61,7 @@ func TestRouter(t *testing.T) {
 			Message: &tg.Message{},
 		}})
 
-		assert.EqualError(t, err, "filter tgb.FilterFunc: failure")
+		assert.EqualError(t, err, "filter error: failure")
 
 	})
 	t.Run("Error", func(t *testing.T) {
