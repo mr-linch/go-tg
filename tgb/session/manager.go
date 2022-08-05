@@ -108,6 +108,10 @@ func (manager *Manager[T]) Get(ctx context.Context) *T {
 	return v.(*T)
 }
 
+func (manager *Manager[T]) Reset(session *T) {
+	*session = manager.intial
+}
+
 func (manager *Manager[T]) Filter(fn func(*T) bool) tgb.Filter {
 	return tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
 		session := manager.Get(ctx)
@@ -145,6 +149,12 @@ func (manager *Manager[T]) Wrap(next tgb.Handler) tgb.Handler {
 
 		// check if session changed and should be updated
 		if sessionBeforeHandle != *session {
+			if *session == manager.intial {
+				if err := manager.store.Del(ctx, key); err != nil {
+					return fmt.Errorf("delete default session: %w", err)
+				}
+				return nil
+			}
 			if err := manager.saveSession(ctx, key, session); err != nil {
 				return fmt.Errorf("save session to store: %w", err)
 			}

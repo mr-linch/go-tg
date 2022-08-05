@@ -21,9 +21,9 @@ func WithKeyFunc(keyFunc KeyFunc) ManagerOption {
 	}
 }
 
-// WithStorage sets a storage for sessions.
+// WithStore sets a storage for sessions.
 // By default, it uses [StoreMemory].
-func WithStorage(storage Store) ManagerOption {
+func WithStore(storage Store) ManagerOption {
 	return func(settings managerSettings) {
 		settings.setStore(storage)
 	}
