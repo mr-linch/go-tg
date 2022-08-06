@@ -86,4 +86,5 @@ jobs:
           POSTGRES_DSN: postgres://go-tg:go-tg@postgres:5432/go-tg?sslmode=disable
           MYSQL_DNS: root:go-tg@tcp(localhost:3306)/mysql
 
-        run: go test -timeout 30s -v -race -tags e2e ./...
+        run: |
+          go test -timeout 30s -v -race -tags e2e ./tgb/session/sessionsql/e2e
