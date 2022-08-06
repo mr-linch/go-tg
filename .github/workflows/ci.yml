@@ -145,7 +145,7 @@ jobs:
       - name: Go Work 
         if: steps.changes.outputs.e2e == 'true'
         run: |
-          go work init . tgb/session/sessionbolt tgb/session/sessionsql tgb/session/sessionsql/e2e
+          go work init . ./tgb/session/sessionbolt ./tgb/session/sessionredis ./tgb/session/sessionsql ./tgb/session/sessionsql/e2e ./tgb/session/sessionredis/e2e
 
       - name: Test
         if: steps.changes.outputs.e2e == 'true'
