@@ -21,6 +21,8 @@ func TestMySQL(t *testing.T) {
 		t.Skip("skip because MYSQL_DSN is not set")
 	}
 
+	t.Logf("MYSQL_DSN: %s", dsn)
+
 	db, err := sql.Open("mysql", dsn)
 	assert.NoError(t, err, "open db")
 	defer db.Close()

@@ -71,7 +71,7 @@ jobs:
           --health-retries 5
         ports:
           - 3306:3306
-          
+
     steps:
       - name: Install Go
         uses: actions/setup-go@v3
@@ -87,6 +87,6 @@ jobs:
 
       - name: Test
         env:
-          POSTGRES_DSN: postgres://go-tg:go-tg@postgres:5432/go-tg?sslmode=disable
-          MYSQL_DSN: root:go-tg@tcp(mysql:3306)/mysql
+          POSTGRES_DSN: postgres://go-tg:go-tg@localhost:5432/go-tg?sslmode=disable
+          MYSQL_DSN: root:go-tg@tcp(localhost:3306)/mysql
         run: go test -timeout 30s -v -race -tags e2e ./tgb/session/sessionsql/e2e

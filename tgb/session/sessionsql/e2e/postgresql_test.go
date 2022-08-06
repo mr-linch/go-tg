@@ -21,6 +21,8 @@ func TestPostgreSQL(t *testing.T) {
 		t.Skip("skip because POSTGRES_DSN is not set")
 	}
 
+	t.Logf("POSTGRES_DSN: %s", dsn)
+
 	db, err := sql.Open("postgres", dsn)
 	assert.NoError(t, err, "open db")
 	defer db.Close()
