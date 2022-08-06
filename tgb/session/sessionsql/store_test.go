@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"testing"
 
-	_ "github.com/lib/pq"
-
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 )
