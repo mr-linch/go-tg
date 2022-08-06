@@ -1,3 +1,21 @@
+// Package sessionsql implements a session store using SQL.
+//
+// To interact with the database, the standard [database/sql] is used.
+// Does not import or register any drivers, the user has to do it himself.
+// Since database queries are not cross-platform, you need to explicitly specify which set to use.
+//
+// For example, if you are using PostgreSQL, you should manually init DB and pass the corresponding query set:
+//
+//  // don't forget to import driver
+//  db, err := sql.Open("postgres", "...")
+//  if err != nil {
+//    return err
+//  }
+//  defer db.Close()
+//
+//  store := sessionsql.New(db, "sessions", sessionsql.PostgreSQL)
+//
+// Package also contains query set for: SQLite3 and MySQL.
 package sessionsql
 
 import (
@@ -20,6 +38,7 @@ type Queries struct {
 
 var (
 	// SQLite3 is a set of queries for SQLite3.
+	// Uses ? as placeholder for parameters.
 	SQLite3 = Queries{
 		Setup: `create table if not exists "%s" (
 			key text primary key not null,
@@ -46,6 +65,7 @@ var (
 	}
 
 	// PostgreSQL is a set of queries for PostgreSQL.
+	// Uses $1, $2, $3, ... as placeholder for parameters.
 	PostgreSQL = Queries{
 		Setup: `create table if not exists "%s" (
 			key text primary key not null,
@@ -72,6 +92,7 @@ var (
 	}
 
 	// MySQL is a set of queries for M.
+	// Uses ? as placeholder for parameters.
 	MySQL = Queries{
 		Setup: "create table `%s` (" +
 			"`key` varchar(255) primary key not null," +
@@ -87,17 +108,22 @@ var (
 	}
 )
 
+// DB contains subset of database/sql.DB methods.
 type DB interface {
 	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
 	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
 }
 
+// Store implements session store backed by SQL DB.
 type Store struct {
 	db      DB
 	queries Queries
 	table   string
 }
 
+// New creates a new session store backed by SQL DB.
+// Table argument is a name of table to use.
+// Queries argument is a set of queries for session table.
 func New(db DB, table string, queries Queries) *Store {
 	return &Store{
 		db:      db,
@@ -106,7 +132,7 @@ func New(db DB, table string, queries Queries) *Store {
 	}
 }
 
-// Setup creates table for session.
+// Setup creates table for session in DB.
 func (s *Store) Setup(ctx context.Context) error {
 	_, err := s.db.ExecContext(ctx,
 		fmt.Sprintf(s.queries.Setup, s.table),
@@ -115,7 +141,7 @@ func (s *Store) Setup(ctx context.Context) error {
 	return err
 }
 
-// Set sets a session value.
+// Set saves a session in DB
 func (s *Store) Set(ctx context.Context, key string, value []byte) error {
 	_, err := s.db.ExecContext(ctx,
 		fmt.Sprintf(s.queries.Set, s.table),
@@ -125,7 +151,7 @@ func (s *Store) Set(ctx context.Context, key string, value []byte) error {
 	return err
 }
 
-// Get gets a session value.
+// Get gets a session from DB by key.
 func (s *Store) Get(ctx context.Context, key string) ([]byte, error) {
 	var value []byte
 
@@ -141,7 +167,7 @@ func (s *Store) Get(ctx context.Context, key string) ([]byte, error) {
 	return value, nil
 }
 
-// Del deletes a session value.
+// Del deletes a session in DB.
 func (s *Store) Del(ctx context.Context, key string) error {
 	_, err := s.db.ExecContext(ctx,
 		fmt.Sprintf(s.queries.Del, s.table),
