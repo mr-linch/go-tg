@@ -15,33 +15,6 @@
 // # How it works?
 //
 // See [Manager.Wrapper] for details about middleware logic.
-//
-// # Example
-//
-//  type Session struct {
-//    Name string
-//    Age int
-//  }
-//
-//  // init session manager with initial session value
-//  sessionManager := session.NewManager(Session{})
-//
-//  router := tgb.NewRouter()
-//
-//  // use session manager middleware
-//  router.Use(manager)
-//
-//  router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
-//    // get session
-//    session := sessionManager.Get(ctx)
-//
-//    // update session
-//    session.Name = mu.User.FirstName
-//
-//    // your handler logic...
-//    return nil
-//  })
-//
 package session
 
 import (
