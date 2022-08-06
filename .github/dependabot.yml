@@ -21,6 +21,12 @@ updates:
     directory: "/tgb/session/sessionsql/e2e" # Location of package manifests
     schedule:
       interval: "daily"
+      
+  - package-ecosystem: "gomod" 
+    directory: "/tgb/session/sessionredis/e2e" # Location of package manifests
+    schedule:
+      interval: "daily"
+      
   - package-ecosystem: "github-actions" 
     directory: "/" # Location of package manifests
     schedule:

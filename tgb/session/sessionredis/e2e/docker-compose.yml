@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  redis-v7: 
+    image: redis:7-alpine
+
+    ports:
+      - "63797:6379"
+  redis-v6: 
+    image: redis:6-alpine
+
+    ports:
+      - "63796:6379"
+
