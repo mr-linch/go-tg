@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres: 
+    image: postgres:14.4-alpine
+    environment:
+      POSTGRES_USER: go-tg
+      POSTGRES_PASSWORD: go-tg
+      POSTGRES_DB: go-tg
+    ports:
+      - "5432:5432"
+  mysql:
+    image: mysql:8.0.30
+    environment:
+      MYSQL_ROOT_PASSWORD: go-tg
+    ports:
+      - "3306:3306"
