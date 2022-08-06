@@ -1,3 +1,33 @@
+// Package sessionbolt provides a Redis store for sessions.
+//
+// This package is only compatible with https://github.com/go-redis/redis.
+// But since this package has several different versions for different versions of Redis,
+// we do not import any of them,
+// but ensure compatibility with any of them through generics.
+//
+// # How to use?
+//
+//  1. go get and import relavant go-redis module
+//  2. go get and import this module
+//  3. define store
+//
+// Example:
+//  import (
+//    "github.com/go-redis/redis/v9"
+//    // or "github.com/go-redis/redis/v8"
+//    "github.com/mr-linch/go-tg/tgb/session/sessionredis"
+//  )
+//
+//  func run(ctx context.Context) error {
+// 	  opts, err := redis.ParseURL("redis://localhost:6379")
+//    if err != nil {
+//      return err
+//    }
+//    client := redis.NewClient(opts)
+//
+//    store := sessionredis.NewStore[*redis.StatusCmd, *redis.StringCmd, *redis.IntCmd](client)
+//    // use store :)
+//  }
 package sessionredis
 
 import (
@@ -6,22 +36,22 @@ import (
 	"time"
 )
 
-type RedisStatusCmd interface {
+type redisStatusCmd interface {
 	Err() error
 }
 
-type RedisIntCmd interface {
+type redisIntCmd interface {
 	Err() error
 }
 
-type RedisStringCmd interface {
+type redisStringCmd interface {
 	Bytes() ([]byte, error)
 }
 
 type Redis[
-	SR RedisStatusCmd,
-	GR RedisStringCmd,
-	DR RedisIntCmd,
+	SR redisStatusCmd,
+	GR redisStringCmd,
+	DR redisIntCmd,
 ] interface {
 	Set(ctx context.Context, key string, value interface{}, exp time.Duration) SR
 	Get(ctx context.Context, key string) GR
@@ -29,18 +59,17 @@ type Redis[
 }
 
 type Store[
-	SR RedisStatusCmd,
-	GR RedisStringCmd,
-	DR RedisIntCmd,
+	SR redisStatusCmd,
+	GR redisStringCmd,
+	DR redisIntCmd,
 ] struct {
-	rdb    Redis[SR, GR, DR]
-	prefix string
+	rdb Redis[SR, GR, DR]
 }
 
 func NewStore[
-	SR RedisStatusCmd,
-	GR RedisStringCmd,
-	DR RedisIntCmd,
+	SR redisStatusCmd,
+	GR redisStringCmd,
+	DR redisIntCmd,
 ](redis Redis[SR, GR, DR]) *Store[SR, GR, DR] {
 	return &Store[SR, GR, DR]{
 		rdb: redis,
