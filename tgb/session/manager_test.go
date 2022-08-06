@@ -103,7 +103,7 @@ func TestManager_Init(t *testing.T) {
 
 	manager := NewManager(defaultSession)
 
-	manager.Init(
+	manager.Setup(
 		WithKeyFunc(keyFunc),
 		WithEncoding(encodeFunc, decodeFunc),
 		WithStore(store),

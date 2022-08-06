@@ -1,4 +1,4 @@
-// Package sessionsql implements a session store using SQL.
+// Package sessionsql provides a SQL store for sessions.
 //
 // To interact with the database, the standard [database/sql] is used.
 // Does not import or register any drivers, the user has to do it himself.
