@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.etcd.io/bbolt"
 )
 
 func TestStore(t *testing.T) {
@@ -16,9 +17,12 @@ func TestStore(t *testing.T) {
 
 	path := filepath.Join(tempDir, "sessions.boltdb")
 
-	store, err := Open(path, 0666, nil, WithBucket("sessions_2"))
+	db, err := bbolt.Open(path, 0666, nil)
 	require.NoError(t, err)
-	defer store.Close()
+	defer db.Close()
+
+	store := New(db, "sessions")
+	require.NoError(t, err)
 
 	err = store.Set(context.Background(), "key", []byte("value"))
 	require.NoError(t, err)

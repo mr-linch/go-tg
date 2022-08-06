@@ -13,9 +13,16 @@
 //  }
 //  defer db.Close()
 //
-//  store := sessionsql.New(db, "sessions", sessionsql.PostgreSQL)
+//  store := sessionsql.New(db, "session", sessionsql.PostgreSQL)
 //
-// Package also contains query set for: SQLite3 and MySQL.
+// See Variables section for more list of built-in query sets.
+//
+// Session can be created manually or automatically by calling Setup method (uses create table if not exisits):
+//
+//  if err := store.Setup(ctx); err != nil {
+//    return err
+//  }
+//
 package sessionsql
 
 import (
