@@ -9,6 +9,18 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+  - package-ecosystem: "gomod" 
+    directory: "/tgb/session/sessionbolt" # Location of package manifests
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gomod" 
+    directory: "/tgb/session/sessionsql" # Location of package manifests
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gomod" 
+    directory: "/tgb/session/sessionsql/e2e" # Location of package manifests
+    schedule:
+      interval: "daily"
   - package-ecosystem: "github-actions" 
     directory: "/" # Location of package manifests
     schedule:
