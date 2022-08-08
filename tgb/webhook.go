@@ -345,7 +345,7 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if response.Body != nil {
-		w.Write(response.Body)
+		_, _ = w.Write(response.Body)
 	}
 
 }
