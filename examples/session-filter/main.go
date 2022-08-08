@@ -43,7 +43,9 @@ func main() {
 	// create session manager with default session value
 	sessionManager := session.NewManager(Session{
 		Step: SessionStepInit,
-	})
+	}, session.WithStore(
+		session.NewStoreFile("sessions"),
+	))
 
 	isSessionStep := func(state SessionStep) tgb.Filter {
 		return sessionManager.Filter(func(session *Session) bool {
