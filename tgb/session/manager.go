@@ -9,7 +9,7 @@
 //
 // By default, the data is stored in memory (see [StoreMemory]).
 // It's not good, because it's not persistent and you can lose data if the bot is restarted.
-// You can use any provided storage, see subpackages of current package for list.
+// You can use any provided storage, see [StoreMemory] and [StoreFile] for built-in stores.
 // Or you can use your own storage by implementing [Store] interface.
 //
 // # How it works?
@@ -189,15 +189,15 @@ func (manager *Manager[T]) Reset(session *T) {
 //
 // Example:
 //
-//  isStepName := manager.Filter(func(session *Session) bool {
-//    return session.Step == "name"
-//  })
+//	isStepName := manager.Filter(func(session *Session) bool {
+//	  return session.Step == "name"
+//	})
 //
 // This filter can be used in [github.com/mr-linch/go-tg/tgb.Router] handler registration method:
 //
-//  router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
-//    // ...
-//  }, isStepName)
+//	router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+//	  // ...
+//	}, isStepName)
 func (manager *Manager[T]) Filter(fn func(*T) bool) tgb.Filter {
 	return tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
 		session := manager.Get(ctx)
@@ -213,10 +213,10 @@ func (manager *Manager[T]) Filter(fn func(*T) bool) tgb.Filter {
 // Wrap allow use manager as [github.com/mr-linch/go-tg/tgb.Middleware].
 //
 // This middleware do following:
-//   1. fetch session data from [Store] or create new one if it doesn't exist.
-//   2. put session data to [context.Context]
-//   3. call handler (note: if chain returns error, return an error and do not save changes)
-//   4. update session data in [Store] if it was changed (delete if session value equals initial)
+//  1. fetch session data from [Store] or create new one if it doesn't exist.
+//  2. put session data to [context.Context]
+//  3. call handler (note: if chain returns error, return an error and do not save changes)
+//  4. update session data in [Store] if it was changed (delete if session value equals initial)
 func (manager *Manager[T]) Wrap(next tgb.Handler) tgb.Handler {
 	return tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
 		key := manager.keyFunc(update)

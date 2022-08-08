@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestStore(t *testing.T) {
-	store := NewStoreMemory()
+func genericStoreTest(t *testing.T, store Store) {
+	t.Helper()
 
 	err := store.Set(context.Background(), "key", []byte("value"))
 	require.NoError(t, err)
@@ -23,4 +23,10 @@ func TestStore(t *testing.T) {
 	v, err = store.Get(context.Background(), "key")
 	require.NoError(t, err)
 	require.Nil(t, v)
+}
+
+func TestStore(t *testing.T) {
+	store := NewStoreMemory()
+
+	genericStoreTest(t, store)
 }

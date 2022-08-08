@@ -659,12 +659,8 @@ By default, the session is serialized using [`encoding/json`](https://pkg.go.dev
 
 Session store is simple key-value storage.
 Where key is a string value unique for each chat and value is serialized session data.
-By default, manager use [in-memory store](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session#StoreMemory) implementation.
-Also, library provides modules for different backends:
-
-- [sessionbolt](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session/sessionbolt#Store) - boltdb-based store;
-- [sessionredis](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session/sessionredis#Store) - redis-based store;
-- [sessionsql](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session/sessionsql#Store) - sql-based store (SQLite3, MySQL, PostgreSQL);
+By default, manager use [`StoreMemory`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session#StoreMemory) implementation.
+Also package has [`StoreFile`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session#StoreFile) based on FS.
 
 #### How to use sessions?
 

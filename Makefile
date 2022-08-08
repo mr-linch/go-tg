@@ -1,4 +1,3 @@
-
 .PHONY: go-tidy
 go-tidy: ## tidy all go modules
 	$(call print-target)
