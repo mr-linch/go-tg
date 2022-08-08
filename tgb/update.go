@@ -14,9 +14,9 @@ type Update struct {
 	*tg.Update
 	Client *tg.Client
 
-	webhookResponseLock sync.Mutex
-	webhookResponse     chan json.Marshaler
-	webhookResponseSent bool
+	webhookReplyLock sync.Mutex
+	webhookReply     chan json.Marshaler
+	webhookReplySent bool
 }
 
 func newUpdateWebhook(update *tg.Update, client *tg.Client) *Update {
@@ -24,37 +24,45 @@ func newUpdateWebhook(update *tg.Update, client *tg.Client) *Update {
 		Update: update,
 		Client: client,
 
-		webhookResponse:     make(chan json.Marshaler),
-		webhookResponseSent: false,
+		webhookReply:     make(chan json.Marshaler),
+		webhookReplySent: false,
 	}
 }
 
-// UpdateRespond defines interface for responding to an update via Webhook.
-type UpdateRespond interface {
+// UpdateReply defines interface for responding to an update via Webhook.
+type UpdateReply interface {
 	json.Marshaler
 	DoVoid(ctx context.Context) error
 	Bind(client *tg.Client)
 }
 
-// Respond to Webhook, if possible or make usual call via Client.
-func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
-	update.webhookResponseLock.Lock()
-	defer update.webhookResponseLock.Unlock()
+// Deprecated: use UpdateReply instead.
+type UpdateRespond = UpdateReply
 
-	if update.webhookResponse != nil && !update.webhookResponseSent {
-		update.webhookResponseSent = true
-		update.webhookResponse <- v
+// Reply to Webhook, if possible or make usual call via Client.
+func (update *Update) Reply(ctx context.Context, v UpdateReply) error {
+	update.webhookReplyLock.Lock()
+	defer update.webhookReplyLock.Unlock()
+
+	if update.webhookReply != nil && !update.webhookReplySent {
+		update.webhookReplySent = true
+		update.webhookReply <- v
 		return nil
 	}
 
 	return tg.BindClient(v, update.Client).DoVoid(ctx)
 }
 
-func (update *Update) disableWebhookResponse() {
-	update.webhookResponseLock.Lock()
-	defer update.webhookResponseLock.Unlock()
+// Deprecated: use Reply instead.
+func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
+	return update.Reply(ctx, v)
+}
 
-	update.webhookResponseSent = true
+func (update *Update) disableWebhookReply() {
+	update.webhookReplyLock.Lock()
+	defer update.webhookReplyLock.Unlock()
+
+	update.webhookReplySent = true
 }
 
 // MessageUpdate it's extend wrapper around tg.Message.

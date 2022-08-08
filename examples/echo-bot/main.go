@@ -33,7 +33,7 @@ func main() {
 		}, tgb.Command("start", tgb.WithCommandAlias("help"))).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handles gopher image
-			if err := msg.Update.Respond(ctx, msg.AnswerChatAction(tg.ChatActionUploadPhoto)); err != nil {
+			if err := msg.Update.Reply(ctx, msg.AnswerChatAction(tg.ChatActionUploadPhoto)); err != nil {
 				return fmt.Errorf("answer chat action: %w", err)
 			}
 
@@ -46,7 +46,7 @@ func main() {
 		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle other messages
-			return msg.Copy(msg.Chat).DoVoid(ctx)
+			return msg.Update.Reply(ctx, msg.Copy(msg.Chat))
 		}),
 	)
 }

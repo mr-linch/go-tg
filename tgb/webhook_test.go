@@ -56,6 +56,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		req, err := http.NewRequest(http.MethodGet, "/", strings.NewReader(""))
 		assert.NoError(t, err)
+		req.RemoteAddr = "1.1.1.1"
 
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
@@ -93,6 +94,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(""))
 		assert.NoError(t, err)
 
+		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-Forwarded-For", "1.1.1.1")
 
 		webhook := NewWebhook(
@@ -103,7 +105,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
 
 	t.Run("SecurityCheckToken", func(t *testing.T) {
@@ -114,6 +116,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		req.Header.Set(securityTokenHeader, "secret")
 		req.Header.Set("X-Forwarded-For", "1.1.1.1")
+		req.Header.Set("Content-Type", "application/json")
 
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
@@ -124,7 +127,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
 
 	t.Run("InvalidContentType", func(t *testing.T) {
@@ -214,7 +217,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("HandleOKOneRespondCall", func(t *testing.T) {
+	t.Run("HandleOKOneReplyCall", func(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(`{"update_id": 123456, "message": {"chat": {"id": 1234}}}`))
@@ -228,7 +231,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error {
 				isHandlerCalled = true
-				return update.Respond(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
+				return update.Reply(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
 			}),
 			&tg.Client{},
 			"http://test.io/",
@@ -248,7 +251,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		assert.Equal(t, `{"chat_id":"1234","method":"sendMessage","text":"test"}`, string(body))
 	})
 
-	t.Run("HandleOKTwoRespondCall", func(t *testing.T) {
+	t.Run("HandleOKTwoReplyCall", func(t *testing.T) {
 
 		isHandlerCalled := false
 
@@ -257,16 +260,16 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error {
 				// first call should be send response to webhook
-				err := update.Respond(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
+				err := update.Reply(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
 				assert.NoError(t, err)
 
-				// second call should call UpdateRespond.DoVoid()
-				ur := &MockUpdateRespond{}
+				// second call should call UpdateReply.DoVoid()
+				ur := &MockUpdateReply{}
 
 				ur.On("Bind", mock.Anything).Return()
 				ur.On("DoVoid", mock.Anything).Return(nil)
 
-				err = update.Respond(ctx, ur)
+				err = update.Reply(ctx, ur)
 				assert.NoError(t, err)
 
 				ur.AssertExpectations(t)

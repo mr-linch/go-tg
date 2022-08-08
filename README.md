@@ -100,7 +100,7 @@ func run(ctx context.Context) error {
     }, tgb.Command("start", tgb.WithCommandAlias("help"))).
     // handles gopher image
     Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
-      if err := msg.Update.Respond(ctx, msg.AnswerChatAction(tg.ChatActionUploadPhoto)); err != nil {
+      if err := msg.Update.Reply(ctx, msg.AnswerChatAction(tg.ChatActionUploadPhoto)); err != nil {
         return fmt.Errorf("answer chat action: %w", err)
       }
 
