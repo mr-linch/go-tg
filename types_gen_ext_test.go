@@ -1017,3 +1017,41 @@ func TestMessageEntity_Extract(t *testing.T) {
 
 	assert.Equal(t, "hey@lipsum.com", emailEntity.Extract(text))
 }
+
+func TestUpdate_Msg(t *testing.T) {
+	msg := &Message{ID: 1}
+
+	for _, test := range []struct {
+		Update  *Update
+		Message *Message
+	}{
+		{nil, nil},
+		{&Update{}, nil},
+		{&Update{Message: msg}, msg},
+		{&Update{EditedMessage: msg}, msg},
+		{&Update{ChannelPost: msg}, msg},
+		{&Update{EditedChannelPost: msg}, msg},
+		{&Update{CallbackQuery: &CallbackQuery{Message: msg}}, msg},
+		{&Update{CallbackQuery: &CallbackQuery{}}, nil},
+	} {
+		assert.Equal(t, test.Message, test.Update.Msg())
+	}
+}
+
+func TestUpdate_Chat(t *testing.T) {
+	chat := Chat{ID: 1}
+
+	for _, test := range []struct {
+		Update *Update
+		Chat   *Chat
+	}{
+		{nil, nil},
+		{&Update{InlineQuery: &InlineQuery{}}, nil},
+		{&Update{Message: &Message{Chat: chat}}, &chat},
+		{&Update{ChatMember: &ChatMemberUpdated{Chat: chat}}, &chat},
+		{&Update{MyChatMember: &ChatMemberUpdated{Chat: chat}}, &chat},
+		{&Update{ChatJoinRequest: &ChatJoinRequest{Chat: chat}}, &chat},
+	} {
+		assert.Equal(t, test.Chat, test.Update.Chat())
+	}
+}

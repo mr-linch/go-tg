@@ -18,7 +18,8 @@ func TestRouter(t *testing.T) {
 		})
 		assert.NoError(t, err)
 	})
-	t.Run("UpdateHanlder", func(t *testing.T) {
+
+	t.Run("UpdateAndMessageHanlder", func(t *testing.T) {
 		isMessageHandlerCalled := false
 		isUpdateHanlderCalled := false
 		err := NewRouter().
@@ -41,6 +42,23 @@ func TestRouter(t *testing.T) {
 		assert.True(t, isUpdateHanlderCalled)
 	})
 
+	t.Run("UpdateOnlyHandler", func(t *testing.T) {
+		isUpdateHanlderCalled := false
+		err := NewRouter().
+			Update(func(ctx context.Context, update *Update) error {
+				isUpdateHanlderCalled = true
+				return nil
+			}).
+			Handle(context.Background(), &Update{
+				Update: &tg.Update{
+					Message: &tg.Message{},
+				},
+			})
+
+		assert.NoError(t, err)
+		assert.True(t, isUpdateHanlderCalled, "update handler is not called")
+	})
+
 	t.Run("UnknownUpdateSubtype", func(t *testing.T) {
 		err := NewRouter().Message(func(ctx context.Context, msg *MessageUpdate) error {
 			return nil
@@ -61,7 +79,7 @@ func TestRouter(t *testing.T) {
 			Message: &tg.Message{},
 		}})
 
-		assert.EqualError(t, err, "filter tgb.FilterFunc: failure")
+		assert.EqualError(t, err, "filter error: failure")
 
 	})
 	t.Run("Error", func(t *testing.T) {
@@ -107,14 +125,14 @@ func TestRouter(t *testing.T) {
 		var isMiddelwareCallled bool
 
 		router.Use(
-			func(next Handler) Handler {
+			MiddlewareFunc(func(next Handler) Handler {
 				return HandlerFunc(func(ctx context.Context, update *Update) error {
 					assert.NotNil(t, update)
 
 					isMiddelwareCallled = true
 					return next.Handle(ctx, update)
 				})
-			},
+			}),
 		)
 
 		{

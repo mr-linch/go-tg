@@ -1,6 +1,14 @@
 package tgb
 
-type Middleware func(Handler) Handler
+type Middleware interface {
+	Wrap(Handler) Handler
+}
+
+type MiddlewareFunc func(Handler) Handler
+
+func (m MiddlewareFunc) Wrap(h Handler) Handler {
+	return m(h)
+}
 
 type chain []Middleware
 
@@ -16,7 +24,7 @@ func (c chain) Append(mws ...Middleware) chain {
 // Then wraps handler with middleware chain.
 func (c chain) Then(handler Handler) Handler {
 	for i := range c {
-		handler = c[len(c)-1-i](handler)
+		handler = c[len(c)-1-i].Wrap(handler)
 	}
 
 	return handler
