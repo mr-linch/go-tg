@@ -16,6 +16,9 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+// Webhook is a Telegram bot webhook handler.
+// It handles incoming webhook requests and calls the handler function.
+// It implements the http.Handler interface, but can be adapted to any other handlers, see [Webhook.ServeRequest]
 type Webhook struct {
 	url     string
 	handler Handler

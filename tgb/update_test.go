@@ -48,6 +48,23 @@ func TestUpdate_Reply(t *testing.T) {
 		updateReply.AssertExpectations(t)
 	})
 
+	t.Run("NoWebhookUseRespond", func(t *testing.T) {
+		client := &tg.Client{}
+		updateReply := &MockUpdateReply{}
+
+		updateReply.On("Bind", client).Return()
+		updateReply.On("DoVoid", mock.Anything).Return(nil)
+
+		update := &Update{
+			Client: client,
+		}
+
+		err := update.Respond(context.Background(), updateReply)
+		assert.NoError(t, err)
+
+		updateReply.AssertExpectations(t)
+	})
+
 	t.Run("Webhook", func(t *testing.T) {
 		updateReply := &MockUpdateReply{}
 

@@ -36,6 +36,9 @@ type UpdateReply interface {
 	Bind(client *tg.Client)
 }
 
+// Deprecated: use UpdateReply instead.
+type UpdateRespond = UpdateReply
+
 // Reply to Webhook, if possible or make usual call via Client.
 func (update *Update) Reply(ctx context.Context, v UpdateReply) error {
 	update.webhookReplyLock.Lock()
@@ -48,6 +51,11 @@ func (update *Update) Reply(ctx context.Context, v UpdateReply) error {
 	}
 
 	return tg.BindClient(v, update.Client).DoVoid(ctx)
+}
+
+// Deprecated: use Reply instead.
+func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
+	return update.Reply(ctx, v)
 }
 
 func (update *Update) disableWebhookReply() {
