@@ -58,11 +58,11 @@ func main() {
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle /start command
 			sessionManager.Get(ctx).Step = SessionStepName
-			return msg.Update.Respond(ctx, msg.Answer("Hi, what is your name?"))
+			return msg.Update.Reply(ctx, msg.Answer("Hi, what is your name?"))
 		}, tgb.Command("start")).
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 			// handle no command with SessionStepInitial
-			return mu.Update.Respond(ctx, mu.Answer("Press /start to fill the form"))
+			return mu.Update.Reply(ctx, mu.Answer("Press /start to fill the form"))
 		}, isSessionStep(SessionStepInit)).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle name input
@@ -71,11 +71,11 @@ func main() {
 			session.Name = msg.Text
 			session.Step = SessionStepAge
 
-			return msg.Update.Respond(ctx, msg.Answer("What is your age?"))
+			return msg.Update.Reply(ctx, msg.Answer("What is your age?"))
 		}, isSessionStep(SessionStepName)).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle no digit input when state is SessionStepAge
-			return msg.Update.Respond(ctx, msg.Answer("Please, send me just number"))
+			return msg.Update.Reply(ctx, msg.Answer("Please, send me just number"))
 		}, isSessionStep(SessionStepAge), tgb.Not(isDigit)).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle correct age input
@@ -93,7 +93,7 @@ func main() {
 				buttonLayout.Insert(tg.NewKeyboardButton(gender))
 			}
 
-			return msg.Update.Respond(ctx, msg.Answer("What is your gender?").ReplyMarkup(
+			return msg.Update.Reply(ctx, msg.Answer("What is your gender?").ReplyMarkup(
 				tg.NewReplyKeyboardMarkup(
 					buttonLayout.Keyboard()...,
 				).WithResizeKeyboardMarkup(),
@@ -116,10 +116,10 @@ func main() {
 
 			sessionManager.Reset(session)
 
-			return mu.Update.Respond(ctx, answer)
+			return mu.Update.Reply(ctx, answer)
 		}, isSessionStep(SessionStepGender), tgb.TextIn(genders)).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
-			return msg.Update.Respond(ctx, msg.Answer("Please, choose one of the buttons below 👇"))
+			return msg.Update.Reply(ctx, msg.Answer("Please, choose one of the buttons below 👇"))
 		}, isSessionStep(SessionStepGender), tgb.Not(tgb.TextIn(genders))),
 	)
 }

@@ -33,7 +33,7 @@ func main() {
 
 			photo := sizes[0]
 
-			if err := mu.Update.Respond(ctx,
+			if err := mu.Update.Reply(ctx,
 				tg.NewSendChatActionCall(mu.Message.Chat, tg.ChatActionUploadPhoto),
 			); err != nil {
 				return fmt.Errorf("send chat action: %w", err)

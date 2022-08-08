@@ -29,15 +29,15 @@ func newUpdateWebhook(update *tg.Update, client *tg.Client) *Update {
 	}
 }
 
-// UpdateRespond defines interface for responding to an update via Webhook.
-type UpdateRespond interface {
+// UpdateReply defines interface for responding to an update via Webhook.
+type UpdateReply interface {
 	json.Marshaler
 	DoVoid(ctx context.Context) error
 	Bind(client *tg.Client)
 }
 
-// Respond to Webhook, if possible or make usual call via Client.
-func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
+// Reply to Webhook, if possible or make usual call via Client.
+func (update *Update) Reply(ctx context.Context, v UpdateReply) error {
 	update.webhookReplyLock.Lock()
 	defer update.webhookReplyLock.Unlock()
 
@@ -48,6 +48,16 @@ func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
 	}
 
 	return tg.BindClient(v, update.Client).DoVoid(ctx)
+}
+
+// UpdateRespond is a old name for UpdateReply.
+// Deprecated: use UpdateReply instead.
+type UpdateRespond = UpdateReply
+
+// Respond it's a old name for Reply.
+// Deprecated: use Reply instead.
+func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
+	return update.Reply(ctx, v)
 }
 
 func (update *Update) disableWebhookReply() {

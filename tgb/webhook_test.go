@@ -231,7 +231,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error {
 				isHandlerCalled = true
-				return update.Respond(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
+				return update.Reply(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
 			}),
 			&tg.Client{},
 			"http://test.io/",
@@ -260,7 +260,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error {
 				// first call should be send response to webhook
-				err := update.Respond(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
+				err := update.Reply(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
 				assert.NoError(t, err)
 
 				// second call should call UpdateRespond.DoVoid()
@@ -269,7 +269,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 				ur.On("Bind", mock.Anything).Return()
 				ur.On("DoVoid", mock.Anything).Return(nil)
 
-				err = update.Respond(ctx, ur)
+				err = update.Reply(ctx, ur)
 				assert.NoError(t, err)
 
 				ur.AssertExpectations(t)

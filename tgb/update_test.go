@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-var _ UpdateRespond = (*MockUpdateRespond)(nil)
+var _ UpdateReply = (*MockUpdateRespond)(nil)
 
 type MockUpdateRespond struct {
 	mock.Mock
@@ -42,7 +42,7 @@ func TestUpdate_Respond(t *testing.T) {
 			Client: client,
 		}
 
-		err := update.Respond(context.Background(), updateRespond)
+		err := update.Reply(context.Background(), updateRespond)
 		assert.NoError(t, err)
 
 		updateRespond.AssertExpectations(t)
@@ -57,7 +57,7 @@ func TestUpdate_Respond(t *testing.T) {
 			webhookReply: make(chan json.Marshaler, 1),
 		}
 
-		err := update.Respond(context.Background(), updateRespond)
+		err := update.Reply(context.Background(), updateRespond)
 		assert.NoError(t, err)
 
 		obj := <-update.webhookReply
