@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   lint:
@@ -68,91 +68,3 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-
-  test-e2e:
-    name: Test Integration
-    runs-on: ubuntu-latest  # Service containers to run with `container-job`
-    services:
-      postgres:
-        image: postgres:14.4-alpine
-        env:
-          POSTGRES_USER: go-tg
-          POSTGRES_PASSWORD: go-tg
-          POSTGRES_DB: go-tg
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-      mysql:
-        image: mysql:8.0.30
-        env:
-          MYSQL_ROOT_PASSWORD: go-tg
-        options: 
-          --health-cmd "mysqladmin ping --password=go-tg --host localhost --user root"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 3306:3306
-      
-      redis-v7:
-        image: redis:7-alpine
-
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-        ports:
-          - 63797:6379
-
-      redis-v6:
-        image: redis:7-alpine
-
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-        ports:
-          - 63796:6379
-
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            e2e:
-              - 'tgb/session/sessionsql/**'
-              - 'tgb/session/sessionredis/**'
-
-      - name: Install Go
-        uses: actions/setup-go@v3
-        if: steps.changes.outputs.e2e == 'true'
-        with:
-          go-version: "1.18"
-
-
-      - name: Go Work 
-        if: steps.changes.outputs.e2e == 'true'
-        run: |
-          go work init . ./tgb/session/sessionbolt ./tgb/session/sessionredis ./tgb/session/sessionsql ./tgb/session/sessionsql/e2e ./tgb/session/sessionredis/e2e
-
-      - name: Test
-        if: steps.changes.outputs.e2e == 'true'
-        env:
-          POSTGRES_DSN: postgres://go-tg:go-tg@localhost:5432/go-tg?sslmode=disable
-          MYSQL_DSN: root:go-tg@tcp(localhost:3306)/mysql
-          REDIS_V7_DSN: redis://localhost:63797
-          REDIS_V6_DSN: redis://localhost:63796
-
-        run: go test -timeout 30s -v -race -tags e2e ./tgb/session/sessionsql/e2e
