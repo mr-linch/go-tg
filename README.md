@@ -27,6 +27,8 @@
   - [Receive updates via Polling](#receive-updates-via-polling)
   - [Receive updates via Webhook](#receive-updates-via-webhook)
   - [Routing updates](#routing-updates)
+- [Extensions](#extensions)
+  - [Sessions](#sessions)
 - [Related Projects](#related-projects)
 - [Thanks](#thanks)
 
@@ -631,6 +633,70 @@ router.Error(func(ctx context.Context, update *tgb.Update, err error) error {
 
 That example is not useful and just demonstrates the error handler.
 The better way to achieve this is simply to enable logging in [`Webhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook) or [`Poller`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Poller).
+
+## Extensions
+
+### Sessions
+
+#### What is a Session?
+
+Session it's a simple storage for data related to the Telegram chat.
+It allow you to share data between different updates from the same chat.
+This data is persisted in the [session store](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session#Store) and will be available for the next updates from the same chat.
+
+In fact, the session is the usual `struct` and you can define it as you wish.
+One requirement is that the session must be serializable.
+By default, the session is serialized using [`encoding/json`](https://pkg.go.dev/encoding/json) package, but you can use any other marshal/unmarshal funcs.
+
+#### When not to use sessions?
+
+- you need to store large amount of data;
+- your data is not serializable;
+- you need access to data from other chat sessions;
+- session data should be used by other systems;
+
+#### Where sessions store
+
+Session store is simple key-value storage.
+Where key is a string value unique for each chat and value is serialized session data.
+By default, manager use [in-memory store](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session#StoreMemory) implementation.
+Also, library provides modules for different backends:
+
+- [sessionbolt](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session/sessionbolt#Store) - boltdb-based store;
+- [sessionredis](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session/sessionredis#Store) - redis-based store;
+- [sessionsql](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session/sessionsql#Store) - sql-based store (SQLite3, MySQL, PostgreSQL);
+
+#### How to use sessions?
+
+1. You should define a session struct:
+   ```go
+    type Session struct {
+      PizzaCount int
+    }
+   ```
+2. Create a session manager:
+   ```go
+    var sessionManager = session.NewManager(Session{
+      PizzaCount: 0,
+    })
+   ```
+3. Attach the session manager to the router:
+   ```go
+    router.Use(sessionManager)
+   ```
+4. Use the session manager in the handlers:
+   ```go
+    router.Message(func(ctx context.Context, mu *tgb.Update) error {
+      count := strings.Count(strings.ToLower(mu.Message.Text), "pizza") + strings.Count(mu.Message.Text, "🍕")
+      if count > 0 {
+        session := sessionManager.Get(ctx)
+        session.PizzaCount += count
+      }
+      return nil
+    })
+   ```
+
+See [session](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session) package and [examples](https://github.com/mr-linch/go-tg/tree/main/examples) with `Session Manager` feature for more information.
 
 ## Related Projects
 
