@@ -14,9 +14,9 @@ type Update struct {
 	*tg.Update
 	Client *tg.Client
 
-	webhookResponseLock sync.Mutex
-	webhookResponse     chan json.Marshaler
-	webhookResponseSent bool
+	webhookReplyLock sync.Mutex
+	webhookReply     chan json.Marshaler
+	webhookReplySent bool
 }
 
 func newUpdateWebhook(update *tg.Update, client *tg.Client) *Update {
@@ -24,8 +24,8 @@ func newUpdateWebhook(update *tg.Update, client *tg.Client) *Update {
 		Update: update,
 		Client: client,
 
-		webhookResponse:     make(chan json.Marshaler),
-		webhookResponseSent: false,
+		webhookReply:     make(chan json.Marshaler),
+		webhookReplySent: false,
 	}
 }
 
@@ -38,23 +38,23 @@ type UpdateRespond interface {
 
 // Respond to Webhook, if possible or make usual call via Client.
 func (update *Update) Respond(ctx context.Context, v UpdateRespond) error {
-	update.webhookResponseLock.Lock()
-	defer update.webhookResponseLock.Unlock()
+	update.webhookReplyLock.Lock()
+	defer update.webhookReplyLock.Unlock()
 
-	if update.webhookResponse != nil && !update.webhookResponseSent {
-		update.webhookResponseSent = true
-		update.webhookResponse <- v
+	if update.webhookReply != nil && !update.webhookReplySent {
+		update.webhookReplySent = true
+		update.webhookReply <- v
 		return nil
 	}
 
 	return tg.BindClient(v, update.Client).DoVoid(ctx)
 }
 
-func (update *Update) disableWebhookResponse() {
-	update.webhookResponseLock.Lock()
-	defer update.webhookResponseLock.Unlock()
+func (update *Update) disableWebhookReply() {
+	update.webhookReplyLock.Lock()
+	defer update.webhookReplyLock.Unlock()
 
-	update.webhookResponseSent = true
+	update.webhookReplySent = true
 }
 
 // MessageUpdate it's extend wrapper around tg.Message.

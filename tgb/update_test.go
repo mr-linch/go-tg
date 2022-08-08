@@ -54,13 +54,13 @@ func TestUpdate_Respond(t *testing.T) {
 		updateRespond.On("MarshalJSON", mock.Anything).Return([]byte{}, nil)
 
 		update := &Update{
-			webhookResponse: make(chan json.Marshaler, 1),
+			webhookReply: make(chan json.Marshaler, 1),
 		}
 
 		err := update.Respond(context.Background(), updateRespond)
 		assert.NoError(t, err)
 
-		obj := <-update.webhookResponse
+		obj := <-update.webhookReply
 
 		assert.NotNil(t, obj)
 

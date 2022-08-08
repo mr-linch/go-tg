@@ -56,6 +56,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		req, err := http.NewRequest(http.MethodGet, "/", strings.NewReader(""))
 		assert.NoError(t, err)
+		req.RemoteAddr = "1.1.1.1"
 
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
@@ -93,6 +94,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(""))
 		assert.NoError(t, err)
 
+		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-Forwarded-For", "1.1.1.1")
 
 		webhook := NewWebhook(
@@ -103,7 +105,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
 
 	t.Run("SecurityCheckToken", func(t *testing.T) {
@@ -114,6 +116,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		req.Header.Set(securityTokenHeader, "secret")
 		req.Header.Set("X-Forwarded-For", "1.1.1.1")
+		req.Header.Set("Content-Type", "application/json")
 
 		webhook := NewWebhook(
 			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
@@ -124,7 +127,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 
 		webhook.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
 
 	t.Run("InvalidContentType", func(t *testing.T) {

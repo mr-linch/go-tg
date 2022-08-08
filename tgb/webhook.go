@@ -194,62 +194,83 @@ func (webhook *Webhook) isAllowedIP(ip netip.Addr) bool {
 
 const securityTokenHeader = "X-Telegram-Bot-Api-Secret-Token"
 
-func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// check method
+// WebhookRequest is the request received from Telegram.
+type WebhookRequest struct {
+	Method      string
+	ContentType string
+
+	IP            netip.Addr
+	SecurityToken string
+
+	Body io.Reader
+}
+
+// WebhookResponse is the response to be sent to WebhookRequest.
+type WebhookResponse struct {
+	Status      int
+	ContentType string
+	Body        []byte
+}
+
+func (webhook *Webhook) checkRequest(r *WebhookRequest) *WebhookResponse {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		webhook.log("http error: method not allowed: %s", r.Method)
-		return
-	}
-
-	// check IP
-	ip, err := netip.ParseAddr(realip.FromRequest(r))
-	if err != nil {
-		http.Error(w, "invalid ip", http.StatusBadRequest)
-		webhook.log("http error: invalid ip: %v", err)
-		return
-	}
-
-	if !webhook.isAllowedIP(ip) {
-		http.Error(w, "security check failed", http.StatusUnauthorized)
-		webhook.log("http error: security check failed: ip '%s' is not allowed", ip)
-		return
-	}
-
-	// check token
-	if webhook.securityToken != "" {
-		if securityToken := r.Header.Get(securityTokenHeader); securityToken != webhook.securityToken {
-			http.Error(w, "security check failed", http.StatusUnauthorized)
-			webhook.log("http error: security check failed: token '%s' is not allowed", securityToken)
-			return
+		webhook.log("request with method '%s' was refused", r.Method)
+		return &WebhookResponse{
+			Status:      http.StatusMethodNotAllowed,
+			ContentType: "text/plain",
+			Body:        []byte("method not allowed"),
 		}
 	}
 
-	// check content type
-	if r.Header.Get("Content-Type") != "application/json" {
-		http.Error(w, "content type not supported", http.StatusUnsupportedMediaType)
-		webhook.log("http error: content type not supported: %s", r.Header.Get("Content-Type"))
-		return
+	if r.ContentType != "application/json" {
+		webhook.log("invalid content type '%s'", r.ContentType)
+		return &WebhookResponse{
+			Status:      http.StatusUnsupportedMediaType,
+			ContentType: "text/plain",
+			Body:        []byte("unsupported media type"),
+		}
 	}
 
-	// read body
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "failed to read body", http.StatusBadRequest)
-		webhook.log("http error: read body failed: %v", err)
-		return
+	if !webhook.isAllowedIP(r.IP) {
+		webhook.log("request from '%s' was refused", r.IP)
+		return &WebhookResponse{
+			Status:      http.StatusForbidden,
+			ContentType: "text/plain",
+			Body:        []byte("security check failed"),
+		}
+	}
+
+	if webhook.securityToken != "" && r.SecurityToken != webhook.securityToken {
+		webhook.log("request with token '%s' was refused", r.SecurityToken)
+		return &WebhookResponse{
+			Status:      http.StatusForbidden,
+			ContentType: "text/plain",
+			Body:        []byte("security check failed"),
+		}
+	}
+
+	return nil
+}
+
+// ServeRequest is the generic for webhook requests from Telegram.
+func (webhook *Webhook) ServeRequest(ctx context.Context, r *WebhookRequest) *WebhookResponse {
+	if response := webhook.checkRequest(r); response != nil {
+		return response
 	}
 
 	// parse body
 	baseUpdate := &tg.Update{}
-	if err := json.Unmarshal(body, &baseUpdate); err != nil {
-		http.Error(w, "failed to parse body", http.StatusBadRequest)
-		webhook.log("http error: parse body failed: %v", err)
-		return
+	if err := json.NewDecoder(r.Body).Decode(baseUpdate); err != nil {
+		webhook.log("invalid body: %s", err)
+		return &WebhookResponse{
+			Status:      http.StatusBadRequest,
+			ContentType: "text/plain",
+			Body:        []byte("failed to parse body"),
+		}
 	}
 
 	update := newUpdateWebhook(baseUpdate, webhook.client)
-	defer update.disableWebhookResponse()
+	defer update.disableWebhookReply()
 
 	done := make(chan struct{})
 
@@ -266,30 +287,67 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	select {
-	case <-r.Context().Done():
-		return
-	case response := <-update.webhookResponse:
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		if response != nil {
-			body, err := json.Marshal(response)
+	case <-ctx.Done():
+		return &WebhookResponse{
+			Status: http.StatusOK,
+		}
+	case reply := <-update.webhookReply:
+		response := &WebhookResponse{
+			Status: http.StatusOK,
+		}
+
+		if reply != nil {
+			body, err := json.Marshal(reply)
 
 			if err != nil {
 				webhook.log("marshal webhook response error: %v", err)
-				return
+				return response
 			}
 
-			_, err = w.Write(body)
-			if err != nil {
-				webhook.log("write webhook response error: %v", err)
-				return
-			}
+			response.ContentType = "application/json"
+			response.Body = body
 		}
-		return
+
+		return response
 	case <-done:
-		w.WriteHeader(http.StatusOK)
+		return &WebhookResponse{
+			Status: http.StatusOK,
+		}
+	}
+}
+
+// ServeHTTP is the HTTP handler for webhook requests.
+// Implementation of http.Handler.
+func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ip, err := netip.ParseAddr(realip.FromRequest(r))
+	if err != nil {
+		webhook.log("failed to parse ip: %s", err)
+		http.Error(w, "failed to parse ip", http.StatusBadRequest)
 		return
 	}
+
+	request := &WebhookRequest{
+		Method:        r.Method,
+		ContentType:   r.Header.Get("Content-Type"),
+		IP:            ip,
+		SecurityToken: r.Header.Get(securityTokenHeader),
+		Body:          r.Body,
+	}
+
+	response := webhook.ServeRequest(r.Context(), request)
+
+	if response.ContentType != "" {
+		w.Header().Set("Content-Type", response.ContentType)
+	}
+
+	if response.Status != 0 {
+		w.WriteHeader(response.Status)
+	}
+
+	if response.Body != nil {
+		w.Write(response.Body)
+	}
+
 }
 
 // Run starts the webhook server.
