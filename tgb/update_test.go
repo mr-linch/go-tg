@@ -10,54 +10,54 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-var _ UpdateReply = (*MockUpdateRespond)(nil)
+var _ UpdateReply = (*MockUpdateReply)(nil)
 
-type MockUpdateRespond struct {
+type MockUpdateReply struct {
 	mock.Mock
 }
 
-func (mock *MockUpdateRespond) Bind(client *tg.Client) {
+func (mock *MockUpdateReply) Bind(client *tg.Client) {
 	mock.Called(client)
 }
 
-func (mock *MockUpdateRespond) MarshalJSON() ([]byte, error) {
+func (mock *MockUpdateReply) MarshalJSON() ([]byte, error) {
 	args := mock.Called()
 	return args.Get(0).([]byte), args.Error(1)
 }
 
-func (mock *MockUpdateRespond) DoVoid(ctx context.Context) error {
+func (mock *MockUpdateReply) DoVoid(ctx context.Context) error {
 	args := mock.Called(ctx)
 	return args.Error(0)
 }
 
-func TestUpdate_Respond(t *testing.T) {
+func TestUpdate_Reply(t *testing.T) {
 	t.Run("NoWebhook", func(t *testing.T) {
 		client := &tg.Client{}
-		updateRespond := &MockUpdateRespond{}
+		updateReply := &MockUpdateReply{}
 
-		updateRespond.On("Bind", client).Return()
-		updateRespond.On("DoVoid", mock.Anything).Return(nil)
+		updateReply.On("Bind", client).Return()
+		updateReply.On("DoVoid", mock.Anything).Return(nil)
 
 		update := &Update{
 			Client: client,
 		}
 
-		err := update.Reply(context.Background(), updateRespond)
+		err := update.Reply(context.Background(), updateReply)
 		assert.NoError(t, err)
 
-		updateRespond.AssertExpectations(t)
+		updateReply.AssertExpectations(t)
 	})
 
 	t.Run("Webhook", func(t *testing.T) {
-		updateRespond := &MockUpdateRespond{}
+		updateReply := &MockUpdateReply{}
 
-		updateRespond.On("MarshalJSON", mock.Anything).Return([]byte{}, nil)
+		updateReply.On("MarshalJSON", mock.Anything).Return([]byte{}, nil)
 
 		update := &Update{
 			webhookReply: make(chan json.Marshaler, 1),
 		}
 
-		err := update.Reply(context.Background(), updateRespond)
+		err := update.Reply(context.Background(), updateReply)
 		assert.NoError(t, err)
 
 		obj := <-update.webhookReply
@@ -67,7 +67,7 @@ func TestUpdate_Respond(t *testing.T) {
 		_, err = obj.MarshalJSON()
 		assert.NoError(t, err)
 
-		updateRespond.AssertExpectations(t)
+		updateReply.AssertExpectations(t)
 
 	})
 
