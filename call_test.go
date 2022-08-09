@@ -45,3 +45,17 @@ func TestCallNoResult_MarshalJSON(t *testing.T) {
 
 	assert.JSONEq(t, `{"chat_id":"1","title":"Hello","method":"setChatTitle"}`, string(v))
 }
+
+func TestCall_Request(t *testing.T) {
+	call := NewGetMeCall()
+
+	assert.NotNil(t, call.Request())
+	assert.Equal(t, "getMe", call.Request().Method)
+}
+
+func TestCallNoResult_Request(t *testing.T) {
+	call := NewSetChatTitleCall(ChatID(1), "Hello")
+
+	assert.NotNil(t, call.Request())
+	assert.Equal(t, "setChatTitle", call.Request().Method)
+}

@@ -9,6 +9,7 @@ type Call[T any] struct {
 	request *Request
 }
 
+// Request returns a low-level request object for making API calls.
 func (call *Call[T]) Request() *Request {
 	return call.request
 }
