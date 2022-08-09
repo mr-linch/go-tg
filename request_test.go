@@ -2,10 +2,12 @@ package tg
 
 import (
 	"encoding/json"
+	"errors"
 	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestNewRequest(t *testing.T) {
@@ -94,6 +96,21 @@ func (encoder *testEncoder) WriteFile(key string, file InputFile) error {
 	return nil
 }
 
+type JSONMarshalerMock struct {
+	mock.Mock
+}
+
+func (m *JSONMarshalerMock) MarshalJSON() ([]byte, error) {
+	args := m.Called()
+
+	v := args.Get(0)
+	if v == nil {
+		return nil, args.Error(1)
+	}
+
+	return v.([]byte), args.Error(1)
+}
+
 func TestRequest_MarshalJSON(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 
@@ -116,6 +133,20 @@ func TestRequest_MarshalJSON(t *testing.T) {
 
 		r.String("chat_id", "1")
 		r.File("file", NewFileArgUpload(NewInputFileBytes("file_name", []byte("file_content"))))
+
+		_, err := json.Marshal(r)
+		assert.Error(t, err)
+	})
+
+	t.Run("SubMarshalerError", func(t *testing.T) {
+		r := NewRequest("sendFile")
+
+		obj := &JSONMarshalerMock{}
+
+		obj.On("MarshalJSON").Return(nil, errors.New("error"))
+
+		r.String("chat_id", "1")
+		r.JSON("object", obj)
 
 		_, err := json.Marshal(r)
 		assert.Error(t, err)
