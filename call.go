@@ -2,9 +2,6 @@ package tg
 
 import (
 	"context"
-	"encoding/json"
-
-	"golang.org/x/exp/maps"
 )
 
 type Call[T any] struct {
@@ -12,18 +9,13 @@ type Call[T any] struct {
 	request *Request
 }
 
+// Request returns a low-level request object for making API calls.
 func (call *Call[T]) Request() *Request {
 	return call.request
 }
 
 func (call *Call[T]) MarshalJSON() ([]byte, error) {
-	args := make(map[string]string, len(call.request.args)+1)
-
-	args["method"] = call.request.Method
-
-	maps.Copy(args, call.request.args)
-
-	return json.Marshal(args)
+	return call.request.MarshalJSON()
 }
 
 func (call *Call[T]) Bind(client *Client) {
@@ -45,7 +37,7 @@ func (call *Call[T]) DoVoid(ctx context.Context) (err error) {
 // BindClient binds Client to the Call.
 // It's useful for chaining calls.
 //
-//   return tg.BindClient(tg.NewGetMeCall(), client).DoVoid(ctx)
+//	return tg.BindClient(tg.NewGetMeCall(), client).DoVoid(ctx)
 func BindClient[C interface {
 	Bind(client *Client)
 }](
@@ -66,10 +58,7 @@ func (call *CallNoResult) Request() *Request {
 }
 
 func (call *CallNoResult) MarshalJSON() ([]byte, error) {
-	args := make(map[string]string, len(call.request.args)+1)
-	args["method"] = call.request.Method
-	maps.Copy(args, call.request.args)
-	return json.Marshal(args)
+	return call.request.MarshalJSON()
 }
 
 func (call *CallNoResult) Bind(client *Client) {
