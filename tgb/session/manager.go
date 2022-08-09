@@ -84,12 +84,11 @@ func WithEncoding(
 
 // Manager provides a persistent data storage for bot.
 // You can use it to store chat-specific data persistently.
-//
-
 type Manager[T comparable] struct {
-	intial  T
-	keyFunc KeyFunc
-	store   Store
+	intial    T
+	keyFunc   KeyFunc
+	equalFunc func(T, T) bool
+	store     Store
 
 	encodeFunc func(v any) ([]byte, error)
 	decodeFunc func(d []byte, v any) error
@@ -130,6 +129,10 @@ func NewManager[T comparable](initial T, opts ...ManagerOption) *Manager[T] {
 		decodeFunc: json.Unmarshal,
 
 		cache: make(map[int]*T),
+
+		equalFunc: func(a, b T) bool {
+			return a == b
+		},
 	}
 
 	for _, opt := range opts {
@@ -137,6 +140,12 @@ func NewManager[T comparable](initial T, opts ...ManagerOption) *Manager[T] {
 	}
 
 	return manager
+}
+
+// SetEqualFunc sets a function that compares two sessions.
+// By default, it uses [==].
+func (manager *Manager[T]) SetEqualFunc(fn func(T, T) bool) {
+	manager.equalFunc = fn
 }
 
 // Setup it is late initialization method.
@@ -296,8 +305,8 @@ func (manager *Manager[T]) Wrap(next tgb.Handler) tgb.Handler {
 		manager.cacheDelSession(update)
 
 		// check if session changed and should be updated
-		if sessionBeforeHandle != *session {
-			if *session == manager.intial {
+		if !manager.equalFunc(sessionBeforeHandle, *session) {
+			if manager.equalFunc(*session, manager.intial) {
 				if err := manager.store.Del(ctx, key); err != nil {
 					return fmt.Errorf("delete default session: %w", err)
 				}
