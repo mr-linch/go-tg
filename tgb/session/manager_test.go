@@ -121,6 +121,12 @@ func TestManager_Init(t *testing.T) {
 	require.Error(t, err)
 }
 
+func assertEmptyCache[T comparable](t *testing.T, manager *Manager[T]) bool {
+	t.Helper()
+
+	return assert.Len(t, manager.cache, 0, "cache should be empty")
+}
+
 func TestManager_Wrap(t *testing.T) {
 	t.Run("CantGetKey", func(t *testing.T) {
 		type session struct{}
@@ -134,6 +140,8 @@ func TestManager_Wrap(t *testing.T) {
 		}))
 
 		err := handler.Handle(context.Background(), nil)
+
+		assertEmptyCache(t, manager)
 
 		require.EqualError(t, err, "can't get key from update")
 	})
@@ -157,7 +165,11 @@ func TestManager_Wrap(t *testing.T) {
 			return nil
 		}))
 
-		err := handler.Handle(context.Background(), &tgb.Update{})
+		err := handler.Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
+		}})
+
+		assertEmptyCache(t, manager)
 
 		require.EqualError(t, err, "get session from store: can't get session")
 	})
@@ -195,6 +207,7 @@ func TestManager_Wrap(t *testing.T) {
 		}))
 
 		err := manager.Wrap(handler).Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
 			Message: &tg.Message{
 				Chat: tg.Chat{
 					ID: 1,
@@ -204,6 +217,7 @@ func TestManager_Wrap(t *testing.T) {
 
 		require.NoError(t, err)
 
+		assertEmptyCache(t, manager)
 		store.AssertExpectations(t)
 
 		require.NoError(t, err)
@@ -236,6 +250,7 @@ func TestManager_Wrap(t *testing.T) {
 		}))
 
 		err := manager.Wrap(handler).Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
 			Message: &tg.Message{
 				Chat: tg.Chat{
 					ID: 1,
@@ -244,6 +259,7 @@ func TestManager_Wrap(t *testing.T) {
 		}})
 
 		store.AssertExpectations(t)
+		assertEmptyCache(t, manager)
 
 		require.EqualError(t, err, "error")
 	})
@@ -281,6 +297,7 @@ func TestManager_Wrap(t *testing.T) {
 		}))
 
 		err := manager.Wrap(handler).Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
 			Message: &tg.Message{
 				Chat: tg.Chat{
 					ID: 1,
@@ -289,6 +306,7 @@ func TestManager_Wrap(t *testing.T) {
 		}})
 
 		store.AssertExpectations(t)
+		assertEmptyCache(t, manager)
 
 		require.EqualError(t, err, "save session to store: error")
 	})
@@ -324,6 +342,7 @@ func TestManager_Wrap(t *testing.T) {
 		}))
 
 		err := manager.Wrap(handler).Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
 			Message: &tg.Message{
 				Chat: tg.Chat{
 					ID: 1,
@@ -333,6 +352,7 @@ func TestManager_Wrap(t *testing.T) {
 
 		require.NoError(t, err)
 
+		assertEmptyCache(t, manager)
 		store.AssertExpectations(t)
 	})
 
@@ -367,6 +387,7 @@ func TestManager_Wrap(t *testing.T) {
 		}))
 
 		err := manager.Wrap(handler).Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
 			Message: &tg.Message{
 				Chat: tg.Chat{
 					ID: 1,
@@ -375,6 +396,7 @@ func TestManager_Wrap(t *testing.T) {
 		}})
 
 		require.NoError(t, err)
+		assertEmptyCache(t, manager)
 
 		store.AssertExpectations(t)
 	})
@@ -410,6 +432,7 @@ func TestManager_Wrap(t *testing.T) {
 		}))
 
 		err := manager.Wrap(handler).Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
 			Message: &tg.Message{
 				Chat: tg.Chat{
 					ID: 1,
@@ -418,8 +441,134 @@ func TestManager_Wrap(t *testing.T) {
 		}})
 
 		require.EqualError(t, err, "delete default session: error")
+		assertEmptyCache(t, manager)
 
 		store.AssertExpectations(t)
+	})
+
+	t.Run("HandlePanic", func(t *testing.T) {
+		type Session struct {
+			Counter int
+		}
+
+		store := &StoreMock{}
+
+		store.On("Get",
+			mock.Anything,
+			"1",
+		).Return(nil, nil)
+
+		manager := NewManager(
+			Session{Counter: 1},
+			WithStore(store),
+		)
+
+		handler := manager.Wrap(tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
+			panic("oh no")
+		}))
+
+		assert.Panics(t, func() {
+			_ = manager.Wrap(handler).Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+				ID: 1234,
+				Message: &tg.Message{
+					Chat: tg.Chat{
+						ID: 1,
+					},
+				},
+			}})
+		})
+
+		store.AssertExpectations(t)
+		assertEmptyCache(t, manager)
+	})
+
+	t.Run("HandleError", func(t *testing.T) {
+		type Session struct {
+			Counter int
+		}
+
+		store := &StoreMock{}
+
+		store.On("Get",
+			mock.Anything,
+			"1",
+		).Return(nil, nil)
+
+		manager := NewManager(
+			Session{Counter: 1},
+			WithStore(store),
+		)
+
+		handler := manager.Wrap(tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
+			return fmt.Errorf("oh no")
+		}))
+
+		err := handler.Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
+			Message: &tg.Message{
+				Chat: tg.Chat{
+					ID: 1,
+				},
+			},
+		}})
+
+		assert.EqualError(t, err, "oh no")
+		store.AssertExpectations(t)
+		assertEmptyCache(t, manager)
+	})
+
+	t.Run("HandleNoMatched", func(t *testing.T) {
+
+		type Session struct {
+			Counter int
+		}
+
+		store := &StoreMock{}
+
+		store.On("Get",
+			mock.Anything,
+			"1",
+		).Return(nil, nil)
+
+		manager := NewManager(
+			Session{Counter: 1},
+			WithStore(store),
+		)
+
+		router := tgb.NewRouter()
+
+		router.Use(manager)
+
+		router.CallbackQuery(func(_ context.Context, _ *tgb.CallbackQueryUpdate) error {
+			return nil
+		}, manager.Filter(func(s *Session) bool {
+			return s.Counter == 2
+		}))
+
+		router.CallbackQuery(func(_ context.Context, _ *tgb.CallbackQueryUpdate) error {
+			return nil
+		}, manager.Filter(func(s *Session) bool {
+			return s.Counter == 3
+		}))
+
+		err := router.Handle(context.Background(), &tgb.Update{Update: &tg.Update{
+			ID: 1234,
+			CallbackQuery: &tg.CallbackQuery{
+				Data: "not_found",
+				Message: &tg.Message{
+					Chat: tg.Chat{
+						ID: 1,
+					},
+				},
+			},
+		}})
+
+		require.NoError(t, err)
+
+		store.AssertExpectations(t)
+		store.AssertNumberOfCalls(t, "Get", 1)
+
+		assertEmptyCache(t, manager)
 	})
 }
 

@@ -20,7 +20,8 @@ type Router struct {
 	typedHandlers  map[tg.UpdateType][]Handler
 	updateHandlers []Handler
 
-	errorHandler ErrorHandler
+	defaultHandler Handler
+	errorHandler   ErrorHandler
 }
 
 // NewRouter creates new Bot.
@@ -28,6 +29,9 @@ func NewRouter() *Router {
 	return &Router{
 		chain:         chain{},
 		typedHandlers: map[tg.UpdateType][]Handler{},
+		defaultHandler: HandlerFunc(func(ctx context.Context, update *Update) error {
+			return nil
+		}),
 	}
 }
 
@@ -40,7 +44,10 @@ func compactFilters(filters ...Filter) Filter {
 	return nil
 }
 
-var errFilterNoAllow = fmt.Errorf("filter does not allow update")
+var (
+	// ErrFilterNoAllow is returned when filter doesn't allow to handle Update.
+	ErrFilterNoAllow = fmt.Errorf("filter no allow")
+)
 
 func filterMiddleware(filter Filter) Middleware {
 	return MiddlewareFunc(func(next Handler) Handler {
@@ -58,7 +65,7 @@ func filterMiddleware(filter Filter) Middleware {
 				return next.Handle(ctx, update)
 			}
 
-			return errFilterNoAllow
+			return ErrFilterNoAllow
 		})
 	})
 }
@@ -172,6 +179,10 @@ func (bot *Router) Update(handler HandlerFunc, filters ...Filter) *Router {
 	return bot
 }
 
+func (bot *Router) getDefaultHandler() Handler {
+	return bot.chain.Then(bot.defaultHandler)
+}
+
 // Handle handles an Update.
 func (bot *Router) Handle(ctx context.Context, update *Update) error {
 	group := append([]Handler{}, bot.updateHandlers...)
@@ -181,9 +192,12 @@ func (bot *Router) Handle(ctx context.Context, update *Update) error {
 		group = append(group, typed...)
 	}
 
+	// If no handlers found, use default handler.
+	group = append(group, bot.getDefaultHandler())
+
 	for _, handler := range group {
 		err := handler.Handle(ctx, update)
-		if errors.Is(err, errFilterNoAllow) {
+		if errors.Is(err, ErrFilterNoAllow) {
 			continue
 		} else if err != nil && bot.errorHandler != nil {
 			return bot.errorHandler(ctx, update, err)
