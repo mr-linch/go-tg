@@ -20,8 +20,10 @@ package session
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
+	"sync"
 
 	"github.com/mr-linch/go-tg/tgb"
 )
@@ -91,6 +93,9 @@ type Manager[T comparable] struct {
 
 	encodeFunc func(v any) ([]byte, error)
 	decodeFunc func(d []byte, v any) error
+
+	cacheLock sync.RWMutex // protects cache
+	cache     map[int]*T   // cache for sessions in middleware context
 }
 
 func (manager *Manager[T]) setKeyFunc(keyFunc KeyFunc) {
@@ -123,6 +128,8 @@ func NewManager[T comparable](initial T, opts ...ManagerOption) *Manager[T] {
 
 		encodeFunc: json.Marshal,
 		decodeFunc: json.Unmarshal,
+
+		cache: make(map[int]*T),
 	}
 
 	for _, opt := range opts {
@@ -210,6 +217,26 @@ func (manager *Manager[T]) Filter(fn func(*T) bool) tgb.Filter {
 	})
 }
 
+func (manager *Manager[T]) cacheSaveSession(update *tgb.Update, session *T) {
+	manager.cacheLock.Lock()
+	manager.cache[update.ID] = session
+	manager.cacheLock.Unlock()
+}
+
+func (manager *Manager[T]) cacheGetSession(update *tgb.Update) *T {
+	manager.cacheLock.Lock()
+	session := manager.cache[update.ID]
+	manager.cacheLock.Unlock()
+
+	return session
+}
+
+func (manager *Manager[T]) cacheDelSession(update *tgb.Update) {
+	manager.cacheLock.Lock()
+	delete(manager.cache, update.ID)
+	manager.cacheLock.Unlock()
+}
+
 // Wrap allow use manager as [github.com/mr-linch/go-tg/tgb.Middleware].
 //
 // This middleware do following:
@@ -225,9 +252,27 @@ func (manager *Manager[T]) Wrap(next tgb.Handler) tgb.Handler {
 			return fmt.Errorf("can't get key from update")
 		}
 
-		session, err := manager.getSession(ctx, key)
-		if err != nil {
-			return fmt.Errorf("get session from store: %w", err)
+		// check if session exists in middleware cache
+		session := manager.cacheGetSession(update)
+
+		if session == nil {
+			var err error
+			session, err = manager.getSession(ctx, key)
+			if err != nil {
+				return fmt.Errorf("get session from store: %w", err)
+			}
+
+			// save session to middleware cache
+			manager.cacheSaveSession(update, session)
+
+			// for avoid memory leak on header panic,
+			// delete session from cache on panic catched
+			defer func() {
+				if err := recover(); err != nil {
+					manager.cacheDelSession(update)
+					panic(err)
+				}
+			}()
 		}
 
 		// copy session before passing to next handler,
@@ -237,8 +282,18 @@ func (manager *Manager[T]) Wrap(next tgb.Handler) tgb.Handler {
 		ctx = context.WithValue(ctx, sessionContextKey, session)
 
 		if err := next.Handle(ctx, update); err != nil {
+			// if error is not caused by filter no allow,
+			// delete session from middleware cache
+			if !errors.Is(err, tgb.ErrFilterNoAllow) {
+				manager.cacheDelSession(update)
+			}
+
 			return err
 		}
+
+		// delete session from middleware cache
+		// because handler is matched
+		manager.cacheDelSession(update)
 
 		// check if session changed and should be updated
 		if sessionBeforeHandle != *session {
