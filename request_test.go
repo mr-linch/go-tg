@@ -16,7 +16,7 @@ func TestNewRequest(t *testing.T) {
 	assert.Equal(t, "getMe", r.Method)
 }
 
-func TestRequestSetters(t *testing.T) {
+func TestRequest_Setters(t *testing.T) {
 	r := NewRequest("getMe")
 
 	r.JSON("foo", "bar")
@@ -94,6 +94,73 @@ func (encoder *testEncoder) WriteString(key, value string) error {
 func (encoder *testEncoder) WriteFile(key string, file InputFile) error {
 	encoder.fileKeys = append(encoder.fileKeys, key)
 	return nil
+}
+
+func TestRequest_Encode(t *testing.T) {
+	t.Run("JSONToArgsError", func(t *testing.T) {
+		r := NewRequest("sendFile")
+
+		obj := &JSONMarshalerMock{}
+
+		obj.On("MarshalJSON").Return(nil, errors.New("error"))
+
+		r.String("chat_id", "1")
+		r.JSON("object", obj)
+
+		encoder := &MockEncoder{}
+
+		err := r.Encode(encoder)
+		assert.Error(t, err)
+	})
+
+	t.Run("WriteFileError", func(t *testing.T) {
+		r := NewRequest("sendFile")
+
+		r.String("chat_id", "1")
+		r.File("file", NewFileArgUpload(NewInputFileBytes("file_name", []byte("file_content"))))
+
+		encoder := &MockEncoder{}
+
+		encoder.On("WriteFile", "file", mock.Anything).
+			Return(errors.New("error"))
+
+		err := r.Encode(encoder)
+
+		assert.Error(t, err)
+
+		encoder.AssertExpectations(t)
+	})
+
+	t.Run("WriteStringError", func(t *testing.T) {
+		r := NewRequest("sendFile")
+
+		r.String("chat_id", "1")
+
+		encoder := &MockEncoder{}
+
+		encoder.On("WriteString", "chat_id", "1").
+			Return(errors.New("error"))
+
+		err := r.Encode(encoder)
+
+		assert.Error(t, err)
+
+		encoder.AssertExpectations(t)
+	})
+}
+
+type MockEncoder struct {
+	mock.Mock
+}
+
+func (m *MockEncoder) WriteString(key, value string) error {
+	args := m.Called(key, value)
+	return args.Error(0)
+}
+
+func (m *MockEncoder) WriteFile(key string, file InputFile) error {
+	args := m.Called(key, file)
+	return args.Error(0)
 }
 
 type JSONMarshalerMock struct {

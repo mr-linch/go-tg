@@ -133,20 +133,20 @@ func (r *Request) jsonToArgs() error {
 // Encode request using encoder.
 func (r *Request) Encode(encoder Encoder) error {
 	if err := r.jsonToArgs(); err != nil {
-		return err
+		return fmt.Errorf("encode json to args: %w", err)
 	}
 
 	// add files
 	for k, v := range r.files {
 		if err := encoder.WriteFile(k, v); err != nil {
-			return err
+			return fmt.Errorf("encode file %s: %w", k, err)
 		}
 	}
 
 	// add arguments
 	for k, v := range r.args {
 		if err := encoder.WriteString(k, v); err != nil {
-			return err
+			return fmt.Errorf("encode argument %s: %w", k, err)
 		}
 	}
 
