@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+
+	"golang.org/x/exp/maps"
 )
 
 // Request is Telegram Bot API request structure.
@@ -116,15 +118,22 @@ func (r *Request) Stringer(name string, v fmt.Stringer) *Request {
 	return r.String(name, v.String())
 }
 
-// Encode request using encoder.
-func (r *Request) Encode(encoder Encoder) error {
-
+func (r *Request) jsonToArgs() error {
 	for k, jn := range r.json {
 		v, err := json.Marshal(jn)
 		if err != nil {
 			return fmt.Errorf("failed to marshal %s: %w", k, err)
 		}
 		r.args[k] = string(v)
+	}
+
+	return nil
+}
+
+// Encode request using encoder.
+func (r *Request) Encode(encoder Encoder) error {
+	if err := r.jsonToArgs(); err != nil {
+		return err
 	}
 
 	// add files
@@ -142,4 +151,21 @@ func (r *Request) Encode(encoder Encoder) error {
 	}
 
 	return nil
+}
+
+func (req *Request) MarshalJSON() ([]byte, error) {
+	if err := req.jsonToArgs(); err != nil {
+		return nil, fmt.Errorf("marshal json to args: %w", err)
+	}
+
+	if len(req.files) > 0 {
+		return nil, fmt.Errorf("files are not supported in JSON requests")
+	}
+
+	args := make(map[string]string, len(req.args)+1)
+
+	args["method"] = req.Method
+	maps.Copy(args, req.args)
+
+	return json.Marshal(args)
 }

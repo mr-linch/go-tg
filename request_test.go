@@ -1,6 +1,7 @@
 package tg
 
 import (
+	"encoding/json"
 	"sort"
 	"testing"
 
@@ -91,4 +92,32 @@ func (encoder *testEncoder) WriteString(key, value string) error {
 func (encoder *testEncoder) WriteFile(key string, file InputFile) error {
 	encoder.fileKeys = append(encoder.fileKeys, key)
 	return nil
+}
+
+func TestRequest_MarshalJSON(t *testing.T) {
+	t.Run("OK", func(t *testing.T) {
+
+		r := NewRequest("sendMessage")
+
+		r.String("chat_id", "1")
+		r.JSON("object", struct {
+			Key string
+		}{
+			Key: "value",
+		})
+
+		v, err := json.Marshal(r)
+		assert.NoError(t, err)
+		assert.Equal(t, `{"chat_id":"1","method":"sendMessage","object":"{\"Key\":\"value\"}"}`, string(v))
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		r := NewRequest("sendFile")
+
+		r.String("chat_id", "1")
+		r.File("file", NewFileArgUpload(NewInputFileBytes("file_name", []byte("file_content"))))
+
+		_, err := json.Marshal(r)
+		assert.Error(t, err)
+	})
 }
