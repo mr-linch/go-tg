@@ -2,7 +2,7 @@ package session
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -54,7 +54,7 @@ func TestStoreFile_Set(t *testing.T) {
 	assert.NoError(t, err)
 	defer f.Close()
 
-	b, err := ioutil.ReadAll(f)
+	b, err := io.ReadAll(f)
 	assert.NoError(t, err)
 	assert.Equal(t, []byte("value"), b)
 }
