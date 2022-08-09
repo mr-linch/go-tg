@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/mr-linch/go-tg"
@@ -196,6 +197,10 @@ func TestManager_Wrap(t *testing.T) {
 			Session{Counter: 1},
 			WithStore(store),
 		)
+
+		manager.SetEqualFunc(func(a, b Session) bool {
+			return reflect.DeepEqual(a, b)
+		})
 
 		handler := manager.Wrap(tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
 			session := manager.Get(ctx)
