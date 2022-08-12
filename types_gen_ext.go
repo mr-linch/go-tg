@@ -1196,7 +1196,7 @@ const (
 
 // String returns string representation of MessageEntityType.
 func (met MessageEntityType) String() string {
-	if met > MessageEntityTypeUnknown && met <= MessageEntityTypeTextMention {
+	if met > MessageEntityTypeUnknown && met <= MessageEntityCustomEmoji {
 		return [...]string{
 			"mention",
 			"hashtag",
