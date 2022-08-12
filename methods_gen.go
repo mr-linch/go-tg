@@ -5,7 +5,7 @@ package tg
 
 // GetUpdatesCall reprenesents a call to the getUpdates method.
 // Use this method to receive incoming updates using long polling (wiki)
-// An Array of Update objects is returned.
+// Returns an Array of Update objects.
 type GetUpdatesCall struct {
 	Call[[]Update]
 }
@@ -330,7 +330,7 @@ func (call *SendMessageCall) ReplyToMessageID(replyToMessageID int) *SendMessage
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendMessageCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendMessageCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -406,6 +406,7 @@ func (call *ForwardMessageCall) MessageID(messageID int) *ForwardMessageCall {
 // CopyMessageCall reprenesents a call to the copyMessage method.
 // Use this method to copy messages of any kind
 // Service messages and invoice messages can't be copied
+// A quiz poll can be copied only if the value of the field correct_option_id is known to the bot
 // The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message
 // Returns the MessageId of the sent message on success.
 type CopyMessageCall struct {
@@ -489,7 +490,7 @@ func (call *CopyMessageCall) ReplyToMessageID(replyToMessageID int) *CopyMessage
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *CopyMessageCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *CopyMessageCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -577,7 +578,7 @@ func (call *SendPhotoCall) ReplyToMessageID(replyToMessageID int) *SendPhotoCall
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendPhotoCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendPhotoCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -692,7 +693,7 @@ func (call *SendAudioCall) ReplyToMessageID(replyToMessageID int) *SendAudioCall
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendAudioCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendAudioCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -793,7 +794,7 @@ func (call *SendDocumentCall) ReplyToMessageID(replyToMessageID int) *SendDocume
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendDocumentCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendDocumentCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -888,7 +889,7 @@ func (call *SendVideoCall) CaptionEntities(captionEntities []MessageEntity) *Sen
 	return call
 }
 
-// SupportsStreaming Pass True, if the uploaded video is suitable for streaming
+// SupportsStreaming Pass True if the uploaded video is suitable for streaming
 func (call *SendVideoCall) SupportsStreaming(supportsStreaming bool) *SendVideoCall {
 	call.request.Bool("supports_streaming", supportsStreaming)
 	return call
@@ -912,7 +913,7 @@ func (call *SendVideoCall) ReplyToMessageID(replyToMessageID int) *SendVideoCall
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendVideoCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendVideoCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1025,7 +1026,7 @@ func (call *SendAnimationCall) ReplyToMessageID(replyToMessageID int) *SendAnima
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendAnimationCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendAnimationCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1121,7 +1122,7 @@ func (call *SendVoiceCall) ReplyToMessageID(replyToMessageID int) *SendVoiceCall
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendVoiceCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendVoiceCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1210,7 +1211,7 @@ func (call *SendVideoNoteCall) ReplyToMessageID(replyToMessageID int) *SendVideo
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendVideoNoteCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendVideoNoteCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1281,7 +1282,7 @@ func (call *SendMediaGroupCall) ReplyToMessageID(replyToMessageID int) *SendMedi
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendMediaGroupCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendMediaGroupCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1377,7 +1378,7 @@ func (call *SendLocationCall) ReplyToMessageID(replyToMessageID int) *SendLocati
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendLocationCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendLocationCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1668,7 +1669,7 @@ func (call *SendVenueCall) ReplyToMessageID(replyToMessageID int) *SendVenueCall
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendVenueCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendVenueCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1758,7 +1759,7 @@ func (call *SendContactCall) ReplyToMessageID(replyToMessageID int) *SendContact
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendContactCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendContactCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1872,7 +1873,7 @@ func (call *SendPollCall) CloseDate(closeDate int) *SendPollCall {
 	return call
 }
 
-// IsClosed Pass True, if the poll needs to be immediately closed. This can be useful for poll preview.
+// IsClosed Pass True if the poll needs to be immediately closed. This can be useful for poll preview.
 func (call *SendPollCall) IsClosed(isClosed bool) *SendPollCall {
 	call.request.Bool("is_closed", isClosed)
 	return call
@@ -1896,7 +1897,7 @@ func (call *SendPollCall) ReplyToMessageID(replyToMessageID int) *SendPollCall {
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendPollCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendPollCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -1964,7 +1965,7 @@ func (call *SendDiceCall) ReplyToMessageID(replyToMessageID int) *SendDiceCall {
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendDiceCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendDiceCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -2299,67 +2300,67 @@ func (call *PromoteChatMemberCall) UserID(userID UserID) *PromoteChatMemberCall 
 	return call
 }
 
-// IsAnonymous Pass True, if the administrator's presence in the chat is hidden
+// IsAnonymous Pass True if the administrator's presence in the chat is hidden
 func (call *PromoteChatMemberCall) IsAnonymous(isAnonymous bool) *PromoteChatMemberCall {
 	call.request.Bool("is_anonymous", isAnonymous)
 	return call
 }
 
-// CanManageChat Pass True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+// CanManageChat Pass True if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
 func (call *PromoteChatMemberCall) CanManageChat(canManageChat bool) *PromoteChatMemberCall {
 	call.request.Bool("can_manage_chat", canManageChat)
 	return call
 }
 
-// CanPostMessages Pass True, if the administrator can create channel posts, channels only
+// CanPostMessages Pass True if the administrator can create channel posts, channels only
 func (call *PromoteChatMemberCall) CanPostMessages(canPostMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_post_messages", canPostMessages)
 	return call
 }
 
-// CanEditMessages Pass True, if the administrator can edit messages of other users and can pin messages, channels only
+// CanEditMessages Pass True if the administrator can edit messages of other users and can pin messages, channels only
 func (call *PromoteChatMemberCall) CanEditMessages(canEditMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_edit_messages", canEditMessages)
 	return call
 }
 
-// CanDeleteMessages Pass True, if the administrator can delete messages of other users
+// CanDeleteMessages Pass True if the administrator can delete messages of other users
 func (call *PromoteChatMemberCall) CanDeleteMessages(canDeleteMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_delete_messages", canDeleteMessages)
 	return call
 }
 
-// CanManageVideoChats Pass True, if the administrator can manage video chats
+// CanManageVideoChats Pass True if the administrator can manage video chats
 func (call *PromoteChatMemberCall) CanManageVideoChats(canManageVideoChats bool) *PromoteChatMemberCall {
 	call.request.Bool("can_manage_video_chats", canManageVideoChats)
 	return call
 }
 
-// CanRestrictMembers Pass True, if the administrator can restrict, ban or unban chat members
+// CanRestrictMembers Pass True if the administrator can restrict, ban or unban chat members
 func (call *PromoteChatMemberCall) CanRestrictMembers(canRestrictMembers bool) *PromoteChatMemberCall {
 	call.request.Bool("can_restrict_members", canRestrictMembers)
 	return call
 }
 
-// CanPromoteMembers Pass True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
+// CanPromoteMembers Pass True if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
 func (call *PromoteChatMemberCall) CanPromoteMembers(canPromoteMembers bool) *PromoteChatMemberCall {
 	call.request.Bool("can_promote_members", canPromoteMembers)
 	return call
 }
 
-// CanChangeInfo Pass True, if the administrator can change chat title, photo and other settings
+// CanChangeInfo Pass True if the administrator can change chat title, photo and other settings
 func (call *PromoteChatMemberCall) CanChangeInfo(canChangeInfo bool) *PromoteChatMemberCall {
 	call.request.Bool("can_change_info", canChangeInfo)
 	return call
 }
 
-// CanInviteUsers Pass True, if the administrator can invite new users to the chat
+// CanInviteUsers Pass True if the administrator can invite new users to the chat
 func (call *PromoteChatMemberCall) CanInviteUsers(canInviteUsers bool) *PromoteChatMemberCall {
 	call.request.Bool("can_invite_users", canInviteUsers)
 	return call
 }
 
-// CanPinMessages Pass True, if the administrator can pin messages, supergroups only
+// CanPinMessages Pass True if the administrator can pin messages, supergroups only
 func (call *PromoteChatMemberCall) CanPinMessages(canPinMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_pin_messages", canPinMessages)
 	return call
@@ -3004,7 +3005,7 @@ func (call *PinChatMessageCall) MessageID(messageID int) *PinChatMessageCall {
 	return call
 }
 
-// DisableNotification Pass True, if it is not necessary to send a notification to all chat members about the new pinned message. Notifications are always disabled in channels and private chats.
+// DisableNotification Pass True if it is not necessary to send a notification to all chat members about the new pinned message. Notifications are always disabled in channels and private chats.
 func (call *PinChatMessageCall) DisableNotification(disableNotification bool) *PinChatMessageCall {
 	call.request.Bool("disable_notification", disableNotification)
 	return call
@@ -3144,9 +3145,8 @@ func (call *GetChatCall) ChatID(chatID PeerID) *GetChatCall {
 }
 
 // GetChatAdministratorsCall reprenesents a call to the getChatAdministrators method.
-// Use this method to get a list of administrators in a chat
-// On success, returns an Array of ChatMember objects that contains information about all chat administrators except other bots
-// If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
+// Use this method to get a list of administrators in a chat, which aren't bots
+// Returns an Array of ChatMember objects.
 type GetChatAdministratorsCall struct {
 	Call[[]ChatMember]
 }
@@ -3464,7 +3464,7 @@ func (call *DeleteMyCommandsCall) LanguageCode(languageCode string) *DeleteMyCom
 
 // GetMyCommandsCall reprenesents a call to the getMyCommands method.
 // Use this method to get the current list of the bot's commands for the given scope and user language
-// Returns Array of BotCommand on success
+// Returns an Array of BotCommand objects
 // If commands aren't set, an empty list is returned.
 type GetMyCommandsCall struct {
 	Call[[]BotCommand]
@@ -4093,7 +4093,7 @@ func (call *SendStickerCall) ReplyToMessageID(replyToMessageID int) *SendSticker
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendStickerCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendStickerCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -4134,6 +4134,38 @@ func (client *Client) GetStickerSet(name string) *GetStickerSetCall {
 // Name Name of the sticker set
 func (call *GetStickerSetCall) Name(name string) *GetStickerSetCall {
 	call.request.String("name", name)
+	return call
+}
+
+// GetCustomEmojiStickersCall reprenesents a call to the getCustomEmojiStickers method.
+// Use this method to get information about custom emoji stickers by their identifiers
+// Returns an Array of Sticker objects.
+type GetCustomEmojiStickersCall struct {
+	Call[[]Sticker]
+}
+
+// NewGetCustomEmojiStickersCall constructs a new GetCustomEmojiStickersCall with required parameters.
+// customEmojiIds - List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
+func NewGetCustomEmojiStickersCall(customEmojiIds []string) *GetCustomEmojiStickersCall {
+	return &GetCustomEmojiStickersCall{
+		Call[[]Sticker]{
+			request: NewRequest("getCustomEmojiStickers").
+				JSON("custom_emoji_ids", customEmojiIds),
+		},
+	}
+}
+
+// GetCustomEmojiStickersCall constructs a new GetCustomEmojiStickersCall with required parameters.
+func (client *Client) GetCustomEmojiStickers(customEmojiIds []string) *GetCustomEmojiStickersCall {
+	return BindClient(
+		NewGetCustomEmojiStickersCall(customEmojiIds),
+		client,
+	)
+}
+
+// CustomEmojiIds List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
+func (call *GetCustomEmojiStickersCall) CustomEmojiIds(customEmojiIds []string) *GetCustomEmojiStickersCall {
+	call.request.JSON("custom_emoji_ids", customEmojiIds)
 	return call
 }
 
@@ -4246,15 +4278,15 @@ func (call *CreateNewStickerSetCall) WEBMSticker(webmSticker InputFile) *CreateN
 	return call
 }
 
-// Emojis One or more emoji corresponding to the sticker
-func (call *CreateNewStickerSetCall) Emojis(emojis string) *CreateNewStickerSetCall {
-	call.request.String("emojis", emojis)
+// StickerType Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API at the moment. By default, a regular sticker set is created.
+func (call *CreateNewStickerSetCall) StickerType(stickerType string) *CreateNewStickerSetCall {
+	call.request.String("sticker_type", stickerType)
 	return call
 }
 
-// ContainsMasks Pass True, if a set of mask stickers should be created
-func (call *CreateNewStickerSetCall) ContainsMasks(containsMasks bool) *CreateNewStickerSetCall {
-	call.request.Bool("contains_masks", containsMasks)
+// Emojis One or more emoji corresponding to the sticker
+func (call *CreateNewStickerSetCall) Emojis(emojis string) *CreateNewStickerSetCall {
+	call.request.String("emojis", emojis)
 	return call
 }
 
@@ -4502,7 +4534,7 @@ func (call *AnswerInlineQueryCall) CacheTime(cacheTime int) *AnswerInlineQueryCa
 	return call
 }
 
-// IsPersonal Pass True, if results may be cached on the server side only for the user that sent the query. By default, results may be returned to any user who sends the same query
+// IsPersonal Pass True if results may be cached on the server side only for the user that sent the query. By default, results may be returned to any user who sends the same query
 func (call *AnswerInlineQueryCall) IsPersonal(isPersonal bool) *AnswerInlineQueryCall {
 	call.request.Bool("is_personal", isPersonal)
 	return call
@@ -4694,43 +4726,43 @@ func (call *SendInvoiceCall) PhotoHeight(photoHeight int) *SendInvoiceCall {
 	return call
 }
 
-// NeedName Pass True, if you require the user's full name to complete the order
+// NeedName Pass True if you require the user's full name to complete the order
 func (call *SendInvoiceCall) NeedName(needName bool) *SendInvoiceCall {
 	call.request.Bool("need_name", needName)
 	return call
 }
 
-// NeedPhoneNumber Pass True, if you require the user's phone number to complete the order
+// NeedPhoneNumber Pass True if you require the user's phone number to complete the order
 func (call *SendInvoiceCall) NeedPhoneNumber(needPhoneNumber bool) *SendInvoiceCall {
 	call.request.Bool("need_phone_number", needPhoneNumber)
 	return call
 }
 
-// NeedEmail Pass True, if you require the user's email address to complete the order
+// NeedEmail Pass True if you require the user's email address to complete the order
 func (call *SendInvoiceCall) NeedEmail(needEmail bool) *SendInvoiceCall {
 	call.request.Bool("need_email", needEmail)
 	return call
 }
 
-// NeedShippingAddress Pass True, if you require the user's shipping address to complete the order
+// NeedShippingAddress Pass True if you require the user's shipping address to complete the order
 func (call *SendInvoiceCall) NeedShippingAddress(needShippingAddress bool) *SendInvoiceCall {
 	call.request.Bool("need_shipping_address", needShippingAddress)
 	return call
 }
 
-// SendPhoneNumberToProvider Pass True, if the user's phone number should be sent to provider
+// SendPhoneNumberToProvider Pass True if the user's phone number should be sent to provider
 func (call *SendInvoiceCall) SendPhoneNumberToProvider(sendPhoneNumberToProvider bool) *SendInvoiceCall {
 	call.request.Bool("send_phone_number_to_provider", sendPhoneNumberToProvider)
 	return call
 }
 
-// SendEmailToProvider Pass True, if the user's email address should be sent to provider
+// SendEmailToProvider Pass True if the user's email address should be sent to provider
 func (call *SendInvoiceCall) SendEmailToProvider(sendEmailToProvider bool) *SendInvoiceCall {
 	call.request.Bool("send_email_to_provider", sendEmailToProvider)
 	return call
 }
 
-// IsFlexible Pass True, if the final price depends on the shipping method
+// IsFlexible Pass True if the final price depends on the shipping method
 func (call *SendInvoiceCall) IsFlexible(isFlexible bool) *SendInvoiceCall {
 	call.request.Bool("is_flexible", isFlexible)
 	return call
@@ -4754,7 +4786,7 @@ func (call *SendInvoiceCall) ReplyToMessageID(replyToMessageID int) *SendInvoice
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendInvoiceCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendInvoiceCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -4880,43 +4912,43 @@ func (call *CreateInvoiceLinkCall) PhotoHeight(photoHeight int) *CreateInvoiceLi
 	return call
 }
 
-// NeedName Pass True, if you require the user's full name to complete the order
+// NeedName Pass True if you require the user's full name to complete the order
 func (call *CreateInvoiceLinkCall) NeedName(needName bool) *CreateInvoiceLinkCall {
 	call.request.Bool("need_name", needName)
 	return call
 }
 
-// NeedPhoneNumber Pass True, if you require the user's phone number to complete the order
+// NeedPhoneNumber Pass True if you require the user's phone number to complete the order
 func (call *CreateInvoiceLinkCall) NeedPhoneNumber(needPhoneNumber bool) *CreateInvoiceLinkCall {
 	call.request.Bool("need_phone_number", needPhoneNumber)
 	return call
 }
 
-// NeedEmail Pass True, if you require the user's email address to complete the order
+// NeedEmail Pass True if you require the user's email address to complete the order
 func (call *CreateInvoiceLinkCall) NeedEmail(needEmail bool) *CreateInvoiceLinkCall {
 	call.request.Bool("need_email", needEmail)
 	return call
 }
 
-// NeedShippingAddress Pass True, if you require the user's shipping address to complete the order
+// NeedShippingAddress Pass True if you require the user's shipping address to complete the order
 func (call *CreateInvoiceLinkCall) NeedShippingAddress(needShippingAddress bool) *CreateInvoiceLinkCall {
 	call.request.Bool("need_shipping_address", needShippingAddress)
 	return call
 }
 
-// SendPhoneNumberToProvider Pass True, if the user's phone number should be sent to the provider
+// SendPhoneNumberToProvider Pass True if the user's phone number should be sent to the provider
 func (call *CreateInvoiceLinkCall) SendPhoneNumberToProvider(sendPhoneNumberToProvider bool) *CreateInvoiceLinkCall {
 	call.request.Bool("send_phone_number_to_provider", sendPhoneNumberToProvider)
 	return call
 }
 
-// SendEmailToProvider Pass True, if the user's email address should be sent to the provider
+// SendEmailToProvider Pass True if the user's email address should be sent to the provider
 func (call *CreateInvoiceLinkCall) SendEmailToProvider(sendEmailToProvider bool) *CreateInvoiceLinkCall {
 	call.request.Bool("send_email_to_provider", sendEmailToProvider)
 	return call
 }
 
-// IsFlexible Pass True, if the final price depends on the shipping method
+// IsFlexible Pass True if the final price depends on the shipping method
 func (call *CreateInvoiceLinkCall) IsFlexible(isFlexible bool) *CreateInvoiceLinkCall {
 	call.request.Bool("is_flexible", isFlexible)
 	return call
@@ -4932,7 +4964,7 @@ type AnswerShippingQueryCall struct {
 
 // NewAnswerShippingQueryCall constructs a new AnswerShippingQueryCall with required parameters.
 // shippingQueryID - Unique identifier for the query to be answered
-// ok - Specify True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
+// ok - Pass True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
 func NewAnswerShippingQueryCall(shippingQueryID string, ok bool) *AnswerShippingQueryCall {
 	return &AnswerShippingQueryCall{
 		CallNoResult{
@@ -4957,7 +4989,7 @@ func (call *AnswerShippingQueryCall) ShippingQueryID(shippingQueryID string) *An
 	return call
 }
 
-// Ok Specify True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
+// Ok Pass True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
 func (call *AnswerShippingQueryCall) Ok(ok bool) *AnswerShippingQueryCall {
 	call.request.Bool("ok", ok)
 	return call
@@ -5124,7 +5156,7 @@ func (call *SendGameCall) ReplyToMessageID(replyToMessageID int) *SendGameCall {
 	return call
 }
 
-// AllowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to message is not found
+// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
 func (call *SendGameCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendGameCall {
 	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
 	return call
@@ -5177,13 +5209,13 @@ func (call *SetGameScoreCall) Score(score int) *SetGameScoreCall {
 	return call
 }
 
-// Force Pass True, if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters
+// Force Pass True if the high score is allowed to decrease. This can be useful when fixing mistakes or banning cheaters
 func (call *SetGameScoreCall) Force(force bool) *SetGameScoreCall {
 	call.request.Bool("force", force)
 	return call
 }
 
-// DisableEditMessage Pass True, if the game message should not be automatically edited to include the current scoreboard
+// DisableEditMessage Pass True if the game message should not be automatically edited to include the current scoreboard
 func (call *SetGameScoreCall) DisableEditMessage(disableEditMessage bool) *SetGameScoreCall {
 	call.request.Bool("disable_edit_message", disableEditMessage)
 	return call
@@ -5210,19 +5242,19 @@ func (call *SetGameScoreCall) InlineMessageID(inlineMessageID string) *SetGameSc
 // GetGameHighScoresCall reprenesents a call to the getGameHighScores method.
 // Use this method to get data for high score tables
 // Will return the score of the specified user and several of their neighbors in a game
-// On success, returns an Array of GameHighScore objects.
+// Returns an Array of GameHighScore objects.
 // This method will currently return scores for the target user, plus two of their closest neighbors on each side
 // Will also return the top three users if the user and their neighbors are not among them
 // Please note that this behavior is subject to change.
 type GetGameHighScoresCall struct {
-	Call[GameHighScore]
+	Call[[]GameHighScore]
 }
 
 // NewGetGameHighScoresCall constructs a new GetGameHighScoresCall with required parameters.
 // userID - Target user id
 func NewGetGameHighScoresCall(userID UserID) *GetGameHighScoresCall {
 	return &GetGameHighScoresCall{
-		Call[GameHighScore]{
+		Call[[]GameHighScore]{
 			request: NewRequest("getGameHighScores").
 				UserID("user_id", userID),
 		},
