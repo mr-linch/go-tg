@@ -987,6 +987,7 @@ func TestMessageEntityType_UnmarshalText(t *testing.T) {
 		{"pre", MessageEntityTypePre, false},
 		{"text_link", MessageEntityTypeTextLink, false},
 		{"text_mention", MessageEntityTypeTextMention, false},
+		{"custom_emoji", MessageEntityCustomEmoji, false},
 	} {
 		var e MessageEntityType
 
