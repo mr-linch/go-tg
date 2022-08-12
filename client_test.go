@@ -3,7 +3,7 @@ package tg
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -42,7 +42,7 @@ func TestClient_Download(t *testing.T) {
 		assert.NoError(t, err)
 		defer body.Close()
 
-		data, err := ioutil.ReadAll(body)
+		data, err := io.ReadAll(body)
 		assert.NoError(t, err)
 		assert.Equal(t, "test", string(data))
 

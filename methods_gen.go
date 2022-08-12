@@ -4279,8 +4279,8 @@ func (call *CreateNewStickerSetCall) WEBMSticker(webmSticker InputFile) *CreateN
 }
 
 // StickerType Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API at the moment. By default, a regular sticker set is created.
-func (call *CreateNewStickerSetCall) StickerType(stickerType string) *CreateNewStickerSetCall {
-	call.request.String("sticker_type", stickerType)
+func (call *CreateNewStickerSetCall) StickerType(stickerType StickerType) *CreateNewStickerSetCall {
+	call.request.Stringer("sticker_type", stickerType)
 	return call
 }
 

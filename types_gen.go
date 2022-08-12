@@ -1468,7 +1468,7 @@ type Sticker struct {
 	FileUniqueID string `json:"file_unique_id"`
 
 	// Type of the sticker, currently one of “regular”, “mask”, “custom_emoji”. The type of the sticker is independent from its format, which is determined by the fields is_animated and is_video.
-	Type string `json:"type"`
+	Type StickerType `json:"type"`
 
 	// Sticker width
 	Width int `json:"width"`
@@ -1513,7 +1513,7 @@ type StickerSet struct {
 	Title string `json:"title"`
 
 	// Type of stickers in the set, currently one of “regular”, “mask”, “custom_emoji”
-	StickerType string `json:"sticker_type"`
+	StickerType StickerType `json:"sticker_type"`
 
 	// True, if the sticker set contains animated stickers
 	IsAnimated bool `json:"is_animated"`

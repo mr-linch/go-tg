@@ -215,10 +215,10 @@ type CallbackGame struct{}
 // ReplyMarkup generic for keyboards.
 //
 // Known implementations:
-//  - [ReplyKeyboardMarkup]
-//  - [InlineKeyboardMarkup]
-//  - [ReplyKeyboardRemove]
-//  - [ForceReply]
+//   - [ReplyKeyboardMarkup]
+//   - [InlineKeyboardMarkup]
+//   - [ReplyKeyboardRemove]
+//   - [ForceReply]
 type ReplyMarkup interface {
 	isReplyMarkup()
 }
@@ -271,7 +271,9 @@ func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginURL) InlineKeybo
 }
 
 // NewInlineKeyboardButtonSwitchInlineQuery represents button that
-//  will prompt the user to select one of their chats,
+//
+//	will prompt the user to select one of their chats,
+//
 // open that chat and insert the bot's username and the specified inline query in the input field.
 func NewInlineKeyboardButtonSwitchInlineQuery(text string, query string) InlineKeyboardButton {
 	return InlineKeyboardButton{
@@ -692,11 +694,11 @@ func (result InlineQueryResultVenue) MarshalJSON() ([]byte, error) {
 // InputMessageContent it's generic interface for all types of input message content.
 //
 // Known implementations:
-//  - [InputTextMessageContent]
-//  - [InputLocationMessageContent]
-//  - [InputVenueMessageContent]
-//  - [InputContactMessageContent]
-//  - [InputInvoiceMessageContent]
+//   - [InputTextMessageContent]
+//   - [InputLocationMessageContent]
+//   - [InputVenueMessageContent]
+//   - [InputContactMessageContent]
+//   - [InputInvoiceMessageContent]
 type InputMessageContent interface {
 	isInputMessageContent()
 }
@@ -1187,6 +1189,9 @@ const (
 
 	// for users without usernames
 	MessageEntityTypeTextMention
+
+	// for inline custom emoji sticker
+	MessageEntityCustomEmoji
 )
 
 // String returns string representation of MessageEntityType.
@@ -1209,6 +1214,7 @@ func (met MessageEntityType) String() string {
 			"pre",
 			"text_link",
 			"text_mention",
+			"custom_emoji",
 		}[met-1]
 	}
 
@@ -1259,6 +1265,8 @@ func (met *MessageEntityType) UnmarshalText(v []byte) error {
 		*met = MessageEntityTypeTextLink
 	case "text_mention":
 		*met = MessageEntityTypeTextMention
+	case "custom_emoji":
+		*met = MessageEntityCustomEmoji
 	default:
 		return fmt.Errorf("unknown message entity type")
 	}
@@ -1269,4 +1277,46 @@ func (met *MessageEntityType) UnmarshalText(v []byte) error {
 // Extract entitie value from plain text.
 func (me MessageEntity) Extract(text string) string {
 	return string([]rune(text)[me.Offset : me.Offset+me.Length])
+}
+
+// StickerType it's type for describe content of Sticker.
+type StickerType int
+
+const (
+	StickerTypeUnknown StickerType = iota
+	StickerTypeRegular
+	StickerTypeMask
+	StickerTypeCustomEmoji
+)
+
+func (sticker StickerType) String() string {
+	switch sticker {
+	case StickerTypeRegular:
+		return "regular"
+	case StickerTypeMask:
+		return "mask"
+	case StickerTypeCustomEmoji:
+		return "custom_emoji"
+	default:
+		return "unknown"
+	}
+}
+
+func (sticker StickerType) MarshalText() ([]byte, error) {
+	return []byte(sticker.String()), nil
+}
+
+func (sticker *StickerType) UnmarshalText(v []byte) error {
+	switch string(v) {
+	case "regular":
+		*sticker = StickerTypeRegular
+	case "mask":
+		*sticker = StickerTypeMask
+	case "custom_emoji":
+		*sticker = StickerTypeCustomEmoji
+	default:
+		*sticker = StickerTypeUnknown
+	}
+
+	return nil
 }
