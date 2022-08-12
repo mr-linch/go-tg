@@ -923,6 +923,7 @@ func TestMessageEntityType_String(t *testing.T) {
 		{MessageEntityTypePre, "pre"},
 		{MessageEntityTypeTextLink, "text_link"},
 		{MessageEntityTypeTextMention, "text_mention"},
+		{MessageEntityCustomEmoji, "custom_emoji"},
 	} {
 		assert.Equal(t, test.Want, test.Type.String())
 	}
@@ -951,6 +952,7 @@ func TestMessageEntityType_MarshalText(t *testing.T) {
 		{MessageEntityTypePre, []byte("pre"), false},
 		{MessageEntityTypeTextLink, []byte("text_link"), false},
 		{MessageEntityTypeTextMention, []byte("text_mention"), false},
+		{MessageEntityCustomEmoji, []byte("custom_emoji"), false},
 	} {
 		b, err := test.Type.MarshalText()
 		if test.Err {
@@ -985,6 +987,7 @@ func TestMessageEntityType_UnmarshalText(t *testing.T) {
 		{"pre", MessageEntityTypePre, false},
 		{"text_link", MessageEntityTypeTextLink, false},
 		{"text_mention", MessageEntityTypeTextMention, false},
+		{"custom_emoji", MessageEntityCustomEmoji, false},
 	} {
 		var e MessageEntityType
 
@@ -1053,5 +1056,39 @@ func TestUpdate_Chat(t *testing.T) {
 		{&Update{ChatJoinRequest: &ChatJoinRequest{Chat: chat}}, &chat},
 	} {
 		assert.Equal(t, test.Chat, test.Update.Chat())
+	}
+}
+
+func TestStickerType_MarshalText(t *testing.T) {
+	for _, test := range []struct {
+		Type StickerType
+		Want string
+	}{
+		{StickerTypeUnknown, "unknown"},
+		{StickerTypeRegular, "regular"},
+		{StickerTypeMask, "mask"},
+		{StickerTypeCustomEmoji, "custom_emoji"},
+	} {
+		b, err := test.Type.MarshalText()
+		assert.NoError(t, err)
+		assert.Equal(t, test.Want, string(b))
+	}
+}
+
+func TestStickerType_UnmarshalText(t *testing.T) {
+	for _, test := range []struct {
+		Input string
+		Want  StickerType
+	}{
+		{"unknown", StickerTypeUnknown},
+		{"regular", StickerTypeRegular},
+		{"mask", StickerTypeMask},
+		{"custom_emoji", StickerTypeCustomEmoji},
+	} {
+		var e StickerType
+
+		err := e.UnmarshalText([]byte(test.Input))
+		assert.NoError(t, err)
+		assert.Equal(t, test.Want, e)
 	}
 }

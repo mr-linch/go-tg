@@ -150,6 +150,9 @@ type Chat struct {
 	// Optional. True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id> links only in chats with the user. Returned only in getChat.
 	HasPrivateForwards bool `json:"has_private_forwards,omitempty"`
 
+	// Optional. True, if the privacy settings of the other party restrict sending voice and video note messages in the private chat. Returned only in getChat.
+	HasRestrictedVoiceAndVideoMessages bool `json:"has_restricted_voice_and_video_messages,omitempty"`
+
 	// Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat.
 	JoinToSendMessages bool `json:"join_to_send_messages,omitempty"`
 
@@ -378,7 +381,7 @@ type MessageID struct {
 
 // MessageEntity this object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
 type MessageEntity struct {
-	// Type of the entity. Currently, can be “mention” (@username), “hashtag” (#hashtag), “cashtag” ($USD), “bot_command” (/start@jobs_bot), “url” (https://telegram.org), “email” (do-not-reply@telegram.org), “phone_number” (+1-212-555-0123), “bold” (bold text), “italic” (italic text), “underline” (underlined text), “strikethrough” (strikethrough text), “spoiler” (spoiler message), “code” (monowidth string), “pre” (monowidth block), “text_link” (for clickable text URLs), “text_mention” (for users without usernames)
+	// Type of the entity. Currently, can be “mention” (@username), “hashtag” (#hashtag), “cashtag” ($USD), “bot_command” (/start@jobs_bot), “url” (https://telegram.org), “email” (do-not-reply@telegram.org), “phone_number” (+1-212-555-0123), “bold” (bold text), “italic” (italic text), “underline” (underlined text), “strikethrough” (strikethrough text), “spoiler” (spoiler message), “code” (monowidth string), “pre” (monowidth block), “text_link” (for clickable text URLs), “text_mention” (for users without usernames), “custom_emoji” (for inline custom emoji stickers)
 	Type MessageEntityType `json:"type"`
 
 	// Offset in UTF-16 code units to the start of the entity
@@ -395,6 +398,9 @@ type MessageEntity struct {
 
 	// Optional. For “pre” only, the programming language of the entity text
 	Language string `json:"language,omitempty"`
+
+	// Optional. For “custom_emoji” only, unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker
+	CustomEmojiID string `json:"custom_emoji_id,omitempty"`
 }
 
 // PhotoSize this object represents one size of a photo or a file / sticker thumbnail.
@@ -1365,7 +1371,7 @@ type InputMediaVideo struct {
 	// Optional. Video duration in seconds
 	Duration int `json:"duration,omitempty"`
 
-	// Optional. Pass True, if the uploaded video is suitable for streaming
+	// Optional. Pass True if the uploaded video is suitable for streaming
 	SupportsStreaming bool `json:"supports_streaming,omitempty"`
 }
 
@@ -1461,6 +1467,9 @@ type Sticker struct {
 	// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
 	FileUniqueID string `json:"file_unique_id"`
 
+	// Type of the sticker, currently one of “regular”, “mask”, “custom_emoji”. The type of the sticker is independent from its format, which is determined by the fields is_animated and is_video.
+	Type StickerType `json:"type"`
+
 	// Sticker width
 	Width int `json:"width"`
 
@@ -1482,11 +1491,14 @@ type Sticker struct {
 	// Optional. Name of the sticker set to which the sticker belongs
 	SetName string `json:"set_name,omitempty"`
 
-	// Optional. Premium animation for the sticker, if the sticker is premium
+	// Optional. For premium regular stickers, premium animation for the sticker
 	PremiumAnimation *File `json:"premium_animation,omitempty"`
 
 	// Optional. For mask stickers, the position where the mask should be placed
 	MaskPosition *MaskPosition `json:"mask_position,omitempty"`
+
+	// Optional. For custom emoji stickers, unique identifier of the custom emoji
+	CustomEmojiID string `json:"custom_emoji_id,omitempty"`
 
 	// Optional. File size in bytes
 	FileSize int `json:"file_size,omitempty"`
@@ -1500,14 +1512,14 @@ type StickerSet struct {
 	// Sticker set title
 	Title string `json:"title"`
 
+	// Type of stickers in the set, currently one of “regular”, “mask”, “custom_emoji”
+	StickerType StickerType `json:"sticker_type"`
+
 	// True, if the sticker set contains animated stickers
 	IsAnimated bool `json:"is_animated"`
 
 	// True, if the sticker set contains video stickers
 	IsVideo bool `json:"is_video"`
-
-	// True, if the sticker set contains masks
-	ContainsMasks bool `json:"contains_masks"`
 
 	// List of all set stickers
 	Stickers []Sticker `json:"stickers"`
@@ -1572,7 +1584,7 @@ type InlineQueryResultArticle struct {
 	// Optional. URL of the result
 	URL string `json:"url,omitempty"`
 
-	// Optional. Pass True, if you don't want the URL to be shown in the message
+	// Optional. Pass True if you don't want the URL to be shown in the message
 	HideURL bool `json:"hide_url,omitempty"`
 
 	// Optional. Short description of the result
@@ -2379,25 +2391,25 @@ type InputInvoiceMessageContent struct {
 	// Optional. Photo height
 	PhotoHeight int `json:"photo_height,omitempty"`
 
-	// Optional. Pass True, if you require the user's full name to complete the order
+	// Optional. Pass True if you require the user's full name to complete the order
 	NeedName bool `json:"need_name,omitempty"`
 
-	// Optional. Pass True, if you require the user's phone number to complete the order
+	// Optional. Pass True if you require the user's phone number to complete the order
 	NeedPhoneNumber bool `json:"need_phone_number,omitempty"`
 
-	// Optional. Pass True, if you require the user's email address to complete the order
+	// Optional. Pass True if you require the user's email address to complete the order
 	NeedEmail bool `json:"need_email,omitempty"`
 
-	// Optional. Pass True, if you require the user's shipping address to complete the order
+	// Optional. Pass True if you require the user's shipping address to complete the order
 	NeedShippingAddress bool `json:"need_shipping_address,omitempty"`
 
-	// Optional. Pass True, if the user's phone number should be sent to provider
+	// Optional. Pass True if the user's phone number should be sent to provider
 	SendPhoneNumberToProvider bool `json:"send_phone_number_to_provider,omitempty"`
 
-	// Optional. Pass True, if the user's email address should be sent to provider
+	// Optional. Pass True if the user's email address should be sent to provider
 	SendEmailToProvider bool `json:"send_email_to_provider,omitempty"`
 
-	// Optional. Pass True, if the final price depends on the shipping method
+	// Optional. Pass True if the final price depends on the shipping method
 	IsFlexible bool `json:"is_flexible,omitempty"`
 }
 
@@ -2869,6 +2881,9 @@ type WebAppUser struct {
 
 	// Optional. IETF language tag of the user's language. Returns in user field only.
 	LanguageCode string `json:"language_code,omitempty"`
+
+	// Optional. True, if this user is a Telegram Premium user
+	IsPremium bool `json:"is_premium,omitempty"`
 
 	// Optional. URL of the user’s profile photo. The photo can be in .jpeg or .svg formats. Only returned for Web Apps launched from the attachment menu.
 	PhotoURL string `json:"photo_url,omitempty"`
