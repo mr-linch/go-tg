@@ -376,6 +376,55 @@ func TestRouter(t *testing.T) {
 		}
 	})
 
+	t.Run("Middleware group", func(t *testing.T) {
+		router := NewRouter()
+		ctx := context.Background()
+
+		isRouterMiddelwareCallled := false
+		isGroupMiddelwareCallled := false
+
+		router.Use(MiddlewareFunc(func(next Handler) Handler {
+			return HandlerFunc(func(ctx context.Context, update *Update) error {
+				isRouterMiddelwareCallled = true
+				return next.Handle(ctx, update)
+			})
+		}))
+		router.UseGroup(func(_ *Router) {
+			router.Message(func(_ context.Context, _ *MessageUpdate) error {
+				return nil
+			})
+		}, MiddlewareFunc(func(next Handler) Handler {
+			return HandlerFunc(func(ctx context.Context, update *Update) error {
+				isGroupMiddelwareCallled = true
+				return next.Handle(ctx, update)
+			})
+		}))
+
+		router.EditedMessage(func(ctx context.Context, msg *MessageUpdate) error {
+			return nil
+		})
+
+		err := router.Handle(ctx, &Update{Update: &tg.Update{
+			Message: &tg.Message{},
+		}})
+
+		assert.NoError(t, err)
+		assert.True(t, isRouterMiddelwareCallled, "router middleware should be called (group handler)")
+		assert.True(t, isGroupMiddelwareCallled, "router group handler should be called (group handler)")
+
+		isRouterMiddelwareCallled = false //reset
+		isGroupMiddelwareCallled = false  // reset
+
+		err = router.Handle(ctx, &Update{Update: &tg.Update{
+			EditedMessage: &tg.Message{},
+		}})
+
+		assert.NoError(t, err)
+		assert.True(t, isRouterMiddelwareCallled, "router middleware should be called (after group handler)")
+		assert.False(t, isGroupMiddelwareCallled, "router group handler should not be called (after group handler)")
+
+	})
+
 	t.Run("FilterNotAllow", func(t *testing.T) {
 		isPrivateChatHandlerCalled := false
 		isGroupChatHandlerCalled := false

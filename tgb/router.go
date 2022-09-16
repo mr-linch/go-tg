@@ -77,6 +77,15 @@ func (bot *Router) Use(mws ...Middleware) *Router {
 	return bot
 }
 
+func (bot *Router) UseGroup(group func(b *Router), mws ...Middleware) *Router {
+	originalChain := bot.chain
+	bot.chain = bot.chain.Append(mws...)
+	group(bot)
+	bot.chain = originalChain
+
+	return bot
+}
+
 func (bot *Router) register(typ tg.UpdateType, handler Handler, filters ...Filter) *Router {
 	filter := compactFilters(filters...)
 
