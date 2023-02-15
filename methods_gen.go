@@ -288,6 +288,12 @@ func (call *SendMessageCall) ChatID(chatID PeerID) *SendMessageCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendMessageCall) MessageThreadID(messageThreadID int) *SendMessageCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Text Text of the message to be sent, 1-4096 characters after entities parsing
 func (call *SendMessageCall) Text(text string) *SendMessageCall {
 	call.request.String("text", text)
@@ -379,6 +385,12 @@ func (call *ForwardMessageCall) ChatID(chatID PeerID) *ForwardMessageCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *ForwardMessageCall) MessageThreadID(messageThreadID int) *ForwardMessageCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // FromChatID Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
 func (call *ForwardMessageCall) FromChatID(fromChatID PeerID) *ForwardMessageCall {
 	call.request.PeerID("from_chat_id", fromChatID)
@@ -439,6 +451,12 @@ func (client *Client) CopyMessage(chatID PeerID, fromChatID PeerID, messageID in
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *CopyMessageCall) ChatID(chatID PeerID) *CopyMessageCall {
 	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *CopyMessageCall) MessageThreadID(messageThreadID int) *CopyMessageCall {
+	call.request.Int("message_thread_id", messageThreadID)
 	return call
 }
 
@@ -536,6 +554,12 @@ func (call *SendPhotoCall) ChatID(chatID PeerID) *SendPhotoCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendPhotoCall) MessageThreadID(messageThreadID int) *SendPhotoCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Photo Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More information on Sending Files »
 func (call *SendPhotoCall) Photo(photo FileArg) *SendPhotoCall {
 	call.request.File("photo", photo)
@@ -557,6 +581,12 @@ func (call *SendPhotoCall) ParseMode(parseMode ParseMode) *SendPhotoCall {
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
 func (call *SendPhotoCall) CaptionEntities(captionEntities []MessageEntity) *SendPhotoCall {
 	call.request.JSON("caption_entities", captionEntities)
+	return call
+}
+
+// HasSpoiler Pass True if the photo needs to be covered with a spoiler animation
+func (call *SendPhotoCall) HasSpoiler(hasSpoiler bool) *SendPhotoCall {
+	call.request.Bool("has_spoiler", hasSpoiler)
 	return call
 }
 
@@ -624,6 +654,12 @@ func (client *Client) SendAudio(chatID PeerID, audio FileArg) *SendAudioCall {
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendAudioCall) ChatID(chatID PeerID) *SendAudioCall {
 	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendAudioCall) MessageThreadID(messageThreadID int) *SendAudioCall {
+	call.request.Int("message_thread_id", messageThreadID)
 	return call
 }
 
@@ -740,6 +776,12 @@ func (call *SendDocumentCall) ChatID(chatID PeerID) *SendDocumentCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendDocumentCall) MessageThreadID(messageThreadID int) *SendDocumentCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Document File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func (call *SendDocumentCall) Document(document FileArg) *SendDocumentCall {
 	call.request.File("document", document)
@@ -841,6 +883,12 @@ func (call *SendVideoCall) ChatID(chatID PeerID) *SendVideoCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendVideoCall) MessageThreadID(messageThreadID int) *SendVideoCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Video Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More information on Sending Files »
 func (call *SendVideoCall) Video(video FileArg) *SendVideoCall {
 	call.request.File("video", video)
@@ -886,6 +934,12 @@ func (call *SendVideoCall) ParseMode(parseMode ParseMode) *SendVideoCall {
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
 func (call *SendVideoCall) CaptionEntities(captionEntities []MessageEntity) *SendVideoCall {
 	call.request.JSON("caption_entities", captionEntities)
+	return call
+}
+
+// HasSpoiler Pass True if the video needs to be covered with a spoiler animation
+func (call *SendVideoCall) HasSpoiler(hasSpoiler bool) *SendVideoCall {
+	call.request.Bool("has_spoiler", hasSpoiler)
 	return call
 }
 
@@ -960,6 +1014,12 @@ func (call *SendAnimationCall) ChatID(chatID PeerID) *SendAnimationCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendAnimationCall) MessageThreadID(messageThreadID int) *SendAnimationCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Animation Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More information on Sending Files »
 func (call *SendAnimationCall) Animation(animation FileArg) *SendAnimationCall {
 	call.request.File("animation", animation)
@@ -1005,6 +1065,12 @@ func (call *SendAnimationCall) ParseMode(parseMode ParseMode) *SendAnimationCall
 // CaptionEntities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
 func (call *SendAnimationCall) CaptionEntities(captionEntities []MessageEntity) *SendAnimationCall {
 	call.request.JSON("caption_entities", captionEntities)
+	return call
+}
+
+// HasSpoiler Pass True if the animation needs to be covered with a spoiler animation
+func (call *SendAnimationCall) HasSpoiler(hasSpoiler bool) *SendAnimationCall {
+	call.request.Bool("has_spoiler", hasSpoiler)
 	return call
 }
 
@@ -1071,6 +1137,12 @@ func (client *Client) SendVoice(chatID PeerID, voice FileArg) *SendVoiceCall {
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendVoiceCall) ChatID(chatID PeerID) *SendVoiceCall {
 	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendVoiceCall) MessageThreadID(messageThreadID int) *SendVoiceCall {
+	call.request.Int("message_thread_id", messageThreadID)
 	return call
 }
 
@@ -1169,6 +1241,12 @@ func (call *SendVideoNoteCall) ChatID(chatID PeerID) *SendVideoNoteCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendVideoNoteCall) MessageThreadID(messageThreadID int) *SendVideoNoteCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // VideoNote Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending video notes by a URL is currently unsupported
 func (call *SendVideoNoteCall) VideoNote(videoNote FileArg) *SendVideoNoteCall {
 	call.request.File("video_note", videoNote)
@@ -1258,6 +1336,12 @@ func (call *SendMediaGroupCall) ChatID(chatID PeerID) *SendMediaGroupCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendMediaGroupCall) MessageThreadID(messageThreadID int) *SendMediaGroupCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Media A JSON-serialized array describing messages to be sent, must include 2-10 items
 func (call *SendMediaGroupCall) Media(media []InputMedia) *SendMediaGroupCall {
 	call.request.InputMediaSlice("media", media)
@@ -1321,6 +1405,12 @@ func (client *Client) SendLocation(chatID PeerID, latitude float64, longitude fl
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendLocationCall) ChatID(chatID PeerID) *SendLocationCall {
 	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendLocationCall) MessageThreadID(messageThreadID int) *SendLocationCall {
+	call.request.Int("message_thread_id", messageThreadID)
 	return call
 }
 
@@ -1603,6 +1693,12 @@ func (call *SendVenueCall) ChatID(chatID PeerID) *SendVenueCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendVenueCall) MessageThreadID(messageThreadID int) *SendVenueCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Latitude Latitude of the venue
 func (call *SendVenueCall) Latitude(latitude float64) *SendVenueCall {
 	call.request.Float64("latitude", latitude)
@@ -1717,6 +1813,12 @@ func (call *SendContactCall) ChatID(chatID PeerID) *SendContactCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendContactCall) MessageThreadID(messageThreadID int) *SendContactCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // PhoneNumber Contact's phone number
 func (call *SendContactCall) PhoneNumber(phoneNumber string) *SendContactCall {
 	call.request.String("phone_number", phoneNumber)
@@ -1765,7 +1867,7 @@ func (call *SendContactCall) AllowSendingWithoutReply(allowSendingWithoutReply b
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 func (call *SendContactCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendContactCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1804,6 +1906,12 @@ func (client *Client) SendPoll(chatID PeerID, question string, options []string)
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendPollCall) ChatID(chatID PeerID) *SendPollCall {
 	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendPollCall) MessageThreadID(messageThreadID int) *SendPollCall {
+	call.request.Int("message_thread_id", messageThreadID)
 	return call
 }
 
@@ -1941,6 +2049,12 @@ func (call *SendDiceCall) ChatID(chatID PeerID) *SendDiceCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendDiceCall) MessageThreadID(messageThreadID int) *SendDiceCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Emoji Emoji on which the dice throw animation is based. Currently, must be one of “”, “”, “”, “”, “”, or “”. Dice can have values 1-6 for “”, “” and “”, values 1-5 for “” and “”, and values 1-64 for “”. Defaults to “”
 func (call *SendDiceCall) Emoji(emoji string) *SendDiceCall {
 	call.request.String("emoji", emoji)
@@ -2012,6 +2126,12 @@ func (client *Client) SendChatAction(chatID PeerID, action ChatAction) *SendChat
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendChatActionCall) ChatID(chatID PeerID) *SendChatActionCall {
 	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread; supergroups only
+func (call *SendChatActionCall) MessageThreadID(messageThreadID int) *SendChatActionCall {
+	call.request.Int("message_thread_id", messageThreadID)
 	return call
 }
 
@@ -2253,6 +2373,12 @@ func (call *RestrictChatMemberCall) Permissions(permissions ChatPermissions) *Re
 	return call
 }
 
+// UseIndependentChatPermissions Pass True if chat permissions are set independently. Otherwise, the can_send_other_messages and can_add_web_page_previews permissions will imply the can_send_messages, can_send_audios, can_send_documents, can_send_photos, can_send_videos, can_send_video_notes, and can_send_voice_notes permissions; the can_send_polls permission will imply the can_send_messages permission.
+func (call *RestrictChatMemberCall) UseIndependentChatPermissions(useIndependentChatPermissions bool) *RestrictChatMemberCall {
+	call.request.Bool("use_independent_chat_permissions", useIndependentChatPermissions)
+	return call
+}
+
 // UntilDate Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
 func (call *RestrictChatMemberCall) UntilDate(untilDate int) *RestrictChatMemberCall {
 	call.request.Int("until_date", untilDate)
@@ -2342,7 +2468,7 @@ func (call *PromoteChatMemberCall) CanRestrictMembers(canRestrictMembers bool) *
 	return call
 }
 
-// CanPromoteMembers Pass True if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
+// CanPromoteMembers Pass True if the administrator can add new administrators with a subset of their own privileges or demote administrators that they have promoted, directly or indirectly (promoted by administrators that were appointed by him)
 func (call *PromoteChatMemberCall) CanPromoteMembers(canPromoteMembers bool) *PromoteChatMemberCall {
 	call.request.Bool("can_promote_members", canPromoteMembers)
 	return call
@@ -2363,6 +2489,12 @@ func (call *PromoteChatMemberCall) CanInviteUsers(canInviteUsers bool) *PromoteC
 // CanPinMessages Pass True if the administrator can pin messages, supergroups only
 func (call *PromoteChatMemberCall) CanPinMessages(canPinMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_pin_messages", canPinMessages)
+	return call
+}
+
+// CanManageTopics Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
+func (call *PromoteChatMemberCall) CanManageTopics(canManageTopics bool) *PromoteChatMemberCall {
+	call.request.Bool("can_manage_topics", canManageTopics)
 	return call
 }
 
@@ -2531,6 +2663,12 @@ func (call *SetChatPermissionsCall) ChatID(chatID PeerID) *SetChatPermissionsCal
 // Permissions A JSON-serialized object for new default chat permissions
 func (call *SetChatPermissionsCall) Permissions(permissions ChatPermissions) *SetChatPermissionsCall {
 	call.request.JSON("permissions", permissions)
+	return call
+}
+
+// UseIndependentChatPermissions Pass True if chat permissions are set independently. Otherwise, the can_send_other_messages and can_add_web_page_previews permissions will imply the can_send_messages, can_send_audios, can_send_documents, can_send_photos, can_send_videos, can_send_video_notes, and can_send_voice_notes permissions; the can_send_polls permission will imply the can_send_messages permission.
+func (call *SetChatPermissionsCall) UseIndependentChatPermissions(useIndependentChatPermissions bool) *SetChatPermissionsCall {
+	call.request.Bool("use_independent_chat_permissions", useIndependentChatPermissions)
 	return call
 }
 
@@ -2896,7 +3034,7 @@ type SetChatTitleCall struct {
 
 // NewSetChatTitleCall constructs a new SetChatTitleCall with required parameters.
 // chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// title - New chat title, 1-255 characters
+// title - New chat title, 1-128 characters
 func NewSetChatTitleCall(chatID PeerID, title string) *SetChatTitleCall {
 	return &SetChatTitleCall{
 		CallNoResult{
@@ -2921,7 +3059,7 @@ func (call *SetChatTitleCall) ChatID(chatID PeerID) *SetChatTitleCall {
 	return call
 }
 
-// Title New chat title, 1-255 characters
+// Title New chat title, 1-128 characters
 func (call *SetChatTitleCall) Title(title string) *SetChatTitleCall {
 	call.request.String("title", title)
 	return call
@@ -3210,6 +3348,7 @@ func (call *GetChatMemberCountCall) ChatID(chatID PeerID) *GetChatMemberCountCal
 
 // GetChatMemberCall reprenesents a call to the getChatMember method.
 // Use this method to get information about a member of a chat
+// The method is only guaranteed to work for other users if the bot is an administrator in the chat
 // Returns a ChatMember object on success.
 type GetChatMemberCall struct {
 	Call[ChatMember]
@@ -3322,6 +3461,466 @@ func (call *DeleteChatStickerSetCall) ChatID(chatID PeerID) *DeleteChatStickerSe
 	return call
 }
 
+// GetForumTopicIconStickersCall reprenesents a call to the getForumTopicIconStickers method.
+// Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user
+// Requires no parameters
+// Returns an Array of Sticker objects.
+type GetForumTopicIconStickersCall struct {
+	Call[[]Sticker]
+}
+
+// NewGetForumTopicIconStickersCall constructs a new GetForumTopicIconStickersCall with required parameters.
+func NewGetForumTopicIconStickersCall() *GetForumTopicIconStickersCall {
+	return &GetForumTopicIconStickersCall{
+		Call[[]Sticker]{
+			request: NewRequest("getForumTopicIconStickers"),
+		},
+	}
+}
+
+// GetForumTopicIconStickersCall constructs a new GetForumTopicIconStickersCall with required parameters.
+func (client *Client) GetForumTopicIconStickers() *GetForumTopicIconStickersCall {
+	return BindClient(
+		NewGetForumTopicIconStickersCall(),
+		client,
+	)
+}
+
+// CreateForumTopicCall reprenesents a call to the createForumTopic method.
+// Use this method to create a topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights
+// Returns information about the created topic as a ForumTopic object.
+type CreateForumTopicCall struct {
+	Call[ForumTopic]
+}
+
+// NewCreateForumTopicCall constructs a new CreateForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// name - Topic name, 1-128 characters
+func NewCreateForumTopicCall(chatID PeerID, name string) *CreateForumTopicCall {
+	return &CreateForumTopicCall{
+		Call[ForumTopic]{
+			request: NewRequest("createForumTopic").
+				PeerID("chat_id", chatID).
+				String("name", name),
+		},
+	}
+}
+
+// CreateForumTopicCall constructs a new CreateForumTopicCall with required parameters.
+func (client *Client) CreateForumTopic(chatID PeerID, name string) *CreateForumTopicCall {
+	return BindClient(
+		NewCreateForumTopicCall(chatID, name),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *CreateForumTopicCall) ChatID(chatID PeerID) *CreateForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// Name Topic name, 1-128 characters
+func (call *CreateForumTopicCall) Name(name string) *CreateForumTopicCall {
+	call.request.String("name", name)
+	return call
+}
+
+// IconColor Color of the topic icon in RGB format. Currently, must be one of 7322096 (0x6FB9F0), 16766590 (0xFFD67E), 13338331 (0xCB86DB), 9367192 (0x8EEE98), 16749490 (0xFF93B2), or 16478047 (0xFB6F5F)
+func (call *CreateForumTopicCall) IconColor(iconColor int) *CreateForumTopicCall {
+	call.request.Int("icon_color", iconColor)
+	return call
+}
+
+// IconCustomEmojiID Unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed custom emoji identifiers.
+func (call *CreateForumTopicCall) IconCustomEmojiID(iconCustomEmojiID string) *CreateForumTopicCall {
+	call.request.String("icon_custom_emoji_id", iconCustomEmojiID)
+	return call
+}
+
+// EditForumTopicCall reprenesents a call to the editForumTopic method.
+// Use this method to edit name and icon of a topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights, unless it is the creator of the topic
+type EditForumTopicCall struct {
+	CallNoResult
+}
+
+// NewEditForumTopicCall constructs a new EditForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// messageThreadID - Unique identifier for the target message thread of the forum topic
+func NewEditForumTopicCall(chatID PeerID, messageThreadID int) *EditForumTopicCall {
+	return &EditForumTopicCall{
+		CallNoResult{
+			request: NewRequest("editForumTopic").
+				PeerID("chat_id", chatID).
+				Int("message_thread_id", messageThreadID),
+		},
+	}
+}
+
+// EditForumTopicCall constructs a new EditForumTopicCall with required parameters.
+func (client *Client) EditForumTopic(chatID PeerID, messageThreadID int) *EditForumTopicCall {
+	return BindClient(
+		NewEditForumTopicCall(chatID, messageThreadID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *EditForumTopicCall) ChatID(chatID PeerID) *EditForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread of the forum topic
+func (call *EditForumTopicCall) MessageThreadID(messageThreadID int) *EditForumTopicCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
+// Name New topic name, 0-128 characters. If not specified or empty, the current name of the topic will be kept
+func (call *EditForumTopicCall) Name(name string) *EditForumTopicCall {
+	call.request.String("name", name)
+	return call
+}
+
+// IconCustomEmojiID New unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed custom emoji identifiers. Pass an empty string to remove the icon. If not specified, the current icon will be kept
+func (call *EditForumTopicCall) IconCustomEmojiID(iconCustomEmojiID string) *EditForumTopicCall {
+	call.request.String("icon_custom_emoji_id", iconCustomEmojiID)
+	return call
+}
+
+// CloseForumTopicCall reprenesents a call to the closeForumTopic method.
+// Use this method to close an open topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic
+type CloseForumTopicCall struct {
+	CallNoResult
+}
+
+// NewCloseForumTopicCall constructs a new CloseForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// messageThreadID - Unique identifier for the target message thread of the forum topic
+func NewCloseForumTopicCall(chatID PeerID, messageThreadID int) *CloseForumTopicCall {
+	return &CloseForumTopicCall{
+		CallNoResult{
+			request: NewRequest("closeForumTopic").
+				PeerID("chat_id", chatID).
+				Int("message_thread_id", messageThreadID),
+		},
+	}
+}
+
+// CloseForumTopicCall constructs a new CloseForumTopicCall with required parameters.
+func (client *Client) CloseForumTopic(chatID PeerID, messageThreadID int) *CloseForumTopicCall {
+	return BindClient(
+		NewCloseForumTopicCall(chatID, messageThreadID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *CloseForumTopicCall) ChatID(chatID PeerID) *CloseForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread of the forum topic
+func (call *CloseForumTopicCall) MessageThreadID(messageThreadID int) *CloseForumTopicCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
+// ReopenForumTopicCall reprenesents a call to the reopenForumTopic method.
+// Use this method to reopen a closed topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic
+type ReopenForumTopicCall struct {
+	CallNoResult
+}
+
+// NewReopenForumTopicCall constructs a new ReopenForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// messageThreadID - Unique identifier for the target message thread of the forum topic
+func NewReopenForumTopicCall(chatID PeerID, messageThreadID int) *ReopenForumTopicCall {
+	return &ReopenForumTopicCall{
+		CallNoResult{
+			request: NewRequest("reopenForumTopic").
+				PeerID("chat_id", chatID).
+				Int("message_thread_id", messageThreadID),
+		},
+	}
+}
+
+// ReopenForumTopicCall constructs a new ReopenForumTopicCall with required parameters.
+func (client *Client) ReopenForumTopic(chatID PeerID, messageThreadID int) *ReopenForumTopicCall {
+	return BindClient(
+		NewReopenForumTopicCall(chatID, messageThreadID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *ReopenForumTopicCall) ChatID(chatID PeerID) *ReopenForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread of the forum topic
+func (call *ReopenForumTopicCall) MessageThreadID(messageThreadID int) *ReopenForumTopicCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
+// DeleteForumTopicCall reprenesents a call to the deleteForumTopic method.
+// Use this method to delete a forum topic along with all its messages in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have the can_delete_messages administrator rights
+type DeleteForumTopicCall struct {
+	CallNoResult
+}
+
+// NewDeleteForumTopicCall constructs a new DeleteForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// messageThreadID - Unique identifier for the target message thread of the forum topic
+func NewDeleteForumTopicCall(chatID PeerID, messageThreadID int) *DeleteForumTopicCall {
+	return &DeleteForumTopicCall{
+		CallNoResult{
+			request: NewRequest("deleteForumTopic").
+				PeerID("chat_id", chatID).
+				Int("message_thread_id", messageThreadID),
+		},
+	}
+}
+
+// DeleteForumTopicCall constructs a new DeleteForumTopicCall with required parameters.
+func (client *Client) DeleteForumTopic(chatID PeerID, messageThreadID int) *DeleteForumTopicCall {
+	return BindClient(
+		NewDeleteForumTopicCall(chatID, messageThreadID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *DeleteForumTopicCall) ChatID(chatID PeerID) *DeleteForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread of the forum topic
+func (call *DeleteForumTopicCall) MessageThreadID(messageThreadID int) *DeleteForumTopicCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
+// UnpinAllForumTopicMessagesCall reprenesents a call to the unpinAllForumTopicMessages method.
+// Use this method to clear the list of pinned messages in a forum topic
+// The bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup
+type UnpinAllForumTopicMessagesCall struct {
+	CallNoResult
+}
+
+// NewUnpinAllForumTopicMessagesCall constructs a new UnpinAllForumTopicMessagesCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// messageThreadID - Unique identifier for the target message thread of the forum topic
+func NewUnpinAllForumTopicMessagesCall(chatID PeerID, messageThreadID int) *UnpinAllForumTopicMessagesCall {
+	return &UnpinAllForumTopicMessagesCall{
+		CallNoResult{
+			request: NewRequest("unpinAllForumTopicMessages").
+				PeerID("chat_id", chatID).
+				Int("message_thread_id", messageThreadID),
+		},
+	}
+}
+
+// UnpinAllForumTopicMessagesCall constructs a new UnpinAllForumTopicMessagesCall with required parameters.
+func (client *Client) UnpinAllForumTopicMessages(chatID PeerID, messageThreadID int) *UnpinAllForumTopicMessagesCall {
+	return BindClient(
+		NewUnpinAllForumTopicMessagesCall(chatID, messageThreadID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *UnpinAllForumTopicMessagesCall) ChatID(chatID PeerID) *UnpinAllForumTopicMessagesCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread of the forum topic
+func (call *UnpinAllForumTopicMessagesCall) MessageThreadID(messageThreadID int) *UnpinAllForumTopicMessagesCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
+// EditGeneralForumTopicCall reprenesents a call to the editGeneralForumTopic method.
+// Use this method to edit the name of the 'General' topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights
+type EditGeneralForumTopicCall struct {
+	CallNoResult
+}
+
+// NewEditGeneralForumTopicCall constructs a new EditGeneralForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+// name - New topic name, 1-128 characters
+func NewEditGeneralForumTopicCall(chatID PeerID, name string) *EditGeneralForumTopicCall {
+	return &EditGeneralForumTopicCall{
+		CallNoResult{
+			request: NewRequest("editGeneralForumTopic").
+				PeerID("chat_id", chatID).
+				String("name", name),
+		},
+	}
+}
+
+// EditGeneralForumTopicCall constructs a new EditGeneralForumTopicCall with required parameters.
+func (client *Client) EditGeneralForumTopic(chatID PeerID, name string) *EditGeneralForumTopicCall {
+	return BindClient(
+		NewEditGeneralForumTopicCall(chatID, name),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *EditGeneralForumTopicCall) ChatID(chatID PeerID) *EditGeneralForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// Name New topic name, 1-128 characters
+func (call *EditGeneralForumTopicCall) Name(name string) *EditGeneralForumTopicCall {
+	call.request.String("name", name)
+	return call
+}
+
+// CloseGeneralForumTopicCall reprenesents a call to the closeGeneralForumTopic method.
+// Use this method to close an open 'General' topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights
+type CloseGeneralForumTopicCall struct {
+	CallNoResult
+}
+
+// NewCloseGeneralForumTopicCall constructs a new CloseGeneralForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func NewCloseGeneralForumTopicCall(chatID PeerID) *CloseGeneralForumTopicCall {
+	return &CloseGeneralForumTopicCall{
+		CallNoResult{
+			request: NewRequest("closeGeneralForumTopic").
+				PeerID("chat_id", chatID),
+		},
+	}
+}
+
+// CloseGeneralForumTopicCall constructs a new CloseGeneralForumTopicCall with required parameters.
+func (client *Client) CloseGeneralForumTopic(chatID PeerID) *CloseGeneralForumTopicCall {
+	return BindClient(
+		NewCloseGeneralForumTopicCall(chatID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *CloseGeneralForumTopicCall) ChatID(chatID PeerID) *CloseGeneralForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// ReopenGeneralForumTopicCall reprenesents a call to the reopenGeneralForumTopic method.
+// Use this method to reopen a closed 'General' topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights
+// The topic will be automatically unhidden if it was hidden
+type ReopenGeneralForumTopicCall struct {
+	CallNoResult
+}
+
+// NewReopenGeneralForumTopicCall constructs a new ReopenGeneralForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func NewReopenGeneralForumTopicCall(chatID PeerID) *ReopenGeneralForumTopicCall {
+	return &ReopenGeneralForumTopicCall{
+		CallNoResult{
+			request: NewRequest("reopenGeneralForumTopic").
+				PeerID("chat_id", chatID),
+		},
+	}
+}
+
+// ReopenGeneralForumTopicCall constructs a new ReopenGeneralForumTopicCall with required parameters.
+func (client *Client) ReopenGeneralForumTopic(chatID PeerID) *ReopenGeneralForumTopicCall {
+	return BindClient(
+		NewReopenGeneralForumTopicCall(chatID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *ReopenGeneralForumTopicCall) ChatID(chatID PeerID) *ReopenGeneralForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// HideGeneralForumTopicCall reprenesents a call to the hideGeneralForumTopic method.
+// Use this method to hide the 'General' topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights
+// The topic will be automatically closed if it was open
+type HideGeneralForumTopicCall struct {
+	CallNoResult
+}
+
+// NewHideGeneralForumTopicCall constructs a new HideGeneralForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func NewHideGeneralForumTopicCall(chatID PeerID) *HideGeneralForumTopicCall {
+	return &HideGeneralForumTopicCall{
+		CallNoResult{
+			request: NewRequest("hideGeneralForumTopic").
+				PeerID("chat_id", chatID),
+		},
+	}
+}
+
+// HideGeneralForumTopicCall constructs a new HideGeneralForumTopicCall with required parameters.
+func (client *Client) HideGeneralForumTopic(chatID PeerID) *HideGeneralForumTopicCall {
+	return BindClient(
+		NewHideGeneralForumTopicCall(chatID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *HideGeneralForumTopicCall) ChatID(chatID PeerID) *HideGeneralForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// UnhideGeneralForumTopicCall reprenesents a call to the unhideGeneralForumTopic method.
+// Use this method to unhide the 'General' topic in a forum supergroup chat
+// The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights
+type UnhideGeneralForumTopicCall struct {
+	CallNoResult
+}
+
+// NewUnhideGeneralForumTopicCall constructs a new UnhideGeneralForumTopicCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func NewUnhideGeneralForumTopicCall(chatID PeerID) *UnhideGeneralForumTopicCall {
+	return &UnhideGeneralForumTopicCall{
+		CallNoResult{
+			request: NewRequest("unhideGeneralForumTopic").
+				PeerID("chat_id", chatID),
+		},
+	}
+}
+
+// UnhideGeneralForumTopicCall constructs a new UnhideGeneralForumTopicCall with required parameters.
+func (client *Client) UnhideGeneralForumTopic(chatID PeerID) *UnhideGeneralForumTopicCall {
+	return BindClient(
+		NewUnhideGeneralForumTopicCall(chatID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *UnhideGeneralForumTopicCall) ChatID(chatID PeerID) *UnhideGeneralForumTopicCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
 // AnswerCallbackQueryCall reprenesents a call to the answerCallbackQuery method.
 // Use this method to send answers to callback queries sent from inline keyboards
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert
@@ -3384,7 +3983,7 @@ func (call *AnswerCallbackQueryCall) CacheTime(cacheTime int) *AnswerCallbackQue
 
 // SetMyCommandsCall reprenesents a call to the setMyCommands method.
 // Use this method to change the list of the bot's commands
-// See https://core.telegram.org/bots#commands for more details about bot commands
+// See this manual for more details about bot commands
 type SetMyCommandsCall struct {
 	CallNoResult
 }
@@ -4069,6 +4668,12 @@ func (call *SendStickerCall) ChatID(chatID PeerID) *SendStickerCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendStickerCall) MessageThreadID(messageThreadID int) *SendStickerCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Sticker Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 func (call *SendStickerCall) Sticker(sticker FileArg) *SendStickerCall {
 	call.request.File("sticker", sticker)
@@ -4642,6 +5247,12 @@ func (call *SendInvoiceCall) ChatID(chatID PeerID) *SendInvoiceCall {
 	return call
 }
 
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendInvoiceCall) MessageThreadID(messageThreadID int) *SendInvoiceCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
 // Title Product name, 1-32 characters
 func (call *SendInvoiceCall) Title(title string) *SendInvoiceCall {
 	call.request.String("title", title)
@@ -5129,6 +5740,12 @@ func (client *Client) SendGame(chatID ChatID, gameShortName string) *SendGameCal
 // ChatID Unique identifier for the target chat
 func (call *SendGameCall) ChatID(chatID ChatID) *SendGameCall {
 	call.request.ChatID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *SendGameCall) MessageThreadID(messageThreadID int) *SendGameCall {
+	call.request.Int("message_thread_id", messageThreadID)
 	return call
 }
 
