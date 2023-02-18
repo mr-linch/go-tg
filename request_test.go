@@ -33,6 +33,9 @@ func TestRequest_Setters(t *testing.T) {
 	r.File("file_by_id", FileArg{
 		FileID: "file_id",
 	})
+	r.File("file_url", FileArg{
+		URL: "file_url",
+	})
 	r.File("file_input", FileArg{
 		Upload: NewInputFileBytes("file_name", []byte("file_content")),
 	})
@@ -78,6 +81,7 @@ func TestRequest_Setters(t *testing.T) {
 		"attachment_0_thumb",
 		"file",
 		"file_input",
+		"file_url",
 	}, encoder.fileKeys)
 }
 

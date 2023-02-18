@@ -168,7 +168,7 @@ func NewFileArgID(id FileID) FileArg {
 }
 
 func (arg FileArg) MarshalJSON() ([]byte, error) {
-	str := arg.getString()
+	str := arg.getRef()
 	if str != "" {
 		return json.Marshal(str)
 	}
@@ -176,7 +176,13 @@ func (arg FileArg) MarshalJSON() ([]byte, error) {
 	return nil, fmt.Errorf("FileArg is not json serializable")
 }
 
-func (arg *FileArg) getString() string {
+// isRef returns true if FileArg is just reference
+func (arg *FileArg) isRef() bool {
+	return arg.FileID != "" || arg.URL != "" || arg.addr != ""
+}
+
+// getRef returns text representation of reference
+func (arg *FileArg) getRef() string {
 	if arg.FileID != "" {
 		return string(arg.FileID)
 	} else if arg.URL != "" {

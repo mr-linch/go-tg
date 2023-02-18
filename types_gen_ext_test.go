@@ -532,7 +532,7 @@ func TestFileArg_getString(t *testing.T) {
 			Want:    "addr",
 		},
 	} {
-		assert.Equal(t, test.Want, test.FileArg.getString())
+		assert.Equal(t, test.Want, test.FileArg.getRef())
 	}
 }
 
