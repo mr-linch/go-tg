@@ -33,6 +33,9 @@ func TestRequest_Setters(t *testing.T) {
 	r.File("file_by_id", FileArg{
 		FileID: "file_id",
 	})
+	r.File("file_by_url", FileArg{
+		URL: "file_url",
+	})
 	r.File("file_input", FileArg{
 		Upload: NewInputFileBytes("file_name", []byte("file_content")),
 	})
@@ -61,6 +64,7 @@ func TestRequest_Setters(t *testing.T) {
 		"bool",
 		"chat",
 		"file_by_id",
+		"file_by_url",
 		"file_id",
 		"float64",
 		"foo",

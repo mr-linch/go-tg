@@ -76,11 +76,11 @@ func (r *Request) FileID(name string, v FileID) *Request {
 }
 
 func (r *Request) File(name string, arg FileArg) *Request {
-	if arg.FileID != "" {
-		return r.String(name, string(arg.FileID))
-	} else {
-		return r.InputFile(name, arg.Upload)
+	if arg.isRef() {
+		return r.String(name, arg.getRef())
 	}
+
+	return r.InputFile(name, arg.Upload)
 }
 
 func (r *Request) InputMediaSlice(name string, im []InputMedia) *Request {
@@ -99,7 +99,7 @@ func (r *Request) InputMedia(im InputMedia) *Request {
 	id := fmt.Sprintf("attachment_%d", r.attachmentIdx)
 	addr := fmt.Sprintf("attach://%s", id)
 
-	if media.getString() == "" {
+	if media.getRef() == "" {
 		r.InputFile(id, media.Upload)
 		media.addr = addr
 		r.attachmentIdx++
