@@ -114,8 +114,19 @@ func (id UserID) PeerID() string {
 // Username represents a Telegram username.
 type Username string
 
+// PeerID implements [Peer] interface.
 func (un Username) PeerID() string {
 	return "@" + string(un)
+}
+
+// Link returns a public link with username.
+func (un Username) Link() string {
+	return "https://t.me/" + string(un)
+}
+
+// DeepLink returns a deep link with username.
+func (un Username) DeepLink() string {
+	return "tg://resolve?domain=" + string(un)
 }
 
 // PeerID represents generic Telegram peer.

@@ -26,6 +26,14 @@ func TestUsername_PeerID(t *testing.T) {
 	assert.Equal(t, "@username", Username("username").PeerID())
 }
 
+func TestUsername_Link(t *testing.T) {
+	assert.Equal(t, "https://t.me/username", Username("username").Link())
+}
+
+func TestUsername_DeepLink(t *testing.T) {
+	assert.Equal(t, "tg://resolve?domain=username", Username("username").DeepLink())
+}
+
 func TestChatType_String(t *testing.T) {
 	for _, test := range []struct {
 		ChatType ChatType

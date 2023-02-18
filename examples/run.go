@@ -64,7 +64,7 @@ func run(ctx context.Context, handler tgb.Handler) error {
 		return fmt.Errorf("get me: %w", err)
 	}
 
-	log.Printf("authorized as https://t.me/%s", me.Username)
+	log.Printf("authorized as %s", me.Username.Link())
 
 	if flagWebhookURL != "" {
 		err = tgb.NewWebhook(
