@@ -126,7 +126,7 @@ func (un Username) Link() string {
 
 // DeepLink returns a deep link with username.
 func (un Username) DeepLink() string {
-	return "tg://resolve?domain=%s" + string(un)
+	return "tg://resolve?domain=" + string(un)
 }
 
 // PeerID represents generic Telegram peer.
