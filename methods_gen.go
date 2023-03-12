@@ -705,9 +705,9 @@ func (call *SendAudioCall) Title(title string) *SendAudioCall {
 	return call
 }
 
-// Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendAudioCall) Thumb(thumb FileArg) *SendAudioCall {
-	call.request.File("thumb", thumb)
+// Thumbnail Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
+func (call *SendAudioCall) Thumbnail(thumbnail FileArg) *SendAudioCall {
+	call.request.File("thumbnail", thumbnail)
 	return call
 }
 
@@ -788,9 +788,9 @@ func (call *SendDocumentCall) Document(document FileArg) *SendDocumentCall {
 	return call
 }
 
-// Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendDocumentCall) Thumb(thumb FileArg) *SendDocumentCall {
-	call.request.File("thumb", thumb)
+// Thumbnail Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
+func (call *SendDocumentCall) Thumbnail(thumbnail FileArg) *SendDocumentCall {
+	call.request.File("thumbnail", thumbnail)
 	return call
 }
 
@@ -913,9 +913,9 @@ func (call *SendVideoCall) Height(height int) *SendVideoCall {
 	return call
 }
 
-// Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendVideoCall) Thumb(thumb FileArg) *SendVideoCall {
-	call.request.File("thumb", thumb)
+// Thumbnail Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
+func (call *SendVideoCall) Thumbnail(thumbnail FileArg) *SendVideoCall {
+	call.request.File("thumbnail", thumbnail)
 	return call
 }
 
@@ -1044,9 +1044,9 @@ func (call *SendAnimationCall) Height(height int) *SendAnimationCall {
 	return call
 }
 
-// Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendAnimationCall) Thumb(thumb FileArg) *SendAnimationCall {
-	call.request.File("thumb", thumb)
+// Thumbnail Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
+func (call *SendAnimationCall) Thumbnail(thumbnail FileArg) *SendAnimationCall {
+	call.request.File("thumbnail", thumbnail)
 	return call
 }
 
@@ -1265,9 +1265,9 @@ func (call *SendVideoNoteCall) Length(length int) *SendVideoNoteCall {
 	return call
 }
 
-// Thumb Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
-func (call *SendVideoNoteCall) Thumb(thumb FileArg) *SendVideoNoteCall {
-	call.request.File("thumb", thumb)
+// Thumbnail Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More information on Sending Files »
+func (call *SendVideoNoteCall) Thumbnail(thumbnail FileArg) *SendVideoNoteCall {
+	call.request.File("thumbnail", thumbnail)
 	return call
 }
 
@@ -1476,179 +1476,6 @@ func (call *SendLocationCall) AllowSendingWithoutReply(allowSendingWithoutReply 
 
 // ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 func (call *SendLocationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendLocationCall {
-	call.request.JSON("reply_markup", replyMarkup)
-	return call
-}
-
-// EditMessageLiveLocationCall reprenesents a call to the editMessageLiveLocation method.
-// Use this method to edit live location messages
-// A location can be edited until its live_period expires or editing is explicitly disabled by a call to stopMessageLiveLocation
-// On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
-type EditMessageLiveLocationCall struct {
-	Call[Message]
-}
-
-// NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageID - Required if inline_message_id is not specified. Identifier of the message to edit
-func NewEditMessageLiveLocationCall(chatID PeerID, messageID int) *EditMessageLiveLocationCall {
-	return &EditMessageLiveLocationCall{
-		Call[Message]{
-			request: NewRequest("editMessageLiveLocation").
-				PeerID("chat_id", chatID).
-				Int("message_id", messageID),
-		},
-	}
-}
-
-// NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
-func NewEditMessageLiveLocationInlineCall(inlineMessageID string) *EditMessageLiveLocationCall {
-	return &EditMessageLiveLocationCall{
-		Call[Message]{
-			request: NewRequest("editMessageLiveLocation").
-				String("inline_message_id", inlineMessageID),
-		},
-	}
-}
-
-// EditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-func (client *Client) EditMessageLiveLocation(chatID PeerID, messageID int) *EditMessageLiveLocationCall {
-	return BindClient(
-		NewEditMessageLiveLocationCall(chatID, messageID),
-		client,
-	)
-}
-
-// EditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
-func (client *Client) EditMessageLiveLocationInline(inlineMessageID string) *EditMessageLiveLocationCall {
-	return BindClient(
-		NewEditMessageLiveLocationInlineCall(inlineMessageID),
-		client,
-	)
-}
-
-// ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *EditMessageLiveLocationCall) ChatID(chatID PeerID) *EditMessageLiveLocationCall {
-	call.request.PeerID("chat_id", chatID)
-	return call
-}
-
-// MessageID Required if inline_message_id is not specified. Identifier of the message to edit
-func (call *EditMessageLiveLocationCall) MessageID(messageID int) *EditMessageLiveLocationCall {
-	call.request.Int("message_id", messageID)
-	return call
-}
-
-// InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *EditMessageLiveLocationCall) InlineMessageID(inlineMessageID string) *EditMessageLiveLocationCall {
-	call.request.String("inline_message_id", inlineMessageID)
-	return call
-}
-
-// Latitude Latitude of new location
-func (call *EditMessageLiveLocationCall) Latitude(latitude float64) *EditMessageLiveLocationCall {
-	call.request.Float64("latitude", latitude)
-	return call
-}
-
-// Longitude Longitude of new location
-func (call *EditMessageLiveLocationCall) Longitude(longitude float64) *EditMessageLiveLocationCall {
-	call.request.Float64("longitude", longitude)
-	return call
-}
-
-// HorizontalAccuracy The radius of uncertainty for the location, measured in meters; 0-1500
-func (call *EditMessageLiveLocationCall) HorizontalAccuracy(horizontalAccuracy float64) *EditMessageLiveLocationCall {
-	call.request.Float64("horizontal_accuracy", horizontalAccuracy)
-	return call
-}
-
-// Heading Direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
-func (call *EditMessageLiveLocationCall) Heading(heading int) *EditMessageLiveLocationCall {
-	call.request.Int("heading", heading)
-	return call
-}
-
-// ProximityAlertRadius The maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.
-func (call *EditMessageLiveLocationCall) ProximityAlertRadius(proximityAlertRadius int) *EditMessageLiveLocationCall {
-	call.request.Int("proximity_alert_radius", proximityAlertRadius)
-	return call
-}
-
-// ReplyMarkup A JSON-serialized object for a new inline keyboard.
-func (call *EditMessageLiveLocationCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *EditMessageLiveLocationCall {
-	call.request.JSON("reply_markup", replyMarkup)
-	return call
-}
-
-// StopMessageLiveLocationCall reprenesents a call to the stopMessageLiveLocation method.
-// Use this method to stop updating a live location message before live_period expires
-// On success, if the message is not an inline message, the edited Message is returned, otherwise True is returned.
-type StopMessageLiveLocationCall struct {
-	Call[Message]
-}
-
-// NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageID - Required if inline_message_id is not specified. Identifier of the message with live location to stop
-func NewStopMessageLiveLocationCall(chatID PeerID, messageID int) *StopMessageLiveLocationCall {
-	return &StopMessageLiveLocationCall{
-		Call[Message]{
-			request: NewRequest("stopMessageLiveLocation").
-				PeerID("chat_id", chatID).
-				Int("message_id", messageID),
-		},
-	}
-}
-
-// NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
-func NewStopMessageLiveLocationInlineCall(inlineMessageID string) *StopMessageLiveLocationCall {
-	return &StopMessageLiveLocationCall{
-		Call[Message]{
-			request: NewRequest("stopMessageLiveLocation").
-				String("inline_message_id", inlineMessageID),
-		},
-	}
-}
-
-// StopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-func (client *Client) StopMessageLiveLocation(chatID PeerID, messageID int) *StopMessageLiveLocationCall {
-	return BindClient(
-		NewStopMessageLiveLocationCall(chatID, messageID),
-		client,
-	)
-}
-
-// StopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
-func (client *Client) StopMessageLiveLocationInline(inlineMessageID string) *StopMessageLiveLocationCall {
-	return BindClient(
-		NewStopMessageLiveLocationInlineCall(inlineMessageID),
-		client,
-	)
-}
-
-// ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-func (call *StopMessageLiveLocationCall) ChatID(chatID PeerID) *StopMessageLiveLocationCall {
-	call.request.PeerID("chat_id", chatID)
-	return call
-}
-
-// MessageID Required if inline_message_id is not specified. Identifier of the message with live location to stop
-func (call *StopMessageLiveLocationCall) MessageID(messageID int) *StopMessageLiveLocationCall {
-	call.request.Int("message_id", messageID)
-	return call
-}
-
-// InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
-func (call *StopMessageLiveLocationCall) InlineMessageID(inlineMessageID string) *StopMessageLiveLocationCall {
-	call.request.String("inline_message_id", inlineMessageID)
-	return call
-}
-
-// ReplyMarkup A JSON-serialized object for a new inline keyboard.
-func (call *StopMessageLiveLocationCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *StopMessageLiveLocationCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
 }
@@ -4098,6 +3925,136 @@ func (call *GetMyCommandsCall) LanguageCode(languageCode string) *GetMyCommandsC
 	return call
 }
 
+// SetMyDescriptionCall reprenesents a call to the setMyDescription method.
+// Use this method to change the bot's description, which is shown in the chat with the bot if the chat is empty
+type SetMyDescriptionCall struct {
+	CallNoResult
+}
+
+// NewSetMyDescriptionCall constructs a new SetMyDescriptionCall with required parameters.
+func NewSetMyDescriptionCall() *SetMyDescriptionCall {
+	return &SetMyDescriptionCall{
+		CallNoResult{
+			request: NewRequest("setMyDescription"),
+		},
+	}
+}
+
+// SetMyDescriptionCall constructs a new SetMyDescriptionCall with required parameters.
+func (client *Client) SetMyDescription() *SetMyDescriptionCall {
+	return BindClient(
+		NewSetMyDescriptionCall(),
+		client,
+	)
+}
+
+// Description New bot description; 0-512 characters. Pass an empty string to remove the dedicated description for the given language.
+func (call *SetMyDescriptionCall) Description(description string) *SetMyDescriptionCall {
+	call.request.String("description", description)
+	return call
+}
+
+// LanguageCode A two-letter ISO 639-1 language code. If empty, the description will be applied to all users for whose language there is no dedicated description.
+func (call *SetMyDescriptionCall) LanguageCode(languageCode string) *SetMyDescriptionCall {
+	call.request.String("language_code", languageCode)
+	return call
+}
+
+// GetMyDescriptionCall reprenesents a call to the getMyDescription method.
+// Use this method to get the current bot description for the given user language
+// Returns BotDescription on success.
+type GetMyDescriptionCall struct {
+	Call[BotDescription]
+}
+
+// NewGetMyDescriptionCall constructs a new GetMyDescriptionCall with required parameters.
+func NewGetMyDescriptionCall() *GetMyDescriptionCall {
+	return &GetMyDescriptionCall{
+		Call[BotDescription]{
+			request: NewRequest("getMyDescription"),
+		},
+	}
+}
+
+// GetMyDescriptionCall constructs a new GetMyDescriptionCall with required parameters.
+func (client *Client) GetMyDescription() *GetMyDescriptionCall {
+	return BindClient(
+		NewGetMyDescriptionCall(),
+		client,
+	)
+}
+
+// LanguageCode A two-letter ISO 639-1 language code or an empty string
+func (call *GetMyDescriptionCall) LanguageCode(languageCode string) *GetMyDescriptionCall {
+	call.request.String("language_code", languageCode)
+	return call
+}
+
+// SetMyShortDescriptionCall reprenesents a call to the setMyShortDescription method.
+// Use this method to change the bot's short description, which is shown on the bot's profile page and is sent together with the link when users share the bot
+type SetMyShortDescriptionCall struct {
+	CallNoResult
+}
+
+// NewSetMyShortDescriptionCall constructs a new SetMyShortDescriptionCall with required parameters.
+func NewSetMyShortDescriptionCall() *SetMyShortDescriptionCall {
+	return &SetMyShortDescriptionCall{
+		CallNoResult{
+			request: NewRequest("setMyShortDescription"),
+		},
+	}
+}
+
+// SetMyShortDescriptionCall constructs a new SetMyShortDescriptionCall with required parameters.
+func (client *Client) SetMyShortDescription() *SetMyShortDescriptionCall {
+	return BindClient(
+		NewSetMyShortDescriptionCall(),
+		client,
+	)
+}
+
+// ShortDescription New short description for the bot; 0-120 characters. Pass an empty string to remove the dedicated short description for the given language.
+func (call *SetMyShortDescriptionCall) ShortDescription(shortDescription string) *SetMyShortDescriptionCall {
+	call.request.String("short_description", shortDescription)
+	return call
+}
+
+// LanguageCode A two-letter ISO 639-1 language code. If empty, the short description will be applied to all users for whose language there is no dedicated short description.
+func (call *SetMyShortDescriptionCall) LanguageCode(languageCode string) *SetMyShortDescriptionCall {
+	call.request.String("language_code", languageCode)
+	return call
+}
+
+// GetMyShortDescriptionCall reprenesents a call to the getMyShortDescription method.
+// Use this method to get the current bot short description for the given user language
+// Returns BotShortDescription on success.
+type GetMyShortDescriptionCall struct {
+	Call[BotShortDescription]
+}
+
+// NewGetMyShortDescriptionCall constructs a new GetMyShortDescriptionCall with required parameters.
+func NewGetMyShortDescriptionCall() *GetMyShortDescriptionCall {
+	return &GetMyShortDescriptionCall{
+		Call[BotShortDescription]{
+			request: NewRequest("getMyShortDescription"),
+		},
+	}
+}
+
+// GetMyShortDescriptionCall constructs a new GetMyShortDescriptionCall with required parameters.
+func (client *Client) GetMyShortDescription() *GetMyShortDescriptionCall {
+	return BindClient(
+		NewGetMyShortDescriptionCall(),
+		client,
+	)
+}
+
+// LanguageCode A two-letter ISO 639-1 language code or an empty string
+func (call *GetMyShortDescriptionCall) LanguageCode(languageCode string) *GetMyShortDescriptionCall {
+	call.request.String("language_code", languageCode)
+	return call
+}
+
 // SetChatMenuButtonCall reprenesents a call to the setChatMenuButton method.
 // Use this method to change the bot's menu button in a private chat, or the default menu button
 type SetChatMenuButtonCall struct {
@@ -4165,7 +4122,7 @@ func (call *GetChatMenuButtonCall) ChatID(chatID ChatID) *GetChatMenuButtonCall 
 
 // SetMyDefaultAdministratorRightsCall reprenesents a call to the setMyDefaultAdministratorRights method.
 // Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels
-// These rights will be suggested to users, but they are are free to modify the list before adding the bot
+// These rights will be suggested to users, but they are free to modify the list before adding the bot
 type SetMyDefaultAdministratorRightsCall struct {
 	CallNoResult
 }
@@ -4479,6 +4436,179 @@ func (call *EditMessageMediaCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) 
 	return call
 }
 
+// EditMessageLiveLocationCall reprenesents a call to the editMessageLiveLocation method.
+// Use this method to edit live location messages
+// A location can be edited until its live_period expires or editing is explicitly disabled by a call to stopMessageLiveLocation
+// On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+type EditMessageLiveLocationCall struct {
+	Call[Message]
+}
+
+// NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
+// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Required if inline_message_id is not specified. Identifier of the message to edit
+func NewEditMessageLiveLocationCall(chatID PeerID, messageID int) *EditMessageLiveLocationCall {
+	return &EditMessageLiveLocationCall{
+		Call[Message]{
+			request: NewRequest("editMessageLiveLocation").
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
+		},
+	}
+}
+
+// NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
+// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
+func NewEditMessageLiveLocationInlineCall(inlineMessageID string) *EditMessageLiveLocationCall {
+	return &EditMessageLiveLocationCall{
+		Call[Message]{
+			request: NewRequest("editMessageLiveLocation").
+				String("inline_message_id", inlineMessageID),
+		},
+	}
+}
+
+// EditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
+func (client *Client) EditMessageLiveLocation(chatID PeerID, messageID int) *EditMessageLiveLocationCall {
+	return BindClient(
+		NewEditMessageLiveLocationCall(chatID, messageID),
+		client,
+	)
+}
+
+// EditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall with required parameters.
+func (client *Client) EditMessageLiveLocationInline(inlineMessageID string) *EditMessageLiveLocationCall {
+	return BindClient(
+		NewEditMessageLiveLocationInlineCall(inlineMessageID),
+		client,
+	)
+}
+
+// ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func (call *EditMessageLiveLocationCall) ChatID(chatID PeerID) *EditMessageLiveLocationCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageID Required if inline_message_id is not specified. Identifier of the message to edit
+func (call *EditMessageLiveLocationCall) MessageID(messageID int) *EditMessageLiveLocationCall {
+	call.request.Int("message_id", messageID)
+	return call
+}
+
+// InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
+func (call *EditMessageLiveLocationCall) InlineMessageID(inlineMessageID string) *EditMessageLiveLocationCall {
+	call.request.String("inline_message_id", inlineMessageID)
+	return call
+}
+
+// Latitude Latitude of new location
+func (call *EditMessageLiveLocationCall) Latitude(latitude float64) *EditMessageLiveLocationCall {
+	call.request.Float64("latitude", latitude)
+	return call
+}
+
+// Longitude Longitude of new location
+func (call *EditMessageLiveLocationCall) Longitude(longitude float64) *EditMessageLiveLocationCall {
+	call.request.Float64("longitude", longitude)
+	return call
+}
+
+// HorizontalAccuracy The radius of uncertainty for the location, measured in meters; 0-1500
+func (call *EditMessageLiveLocationCall) HorizontalAccuracy(horizontalAccuracy float64) *EditMessageLiveLocationCall {
+	call.request.Float64("horizontal_accuracy", horizontalAccuracy)
+	return call
+}
+
+// Heading Direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
+func (call *EditMessageLiveLocationCall) Heading(heading int) *EditMessageLiveLocationCall {
+	call.request.Int("heading", heading)
+	return call
+}
+
+// ProximityAlertRadius The maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.
+func (call *EditMessageLiveLocationCall) ProximityAlertRadius(proximityAlertRadius int) *EditMessageLiveLocationCall {
+	call.request.Int("proximity_alert_radius", proximityAlertRadius)
+	return call
+}
+
+// ReplyMarkup A JSON-serialized object for a new inline keyboard.
+func (call *EditMessageLiveLocationCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *EditMessageLiveLocationCall {
+	call.request.JSON("reply_markup", replyMarkup)
+	return call
+}
+
+// StopMessageLiveLocationCall reprenesents a call to the stopMessageLiveLocation method.
+// Use this method to stop updating a live location message before live_period expires
+// On success, if the message is not an inline message, the edited Message is returned, otherwise True is returned.
+type StopMessageLiveLocationCall struct {
+	Call[Message]
+}
+
+// NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
+// chatID - Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Required if inline_message_id is not specified. Identifier of the message with live location to stop
+func NewStopMessageLiveLocationCall(chatID PeerID, messageID int) *StopMessageLiveLocationCall {
+	return &StopMessageLiveLocationCall{
+		Call[Message]{
+			request: NewRequest("stopMessageLiveLocation").
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
+		},
+	}
+}
+
+// NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
+// inlineMessageID - Required if chat_id and message_id are not specified. Identifier of the inline message
+func NewStopMessageLiveLocationInlineCall(inlineMessageID string) *StopMessageLiveLocationCall {
+	return &StopMessageLiveLocationCall{
+		Call[Message]{
+			request: NewRequest("stopMessageLiveLocation").
+				String("inline_message_id", inlineMessageID),
+		},
+	}
+}
+
+// StopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
+func (client *Client) StopMessageLiveLocation(chatID PeerID, messageID int) *StopMessageLiveLocationCall {
+	return BindClient(
+		NewStopMessageLiveLocationCall(chatID, messageID),
+		client,
+	)
+}
+
+// StopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall with required parameters.
+func (client *Client) StopMessageLiveLocationInline(inlineMessageID string) *StopMessageLiveLocationCall {
+	return BindClient(
+		NewStopMessageLiveLocationInlineCall(inlineMessageID),
+		client,
+	)
+}
+
+// ChatID Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func (call *StopMessageLiveLocationCall) ChatID(chatID PeerID) *StopMessageLiveLocationCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageID Required if inline_message_id is not specified. Identifier of the message with live location to stop
+func (call *StopMessageLiveLocationCall) MessageID(messageID int) *StopMessageLiveLocationCall {
+	call.request.Int("message_id", messageID)
+	return call
+}
+
+// InlineMessageID Required if chat_id and message_id are not specified. Identifier of the inline message
+func (call *StopMessageLiveLocationCall) InlineMessageID(inlineMessageID string) *StopMessageLiveLocationCall {
+	call.request.String("inline_message_id", inlineMessageID)
+	return call
+}
+
+// ReplyMarkup A JSON-serialized object for a new inline keyboard.
+func (call *StopMessageLiveLocationCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *StopMessageLiveLocationCall {
+	call.request.JSON("reply_markup", replyMarkup)
+	return call
+}
+
 // EditMessageReplyMarkupCall reprenesents a call to the editMessageReplyMarkup method.
 // Use this method to edit only the reply markup of messages
 // On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
@@ -4643,7 +4773,7 @@ type SendStickerCall struct {
 
 // NewSendStickerCall constructs a new SendStickerCall with required parameters.
 // chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// sticker - Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
+// sticker - Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP or .TGS sticker using multipart/form-data. More information on Sending Files ». Video stickers can only be sent by a file_id. Animated stickers can't be sent via an HTTP URL.
 func NewSendStickerCall(chatID PeerID, sticker FileArg) *SendStickerCall {
 	return &SendStickerCall{
 		Call[Message]{
@@ -4674,9 +4804,15 @@ func (call *SendStickerCall) MessageThreadID(messageThreadID int) *SendStickerCa
 	return call
 }
 
-// Sticker Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
+// Sticker Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP or .TGS sticker using multipart/form-data. More information on Sending Files ». Video stickers can only be sent by a file_id. Animated stickers can't be sent via an HTTP URL.
 func (call *SendStickerCall) Sticker(sticker FileArg) *SendStickerCall {
 	call.request.File("sticker", sticker)
+	return call
+}
+
+// Emoji Emoji associated with the sticker; only for just uploaded stickers
+func (call *SendStickerCall) Emoji(emoji string) *SendStickerCall {
+	call.request.String("emoji", emoji)
 	return call
 }
 
@@ -4775,7 +4911,7 @@ func (call *GetCustomEmojiStickersCall) CustomEmojiIds(customEmojiIds []string) 
 }
 
 // UploadStickerFileCall reprenesents a call to the uploadStickerFile method.
-// Use this method to upload a .PNG file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times)
+// Use this method to upload a file with a sticker for later use in the createNewStickerSet and addStickerToSet methods (the file can be used multiple times)
 // Returns the uploaded File on success.
 type UploadStickerFileCall struct {
 	Call[File]
@@ -4783,21 +4919,23 @@ type UploadStickerFileCall struct {
 
 // NewUploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
 // userID - User identifier of sticker file owner
-// pngSticker - PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More information on Sending Files »
-func NewUploadStickerFileCall(userID UserID, pngSticker InputFile) *UploadStickerFileCall {
+// sticker - A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See https://core.telegram.org/stickers for technical requirements. More information on Sending Files »
+// stickerFormat - Format of the sticker, must be one of “static”, “animated”, “video”
+func NewUploadStickerFileCall(userID UserID, sticker InputFile, stickerFormat string) *UploadStickerFileCall {
 	return &UploadStickerFileCall{
 		Call[File]{
 			request: NewRequest("uploadStickerFile").
 				UserID("user_id", userID).
-				JSON("png_sticker", pngSticker),
+				JSON("sticker", sticker).
+				String("sticker_format", stickerFormat),
 		},
 	}
 }
 
 // UploadStickerFileCall constructs a new UploadStickerFileCall with required parameters.
-func (client *Client) UploadStickerFile(userID UserID, pngSticker InputFile) *UploadStickerFileCall {
+func (client *Client) UploadStickerFile(userID UserID, sticker InputFile, stickerFormat string) *UploadStickerFileCall {
 	return BindClient(
-		NewUploadStickerFileCall(userID, pngSticker),
+		NewUploadStickerFileCall(userID, sticker, stickerFormat),
 		client,
 	)
 }
@@ -4808,16 +4946,21 @@ func (call *UploadStickerFileCall) UserID(userID UserID) *UploadStickerFileCall 
 	return call
 }
 
-// PNGSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More information on Sending Files »
-func (call *UploadStickerFileCall) PNGSticker(pngSticker InputFile) *UploadStickerFileCall {
-	call.request.JSON("png_sticker", pngSticker)
+// Sticker A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See https://core.telegram.org/stickers for technical requirements. More information on Sending Files »
+func (call *UploadStickerFileCall) Sticker(sticker InputFile) *UploadStickerFileCall {
+	call.request.JSON("sticker", sticker)
+	return call
+}
+
+// StickerFormat Format of the sticker, must be one of “static”, “animated”, “video”
+func (call *UploadStickerFileCall) StickerFormat(stickerFormat string) *UploadStickerFileCall {
+	call.request.String("sticker_format", stickerFormat)
 	return call
 }
 
 // CreateNewStickerSetCall reprenesents a call to the createNewStickerSet method.
 // Use this method to create a new sticker set owned by a user
 // The bot will be able to edit the sticker set thus created
-// You must use exactly one of the fields png_sticker, tgs_sticker, or webm_sticker
 type CreateNewStickerSetCall struct {
 	CallNoResult
 }
@@ -4826,23 +4969,25 @@ type CreateNewStickerSetCall struct {
 // userID - User identifier of created sticker set owner
 // name - Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
 // title - Sticker set title, 1-64 characters
-// emojis - One or more emoji corresponding to the sticker
-func NewCreateNewStickerSetCall(userID UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
+// stickers - A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
+// stickerFormat - Format of stickers in the set, must be one of “static”, “animated”, “video”
+func NewCreateNewStickerSetCall(userID UserID, name string, title string, stickers []InputSticker, stickerFormat string) *CreateNewStickerSetCall {
 	return &CreateNewStickerSetCall{
 		CallNoResult{
 			request: NewRequest("createNewStickerSet").
 				UserID("user_id", userID).
 				String("name", name).
 				String("title", title).
-				String("emojis", emojis),
+				JSON("stickers", stickers).
+				String("sticker_format", stickerFormat),
 		},
 	}
 }
 
 // CreateNewStickerSetCall constructs a new CreateNewStickerSetCall with required parameters.
-func (client *Client) CreateNewStickerSet(userID UserID, name string, title string, emojis string) *CreateNewStickerSetCall {
+func (client *Client) CreateNewStickerSet(userID UserID, name string, title string, stickers []InputSticker, stickerFormat string) *CreateNewStickerSetCall {
 	return BindClient(
-		NewCreateNewStickerSetCall(userID, name, title, emojis),
+		NewCreateNewStickerSetCall(userID, name, title, stickers, stickerFormat),
 		client,
 	)
 }
@@ -4865,47 +5010,35 @@ func (call *CreateNewStickerSetCall) Title(title string) *CreateNewStickerSetCal
 	return call
 }
 
-// PNGSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *CreateNewStickerSetCall) PNGSticker(pngSticker FileArg) *CreateNewStickerSetCall {
-	call.request.File("png_sticker", pngSticker)
+// Stickers A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
+func (call *CreateNewStickerSetCall) Stickers(stickers []InputSticker) *CreateNewStickerSetCall {
+	call.request.JSON("stickers", stickers)
 	return call
 }
 
-// TGSSticker TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
-func (call *CreateNewStickerSetCall) TGSSticker(tgsSticker InputFile) *CreateNewStickerSetCall {
-	call.request.JSON("tgs_sticker", tgsSticker)
+// StickerFormat Format of stickers in the set, must be one of “static”, “animated”, “video”
+func (call *CreateNewStickerSetCall) StickerFormat(stickerFormat string) *CreateNewStickerSetCall {
+	call.request.String("sticker_format", stickerFormat)
 	return call
 }
 
-// WEBMSticker WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
-func (call *CreateNewStickerSetCall) WEBMSticker(webmSticker InputFile) *CreateNewStickerSetCall {
-	call.request.JSON("webm_sticker", webmSticker)
-	return call
-}
-
-// StickerType Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API at the moment. By default, a regular sticker set is created.
+// StickerType Type of stickers in the set, pass “regular”, “mask”, or “custom_emoji”. By default, a regular sticker set is created.
 func (call *CreateNewStickerSetCall) StickerType(stickerType StickerType) *CreateNewStickerSetCall {
 	call.request.Stringer("sticker_type", stickerType)
 	return call
 }
 
-// Emojis One or more emoji corresponding to the sticker
-func (call *CreateNewStickerSetCall) Emojis(emojis string) *CreateNewStickerSetCall {
-	call.request.String("emojis", emojis)
-	return call
-}
-
-// MaskPosition A JSON-serialized object for position where the mask should be placed on faces
-func (call *CreateNewStickerSetCall) MaskPosition(maskPosition MaskPosition) *CreateNewStickerSetCall {
-	call.request.JSON("mask_position", maskPosition)
+// NeedsRepainting Pass True if stickers in the sticker set must be repainted to the color of text when used in messages, the accent color if used as emoji status, white on chat photos, or another appropriate color based on context; for custom emoji sticker sets only
+func (call *CreateNewStickerSetCall) NeedsRepainting(needsRepainting bool) *CreateNewStickerSetCall {
+	call.request.Bool("needs_repainting", needsRepainting)
 	return call
 }
 
 // AddStickerToSetCall reprenesents a call to the addStickerToSet method.
 // Use this method to add a new sticker to a set created by the bot
-// You must use exactly one of the fields png_sticker, tgs_sticker, or webm_sticker
-// Animated stickers can be added to animated sticker sets and only to them
-// Animated sticker sets can have up to 50 stickers
+// The format of the added sticker must match the format of the other stickers in the set
+// Emoji sticker sets can have up to 200 stickers
+// Animated and video sticker sets can have up to 50 stickers
 // Static sticker sets can have up to 120 stickers
 type AddStickerToSetCall struct {
 	CallNoResult
@@ -4914,22 +5047,22 @@ type AddStickerToSetCall struct {
 // NewAddStickerToSetCall constructs a new AddStickerToSetCall with required parameters.
 // userID - User identifier of sticker set owner
 // name - Sticker set name
-// emojis - One or more emoji corresponding to the sticker
-func NewAddStickerToSetCall(userID UserID, name string, emojis string) *AddStickerToSetCall {
+// sticker - A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set isn't changed.
+func NewAddStickerToSetCall(userID UserID, name string, sticker InputSticker) *AddStickerToSetCall {
 	return &AddStickerToSetCall{
 		CallNoResult{
 			request: NewRequest("addStickerToSet").
 				UserID("user_id", userID).
 				String("name", name).
-				String("emojis", emojis),
+				JSON("sticker", sticker),
 		},
 	}
 }
 
 // AddStickerToSetCall constructs a new AddStickerToSetCall with required parameters.
-func (client *Client) AddStickerToSet(userID UserID, name string, emojis string) *AddStickerToSetCall {
+func (client *Client) AddStickerToSet(userID UserID, name string, sticker InputSticker) *AddStickerToSetCall {
 	return BindClient(
-		NewAddStickerToSetCall(userID, name, emojis),
+		NewAddStickerToSetCall(userID, name, sticker),
 		client,
 	)
 }
@@ -4946,33 +5079,9 @@ func (call *AddStickerToSetCall) Name(name string) *AddStickerToSetCall {
 	return call
 }
 
-// PNGSticker PNG image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
-func (call *AddStickerToSetCall) PNGSticker(pngSticker FileArg) *AddStickerToSetCall {
-	call.request.File("png_sticker", pngSticker)
-	return call
-}
-
-// TGSSticker TGS animation with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#animated-sticker-requirements for technical requirements
-func (call *AddStickerToSetCall) TGSSticker(tgsSticker InputFile) *AddStickerToSetCall {
-	call.request.JSON("tgs_sticker", tgsSticker)
-	return call
-}
-
-// WEBMSticker WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements
-func (call *AddStickerToSetCall) WEBMSticker(webmSticker InputFile) *AddStickerToSetCall {
-	call.request.JSON("webm_sticker", webmSticker)
-	return call
-}
-
-// Emojis One or more emoji corresponding to the sticker
-func (call *AddStickerToSetCall) Emojis(emojis string) *AddStickerToSetCall {
-	call.request.String("emojis", emojis)
-	return call
-}
-
-// MaskPosition A JSON-serialized object for position where the mask should be placed on faces
-func (call *AddStickerToSetCall) MaskPosition(maskPosition MaskPosition) *AddStickerToSetCall {
-	call.request.JSON("mask_position", maskPosition)
+// Sticker A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set isn't changed.
+func (call *AddStickerToSetCall) Sticker(sticker InputSticker) *AddStickerToSetCall {
+	call.request.JSON("sticker", sticker)
 	return call
 }
 
@@ -5046,50 +5155,272 @@ func (call *DeleteStickerFromSetCall) Sticker(sticker string) *DeleteStickerFrom
 	return call
 }
 
-// SetStickerSetThumbCall reprenesents a call to the setStickerSetThumb method.
-// Use this method to set the thumbnail of a sticker set
-// Animated thumbnails can be set for animated sticker sets only
-// Video thumbnails can be set only for video sticker sets only
-type SetStickerSetThumbCall struct {
+// SetStickerEmojiListCall reprenesents a call to the setStickerEmojiList method.
+// Use this method to change the list of emoji assigned to a regular or custom emoji sticker
+// The sticker must belong to a sticker set created by the bot
+type SetStickerEmojiListCall struct {
 	CallNoResult
 }
 
-// NewSetStickerSetThumbCall constructs a new SetStickerSetThumbCall with required parameters.
+// NewSetStickerEmojiListCall constructs a new SetStickerEmojiListCall with required parameters.
+// sticker - File identifier of the sticker
+// emojiList - A JSON-serialized list of 1-20 emoji associated with the sticker
+func NewSetStickerEmojiListCall(sticker string, emojiList []string) *SetStickerEmojiListCall {
+	return &SetStickerEmojiListCall{
+		CallNoResult{
+			request: NewRequest("setStickerEmojiList").
+				String("sticker", sticker).
+				JSON("emoji_list", emojiList),
+		},
+	}
+}
+
+// SetStickerEmojiListCall constructs a new SetStickerEmojiListCall with required parameters.
+func (client *Client) SetStickerEmojiList(sticker string, emojiList []string) *SetStickerEmojiListCall {
+	return BindClient(
+		NewSetStickerEmojiListCall(sticker, emojiList),
+		client,
+	)
+}
+
+// Sticker File identifier of the sticker
+func (call *SetStickerEmojiListCall) Sticker(sticker string) *SetStickerEmojiListCall {
+	call.request.String("sticker", sticker)
+	return call
+}
+
+// EmojiList A JSON-serialized list of 1-20 emoji associated with the sticker
+func (call *SetStickerEmojiListCall) EmojiList(emojiList []string) *SetStickerEmojiListCall {
+	call.request.JSON("emoji_list", emojiList)
+	return call
+}
+
+// SetStickerKeywordsCall reprenesents a call to the setStickerKeywords method.
+// Use this method to change search keywords assigned to a regular or custom emoji sticker
+// The sticker must belong to a sticker set created by the bot
+type SetStickerKeywordsCall struct {
+	CallNoResult
+}
+
+// NewSetStickerKeywordsCall constructs a new SetStickerKeywordsCall with required parameters.
+// sticker - File identifier of the sticker
+func NewSetStickerKeywordsCall(sticker string) *SetStickerKeywordsCall {
+	return &SetStickerKeywordsCall{
+		CallNoResult{
+			request: NewRequest("setStickerKeywords").
+				String("sticker", sticker),
+		},
+	}
+}
+
+// SetStickerKeywordsCall constructs a new SetStickerKeywordsCall with required parameters.
+func (client *Client) SetStickerKeywords(sticker string) *SetStickerKeywordsCall {
+	return BindClient(
+		NewSetStickerKeywordsCall(sticker),
+		client,
+	)
+}
+
+// Sticker File identifier of the sticker
+func (call *SetStickerKeywordsCall) Sticker(sticker string) *SetStickerKeywordsCall {
+	call.request.String("sticker", sticker)
+	return call
+}
+
+// Keywords A JSON-serialized list of 0-20 search keywords for the sticker with total length of up to 64 characters
+func (call *SetStickerKeywordsCall) Keywords(keywords []string) *SetStickerKeywordsCall {
+	call.request.JSON("keywords", keywords)
+	return call
+}
+
+// SetStickerMaskPositionCall reprenesents a call to the setStickerMaskPosition method.
+// Use this method to change the mask position of a mask sticker
+// The sticker must belong to a sticker set that was created by the bot
+type SetStickerMaskPositionCall struct {
+	CallNoResult
+}
+
+// NewSetStickerMaskPositionCall constructs a new SetStickerMaskPositionCall with required parameters.
+// sticker - File identifier of the sticker
+func NewSetStickerMaskPositionCall(sticker string) *SetStickerMaskPositionCall {
+	return &SetStickerMaskPositionCall{
+		CallNoResult{
+			request: NewRequest("setStickerMaskPosition").
+				String("sticker", sticker),
+		},
+	}
+}
+
+// SetStickerMaskPositionCall constructs a new SetStickerMaskPositionCall with required parameters.
+func (client *Client) SetStickerMaskPosition(sticker string) *SetStickerMaskPositionCall {
+	return BindClient(
+		NewSetStickerMaskPositionCall(sticker),
+		client,
+	)
+}
+
+// Sticker File identifier of the sticker
+func (call *SetStickerMaskPositionCall) Sticker(sticker string) *SetStickerMaskPositionCall {
+	call.request.String("sticker", sticker)
+	return call
+}
+
+// MaskPosition A JSON-serialized object with the position where the mask should be placed on faces. Omit the parameter to remove the mask position.
+func (call *SetStickerMaskPositionCall) MaskPosition(maskPosition MaskPosition) *SetStickerMaskPositionCall {
+	call.request.JSON("mask_position", maskPosition)
+	return call
+}
+
+// SetStickerSetTitleCall reprenesents a call to the setStickerSetTitle method.
+// Use this method to set the title of a created sticker set
+type SetStickerSetTitleCall struct {
+	CallNoResult
+}
+
+// NewSetStickerSetTitleCall constructs a new SetStickerSetTitleCall with required parameters.
+// name - Sticker set name
+// title - Sticker set title, 1-64 characters
+func NewSetStickerSetTitleCall(name string, title string) *SetStickerSetTitleCall {
+	return &SetStickerSetTitleCall{
+		CallNoResult{
+			request: NewRequest("setStickerSetTitle").
+				String("name", name).
+				String("title", title),
+		},
+	}
+}
+
+// SetStickerSetTitleCall constructs a new SetStickerSetTitleCall with required parameters.
+func (client *Client) SetStickerSetTitle(name string, title string) *SetStickerSetTitleCall {
+	return BindClient(
+		NewSetStickerSetTitleCall(name, title),
+		client,
+	)
+}
+
+// Name Sticker set name
+func (call *SetStickerSetTitleCall) Name(name string) *SetStickerSetTitleCall {
+	call.request.String("name", name)
+	return call
+}
+
+// Title Sticker set title, 1-64 characters
+func (call *SetStickerSetTitleCall) Title(title string) *SetStickerSetTitleCall {
+	call.request.String("title", title)
+	return call
+}
+
+// SetStickerSetThumbnailCall reprenesents a call to the setStickerSetThumbnail method.
+// Use this method to set the thumbnail of a regular or mask sticker set
+// The format of the thumbnail file must match the format of the stickers in the set
+type SetStickerSetThumbnailCall struct {
+	CallNoResult
+}
+
+// NewSetStickerSetThumbnailCall constructs a new SetStickerSetThumbnailCall with required parameters.
 // name - Sticker set name
 // userID - User identifier of the sticker set owner
-func NewSetStickerSetThumbCall(name string, userID UserID) *SetStickerSetThumbCall {
-	return &SetStickerSetThumbCall{
+func NewSetStickerSetThumbnailCall(name string, userID UserID) *SetStickerSetThumbnailCall {
+	return &SetStickerSetThumbnailCall{
 		CallNoResult{
-			request: NewRequest("setStickerSetThumb").
+			request: NewRequest("setStickerSetThumbnail").
 				String("name", name).
 				UserID("user_id", userID),
 		},
 	}
 }
 
-// SetStickerSetThumbCall constructs a new SetStickerSetThumbCall with required parameters.
-func (client *Client) SetStickerSetThumb(name string, userID UserID) *SetStickerSetThumbCall {
+// SetStickerSetThumbnailCall constructs a new SetStickerSetThumbnailCall with required parameters.
+func (client *Client) SetStickerSetThumbnail(name string, userID UserID) *SetStickerSetThumbnailCall {
 	return BindClient(
-		NewSetStickerSetThumbCall(name, userID),
+		NewSetStickerSetThumbnailCall(name, userID),
 		client,
 	)
 }
 
 // Name Sticker set name
-func (call *SetStickerSetThumbCall) Name(name string) *SetStickerSetThumbCall {
+func (call *SetStickerSetThumbnailCall) Name(name string) *SetStickerSetThumbnailCall {
 	call.request.String("name", name)
 	return call
 }
 
 // UserID User identifier of the sticker set owner
-func (call *SetStickerSetThumbCall) UserID(userID UserID) *SetStickerSetThumbCall {
+func (call *SetStickerSetThumbnailCall) UserID(userID UserID) *SetStickerSetThumbnailCall {
 	call.request.UserID("user_id", userID)
 	return call
 }
 
-// Thumb A PNG image with the thumbnail, must be up to 128 kilobytes in size and have width and height exactly 100px, or a TGS animation with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/stickers#animated-sticker-requirements for animated sticker technical requirements, or a WEBM video with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/stickers#video-sticker-requirements for video sticker technical requirements. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files ». Animated sticker set thumbnails can't be uploaded via HTTP URL.
-func (call *SetStickerSetThumbCall) Thumb(thumb FileArg) *SetStickerSetThumbCall {
-	call.request.File("thumb", thumb)
+// Thumbnail A .WEBP or .PNG image with the thumbnail, must be up to 128 kilobytes in size and have a width and height of exactly 100px, or a .TGS animation with a thumbnail up to 32 kilobytes in size (see https://core.telegram.org/stickers#animated-sticker-requirements for animated sticker technical requirements), or a WEBM video with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/stickers#video-sticker-requirements for video sticker technical requirements. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files ». Animated and video sticker set thumbnails can't be uploaded via HTTP URL. If omitted, then the thumbnail is dropped and the first sticker is used as the thumbnail.
+func (call *SetStickerSetThumbnailCall) Thumbnail(thumbnail FileArg) *SetStickerSetThumbnailCall {
+	call.request.File("thumbnail", thumbnail)
+	return call
+}
+
+// SetCustomEmojiStickerSetThumbnailCall reprenesents a call to the setCustomEmojiStickerSetThumbnail method.
+// Use this method to set the thumbnail of a custom emoji sticker set
+type SetCustomEmojiStickerSetThumbnailCall struct {
+	CallNoResult
+}
+
+// NewSetCustomEmojiStickerSetThumbnailCall constructs a new SetCustomEmojiStickerSetThumbnailCall with required parameters.
+// name - Sticker set name
+func NewSetCustomEmojiStickerSetThumbnailCall(name string) *SetCustomEmojiStickerSetThumbnailCall {
+	return &SetCustomEmojiStickerSetThumbnailCall{
+		CallNoResult{
+			request: NewRequest("setCustomEmojiStickerSetThumbnail").
+				String("name", name),
+		},
+	}
+}
+
+// SetCustomEmojiStickerSetThumbnailCall constructs a new SetCustomEmojiStickerSetThumbnailCall with required parameters.
+func (client *Client) SetCustomEmojiStickerSetThumbnail(name string) *SetCustomEmojiStickerSetThumbnailCall {
+	return BindClient(
+		NewSetCustomEmojiStickerSetThumbnailCall(name),
+		client,
+	)
+}
+
+// Name Sticker set name
+func (call *SetCustomEmojiStickerSetThumbnailCall) Name(name string) *SetCustomEmojiStickerSetThumbnailCall {
+	call.request.String("name", name)
+	return call
+}
+
+// CustomEmojiID Custom emoji identifier of a sticker from the sticker set; pass an empty string to drop the thumbnail and use the first sticker as the thumbnail.
+func (call *SetCustomEmojiStickerSetThumbnailCall) CustomEmojiID(customEmojiID string) *SetCustomEmojiStickerSetThumbnailCall {
+	call.request.String("custom_emoji_id", customEmojiID)
+	return call
+}
+
+// DeleteStickerSetCall reprenesents a call to the deleteStickerSet method.
+// Use this method to delete a sticker set that was created by the bot
+type DeleteStickerSetCall struct {
+	CallNoResult
+}
+
+// NewDeleteStickerSetCall constructs a new DeleteStickerSetCall with required parameters.
+// name - Sticker set name
+func NewDeleteStickerSetCall(name string) *DeleteStickerSetCall {
+	return &DeleteStickerSetCall{
+		CallNoResult{
+			request: NewRequest("deleteStickerSet").
+				String("name", name),
+		},
+	}
+}
+
+// DeleteStickerSetCall constructs a new DeleteStickerSetCall with required parameters.
+func (client *Client) DeleteStickerSet(name string) *DeleteStickerSetCall {
+	return BindClient(
+		NewDeleteStickerSetCall(name),
+		client,
+	)
+}
+
+// Name Sticker set name
+func (call *DeleteStickerSetCall) Name(name string) *DeleteStickerSetCall {
+	call.request.String("name", name)
 	return call
 }
 
