@@ -726,11 +726,21 @@ func (content InputVenueMessageContent) isInputMessageContent()    {}
 func (content InputContactMessageContent) isInputMessageContent()  {}
 func (content InputInvoiceMessageContent) isInputMessageContent()  {}
 
-func (media *InputMediaPhoto) getMedia() (*FileArg, *InputFile)     { return &media.Media, nil }
-func (media *InputMediaVideo) getMedia() (*FileArg, *InputFile)     { return &media.Media, media.Thumb }
-func (media *InputMediaAudio) getMedia() (*FileArg, *InputFile)     { return &media.Media, media.Thumb }
-func (media *InputMediaDocument) getMedia() (*FileArg, *InputFile)  { return &media.Media, media.Thumb }
-func (media *InputMediaAnimation) getMedia() (*FileArg, *InputFile) { return &media.Media, media.Thumb }
+func (media *InputMediaPhoto) getMedia() (*FileArg, *InputFile) {
+	return &media.Media, nil
+}
+func (media *InputMediaVideo) getMedia() (*FileArg, *InputFile) {
+	return &media.Media, media.Thumbnail
+}
+func (media *InputMediaAudio) getMedia() (*FileArg, *InputFile) {
+	return &media.Media, media.Thumbnail
+}
+func (media *InputMediaDocument) getMedia() (*FileArg, *InputFile) {
+	return &media.Media, media.Thumbnail
+}
+func (media *InputMediaAnimation) getMedia() (*FileArg, *InputFile) {
+	return &media.Media, media.Thumbnail
+}
 
 func (media *InputMediaPhoto) MarshalJSON() ([]byte, error) {
 	media.Type = "photo"

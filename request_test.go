@@ -48,7 +48,7 @@ func TestRequest_Setters(t *testing.T) {
 				Upload: NewInputFileBytes("file_name", []byte("file_content")),
 			},
 
-			Thumb: NewInputFileBytes("thumb.jpg", []byte("")).Ptr(),
+			Thumbnail: NewInputFileBytes("thumb.jpg", []byte("")).Ptr(),
 		},
 	})
 
