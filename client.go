@@ -48,7 +48,7 @@ func WithClientServerURL(server string) ClientOption {
 }
 
 // WithClientDoer sets custom http client for Client.
-func WithClientDoer(doer *http.Client) ClientOption {
+func WithClientDoer(doer doer) ClientOption {
 	return func(c *Client) {
 		c.doer = doer
 	}
