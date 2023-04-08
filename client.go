@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-type doer interface {
+type Doer interface {
 	Do(r *http.Request) (*http.Response, error)
 }
 
@@ -30,7 +30,7 @@ type Client struct {
 
 	// http client,
 	// default values is http.DefaultClient
-	doer doer
+	doer Doer
 
 	// contains cached bot info
 	me     *User
@@ -48,7 +48,7 @@ func WithClientServerURL(server string) ClientOption {
 }
 
 // WithClientDoer sets custom http client for Client.
-func WithClientDoer(doer doer) ClientOption {
+func WithClientDoer(doer Doer) ClientOption {
 	return func(c *Client) {
 		c.doer = doer
 	}
