@@ -859,10 +859,10 @@ type ChatShared struct {
 	ChatID int64 `json:"chat_id"`
 }
 
-// WriteAccessAllowed this object represents a service message about a user allowing a bot added to the attachment menu to write messages. Currently holds no information.
+// WriteAccessAllowed this object represents a service message about a user allowing a bot to write messages after adding the bot to the attachment menu or launching a Web App from a link.
 type WriteAccessAllowed struct {
-	// Point in time (Unix timestamp) when the video chat is supposed to be started by a chat administrator
-	StartDate int `json:"start_date"`
+	// Optional. Name of the Web App which was launched from a link
+	WebAppName string `json:"web_app_name,omitempty"`
 }
 
 // VideoChatScheduled this object represents a service message about a video chat scheduled in the chat.
@@ -964,7 +964,7 @@ type KeyboardButton struct {
 	WebApp *WebAppInfo `json:"web_app,omitempty"`
 }
 
-// KeyboardButtonRequestUser this object defines the criteria used to request a suitable user. The identifier of the selected user will be shared with the bot when the corresponding button is pressed.
+// KeyboardButtonRequestUser this object defines the criteria used to request a suitable user. The identifier of the selected user will be shared with the bot when the corresponding button is pressed. More about requesting users »
 type KeyboardButtonRequestUser struct {
 	// Signed 32-bit identifier of the request, which will be received back in the UserShared object. Must be unique within the message
 	RequestID int `json:"request_id"`
@@ -976,7 +976,7 @@ type KeyboardButtonRequestUser struct {
 	UserIsPremium bool `json:"user_is_premium,omitempty"`
 }
 
-// KeyboardButtonRequestChat this object defines the criteria used to request a suitable chat. The identifier of the selected chat will be shared with the bot when the corresponding button is pressed.
+// KeyboardButtonRequestChat this object defines the criteria used to request a suitable chat. The identifier of the selected chat will be shared with the bot when the corresponding button is pressed. More about requesting chats »
 type KeyboardButtonRequestChat struct {
 	// Signed 32-bit identifier of the request, which will be received back in the ChatShared object. Must be unique within the message
 	RequestID int `json:"request_id"`
@@ -1047,6 +1047,9 @@ type InlineKeyboardButton struct {
 	// Optional. If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. May be empty, in which case only the bot's username will be inserted.This offers a quick way for the user to open your bot in inline mode in the same chat - good for selecting something from multiple options.
 	SwitchInlineQueryCurrentChat string `json:"switch_inline_query_current_chat,omitempty"`
 
+	// Optional. If set, pressing the button will prompt the user to select one of their chats of the specified type, open that chat and insert the bot's username and the specified inline query in the input field
+	SwitchInlineQueryChosenChat *SwitchInlineQueryChosenChat `json:"switch_inline_query_chosen_chat,omitempty"`
+
 	// Optional. Description of the game that will be launched when the user presses the button.NOTE: This type of button must always be the first button in the first row.
 	CallbackGame *CallbackGame `json:"callback_game,omitempty"`
 
@@ -1067,6 +1070,24 @@ type LoginURL struct {
 
 	// Optional. Pass True to request the permission for your bot to send messages to the user.
 	RequestWriteAccess bool `json:"request_write_access,omitempty"`
+}
+
+// SwitchInlineQueryChosenChat this object represents an inline button that switches the current user to inline mode in a chosen chat, with an optional default inline query.
+type SwitchInlineQueryChosenChat struct {
+	// Optional. The default inline query to be inserted in the input field. If left empty, only the bot's username will be inserted
+	Query string `json:"query,omitempty"`
+
+	// Optional. True, if private chats with users can be chosen
+	AllowUserChats bool `json:"allow_user_chats,omitempty"`
+
+	// Optional. True, if private chats with bots can be chosen
+	AllowBotChats bool `json:"allow_bot_chats,omitempty"`
+
+	// Optional. True, if group and supergroup chats can be chosen
+	AllowGroupChats bool `json:"allow_group_chats,omitempty"`
+
+	// Optional. True, if channel chats can be chosen
+	AllowChannelChats bool `json:"allow_channel_chats,omitempty"`
 }
 
 // CallbackQuery this object represents an incoming callback query from a callback button in an inline keyboard. If the button that originated the query was attached to a message sent by the bot, the field message will be present. If the button was attached to a message sent via the bot (in inline mode), the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
@@ -1376,6 +1397,9 @@ type ChatMemberUpdated struct {
 
 	// Optional. Chat invite link, which was used by the user to join the chat; for joining by invite link events only.
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
+
+	// Optional. True, if the user joined the chat via a chat folder invite link
+	ViaChatFolderInviteLink bool `json:"via_chat_folder_invite_link,omitempty"`
 }
 
 // ChatJoinRequest represents a join request sent to a chat.
@@ -1529,6 +1553,12 @@ type BotCommandScopeChatMember struct {
 
 	// Unique identifier of the target user
 	UserID int `json:"user_id"`
+}
+
+// BotName this object represents the bot's name.
+type BotName struct {
+	// The bot's name
+	Name string `json:"name"`
 }
 
 // BotDescription this object represents the bot's description.
@@ -1809,7 +1839,7 @@ type MaskPosition struct {
 
 // InputSticker this object describes a sticker to be added to a sticker set.
 type InputSticker struct {
-	// The added sticker. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. Animated and video stickers can't be uploaded via HTTP URL. More information on Sending Files »
+	// The added sticker. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, upload a new one using multipart/form-data, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. Animated and video stickers can't be uploaded via HTTP URL. More information on Sending Files »
 	Sticker FileArg `json:"sticker"`
 
 	// List of 1-20 emoji associated with the sticker
@@ -1841,6 +1871,18 @@ type InlineQuery struct {
 
 	// Optional. Sender location, only for bots that request user location
 	Location *Location `json:"location,omitempty"`
+}
+
+// InlineQueryResultsButton this object represents a button to be shown above inline query results. You must use exactly one of the optional fields.
+type InlineQueryResultsButton struct {
+	// Label text on the button
+	Text string `json:"text"`
+
+	// Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be able to switch back to the inline mode using the method web_app_switch_inline_query inside the Web App.
+	WebApp *WebAppInfo `json:"web_app,omitempty"`
+
+	// Optional. Deep-linking parameter for the /start message sent to the bot when a user presses the button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.Example: An inline bot that sends YouTube videos can ask the user to connect the bot to their YouTube account to adapt search results accordingly. To do this, it displays a 'Connect your YouTube account' button above the results, or even before showing any. The user presses the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs the bot to return an OAuth link. Once done, the bot can offer a switch_inline button so that the user can easily return to the chat where they wanted to use the bot's inline capabilities.
+	StartParameter string `json:"start_parameter,omitempty"`
 }
 
 // InlineQueryResultArticle represents a link to an article or web page.
@@ -3112,7 +3154,7 @@ type GameHighScore struct {
 	Score int `json:"score"`
 }
 
-// WebAppInitData this object contains data that is transferred to the Web App when it is opened. It is empty if the Web App was launched from a keyboard button.
+// WebAppInitData this object contains data that is transferred to the Web App when it is opened. It is empty if the Web App was launched from a keyboard button or from inline mode.
 type WebAppInitData struct {
 	// Optional. A unique identifier for the Web App session, required for sending messages via the answerWebAppQuery method.
 	QueryID string `json:"query_id,omitempty"`
@@ -3125,6 +3167,12 @@ type WebAppInitData struct {
 
 	// Optional. An object containing data about the chat where the bot was launched via the attachment menu. Returned for supergroups, channels and group chats – only for Web Apps launched via the attachment menu.
 	Chat *WebAppChat `json:"chat,omitempty"`
+
+	// Optional. Type of the chat from which the Web App was opened. Can be either “sender” for a private chat with the user opening the link, “private”, “group”, “supergroup”, or “channel”. Returned only for Web Apps launched from direct links.
+	ChatType string `json:"chat_type,omitempty"`
+
+	// Optional. Global identifier, uniquely corresponding to the chat from which the Web App was opened. Returned only for Web Apps launched from a direct link.
+	ChatInstance string `json:"chat_instance,omitempty"`
 
 	// Optional. The value of the startattach parameter, passed via link. Only returned for Web Apps when launched from the attachment menu via link.The value of the start_param parameter will also be passed in the GET-parameter tgWebAppStartParam, so the Web App can load the correct interface right away.
 	StartParam string `json:"start_param,omitempty"`
