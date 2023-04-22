@@ -27,7 +27,7 @@ func (client *Client) GetUpdates() *GetUpdatesCall {
 	)
 }
 
-// Offset Identifier of the first update to be returned. Must be greater by one than the highest among the identifiers of previously received updates. By default, updates starting with the earliest unconfirmed update are returned. An update is considered confirmed as soon as getUpdates is called with an offset higher than its update_id. The negative offset can be specified to retrieve updates starting from -offset update from the end of the updates queue. All previous updates will forgotten.
+// Offset Identifier of the first update to be returned. Must be greater by one than the highest among the identifiers of previously received updates. By default, updates starting with the earliest unconfirmed update are returned. An update is considered confirmed as soon as getUpdates is called with an offset higher than its update_id. The negative offset can be specified to retrieve updates starting from -offset update from the end of the updates queue. All previous updates will be forgotten.
 func (call *GetUpdatesCall) Offset(offset int) *GetUpdatesCall {
 	call.request.Int("offset", offset)
 	return call
@@ -3925,6 +3925,71 @@ func (call *GetMyCommandsCall) LanguageCode(languageCode string) *GetMyCommandsC
 	return call
 }
 
+// SetMyNameCall reprenesents a call to the setMyName method.
+// Use this method to change the bot's name
+type SetMyNameCall struct {
+	CallNoResult
+}
+
+// NewSetMyNameCall constructs a new SetMyNameCall with required parameters.
+func NewSetMyNameCall() *SetMyNameCall {
+	return &SetMyNameCall{
+		CallNoResult{
+			request: NewRequest("setMyName"),
+		},
+	}
+}
+
+// SetMyNameCall constructs a new SetMyNameCall with required parameters.
+func (client *Client) SetMyName() *SetMyNameCall {
+	return BindClient(
+		NewSetMyNameCall(),
+		client,
+	)
+}
+
+// Name New bot name; 0-64 characters. Pass an empty string to remove the dedicated name for the given language.
+func (call *SetMyNameCall) Name(name string) *SetMyNameCall {
+	call.request.String("name", name)
+	return call
+}
+
+// LanguageCode A two-letter ISO 639-1 language code. If empty, the name will be shown to all users for whose language there is no dedicated name.
+func (call *SetMyNameCall) LanguageCode(languageCode string) *SetMyNameCall {
+	call.request.String("language_code", languageCode)
+	return call
+}
+
+// GetMyNameCall reprenesents a call to the getMyName method.
+// Use this method to get the current bot name for the given user language
+// Returns BotName on success.
+type GetMyNameCall struct {
+	Call[BotName]
+}
+
+// NewGetMyNameCall constructs a new GetMyNameCall with required parameters.
+func NewGetMyNameCall() *GetMyNameCall {
+	return &GetMyNameCall{
+		Call[BotName]{
+			request: NewRequest("getMyName"),
+		},
+	}
+}
+
+// GetMyNameCall constructs a new GetMyNameCall with required parameters.
+func (client *Client) GetMyName() *GetMyNameCall {
+	return BindClient(
+		NewGetMyNameCall(),
+		client,
+	)
+}
+
+// LanguageCode A two-letter ISO 639-1 language code or an empty string
+func (call *GetMyNameCall) LanguageCode(languageCode string) *GetMyNameCall {
+	call.request.String("language_code", languageCode)
+	return call
+}
+
 // SetMyDescriptionCall reprenesents a call to the setMyDescription method.
 // Use this method to change the bot's description, which is shown in the chat with the bot if the chat is empty
 type SetMyDescriptionCall struct {
@@ -5470,7 +5535,7 @@ func (call *AnswerInlineQueryCall) CacheTime(cacheTime int) *AnswerInlineQueryCa
 	return call
 }
 
-// IsPersonal Pass True if results may be cached on the server side only for the user that sent the query. By default, results may be returned to any user who sends the same query
+// IsPersonal Pass True if results may be cached on the server side only for the user that sent the query. By default, results may be returned to any user who sends the same query.
 func (call *AnswerInlineQueryCall) IsPersonal(isPersonal bool) *AnswerInlineQueryCall {
 	call.request.Bool("is_personal", isPersonal)
 	return call
@@ -5482,15 +5547,9 @@ func (call *AnswerInlineQueryCall) NextOffset(nextOffset string) *AnswerInlineQu
 	return call
 }
 
-// SwitchPmText If passed, clients will display a button with specified text that switches the user to a private chat with the bot and sends the bot a start message with the parameter switch_pm_parameter
-func (call *AnswerInlineQueryCall) SwitchPmText(switchPmText string) *AnswerInlineQueryCall {
-	call.request.String("switch_pm_text", switchPmText)
-	return call
-}
-
-// SwitchPmParameter Deep-linking parameter for the /start message sent to the bot when user presses the switch button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.Example: An inline bot that sends YouTube videos can ask the user to connect the bot to their YouTube account to adapt search results accordingly. To do this, it displays a 'Connect your YouTube account' button above the results, or even before showing any. The user presses the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs the bot to return an OAuth link. Once done, the bot can offer a switch_inline button so that the user can easily return to the chat where they wanted to use the bot's inline capabilities.
-func (call *AnswerInlineQueryCall) SwitchPmParameter(switchPmParameter string) *AnswerInlineQueryCall {
-	call.request.String("switch_pm_parameter", switchPmParameter)
+// Button A JSON-serialized object describing a button to be shown above inline query results
+func (call *AnswerInlineQueryCall) Button(button InlineQueryResultsButton) *AnswerInlineQueryCall {
+	call.request.JSON("button", button)
 	return call
 }
 
