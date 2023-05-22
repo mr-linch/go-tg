@@ -4159,13 +4159,13 @@ func (call *SetChatMenuButtonCall) MenuButton(menuButton MenuButton) *SetChatMen
 // Use this method to get the current value of the bot's menu button in a private chat, or the default menu button
 // Returns MenuButton on success.
 type GetChatMenuButtonCall struct {
-	Call[MenuButton]
+	Call[MenuButtonOneOf]
 }
 
 // NewGetChatMenuButtonCall constructs a new GetChatMenuButtonCall with required parameters.
 func NewGetChatMenuButtonCall() *GetChatMenuButtonCall {
 	return &GetChatMenuButtonCall{
-		Call[MenuButton]{
+		Call[MenuButtonOneOf]{
 			request: NewRequest("getChatMenuButton"),
 		},
 	}
