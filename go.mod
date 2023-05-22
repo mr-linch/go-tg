@@ -3,7 +3,7 @@ module github.com/mr-linch/go-tg
 go 1.18
 
 require (
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
 )
