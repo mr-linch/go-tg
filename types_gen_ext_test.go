@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPeerIDImpl(t *testing.T) {
@@ -1099,4 +1100,37 @@ func TestStickerType_UnmarshalText(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, test.Want, e)
 	}
+}
+
+func TestMenuButtonOneOf_UnmarshalJSON(t *testing.T) {
+	t.Run("Commands", func(t *testing.T) {
+		var b MenuButtonOneOf
+
+		err := b.UnmarshalJSON([]byte(`{"type": "commands"}`))
+		require.NoError(t, err)
+
+		require.NotNil(t, b.Commands)
+		assert.Equal(t, "commands", b.Commands.Type)
+	})
+
+	t.Run("Default", func(t *testing.T) {
+		var b MenuButtonOneOf
+
+		err := b.UnmarshalJSON([]byte(`{"type": "default"}`))
+		require.NoError(t, err)
+
+		require.NotNil(t, b.Default)
+		assert.Equal(t, "default", b.Default.Type)
+	})
+
+	t.Run("WebApp", func(t *testing.T) {
+		var b MenuButtonOneOf
+
+		err := b.UnmarshalJSON([]byte(`{"type": "web_app", "text": "12345"}`))
+		require.NoError(t, err)
+
+		require.NotNil(t, b.WebApp)
+		assert.Equal(t, "web_app", b.WebApp.Type)
+		assert.Equal(t, "12345", b.WebApp.Text)
+	})
 }

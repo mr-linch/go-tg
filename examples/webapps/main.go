@@ -68,6 +68,22 @@ func run(ctx context.Context) error {
 	}
 	log.Printf("auth as https://t.me/%s", me.Username)
 
+	if err := client.SetChatMenuButton().MenuButton(&tg.MenuButtonWebApp{
+		Text: "Open Web App",
+		WebApp: tg.WebAppInfo{
+			URL: flagBaseURL + "/webapp",
+		},
+	}).DoVoid(ctx); err != nil {
+		return fmt.Errorf("set menu button: %w", err)
+	}
+
+	menuButton, err := client.GetChatMenuButton().Do(ctx)
+	if err != nil {
+		return fmt.Errorf("get menu button: %w", err)
+	}
+
+	log.Printf("webapp menu button: %#v", menuButton.WebApp)
+
 	router := newRouter(flagBaseURL)
 
 	webhook := tgb.NewWebhook(router, client, flagBaseURL+"/webhook",

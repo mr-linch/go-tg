@@ -868,6 +868,38 @@ func (button MenuButtonWebApp) MarshalJSON() ([]byte, error) {
 	return json.Marshal(alias(button))
 }
 
+// MenuButtonOneOf contains one of MenuButton implementations.
+// It's used for proper JSON marshaling.
+type MenuButtonOneOf struct {
+	Default  *MenuButtonDefault
+	Commands *MenuButtonCommands
+	WebApp   *MenuButtonWebApp
+}
+
+func (button *MenuButtonOneOf) UnmarshalJSON(v []byte) error {
+	var partial struct {
+		Type string `json:"type"`
+	}
+
+	if err := json.Unmarshal(v, &partial); err != nil {
+		return fmt.Errorf("unmarshal MenuButtonOneOf partial: %w", err)
+	}
+
+	switch partial.Type {
+	case "default":
+		button.Default = &MenuButtonDefault{}
+		return json.Unmarshal(v, button.Default)
+	case "commands":
+		button.Commands = &MenuButtonCommands{}
+		return json.Unmarshal(v, button.Commands)
+	case "web_app":
+		button.WebApp = &MenuButtonWebApp{}
+		return json.Unmarshal(v, button.WebApp)
+	default:
+		return fmt.Errorf("unknown MenuButtonOneOf type: %s", partial.Type)
+	}
+}
+
 // MessageType it's type for describe content of Message.
 type MessageType int
 
