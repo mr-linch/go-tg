@@ -28,8 +28,9 @@
   - [Receive updates via Webhook](#receive-updates-via-webhook)
   - [Routing updates](#routing-updates)
 - [Extensions](#extensions)
-  - [Sessions](#sessions)
+  - [Sessions](#sessions) 
 - [Related Projects](#related-projects)
+- [Projects using this package]
 - [Thanks](#thanks)
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
@@ -698,6 +699,9 @@ See [session](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session) package 
 
 - [`mr-linch/go-tg-bot`](https://github.com/mr-linch/go-tg-bot) - one click boilerplate for creating Telegram bots with PostgreSQL database and clean architecture;
 - [`bots-house/docker-telegram-bot-api`](https://github.com/bots-house/docker-telegram-bot-api) - docker image for running self-hosted Telegram Bot API with automated CI build;
+
+## Projects using this package
+ - [@ttkeeperbot](https://t.me/ttkeeperbot) - Automatically upload tiktoks in groups and verify users 🇺🇦
 
 ## Thanks
 
