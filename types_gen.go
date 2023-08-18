@@ -153,6 +153,9 @@ type Chat struct {
 	// Optional. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
 	EmojiStatusCustomEmojiID string `json:"emoji_status_custom_emoji_id,omitempty"`
 
+	// Optional. Expiration date of the emoji status of the other party in a private chat, if any. Returned only in getChat.
+	EmojiStatusExpirationDate int `json:"emoji_status_expiration_date,omitempty"`
+
 	// Optional. Bio of the other party in a private chat. Returned only in getChat.
 	Bio string `json:"bio,omitempty"`
 
@@ -290,6 +293,9 @@ type Message struct {
 
 	// Optional. Message is a sticker, information about the sticker
 	Sticker *Sticker `json:"sticker,omitempty"`
+
+	// Optional. Message is a forwarded story
+	Story *Story `json:"story,omitempty"`
 
 	// Optional. Message is a video, information about the video
 	Video *Video `json:"video,omitempty"`
@@ -553,6 +559,36 @@ type Document struct {
 	FileSize int64 `json:"file_size,omitempty"`
 }
 
+// Story this object represents a message about a forwarded story in the chat. Currently holds no information.
+type Story struct {
+	// Identifier for this file, which can be used to download or reuse the file
+	FileID FileID `json:"file_id"`
+
+	// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
+	FileUniqueID string `json:"file_unique_id"`
+
+	// Video width as defined by sender
+	Width int `json:"width"`
+
+	// Video height as defined by sender
+	Height int `json:"height"`
+
+	// Duration of the video in seconds as defined by sender
+	Duration int `json:"duration"`
+
+	// Optional. Video thumbnail
+	Thumbnail *PhotoSize `json:"thumbnail,omitempty"`
+
+	// Optional. Original filename as defined by sender
+	FileName string `json:"file_name,omitempty"`
+
+	// Optional. MIME type of the file as defined by sender
+	MIMEType string `json:"mime_type,omitempty"`
+
+	// Optional. File size in bytes.
+	FileSize int64 `json:"file_size,omitempty"`
+}
+
 // Video this object represents a video file.
 type Video struct {
 	// Identifier for this file, which can be used to download or reuse the file
@@ -663,10 +699,13 @@ type PollAnswer struct {
 	// Unique poll identifier
 	PollID string `json:"poll_id"`
 
-	// The user, who changed the answer to the poll
-	User User `json:"user"`
+	// Optional. The chat that changed the answer to the poll, if the voter is anonymous
+	VoterChat *Chat `json:"voter_chat,omitempty"`
 
-	// 0-based identifiers of answer options, chosen by the user. May be empty if the user retracted their vote.
+	// Optional. The user that changed the answer to the poll, if the voter isn't anonymous
+	User *User `json:"user,omitempty"`
+
+	// 0-based identifiers of chosen answer options. May be empty if the vote was retracted.
 	OptionaIDs []int `json:"option_ids"`
 }
 
@@ -1041,7 +1080,7 @@ type InlineKeyboardButton struct {
 	// Optional. An HTTPS URL used to automatically authorize the user. Can be used as a replacement for the Telegram Login Widget.
 	LoginURL *LoginURL `json:"login_url,omitempty"`
 
-	// Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. May be empty, in which case just the bot's username will be inserted.Note: This offers an easy way for users to start using your bot in inline mode when they are currently in a private chat with it. Especially useful when combined with switch_pm… actions - in this case the user will be automatically returned to the chat they switched from, skipping the chat selection screen.
+	// Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. May be empty, in which case just the bot's username will be inserted.
 	SwitchInlineQuery string `json:"switch_inline_query,omitempty"`
 
 	// Optional. If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. May be empty, in which case only the bot's username will be inserted.This offers a quick way for the user to open your bot in inline mode in the same chat - good for selecting something from multiple options.
