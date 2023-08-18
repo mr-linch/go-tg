@@ -3748,6 +3748,38 @@ func (call *UnhideGeneralForumTopicCall) ChatID(chatID PeerID) *UnhideGeneralFor
 	return call
 }
 
+// UnpinAllGeneralForumTopicMessagesCall reprenesents a call to the unpinAllGeneralForumTopicMessages method.
+// Use this method to clear the list of pinned messages in a General forum topic
+// The bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup
+type UnpinAllGeneralForumTopicMessagesCall struct {
+	CallNoResult
+}
+
+// NewUnpinAllGeneralForumTopicMessagesCall constructs a new UnpinAllGeneralForumTopicMessagesCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func NewUnpinAllGeneralForumTopicMessagesCall(chatID PeerID) *UnpinAllGeneralForumTopicMessagesCall {
+	return &UnpinAllGeneralForumTopicMessagesCall{
+		CallNoResult{
+			request: NewRequest("unpinAllGeneralForumTopicMessages").
+				PeerID("chat_id", chatID),
+		},
+	}
+}
+
+// UnpinAllGeneralForumTopicMessagesCall constructs a new UnpinAllGeneralForumTopicMessagesCall with required parameters.
+func (client *Client) UnpinAllGeneralForumTopicMessages(chatID PeerID) *UnpinAllGeneralForumTopicMessagesCall {
+	return BindClient(
+		NewUnpinAllGeneralForumTopicMessagesCall(chatID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+func (call *UnpinAllGeneralForumTopicMessagesCall) ChatID(chatID PeerID) *UnpinAllGeneralForumTopicMessagesCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
 // AnswerCallbackQueryCall reprenesents a call to the answerCallbackQuery method.
 // Use this method to send answers to callback queries sent from inline keyboards
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert
