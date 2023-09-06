@@ -16,7 +16,7 @@ jobs:
           go-version: "1.18"
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Lint
         uses: golangci/golangci-lint-action@v3
@@ -33,7 +33,7 @@ jobs:
           go-version: "1.18"
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Tidy
         run: make go-tidy
@@ -59,7 +59,7 @@ jobs:
           go-version: "1.18"
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Test
         run: go test -timeout 30s -v -race -coverprofile=coverage.txt ./...
