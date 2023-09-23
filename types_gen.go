@@ -153,7 +153,7 @@ type Chat struct {
 	// Optional. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
 	EmojiStatusCustomEmojiID string `json:"emoji_status_custom_emoji_id,omitempty"`
 
-	// Optional. Expiration date of the emoji status of the other party in a private chat, if any. Returned only in getChat.
+	// Optional. Expiration date of the emoji status of the other party in a private chat in Unix time, if any. Returned only in getChat.
 	EmojiStatusExpirationDate int `json:"emoji_status_expiration_date,omitempty"`
 
 	// Optional. Bio of the other party in a private chat. Returned only in getChat.
@@ -384,7 +384,7 @@ type Message struct {
 	// Optional. The domain name of the website on which the user has logged in. More about Telegram Login »
 	ConnectedWebsite string `json:"connected_website,omitempty"`
 
-	// Optional. Service message: the user allowed the bot added to the attachment menu to write messages
+	// Optional. Service message: the user allowed the bot to write messages after adding it to the attachment or side menu, launching a Web App from a link, or accepting an explicit request from a Web App sent by the method requestWriteAccess
 	WriteAccessAllowed *WriteAccessAllowed `json:"write_access_allowed,omitempty"`
 
 	// Optional. Telegram Passport data
@@ -547,36 +547,6 @@ type Document struct {
 	FileUniqueID string `json:"file_unique_id"`
 
 	// Optional. Document thumbnail as defined by sender
-	Thumbnail *PhotoSize `json:"thumbnail,omitempty"`
-
-	// Optional. Original filename as defined by sender
-	FileName string `json:"file_name,omitempty"`
-
-	// Optional. MIME type of the file as defined by sender
-	MIMEType string `json:"mime_type,omitempty"`
-
-	// Optional. File size in bytes.
-	FileSize int64 `json:"file_size,omitempty"`
-}
-
-// Story this object represents a message about a forwarded story in the chat. Currently holds no information.
-type Story struct {
-	// Identifier for this file, which can be used to download or reuse the file
-	FileID FileID `json:"file_id"`
-
-	// Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
-	FileUniqueID string `json:"file_unique_id"`
-
-	// Video width as defined by sender
-	Width int `json:"width"`
-
-	// Video height as defined by sender
-	Height int `json:"height"`
-
-	// Duration of the video in seconds as defined by sender
-	Duration int `json:"duration"`
-
-	// Optional. Video thumbnail
 	Thumbnail *PhotoSize `json:"thumbnail,omitempty"`
 
 	// Optional. Original filename as defined by sender
@@ -898,10 +868,16 @@ type ChatShared struct {
 	ChatID int64 `json:"chat_id"`
 }
 
-// WriteAccessAllowed this object represents a service message about a user allowing a bot to write messages after adding the bot to the attachment menu or launching a Web App from a link.
+// WriteAccessAllowed this object represents a service message about a user allowing a bot to write messages after adding it to the attachment menu, launching a Web App from a link, or accepting an explicit request from a Web App sent by the method requestWriteAccess.
 type WriteAccessAllowed struct {
-	// Optional. Name of the Web App which was launched from a link
+	// Optional. True, if the access was granted after the user accepted an explicit request from a Web App sent by the method requestWriteAccess
+	FromRequest bool `json:"from_request,omitempty"`
+
+	// Optional. Name of the Web App, if the access was granted when the Web App was launched from a link
 	WebAppName string `json:"web_app_name,omitempty"`
+
+	// Optional. True, if the access was granted when the bot was added to the attachment or side menu
+	FromAttachmentMenu bool `json:"from_attachment_menu,omitempty"`
 }
 
 // VideoChatScheduled this object represents a service message about a video chat scheduled in the chat.
@@ -1215,7 +1191,7 @@ type ChatAdministratorRights struct {
 	// True, if the user's presence in the chat is hidden
 	IsAnonymous bool `json:"is_anonymous"`
 
-	// True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+	// True, if the administrator can access the chat event log, chat statistics, boost list in channels, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
 	CanManageChat bool `json:"can_manage_chat"`
 
 	// True, if the administrator can delete messages of other users
@@ -1236,7 +1212,7 @@ type ChatAdministratorRights struct {
 	// True, if the user is allowed to invite new users to the chat
 	CanInviteUsers bool `json:"can_invite_users"`
 
-	// Optional. True, if the administrator can post in the channel; channels only
+	// Optional. True, if the administrator can post messages in the channel; channels only
 	CanPostMessages bool `json:"can_post_messages,omitempty"`
 
 	// Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
@@ -1244,6 +1220,15 @@ type ChatAdministratorRights struct {
 
 	// Optional. True, if the user is allowed to pin messages; groups and supergroups only
 	CanPinMessages bool `json:"can_pin_messages,omitempty"`
+
+	// Optional. True, if the administrator can post stories in the channel; channels only
+	CanPostStories bool `json:"can_post_stories,omitempty"`
+
+	// Optional. True, if the administrator can edit stories posted by other users; channels only
+	CanEditStories bool `json:"can_edit_stories,omitempty"`
+
+	// Optional. True, if the administrator can delete stories posted by other users; channels only
+	CanDeleteStories bool `json:"can_delete_stories,omitempty"`
 
 	// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
 	CanManageTopics bool `json:"can_manage_topics,omitempty"`
@@ -1293,7 +1278,7 @@ type ChatMemberAdministrator struct {
 	// True, if the user's presence in the chat is hidden
 	IsAnonymous bool `json:"is_anonymous"`
 
-	// True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+	// True, if the administrator can access the chat event log, chat statistics, boost list in channels, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
 	CanManageChat bool `json:"can_manage_chat"`
 
 	// True, if the administrator can delete messages of other users
@@ -1314,7 +1299,7 @@ type ChatMemberAdministrator struct {
 	// True, if the user is allowed to invite new users to the chat
 	CanInviteUsers bool `json:"can_invite_users"`
 
-	// Optional. True, if the administrator can post in the channel; channels only
+	// Optional. True, if the administrator can post messages in the channel; channels only
 	CanPostMessages bool `json:"can_post_messages,omitempty"`
 
 	// Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
@@ -1322,6 +1307,15 @@ type ChatMemberAdministrator struct {
 
 	// Optional. True, if the user is allowed to pin messages; groups and supergroups only
 	CanPinMessages bool `json:"can_pin_messages,omitempty"`
+
+	// Optional. True, if the administrator can post stories in the channel; channels only
+	CanPostStories bool `json:"can_post_stories,omitempty"`
+
+	// Optional. True, if the administrator can edit stories posted by other users; channels only
+	CanEditStories bool `json:"can_edit_stories,omitempty"`
+
+	// Optional. True, if the administrator can delete stories posted by other users; channels only
+	CanDeleteStories bool `json:"can_delete_stories,omitempty"`
 
 	// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
 	CanManageTopics bool `json:"can_manage_topics,omitempty"`
@@ -1392,7 +1386,7 @@ type ChatMemberRestricted struct {
 	// True, if the user is allowed to create forum topics
 	CanManageTopics bool `json:"can_manage_topics"`
 
-	// Date when restrictions will be lifted for this user; unix time. If 0, then the user is restricted forever
+	// Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever
 	UntilDate int `json:"until_date"`
 }
 
@@ -1413,7 +1407,7 @@ type ChatMemberBanned struct {
 	// Information about the user
 	User User `json:"user"`
 
-	// Date when restrictions will be lifted for this user; unix time. If 0, then the user is banned forever
+	// Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever
 	UntilDate int `json:"until_date"`
 }
 
@@ -3193,27 +3187,27 @@ type GameHighScore struct {
 	Score int `json:"score"`
 }
 
-// WebAppInitData this object contains data that is transferred to the Web App when it is opened. It is empty if the Web App was launched from a keyboard button or from inline mode.
+// WebAppInitData this object contains data that is transferred to the Mini App when it is opened. It is empty if the Mini App was launched from a keyboard button or from inline mode.
 type WebAppInitData struct {
-	// Optional. A unique identifier for the Web App session, required for sending messages via the answerWebAppQuery method.
+	// Optional. A unique identifier for the Mini App session, required for sending messages via the answerWebAppQuery method.
 	QueryID string `json:"query_id,omitempty"`
 
 	// Optional. An object containing data about the current user.
 	User *WebAppUser `json:"user,omitempty"`
 
-	// Optional. An object containing data about the chat partner of the current user in the chat where the bot was launched via the attachment menu. Returned only for private chats and only for Web Apps launched via the attachment menu.
+	// Optional. An object containing data about the chat partner of the current user in the chat where the bot was launched via the attachment menu. Returned only for private chats and only for Mini Apps launched via the attachment menu.
 	Receiver *WebAppUser `json:"receiver,omitempty"`
 
-	// Optional. An object containing data about the chat where the bot was launched via the attachment menu. Returned for supergroups, channels and group chats – only for Web Apps launched via the attachment menu.
+	// Optional. An object containing data about the chat where the bot was launched via the attachment menu. Returned for supergroups, channels and group chats – only for Mini Apps launched via the attachment menu.
 	Chat *WebAppChat `json:"chat,omitempty"`
 
-	// Optional. Type of the chat from which the Web App was opened. Can be either “sender” for a private chat with the user opening the link, “private”, “group”, “supergroup”, or “channel”. Returned only for Web Apps launched from direct links.
+	// Optional. Type of the chat from which the Mini App was opened. Can be either “sender” for a private chat with the user opening the link, “private”, “group”, “supergroup”, or “channel”. Returned only for Mini Apps launched from direct links.
 	ChatType string `json:"chat_type,omitempty"`
 
-	// Optional. Global identifier, uniquely corresponding to the chat from which the Web App was opened. Returned only for Web Apps launched from a direct link.
+	// Optional. Global identifier, uniquely corresponding to the chat from which the Mini App was opened. Returned only for Mini Apps launched from a direct link.
 	ChatInstance string `json:"chat_instance,omitempty"`
 
-	// Optional. The value of the startattach parameter, passed via link. Only returned for Web Apps when launched from the attachment menu via link.The value of the start_param parameter will also be passed in the GET-parameter tgWebAppStartParam, so the Web App can load the correct interface right away.
+	// Optional. The value of the startattach parameter, passed via link. Only returned for Mini Apps when launched from the attachment menu via link.The value of the start_param parameter will also be passed in the GET-parameter tgWebAppStartParam, so the Mini App can load the correct interface right away.
 	StartParam string `json:"start_param,omitempty"`
 
 	// Optional. Time in seconds, after which a message can be sent via the answerWebAppQuery method.
@@ -3228,7 +3222,7 @@ type WebAppInitData struct {
 	raw url.Values
 }
 
-// WebAppUser this object contains the data of the Web App user.
+// WebAppUser this object contains the data of the Mini App user.
 type WebAppUser struct {
 	// A unique identifier for the user or bot. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. It has at most 52 significant bits, so a 64-bit integer or a double-precision float type is safe for storing this identifier.
 	ID UserID `json:"id"`
@@ -3248,10 +3242,16 @@ type WebAppUser struct {
 	// Optional. IETF language tag of the user's language. Returns in user field only.
 	LanguageCode string `json:"language_code,omitempty"`
 
-	// Optional. True, if this user is a Telegram Premium user
+	// Optional. True, if this user is a Telegram Premium user.
 	IsPremium bool `json:"is_premium,omitempty"`
 
-	// Optional. URL of the user’s profile photo. The photo can be in .jpeg or .svg formats. Only returned for Web Apps launched from the attachment menu.
+	// Optional. True, if this user added the bot to the attachment menu.
+	AddedToAttachmentMenu bool `json:"added_to_attachment_menu,omitempty"`
+
+	// Optional. True, if this user allowed the bot to message them.
+	AllowsWriteToPm bool `json:"allows_write_to_pm,omitempty"`
+
+	// Optional. URL of the user’s profile photo. The photo can be in .jpeg or .svg formats. Only returned for Mini Apps launched from the attachment menu.
 	PhotoURL string `json:"photo_url,omitempty"`
 }
 
@@ -3269,6 +3269,6 @@ type WebAppChat struct {
 	// Optional. Username of the chat
 	Username string `json:"username,omitempty"`
 
-	// Optional. URL of the chat’s photo. The photo can be in .jpeg or .svg formats. Only returned for Web Apps launched from the attachment menu.
+	// Optional. URL of the chat’s photo. The photo can be in .jpeg or .svg formats. Only returned for Mini Apps launched from the attachment menu.
 	PhotoURL string `json:"photo_url,omitempty"`
 }

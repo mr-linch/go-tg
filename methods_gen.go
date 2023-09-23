@@ -2089,7 +2089,7 @@ func (call *BanChatMemberCall) UserID(userID UserID) *BanChatMemberCall {
 	return call
 }
 
-// UntilDate Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever. Applied for supergroups and channels only.
+// UntilDate Date when the user will be unbanned; Unix time. If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever. Applied for supergroups and channels only.
 func (call *BanChatMemberCall) UntilDate(untilDate int) *BanChatMemberCall {
 	call.request.Int("until_date", untilDate)
 	return call
@@ -2206,7 +2206,7 @@ func (call *RestrictChatMemberCall) UseIndependentChatPermissions(useIndependent
 	return call
 }
 
-// UntilDate Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
+// UntilDate Date when restrictions will be lifted for the user; Unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
 func (call *RestrictChatMemberCall) UntilDate(untilDate int) *RestrictChatMemberCall {
 	call.request.Int("until_date", untilDate)
 	return call
@@ -2259,19 +2259,19 @@ func (call *PromoteChatMemberCall) IsAnonymous(isAnonymous bool) *PromoteChatMem
 	return call
 }
 
-// CanManageChat Pass True if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+// CanManageChat Pass True if the administrator can access the chat event log, chat statistics, boost list in channels, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
 func (call *PromoteChatMemberCall) CanManageChat(canManageChat bool) *PromoteChatMemberCall {
 	call.request.Bool("can_manage_chat", canManageChat)
 	return call
 }
 
-// CanPostMessages Pass True if the administrator can create channel posts, channels only
+// CanPostMessages Pass True if the administrator can post messages in the channel; channels only
 func (call *PromoteChatMemberCall) CanPostMessages(canPostMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_post_messages", canPostMessages)
 	return call
 }
 
-// CanEditMessages Pass True if the administrator can edit messages of other users and can pin messages, channels only
+// CanEditMessages Pass True if the administrator can edit messages of other users and can pin messages; channels only
 func (call *PromoteChatMemberCall) CanEditMessages(canEditMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_edit_messages", canEditMessages)
 	return call
@@ -2280,6 +2280,24 @@ func (call *PromoteChatMemberCall) CanEditMessages(canEditMessages bool) *Promot
 // CanDeleteMessages Pass True if the administrator can delete messages of other users
 func (call *PromoteChatMemberCall) CanDeleteMessages(canDeleteMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_delete_messages", canDeleteMessages)
+	return call
+}
+
+// CanPostStories Pass True if the administrator can post stories in the channel; channels only
+func (call *PromoteChatMemberCall) CanPostStories(canPostStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_post_stories", canPostStories)
+	return call
+}
+
+// CanEditStories Pass True if the administrator can edit stories posted by other users; channels only
+func (call *PromoteChatMemberCall) CanEditStories(canEditStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_edit_stories", canEditStories)
+	return call
+}
+
+// CanDeleteStories Pass True if the administrator can delete stories posted by other users; channels only
+func (call *PromoteChatMemberCall) CanDeleteStories(canDeleteStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_delete_stories", canDeleteStories)
 	return call
 }
 

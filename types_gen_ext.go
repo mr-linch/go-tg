@@ -1379,3 +1379,6 @@ func (sticker *StickerType) UnmarshalText(v []byte) error {
 
 	return nil
 }
+
+// Story is empty type.
+type Story struct{}
