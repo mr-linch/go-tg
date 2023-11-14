@@ -33,6 +33,8 @@ type Webhook struct {
 	securitySubnets []netip.Prefix
 	securityToken   string
 
+	ipFromRequestFunc func(r *http.Request) string
+
 	isSetup bool
 }
 
@@ -63,6 +65,18 @@ func WithDropPendingUpdates(dropPendingUpdates bool) WebhookOption {
 func WithWebhookIP(ip string) WebhookOption {
 	return func(webhook *Webhook) {
 		webhook.ip = ip
+	}
+}
+
+// DefaultWebhookRequestIP is the default function to get the IP address from the request.
+// By default the IP address is resolved through the X-Real-Ip and X-Forwarded-For headers.
+var DefaultWebhookRequestIP = realip.FromRequest
+
+// WithWebhookRequestIP sets function to get the IP address from the request.
+// By default the IP address is resolved through the X-Real-Ip and X-Forwarded-For headers.
+func WithWebhookRequestIP(ip func(r *http.Request) string) WebhookOption {
+	return func(webhook *Webhook) {
+		webhook.ipFromRequestFunc = ip
 	}
 }
 
@@ -117,6 +131,8 @@ func NewWebhook(handler Handler, client *tg.Client, url string, options ...Webho
 		allowedUpdates:  []tg.UpdateType{},
 		securitySubnets: defaultSubnets,
 		securityToken:   token,
+
+		ipFromRequestFunc: DefaultWebhookRequestIP,
 	}
 
 	for _, option := range options {
@@ -322,7 +338,7 @@ func (webhook *Webhook) ServeRequest(ctx context.Context, r *WebhookRequest) *We
 // ServeHTTP is the HTTP handler for webhook requests.
 // Implementation of http.Handler.
 func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ip, err := netip.ParseAddr(realip.FromRequest(r))
+	ip, err := netip.ParseAddr(webhook.ipFromRequestFunc(r))
 	if err != nil {
 		webhook.log("failed to parse ip: %s", err)
 		http.Error(w, "failed to parse ip", http.StatusBadRequest)

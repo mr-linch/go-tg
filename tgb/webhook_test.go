@@ -27,6 +27,8 @@ func TestNewWebhook(t *testing.T) {
 
 		assert.Equal(t, "https://example.com/webhook", webhook.url)
 		assert.NotNil(t, webhook.handler)
+		assert.NotNil(t, webhook.ipFromRequestFunc)
+
 		assert.NotNil(t, webhook.securityToken)
 		assert.Len(t, webhook.securitySubnets, 2)
 	})
@@ -39,10 +41,14 @@ func TestNewWebhook(t *testing.T) {
 			WithWebhookSecuritySubnets(netip.MustParsePrefix("1.1.1.1/24")),
 			WithWebhookSecurityToken("12345"),
 			WithWebhookMaxConnections(10),
+			WithWebhookRequestIP(func(r *http.Request) string {
+				return ""
+			}),
 		)
 
 		assert.Equal(t, "https://example.com/webhook", webhook.url)
 		assert.NotNil(t, webhook.handler)
+		assert.NotNil(t, webhook.ipFromRequestFunc)
 		assert.Equal(t, "12345", webhook.securityToken)
 		assert.Len(t, webhook.securitySubnets, 1)
 		assert.Equal(t, 10, webhook.maxConnections)
