@@ -68,6 +68,10 @@ func WithWebhookIP(ip string) WebhookOption {
 	}
 }
 
+// DefaultWebhookRequestIP is the default function to get the IP address from the request.
+// By default the IP address is resolved through the X-Real-Ip and X-Forwarded-For headers.
+var DefaultWebhookRequestIP = realip.FromRequest
+
 // WithWebhookRequestIP sets function to get the IP address from the request.
 // By default the IP address is resolved through the X-Real-Ip and X-Forwarded-For headers.
 func WithWebhookRequestIP(ip func(r *http.Request) string) WebhookOption {
@@ -128,7 +132,7 @@ func NewWebhook(handler Handler, client *tg.Client, url string, options ...Webho
 		securitySubnets: defaultSubnets,
 		securityToken:   token,
 
-		ipFromRequestFunc: realip.FromRequest,
+		ipFromRequestFunc: DefaultWebhookRequestIP,
 	}
 
 	for _, option := range options {
