@@ -6,13 +6,13 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/netip"
 	"net/url"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/tgb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -28,27 +28,21 @@ func TestNewWebhook(t *testing.T) {
 		assert.Equal(t, "https://example.com/webhook", webhook.url)
 		assert.NotNil(t, webhook.handler)
 		assert.NotNil(t, webhook.ipFromRequestFunc)
+
 		assert.NotNil(t, webhook.securityToken)
 		assert.Len(t, webhook.securitySubnets, 2)
 	})
 	t.Run("Custom", func(t *testing.T) {
-		var (
-			handler tgb.Handler
-			client  *tg.Client
-		)
-
 		webhook := NewWebhook(
-			handler,
-			client,
+			HandlerFunc(func(ctx context.Context, update *Update) error { return nil }),
+			&tg.Client{},
 			"https://example.com/webhook",
+			WithWebhookIP("1.1.1.1"),
+			WithWebhookSecuritySubnets(netip.MustParsePrefix("1.1.1.1/24")),
+			WithWebhookSecurityToken("12345"),
+			WithWebhookMaxConnections(10),
 			WithWebhookRequestIP(func(r *http.Request) string {
-				ip := r.Header.Get("Cf-Connecting-Ip")
-
-				if ip != "" {
-					return ip
-				}
-
-				return tgb.DefaultWebhookRequestIP(r)
+				return ""
 			}),
 		)
 
