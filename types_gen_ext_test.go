@@ -1189,3 +1189,27 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 		assert.Equal(t, "john doe", b.Channel.AuthorSignature)
 	})
 }
+
+func TestReactionType(t *testing.T) {
+	t.Run("Emoji", func(t *testing.T) {
+		var r ReactionType
+
+		err := r.UnmarshalJSON([]byte(`{"type": "emoji", "emoji": "😀"}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, "emoji", r.Type())
+		require.NotNil(t, r.Emoji)
+		assert.Equal(t, "😀", r.Emoji.Emoji)
+	})
+
+	t.Run("CustomEmoji", func(t *testing.T) {
+		var r ReactionType
+
+		err := r.UnmarshalJSON([]byte(`{"type": "custom_emoji", "custom_emoji_id": "12345"}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, "custom_emoji", r.Type())
+		require.NotNil(t, r.CustomEmoji)
+		assert.Equal(t, "12345", r.CustomEmoji.CustomEmojiID)
+	})
+}

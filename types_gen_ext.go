@@ -1385,7 +1385,12 @@ func (sticker *StickerType) UnmarshalText(v []byte) error {
 // Story is empty type.
 type Story struct{}
 
-// MessageOrigin this object describes the origin of a message. It can be one of:
+// MessageOrigin this object describes the origin of a message.
+// It can be one of:
+// - [MessageOriginUser]
+// - [MessageOriginHiddenUser]
+// - [MessageOriginChat]
+// - [MessageOriginChannel]
 type MessageOrigin struct {
 	User       *MessageOriginUser
 	HiddenUser *MessageOriginHiddenUser
@@ -1430,6 +1435,47 @@ func (origin *MessageOrigin) Type() string {
 		return "chat"
 	case origin.Channel != nil:
 		return "channel"
+	default:
+		return "unknown"
+	}
+}
+
+// ReactionType it's type for describe content of Reaction.
+// It can be one of:
+//   - [ReactionTypeEmoji]
+//   - [ReactionTypeCustomEmoji]
+type ReactionType struct {
+	Emoji       *ReactionTypeEmoji
+	CustomEmoji *ReactionTypeCustomEmoji
+}
+
+func (reaction *ReactionType) UnmarshalJSON(v []byte) error {
+	var partial struct {
+		Type string `json:"type"`
+	}
+
+	if err := json.Unmarshal(v, &partial); err != nil {
+		return fmt.Errorf("unmarshal ReactionType partial: %w", err)
+	}
+
+	switch partial.Type {
+	case "emoji":
+		reaction.Emoji = &ReactionTypeEmoji{}
+		return json.Unmarshal(v, reaction.Emoji)
+	case "custom_emoji":
+		reaction.CustomEmoji = &ReactionTypeCustomEmoji{}
+		return json.Unmarshal(v, reaction.CustomEmoji)
+	default:
+		return fmt.Errorf("unknown ReactionType type: %s", partial.Type)
+	}
+}
+
+func (reaction *ReactionType) Type() string {
+	switch {
+	case reaction.Emoji != nil:
+		return "emoji"
+	case reaction.CustomEmoji != nil:
+		return "custom_emoji"
 	default:
 		return "unknown"
 	}
