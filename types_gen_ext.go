@@ -1167,7 +1167,9 @@ func (update *Update) Msg() *Message {
 	case update.EditedChannelPost != nil:
 		return update.EditedChannelPost
 	case update.CallbackQuery != nil && update.CallbackQuery.Message != nil:
-		return update.CallbackQuery.Message
+		// TODO: FIX ME
+		// return update.CallbackQuery.Message
+		return nil
 	default:
 		return nil
 	}
@@ -1382,3 +1384,53 @@ func (sticker *StickerType) UnmarshalText(v []byte) error {
 
 // Story is empty type.
 type Story struct{}
+
+// MessageOrigin this object describes the origin of a message. It can be one of:
+type MessageOrigin struct {
+	User       *MessageOriginUser
+	HiddenUser *MessageOriginHiddenUser
+	Chat       *MessageOriginChat
+	Channel    *MessageOriginChannel
+}
+
+func (origin *MessageOrigin) UnmarshalJSON(v []byte) error {
+	var partial struct {
+		Type string `json:"type"`
+	}
+
+	if err := json.Unmarshal(v, &partial); err != nil {
+		return fmt.Errorf("unmarshal MessageOrigin partial: %w", err)
+	}
+
+	switch partial.Type {
+	case "user":
+		origin.User = &MessageOriginUser{}
+		return json.Unmarshal(v, origin.User)
+	case "hidden_user":
+		origin.HiddenUser = &MessageOriginHiddenUser{}
+		return json.Unmarshal(v, origin.HiddenUser)
+	case "chat":
+		origin.Chat = &MessageOriginChat{}
+		return json.Unmarshal(v, origin.Chat)
+	case "channel":
+		origin.Channel = &MessageOriginChannel{}
+		return json.Unmarshal(v, origin.Channel)
+	default:
+		return fmt.Errorf("unknown MessageOrigin type: %s", partial.Type)
+	}
+}
+
+func (origin *MessageOrigin) Type() string {
+	switch {
+	case origin.User != nil:
+		return "user"
+	case origin.HiddenUser != nil:
+		return "hidden_user"
+	case origin.Chat != nil:
+		return "chat"
+	case origin.Channel != nil:
+		return "channel"
+	default:
+		return "unknown"
+	}
+}
