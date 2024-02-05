@@ -23,6 +23,7 @@ func TestParseModeHTML(t *testing.T) {
 	assert.Equal(t, "<code>Hello World</code>", HTML.Code("Hello World"))
 	assert.Equal(t, "<pre>Hello World</pre>", HTML.Pre("Hello World"))
 	assert.Equal(t, "<b>Hello, World</b>", HTML.Sep(", ").Bold("Hello", "World"))
+	assert.Equal(t, "<blockquote>Hello, World</blockquote>", HTML.Sep(", ").Blockquote("Hello", "World"))
 	assert.Equal(t, "Me &amp; You", HTML.Escape("Me & You"))
 }
 
@@ -55,6 +56,7 @@ func TestParseModeMarkdownV2(t *testing.T) {
 	assert.Equal(t, "[Hello World](https://telegram.org)", MD2.Link("Hello World", "https://telegram.org"))
 	assert.Equal(t, "`Hello World`", MD2.Code("Hello World"))
 	assert.Equal(t, "```Hello World```", MD2.Pre("Hello World"))
+	assert.Equal(t, ">Hello World", MD2.Blockquote("Hello World"))
 	assert.Equal(t, "*Hello, World*", MD2.Sep(", ").Bold("Hello", "World"))
 
 	assert.Equal(t, "\\[\\*go\\_tg\\*\\]", MD2.Escape("[*go_tg*]"))
