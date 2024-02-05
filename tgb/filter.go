@@ -278,7 +278,7 @@ func ChatType(types ...tg.ChatType) Filter {
 		case msg != nil:
 			typ = msg.Chat.Type
 		case update.CallbackQuery != nil && update.CallbackQuery.Message != nil:
-			typ = update.CallbackQuery.Message.Chat.Type
+			typ = update.CallbackQuery.Message.Chat().Type
 		case update.InlineQuery != nil:
 			typ = update.InlineQuery.ChatType
 		case update.MyChatMember != nil:

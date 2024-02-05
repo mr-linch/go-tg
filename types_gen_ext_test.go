@@ -710,8 +710,9 @@ func TestMessage_Type(t *testing.T) {
 			Want:    MessageTypeMigrateFromChatID,
 		},
 		{
-			// TODO: FIXME
-			// Message: &Message{PinnedMessage: &Message{}},
+			Message: &Message{PinnedMessage: &MaybeInaccessibleMessage{
+				Message: &Message{},
+			}},
 			Want: MessageTypePinnedMessage,
 		},
 		{
@@ -1044,8 +1045,9 @@ func TestUpdate_Msg(t *testing.T) {
 		{&Update{EditedMessage: msg}, msg},
 		{&Update{ChannelPost: msg}, msg},
 		{&Update{EditedChannelPost: msg}, msg},
-		// TODO: FIXME
-		// {&Update{CallbackQuery: &CallbackQuery{Message: msg}}, msg},
+		{&Update{CallbackQuery: &CallbackQuery{Message: &MaybeInaccessibleMessage{
+			Message: msg,
+		}}}, msg},
 		{&Update{CallbackQuery: &CallbackQuery{}}, nil},
 	} {
 		assert.Equal(t, test.Message, test.Update.Msg())
@@ -1211,5 +1213,30 @@ func TestReactionType(t *testing.T) {
 		assert.Equal(t, "custom_emoji", r.Type())
 		require.NotNil(t, r.CustomEmoji)
 		assert.Equal(t, "12345", r.CustomEmoji.CustomEmojiID)
+	})
+}
+
+func TestMaybeInaccessibleMessage(t *testing.T) {
+	t.Run("InaccessibleMessage", func(t *testing.T) {
+		var m MaybeInaccessibleMessage
+
+		err := m.UnmarshalJSON([]byte(`{"chat": {"id": 1}, "message_id": 2, "date": 0}`))
+		require.NoError(t, err)
+
+		require.NotNil(t, m.InaccessibleMessage)
+		assert.Equal(t, ChatID(1), m.InaccessibleMessage.Chat.ID)
+		assert.Equal(t, 2, m.InaccessibleMessage.MessageID)
+		assert.Equal(t, 0, m.InaccessibleMessage.Date)
+	})
+
+	t.Run("Message", func(t *testing.T) {
+		var m MaybeInaccessibleMessage
+
+		err := m.UnmarshalJSON([]byte(`{"message_id": 2, "date": 1234}`))
+		require.NoError(t, err)
+
+		require.NotNil(t, m.Message)
+		assert.Equal(t, 2, m.Message.ID)
+		assert.Equal(t, 1234, m.Message.Date)
 	})
 }

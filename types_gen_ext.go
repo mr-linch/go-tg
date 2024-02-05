@@ -1025,6 +1025,11 @@ func (msg *Message) Type() MessageType {
 	}
 }
 
+// IsInaccessible returns true if message is inaccessible.
+func (msg *Message) IsInaccessible() bool {
+	return msg.Date == 0
+}
+
 // UpdateType it's type for describe content of Update.
 type UpdateType int
 
@@ -1166,10 +1171,8 @@ func (update *Update) Msg() *Message {
 		return update.ChannelPost
 	case update.EditedChannelPost != nil:
 		return update.EditedChannelPost
-	case update.CallbackQuery != nil && update.CallbackQuery.Message != nil:
-		// TODO: FIX ME
-		// return update.CallbackQuery.Message
-		return nil
+	case update.CallbackQuery != nil && update.CallbackQuery.Message != nil && update.CallbackQuery.Message.Message != nil:
+		return update.CallbackQuery.Message.Message
 	default:
 		return nil
 	}
@@ -1387,10 +1390,10 @@ type Story struct{}
 
 // MessageOrigin this object describes the origin of a message.
 // It can be one of:
-// - [MessageOriginUser]
-// - [MessageOriginHiddenUser]
-// - [MessageOriginChat]
-// - [MessageOriginChannel]
+//   - [MessageOriginUser]
+//   - [MessageOriginHiddenUser]
+//   - [MessageOriginChat]
+//   - [MessageOriginChannel]
 type MessageOrigin struct {
 	User       *MessageOriginUser
 	HiddenUser *MessageOriginHiddenUser
@@ -1449,6 +1452,17 @@ type ReactionType struct {
 	CustomEmoji *ReactionTypeCustomEmoji
 }
 
+func (reaction *ReactionType) MarshalJSON() ([]byte, error) {
+	switch {
+	case reaction.Emoji != nil:
+		return json.Marshal(reaction.Emoji)
+	case reaction.CustomEmoji != nil:
+		return json.Marshal(reaction.CustomEmoji)
+	default:
+		return nil, fmt.Errorf("unknown ReactionType type")
+	}
+}
+
 func (reaction *ReactionType) UnmarshalJSON(v []byte) error {
 	var partial struct {
 		Type string `json:"type"`
@@ -1478,5 +1492,58 @@ func (reaction *ReactionType) Type() string {
 		return "custom_emoji"
 	default:
 		return "unknown"
+	}
+}
+
+// This object describes a message that can be inaccessible to the bot.
+// It can be one of:
+//   - [Message]
+//   - [InaccessibleMessage]
+type MaybeInaccessibleMessage struct {
+	Message             *Message
+	InaccessibleMessage *InaccessibleMessage
+}
+
+// IsInaccessible returns true if message is inaccessible.
+func (mim *MaybeInaccessibleMessage) IsInaccessible() bool {
+	return mim.InaccessibleMessage != nil
+}
+
+// IsAccessible returns true if message is accessible.
+func (mim *MaybeInaccessibleMessage) IsAccessible() bool {
+	return mim.Message != nil
+}
+
+func (mim *MaybeInaccessibleMessage) Chat() Chat {
+	if mim.InaccessibleMessage != nil {
+		return mim.InaccessibleMessage.Chat
+	}
+
+	return mim.Message.Chat
+}
+
+func (mim *MaybeInaccessibleMessage) MessageID() int {
+	if mim.InaccessibleMessage != nil {
+		return mim.InaccessibleMessage.MessageID
+	}
+
+	return mim.Message.ID
+}
+
+func (mim *MaybeInaccessibleMessage) UnmarshalJSON(v []byte) error {
+	var partial struct {
+		Date int64 `json:"date"`
+	}
+
+	if err := json.Unmarshal(v, &partial); err != nil {
+		return fmt.Errorf("unmarshal MaybeInaccessibleMessage partial: %w", err)
+	}
+
+	if partial.Date == 0 {
+		mim.InaccessibleMessage = &InaccessibleMessage{}
+		return json.Unmarshal(v, mim.InaccessibleMessage)
+	} else {
+		mim.Message = &Message{}
+		return json.Unmarshal(v, mim.Message)
 	}
 }

@@ -560,9 +560,11 @@ func TestManager_Wrap(t *testing.T) {
 			ID: 1234,
 			CallbackQuery: &tg.CallbackQuery{
 				Data: "not_found",
-				Message: &tg.Message{
-					Chat: tg.Chat{
-						ID: 1,
+				Message: &tg.MaybeInaccessibleMessage{
+					Message: &tg.Message{
+						Chat: tg.Chat{
+							ID: 1,
+						},
 					},
 				},
 			},

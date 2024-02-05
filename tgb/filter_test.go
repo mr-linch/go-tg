@@ -394,8 +394,10 @@ func TestChatType(t *testing.T) {
 			ChatType(tg.ChatTypePrivate),
 			&tg.Update{
 				CallbackQuery: &tg.CallbackQuery{
-					Message: &tg.Message{
-						Chat: tg.Chat{Type: tg.ChatTypePrivate},
+					Message: &tg.MaybeInaccessibleMessage{
+						Message: &tg.Message{
+							Chat: tg.Chat{Type: tg.ChatTypePrivate},
+						},
 					},
 				},
 			},
