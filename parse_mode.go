@@ -45,6 +45,9 @@ type ParseMode interface {
 	// Preformated text
 	Pre(v ...string) string
 
+	// Blockquote
+	Blockquote(v ...string) string
+
 	// Escape
 	Escape(v string) string
 }
@@ -61,13 +64,14 @@ var (
 		name:      "HTML",
 		separator: " ",
 
-		bold:      parseModeTag{"<b>", "</b>"},
-		italic:    parseModeTag{"<i>", "</i>"},
-		underline: parseModeTag{"<u>", "</u>"},
-		strike:    parseModeTag{"<s>", "</s>"},
-		spoiler:   parseModeTag{"<tg-spoiler>", "</tg-spoiler>"},
-		code:      parseModeTag{"<code>", "</code>"},
-		pre:       parseModeTag{"<pre>", "</pre>"},
+		bold:       parseModeTag{"<b>", "</b>"},
+		italic:     parseModeTag{"<i>", "</i>"},
+		underline:  parseModeTag{"<u>", "</u>"},
+		strike:     parseModeTag{"<s>", "</s>"},
+		spoiler:    parseModeTag{"<tg-spoiler>", "</tg-spoiler>"},
+		code:       parseModeTag{"<code>", "</code>"},
+		pre:        parseModeTag{"<pre>", "</pre>"},
+		blockquote: parseModeTag{"<blockquote>", "</blockquote>"},
 
 		linkTemplate: `<a href="{url}">{title}</a>`,
 
@@ -95,13 +99,14 @@ var (
 		name:      "MarkdownV2",
 		separator: " ",
 
-		bold:      parseModeTag{"*", "*"},
-		italic:    parseModeTag{"_", "_"},
-		underline: parseModeTag{"__", "__"},
-		strike:    parseModeTag{"~", "~"},
-		spoiler:   parseModeTag{"||", "||"},
-		code:      parseModeTag{"`", "`"},
-		pre:       parseModeTag{"```", "```"},
+		bold:       parseModeTag{"*", "*"},
+		italic:     parseModeTag{"_", "_"},
+		underline:  parseModeTag{"__", "__"},
+		strike:     parseModeTag{"~", "~"},
+		spoiler:    parseModeTag{"||", "||"},
+		code:       parseModeTag{"`", "`"},
+		pre:        parseModeTag{"```", "```"},
+		blockquote: parseModeTag{">", ""},
 
 		linkTemplate: `[{title}]({url})`,
 
@@ -121,6 +126,7 @@ type parseMode struct {
 	spoiler      parseModeTag
 	code         parseModeTag
 	pre          parseModeTag
+	blockquote   parseModeTag
 	linkTemplate string
 
 	escape func(string) string
@@ -197,6 +203,11 @@ func (pm parseMode) Code(v ...string) string {
 // Preformated text
 func (pm parseMode) Pre(v ...string) string {
 	return pm.pre.wrap(strings.Join(v, pm.separator))
+}
+
+// Blockquote
+func (pm parseMode) Blockquote(v ...string) string {
+	return pm.blockquote.wrap(strings.Join(v, pm.separator))
 }
 
 func (pm parseMode) Escape(v string) string {
