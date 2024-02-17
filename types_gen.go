@@ -241,7 +241,7 @@ type Chat struct {
 	CustomEmojiStickerSetName string `json:"custom_emoji_sticker_set_name,omitempty"`
 
 	// Optional. Unique identifier for the linked chat, i.e. the discussion group identifier for a channel and vice versa; for supergroups and channel chats.  Returned only in getChat.
-	LinkedChatID int64 `json:"linked_chat_id,omitempty"`
+	LinkedChatID ChatID `json:"linked_chat_id,omitempty"`
 
 	// Optional. For supergroups, the location to which the supergroup is connected. Returned only in getChat.
 	Location *ChatLocation `json:"location,omitempty"`
@@ -265,7 +265,7 @@ type Message struct {
 	SenderBoostCount int `json:"sender_boost_count,omitempty"`
 
 	// Date the message was sent in Unix time. It is always a positive number, representing a valid date.
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Chat the message belongs to
 	Chat Chat `json:"chat"`
@@ -496,7 +496,7 @@ type InaccessibleMessage struct {
 	MessageID int `json:"message_id"`
 
 	// Always 0. The field can be used to differentiate regular and inaccessible messages.
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 }
 
 // MessageEntity this object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
@@ -640,7 +640,7 @@ type MessageOriginUser struct {
 	Type string `json:"type"`
 
 	// Date the message was sent originally in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// User that sent the message originally
 	SenderUser User `json:"sender_user"`
@@ -652,7 +652,7 @@ type MessageOriginHiddenUser struct {
 	Type string `json:"type"`
 
 	// Date the message was sent originally in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Name of the user that sent the message originally
 	SenderUserName string `json:"sender_user_name"`
@@ -664,7 +664,7 @@ type MessageOriginChat struct {
 	Type string `json:"type"`
 
 	// Date the message was sent originally in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Chat that sent the message originally
 	SenderChat Chat `json:"sender_chat"`
@@ -679,7 +679,7 @@ type MessageOriginChannel struct {
 	Type string `json:"type"`
 
 	// Date the message was sent originally in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Channel chat to which the message was originally sent
 	Chat Chat `json:"chat"`

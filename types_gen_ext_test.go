@@ -4,6 +4,7 @@ import (
 	"encoding"
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -801,6 +802,19 @@ func TestUpdateType_String(t *testing.T) {
 	}
 }
 
+func TestMessage_IsInaccessible(t *testing.T) {
+	accessible := &Message{
+		Date: time.Now().Unix(),
+	}
+
+	inaccessible := &Message{
+		Date: 0,
+	}
+
+	assert.False(t, accessible.IsInaccessible())
+	assert.True(t, inaccessible.IsInaccessible())
+}
+
 func TestUpdateType_UnmarshalText(t *testing.T) {
 	for _, test := range []struct {
 		Text string
@@ -1186,7 +1200,7 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 
 		assert.Equal(t, "user", b.Type())
 		require.NotNil(t, b.User)
-		assert.Equal(t, 12345, b.User.Date)
+		assert.EqualValues(t, 12345, b.User.Date)
 		assert.Equal(t, UserID(1), b.User.SenderUser.ID)
 	})
 
@@ -1198,7 +1212,7 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 
 		assert.Equal(t, "hidden_user", b.Type())
 		require.NotNil(t, b.HiddenUser)
-		assert.Equal(t, 12345, b.HiddenUser.Date)
+		assert.EqualValues(t, 12345, b.HiddenUser.Date)
 		assert.Equal(t, "john doe", b.HiddenUser.SenderUserName)
 	})
 
@@ -1210,7 +1224,7 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 
 		assert.Equal(t, "chat", b.Type())
 		require.NotNil(t, b.Chat)
-		assert.Equal(t, 12345, b.Chat.Date)
+		assert.EqualValues(t, 12345, b.Chat.Date)
 		assert.Equal(t, ChatID(1), b.Chat.SenderChat.ID)
 		assert.Equal(t, "john doe", b.Chat.AuthorSignature)
 	})
@@ -1223,10 +1237,20 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 
 		assert.Equal(t, "channel", b.Type())
 		require.NotNil(t, b.Channel)
-		assert.Equal(t, 12345, b.Channel.Date)
+		assert.EqualValues(t, 12345, b.Channel.Date)
 		assert.Equal(t, ChatID(1), b.Channel.Chat.ID)
 		assert.Equal(t, 2, b.Channel.MessageID)
 		assert.Equal(t, "john doe", b.Channel.AuthorSignature)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		var b MessageOrigin
+
+		err := b.UnmarshalJSON([]byte(`{"type": "unknown"`))
+		require.Error(t, err)
+
+		err = b.UnmarshalJSON([]byte(`{"type": "unknown", "date": 12345}`))
+		require.Error(t, err)
 	})
 }
 
@@ -1252,6 +1276,41 @@ func TestReactionType(t *testing.T) {
 		require.NotNil(t, r.CustomEmoji)
 		assert.Equal(t, "12345", r.CustomEmoji.CustomEmojiID)
 	})
+
+	t.Run("Unknown", func(t *testing.T) {
+		var r ReactionType
+
+		err := r.UnmarshalJSON([]byte(`{"type": "unknown"}`))
+		require.Error(t, err)
+	})
+}
+
+func TestReactionType_MarshalJSON(t *testing.T) {
+	t.Run("Emoji", func(t *testing.T) {
+		r := ReactionType{
+			Emoji: &ReactionTypeEmoji{Emoji: "😀"},
+		}
+
+		assert.Equal(t, "emoji", r.Type())
+
+		b, err := json.Marshal(r)
+		require.NoError(t, err)
+
+		assert.Equal(t, `{"type":"emoji","emoji":"😀"}`, string(b))
+	})
+
+	t.Run("CustomEmoji", func(t *testing.T) {
+		r := &ReactionType{
+			CustomEmoji: &ReactionTypeCustomEmoji{CustomEmojiID: "12345"},
+		}
+
+		assert.Equal(t, "custom_emoji", r.Type())
+
+		b, err := json.Marshal(r)
+		require.NoError(t, err)
+
+		assert.Equal(t, `{"type":"custom_emoji","custom_emoji_id":"12345"}`, string(b))
+	})
 }
 
 func TestMaybeInaccessibleMessage(t *testing.T) {
@@ -1261,20 +1320,27 @@ func TestMaybeInaccessibleMessage(t *testing.T) {
 		err := m.UnmarshalJSON([]byte(`{"chat": {"id": 1}, "message_id": 2, "date": 0}`))
 		require.NoError(t, err)
 
+		assert.True(t, m.IsInaccessible())
+		assert.Equal(t, ChatID(1), m.Chat().ID)
+		assert.Equal(t, 2, m.MessageID())
 		require.NotNil(t, m.InaccessibleMessage)
 		assert.Equal(t, ChatID(1), m.InaccessibleMessage.Chat.ID)
-		assert.Equal(t, 2, m.InaccessibleMessage.MessageID)
-		assert.Equal(t, 0, m.InaccessibleMessage.Date)
+		assert.EqualValues(t, 2, m.InaccessibleMessage.MessageID)
+		assert.EqualValues(t, 0, m.InaccessibleMessage.Date)
 	})
 
 	t.Run("Message", func(t *testing.T) {
 		var m MaybeInaccessibleMessage
 
-		err := m.UnmarshalJSON([]byte(`{"message_id": 2, "date": 1234}`))
+		err := m.UnmarshalJSON([]byte(`{"message_id": 2, "date": 1234, "chat": {"id": 1}}`))
 		require.NoError(t, err)
 
+		assert.Equal(t, ChatID(1), m.Chat().ID)
+
+		assert.True(t, m.IsAccessible())
+		assert.Equal(t, 2, m.MessageID())
 		require.NotNil(t, m.Message)
 		assert.Equal(t, 2, m.Message.ID)
-		assert.Equal(t, 1234, m.Message.Date)
+		assert.EqualValues(t, 1234, m.Message.Date)
 	})
 }

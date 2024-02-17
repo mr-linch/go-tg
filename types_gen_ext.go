@@ -1504,11 +1504,13 @@ type ReactionType struct {
 	CustomEmoji *ReactionTypeCustomEmoji
 }
 
-func (reaction *ReactionType) MarshalJSON() ([]byte, error) {
+func (reaction ReactionType) MarshalJSON() ([]byte, error) {
 	switch {
 	case reaction.Emoji != nil:
+		reaction.Emoji.Type = "emoji"
 		return json.Marshal(reaction.Emoji)
 	case reaction.CustomEmoji != nil:
+		reaction.CustomEmoji.Type = "custom_emoji"
 		return json.Marshal(reaction.CustomEmoji)
 	default:
 		return nil, fmt.Errorf("unknown ReactionType type")
