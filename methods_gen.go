@@ -2368,7 +2368,7 @@ func (call *PromoteChatMemberCall) IsAnonymous(isAnonymous bool) *PromoteChatMem
 	return call
 }
 
-// CanManageChat Pass True if the administrator can access the chat event log, boost list in channels, see channel members, report spam messages, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+// CanManageChat Pass True if the administrator can access the chat event log, get boost list, see hidden supergroup and channel members, report spam messages and ignore slow mode. Implied by any other administrator privilege.
 func (call *PromoteChatMemberCall) CanManageChat(canManageChat bool) *PromoteChatMemberCall {
 	call.request.Bool("can_manage_chat", canManageChat)
 	return call
@@ -2410,6 +2410,24 @@ func (call *PromoteChatMemberCall) CanInviteUsers(canInviteUsers bool) *PromoteC
 	return call
 }
 
+// CanPostStories Pass True if the administrator can post stories to the chat
+func (call *PromoteChatMemberCall) CanPostStories(canPostStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_post_stories", canPostStories)
+	return call
+}
+
+// CanEditStories Pass True if the administrator can edit stories posted by other users
+func (call *PromoteChatMemberCall) CanEditStories(canEditStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_edit_stories", canEditStories)
+	return call
+}
+
+// CanDeleteStories Pass True if the administrator can delete stories posted by other users
+func (call *PromoteChatMemberCall) CanDeleteStories(canDeleteStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_delete_stories", canDeleteStories)
+	return call
+}
+
 // CanPostMessages Pass True if the administrator can post messages in the channel, or access channel statistics; channels only
 func (call *PromoteChatMemberCall) CanPostMessages(canPostMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_post_messages", canPostMessages)
@@ -2425,24 +2443,6 @@ func (call *PromoteChatMemberCall) CanEditMessages(canEditMessages bool) *Promot
 // CanPinMessages Pass True if the administrator can pin messages, supergroups only
 func (call *PromoteChatMemberCall) CanPinMessages(canPinMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_pin_messages", canPinMessages)
-	return call
-}
-
-// CanPostStories Pass True if the administrator can post stories in the channel; channels only
-func (call *PromoteChatMemberCall) CanPostStories(canPostStories bool) *PromoteChatMemberCall {
-	call.request.Bool("can_post_stories", canPostStories)
-	return call
-}
-
-// CanEditStories Pass True if the administrator can edit stories posted by other users; channels only
-func (call *PromoteChatMemberCall) CanEditStories(canEditStories bool) *PromoteChatMemberCall {
-	call.request.Bool("can_edit_stories", canEditStories)
-	return call
-}
-
-// CanDeleteStories Pass True if the administrator can delete stories posted by other users; channels only
-func (call *PromoteChatMemberCall) CanDeleteStories(canDeleteStories bool) *PromoteChatMemberCall {
-	call.request.Bool("can_delete_stories", canDeleteStories)
 	return call
 }
 

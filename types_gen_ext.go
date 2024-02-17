@@ -271,6 +271,10 @@ func NewInlineKeyboardButtonCallback(text string, query string) InlineKeyboardBu
 	}
 }
 
+type CallbackDataEncoder[T any] interface {
+	Encode(data T) (string, error)
+}
+
 // NewInlineKeyboardButtonWebApp creates a button that open a web app.
 func NewInlineKeyboardButtonWebApp(text string, webApp WebAppInfo) InlineKeyboardButton {
 	return InlineKeyboardButton{
@@ -405,6 +409,24 @@ func NewKeyboardButtonWebApp(text string, webApp WebAppInfo) KeyboardButton {
 	return KeyboardButton{
 		Text:   text,
 		WebApp: &webApp,
+	}
+}
+
+// NewKeyboardButtonRequestUsers creates a reply keyboard button that request a user from user.
+// Available in private chats only.
+func NewKeyboardButtonRequestUsers(text string, config KeyboardButtonRequestUsers) KeyboardButton {
+	return KeyboardButton{
+		Text:         text,
+		RequestUsers: &config,
+	}
+}
+
+// NewKeyboardButtonRequestChats creates a reply keyboard button that request a chat from user.
+// Available in private chats only.
+func NewKeyboardButtonRequestChat(text string, config KeyboardButtonRequestChat) KeyboardButton {
+	return KeyboardButton{
+		Text:        text,
+		RequestChat: &config,
 	}
 }
 
@@ -934,6 +956,8 @@ const (
 	MessageTypePinnedMessage
 	MessageTypeInvoice
 	MessageTypeSuccessfulPayment
+	MessageTypeUsersShared
+	MessageTypeChatShared
 	MessageTypeConnectedWebsite
 	MessageTypePassportData
 	MessageTypeProximityAlertTriggered
@@ -1004,6 +1028,10 @@ func (msg *Message) Type() MessageType {
 		return MessageTypeInvoice
 	case msg.SuccessfulPayment != nil:
 		return MessageTypeSuccessfulPayment
+	case msg.UsersShared != nil:
+		return MessageTypeUsersShared
+	case msg.ChatShared != nil:
+		return MessageTypeChatShared
 	case msg.ConnectedWebsite != "":
 		return MessageTypeConnectedWebsite
 	case msg.PassportData != nil:
@@ -1049,6 +1077,10 @@ const (
 	UpdateTypeMyChatMember
 	UpdateTypeChatMember
 	UpdateTypeChatJoinRequest
+	UpdateTypeMessageReaction
+	UpdateTypeMessageReactionCount
+	UpdateTypeChatBoost
+	UpdateTypeRemovedChatBoost
 )
 
 // MarshalText implements encoding.TextMarshaler.
@@ -1091,6 +1123,14 @@ func (typ *UpdateType) UnmarshalText(v []byte) error {
 		*typ = UpdateTypeChatMember
 	case "chat_join_request":
 		*typ = UpdateTypeChatJoinRequest
+	case "message_reaction":
+		*typ = UpdateTypeMessageReaction
+	case "message_reaction_count":
+		*typ = UpdateTypeMessageReactionCount
+	case "chat_boost":
+		*typ = UpdateTypeChatBoost
+	case "removed_chat_boost":
+		*typ = UpdateTypeRemovedChatBoost
 	default:
 		return fmt.Errorf("unknown update type")
 	}
@@ -1100,7 +1140,7 @@ func (typ *UpdateType) UnmarshalText(v []byte) error {
 
 // String returns string representation of UpdateType.
 func (typ UpdateType) String() string {
-	if typ > UpdateTypeUnknown && typ <= UpdateTypeChatJoinRequest {
+	if typ > UpdateTypeUnknown && typ <= UpdateTypeRemovedChatBoost {
 		return [...]string{
 			"message",
 			"edited_message",
@@ -1116,6 +1156,10 @@ func (typ UpdateType) String() string {
 			"my_chat_member",
 			"chat_member",
 			"chat_join_request",
+			"message_reaction",
+			"message_reaction_count",
+			"chat_boost",
+			"removed_chat_boost",
 		}[typ-1]
 	}
 
@@ -1152,6 +1196,14 @@ func (update *Update) Type() UpdateType {
 		return UpdateTypeChatMember
 	case update.ChatJoinRequest != nil:
 		return UpdateTypeChatJoinRequest
+	case update.MessageReaction != nil:
+		return UpdateTypeMessageReaction
+	case update.MessageReactionCount != nil:
+		return UpdateTypeMessageReactionCount
+	case update.ChatBoost != nil:
+		return UpdateTypeChatBoost
+	case update.RemovedChatBoost != nil:
+		return UpdateTypeRemovedChatBoost
 	default:
 		return UpdateTypeUnknown
 	}

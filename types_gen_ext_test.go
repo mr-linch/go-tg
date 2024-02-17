@@ -166,6 +166,8 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 			NewKeyboardButtonRequestLocation("text"),
 			NewKeyboardButtonRequestPoll("text", KeyboardButtonPollType{}),
 			NewKeyboardButtonWebApp("text", WebAppInfo{}),
+			NewKeyboardButtonRequestChat("test", KeyboardButtonRequestChat{RequestID: 1}),
+			NewKeyboardButtonRequestUsers("text", KeyboardButtonRequestUsers{RequestID: 1}),
 		),
 	).WithResizeKeyboardMarkup().
 		WithOneTimeKeyboardMarkup().
@@ -182,6 +184,8 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 				{Text: "text", RequestLocation: true},
 				{Text: "text", RequestPoll: &KeyboardButtonPollType{}},
 				{Text: "text", WebApp: &WebAppInfo{}},
+				{Text: "test", RequestChat: &KeyboardButtonRequestChat{RequestID: 1}},
+				{Text: "text", RequestUsers: &KeyboardButtonRequestUsers{RequestID: 1}},
 			},
 		},
 		ResizeKeyboard:        true,
@@ -724,6 +728,14 @@ func TestMessage_Type(t *testing.T) {
 			Want:    MessageTypeSuccessfulPayment,
 		},
 		{
+			Message: &Message{UsersShared: &UsersShared{}},
+			Want:    MessageTypeUsersShared,
+		},
+		{
+			Message: &Message{ChatShared: &ChatShared{}},
+			Want:    MessageTypeChatShared,
+		},
+		{
 			Message: &Message{ConnectedWebsite: "telegram.me"},
 			Want:    MessageTypeConnectedWebsite,
 		},
@@ -780,8 +792,12 @@ func TestUpdateType_String(t *testing.T) {
 		{UpdateTypeMyChatMember, "my_chat_member"},
 		{UpdateTypeChatMember, "chat_member"},
 		{UpdateTypeChatJoinRequest, "chat_join_request"},
+		{UpdateTypeMessageReaction, "message_reaction"},
+		{UpdateTypeMessageReactionCount, "message_reaction_count"},
+		{UpdateTypeChatBoost, "chat_boost"},
+		{UpdateTypeRemovedChatBoost, "removed_chat_boost"},
 	} {
-		assert.Equal(t, test.Want, test.Type.String())
+		assert.Equal(t, test.Want, test.Type.String(), "update type: %s", test.Want)
 	}
 }
 
@@ -805,18 +821,24 @@ func TestUpdateType_UnmarshalText(t *testing.T) {
 		{"my_chat_member", UpdateTypeMyChatMember, false},
 		{"chat_member", UpdateTypeChatMember, false},
 		{"chat_join_request", UpdateTypeChatJoinRequest, false},
+		{"message_reaction", UpdateTypeMessageReaction, false},
+		{"message_reaction_count", UpdateTypeMessageReactionCount, false},
+		{"chat_boost", UpdateTypeChatBoost, false},
+		{"removed_chat_boost", UpdateTypeRemovedChatBoost, false},
 		{"test", UpdateTypeUnknown, true},
 	} {
-		var typ UpdateType
+		t.Run(test.Text, func(t *testing.T) {
+			var typ UpdateType
 
-		err := typ.UnmarshalText([]byte(test.Text))
+			err := typ.UnmarshalText([]byte(test.Text))
 
-		if test.Err {
-			assert.Error(t, err)
-		} else {
-			assert.NoError(t, err)
-			assert.Equal(t, test.Want, typ)
-		}
+			if test.Err {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, test.Want, typ)
+			}
+		})
 	}
 }
 
@@ -906,6 +928,22 @@ func TestUpdate_Type(t *testing.T) {
 		{
 			Update: &Update{ChatMember: &ChatMemberUpdated{}},
 			Want:   UpdateTypeChatMember,
+		},
+		{
+			Update: &Update{MessageReaction: &MessageReactionUpdated{}},
+			Want:   UpdateTypeMessageReaction,
+		},
+		{
+			Update: &Update{MessageReactionCount: &MessageReactionCountUpdated{}},
+			Want:   UpdateTypeMessageReactionCount,
+		},
+		{
+			Update: &Update{ChatBoost: &ChatBoostUpdated{}},
+			Want:   UpdateTypeChatBoost,
+		},
+		{
+			Update: &Update{RemovedChatBoost: &ChatBoostRemoved{}},
+			Want:   UpdateTypeRemovedChatBoost,
 		},
 	} {
 		assert.Equal(t, test.Want, test.Update.Type())

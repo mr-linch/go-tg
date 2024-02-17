@@ -155,3 +155,47 @@ func firstNotNil[T any](fields ...*T) *T {
 
 	return nil
 }
+
+// MessageReactionHandler it's typed handler for [MessageReactionUpdate].
+type MessageReactionHandler func(context.Context, *MessageReactionUpdate) error
+
+func (handler MessageReactionHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &MessageReactionUpdate{
+		MessageReactionUpdated: update.MessageReaction,
+		Update:                 update,
+		Client:                 update.Client,
+	})
+}
+
+// MessageReactionCountHandler it's typed handler for [MessageReactionCountUpdate].
+type MessageReactionCountHandler func(context.Context, *MessageReactionCountUpdate) error
+
+func (handler MessageReactionCountHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &MessageReactionCountUpdate{
+		MessageReactionCountUpdated: update.MessageReactionCount,
+		Update:                      update,
+		Client:                      update.Client,
+	})
+}
+
+// ChatBoostHandler it's typed handler for [ChatBoostUpdate].
+type ChatBoostHandler func(context.Context, *ChatBoostUpdate) error
+
+func (handler ChatBoostHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &ChatBoostUpdate{
+		ChatBoostUpdated: update.ChatBoost,
+		Update:           update,
+		Client:           update.Client,
+	})
+}
+
+// RemovedChatBoostHandler it's typed handler for [RemovedChatBoostUpdate].
+type RemovedChatBoostHandler func(context.Context, *RemovedChatBoostUpdate) error
+
+func (handler RemovedChatBoostHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &RemovedChatBoostUpdate{
+		ChatBoostRemoved: update.RemovedChatBoost,
+		Update:           update,
+		Client:           update.Client,
+	})
+}
