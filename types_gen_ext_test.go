@@ -1337,6 +1337,15 @@ func TestReactionType_MarshalJSON(t *testing.T) {
 
 		assert.Equal(t, `{"type":"custom_emoji","custom_emoji_id":"12345"}`, string(b))
 	})
+
+	t.Run("Unknown", func(t *testing.T) {
+		r := ReactionType{}
+
+		assert.Equal(t, "unknown", r.Type())
+
+		_, err := json.Marshal(r)
+		require.Error(t, err)
+	})
 }
 
 func TestMaybeInaccessibleMessage(t *testing.T) {
@@ -1368,5 +1377,12 @@ func TestMaybeInaccessibleMessage(t *testing.T) {
 		require.NotNil(t, m.Message)
 		assert.Equal(t, 2, m.Message.ID)
 		assert.EqualValues(t, 1234, m.Message.Date)
+	})
+
+	t.Run("UnmarshalError", func(t *testing.T) {
+		var m MaybeInaccessibleMessage
+
+		err := m.UnmarshalJSON([]byte(`{"chat": {"id": 1}`))
+		require.Error(t, err)
 	})
 }
