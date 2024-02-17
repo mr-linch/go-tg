@@ -1191,6 +1191,32 @@ func TestMenuButtonOneOf_UnmarshalJSON(t *testing.T) {
 	})
 }
 
+func TestMessageOrigin_Type(t *testing.T) {
+	for _, test := range []struct {
+		Origin *MessageOrigin
+		Want   string
+	}{
+		{
+			Origin: &MessageOrigin{},
+			Want:   "unknown",
+		},
+		{
+			Origin: &MessageOrigin{User: &MessageOriginUser{}},
+			Want:   "user",
+		},
+		{
+			Origin: &MessageOrigin{HiddenUser: &MessageOriginHiddenUser{}},
+			Want:   "hidden_user",
+		},
+		{
+			Origin: &MessageOrigin{Chat: &MessageOriginChat{}},
+			Want:   "chat",
+		},
+	} {
+		assert.Equal(t, test.Want, test.Origin.Type())
+	}
+}
+
 func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 	t.Run("MessageOriginUser", func(t *testing.T) {
 		var b MessageOrigin
