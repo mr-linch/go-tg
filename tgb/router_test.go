@@ -374,6 +374,75 @@ func TestRouter(t *testing.T) {
 			assert.NoError(t, err)
 			assert.True(t, isChatJoinRequestHandlerCalled, "chat join request handler should be called")
 		}
+
+		{
+			isMessageReactionHandlerCalled := false
+
+			router.MessageReaction(func(ctx context.Context, msg *MessageReactionUpdate) error {
+				assert.NotNil(t, msg.MessageReactionUpdated)
+				isMessageReactionHandlerCalled = true
+				return nil
+			})
+
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
+				MessageReaction: &tg.MessageReactionUpdated{},
+			}})
+
+			assert.NoError(t, err)
+			assert.True(t, isMessageReactionHandlerCalled, "message reaction handler should be called")
+		}
+
+		{
+			isMessageReactionCountHandlerCalled := false
+
+			router.MessageReactionCount(func(ctx context.Context, msg *MessageReactionCountUpdate) error {
+				assert.NotNil(t, msg.MessageReactionCountUpdated)
+				isMessageReactionCountHandlerCalled = true
+				return nil
+			})
+
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
+				MessageReactionCount: &tg.MessageReactionCountUpdated{},
+			}})
+
+			assert.NoError(t, err)
+			assert.True(t, isMessageReactionCountHandlerCalled, "message reaction count handler should be called")
+		}
+
+		{
+			isChatBoostedHandlerCalled := false
+
+			router.ChatBoost(func(ctx context.Context, msg *ChatBoostUpdate) error {
+				assert.NotNil(t, msg.ChatBoostUpdated)
+				isChatBoostedHandlerCalled = true
+				return nil
+
+			})
+
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
+				ChatBoost: &tg.ChatBoostUpdated{},
+			}})
+
+			assert.NoError(t, err)
+			assert.True(t, isChatBoostedHandlerCalled, "chat boosted handler should be called")
+		}
+
+		{
+			isRemovedChatBoostHandlerCalled := false
+
+			router.RemovedChatBoost(func(ctx context.Context, msg *RemovedChatBoostUpdate) error {
+				assert.NotNil(t, msg.ChatBoostRemoved)
+				isRemovedChatBoostHandlerCalled = true
+				return nil
+			})
+
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
+				RemovedChatBoost: &tg.ChatBoostRemoved{},
+			}})
+
+			assert.NoError(t, err)
+			assert.True(t, isRemovedChatBoostHandlerCalled, "removed chat boosted handler should be called")
+		}
 	})
 
 	t.Run("FilterNotAllow", func(t *testing.T) {
