@@ -1437,8 +1437,23 @@ func (sticker *StickerType) UnmarshalText(v []byte) error {
 	return nil
 }
 
-// Story is empty type.
-type Story struct{}
+// ForumTopicClosed represents a service message about a forum topic closed in the chat. Currently holds no information.
+type ForumTopicClosed struct{}
+
+// ForumTopicReopened represents a service message about a forum topic reopened in the chat. Currently holds no information.
+type ForumTopicReopened struct{}
+
+// GeneralForumTopicHidden represents a service message about General forum topic hidden in the chat. Currently holds no information.
+type GeneralForumTopicHidden struct{}
+
+// GeneralForumTopicUnhidden represents a service message about General forum topic unhidden in the chat. Currently holds no information.
+type GeneralForumTopicUnhidden struct{}
+
+// GiveawayCreated represents a service message about a giveaway created in the chat. Currently holds no information.
+type GiveawayCreated struct{}
+
+// VideoChatStarted represents a service message about a video chat started in the chat. Currently holds no information.
+type VideoChatStarted struct{}
 
 // MessageOrigin this object describes the origin of a message.
 // It can be one of:

@@ -790,6 +790,15 @@ type Document struct {
 	FileSize int64 `json:"file_size,omitempty"`
 }
 
+// Story this object represents a story.
+type Story struct {
+	// Chat that posted the story
+	Chat Chat `json:"chat"`
+
+	// Unique identifier for the story in the chat
+	ID int `json:"id"`
+}
+
 // Video this object represents a video file.
 type Video struct {
 	// Identifier for this file, which can be used to download or reuse the file
@@ -1042,15 +1051,6 @@ type ForumTopicCreated struct {
 	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
 }
 
-// ForumTopicClosed this object represents a service message about a forum topic closed in the chat. Currently holds no information.
-type ForumTopicClosed struct {
-	// Optional. New name of the topic, if it was edited
-	Name string `json:"name,omitempty"`
-
-	// Optional. New identifier of the custom emoji shown as the topic icon, if it was edited; an empty string if the icon was removed
-	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
-}
-
 // ForumTopicEdited this object represents a service message about an edited forum topic.
 type ForumTopicEdited struct {
 	// Optional. New name of the topic, if it was edited
@@ -1058,33 +1058,6 @@ type ForumTopicEdited struct {
 
 	// Optional. New identifier of the custom emoji shown as the topic icon, if it was edited; an empty string if the icon was removed
 	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
-}
-
-// ForumTopicReopened this object represents a service message about a forum topic reopened in the chat. Currently holds no information.
-type ForumTopicReopened struct {
-	// Identifier of the request
-	RequestID int `json:"request_id"`
-
-	// Identifiers of the shared users. These numbers may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting them. But they have at most 52 significant bits, so 64-bit integers or double-precision float types are safe for storing these identifiers. The bot may not have access to the users and could be unable to use these identifiers, unless the users are already known to the bot by some other means.
-	UserIds []int `json:"user_ids"`
-}
-
-// GeneralForumTopicHidden this object represents a service message about General forum topic hidden in the chat. Currently holds no information.
-type GeneralForumTopicHidden struct {
-	// Identifier of the request
-	RequestID int `json:"request_id"`
-
-	// Identifiers of the shared users. These numbers may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting them. But they have at most 52 significant bits, so 64-bit integers or double-precision float types are safe for storing these identifiers. The bot may not have access to the users and could be unable to use these identifiers, unless the users are already known to the bot by some other means.
-	UserIds []int `json:"user_ids"`
-}
-
-// GeneralForumTopicUnhidden this object represents a service message about General forum topic unhidden in the chat. Currently holds no information.
-type GeneralForumTopicUnhidden struct {
-	// Identifier of the request
-	RequestID int `json:"request_id"`
-
-	// Identifiers of the shared users. These numbers may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting them. But they have at most 52 significant bits, so 64-bit integers or double-precision float types are safe for storing these identifiers. The bot may not have access to the users and could be unable to use these identifiers, unless the users are already known to the bot by some other means.
-	UserIds []int `json:"user_ids"`
 }
 
 // UsersShared this object contains information about the users whose identifiers were shared with the bot using a KeyboardButtonRequestUsers button.
@@ -1123,12 +1096,6 @@ type VideoChatScheduled struct {
 	StartDate int `json:"start_date"`
 }
 
-// VideoChatStarted this object represents a service message about a video chat started in the chat. Currently holds no information.
-type VideoChatStarted struct {
-	// Video chat duration in seconds
-	Duration int `json:"duration"`
-}
-
 // VideoChatEnded this object represents a service message about a video chat ended in the chat.
 type VideoChatEnded struct {
 	// Video chat duration in seconds
@@ -1139,33 +1106,6 @@ type VideoChatEnded struct {
 type VideoChatParticipantsInvited struct {
 	// New members that were invited to the video chat
 	Users []User `json:"users"`
-}
-
-// GiveawayCreated this object represents a service message about the creation of a scheduled giveaway. Currently holds no information.
-type GiveawayCreated struct {
-	// The list of chats which the user must join to participate in the giveaway
-	Chats []Chat `json:"chats"`
-
-	// Point in time (Unix timestamp) when winners of the giveaway will be selected
-	WinnersSelectionDate int `json:"winners_selection_date"`
-
-	// The number of users which are supposed to be selected as winners of the giveaway
-	WinnerCount int `json:"winner_count"`
-
-	// Optional. True, if only users who join the chats after the giveaway started should be eligible to win
-	OnlyNewMembers bool `json:"only_new_members,omitempty"`
-
-	// Optional. True, if the list of giveaway winners will be visible to everyone
-	HasPublicWinners bool `json:"has_public_winners,omitempty"`
-
-	// Optional. Description of additional giveaway prize
-	PrizeDescription string `json:"prize_description,omitempty"`
-
-	// Optional. A list of two-letter ISO 3166-1 alpha-2 country codes indicating the countries from which eligible users for the giveaway must come. If empty, then all users can participate in the giveaway. Users with a phone number that was bought on Fragment can always participate in giveaways.
-	CountryCodes []string `json:"country_codes,omitempty"`
-
-	// Optional. The number of months the Telegram Premium subscription won from the giveaway will be active for
-	PremiumSubscriptionMonthCount int `json:"premium_subscription_month_count,omitempty"`
 }
 
 // Giveaway this object represents a message about a scheduled giveaway.
