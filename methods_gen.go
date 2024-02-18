@@ -45,7 +45,7 @@ func (call *GetUpdatesCall) Timeout(timeout int) *GetUpdatesCall {
 	return call
 }
 
-// AllowedUpdates A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all update types except chat_member (default). If not specified, the previous setting will be used.Please note that this parameter doesn't affect updates created before the call to the getUpdates, so unwanted updates may be received for a short period of time.
+// AllowedUpdates A JSON-serialized list of the update types you want your bot to receive. For example, specify ["message", "edited_channel_post", "callback_query"] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all update types except chat_member, message_reaction, and message_reaction_count (default). If not specified, the previous setting will be used.Please note that this parameter doesn't affect updates created before the call to the getUpdates, so unwanted updates may be received for a short period of time.
 func (call *GetUpdatesCall) AllowedUpdates(allowedUpdates []UpdateType) *GetUpdatesCall {
 	call.request.JSON("allowed_updates", allowedUpdates)
 	return call
@@ -104,7 +104,7 @@ func (call *SetWebhookCall) MaxConnections(maxConnections int) *SetWebhookCall {
 	return call
 }
 
-// AllowedUpdates A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all update types except chat_member (default). If not specified, the previous setting will be used.Please note that this parameter doesn't affect updates created before the call to the setWebhook, so unwanted updates may be received for a short period of time.
+// AllowedUpdates A JSON-serialized list of the update types you want your bot to receive. For example, specify ["message", "edited_channel_post", "callback_query"] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all update types except chat_member, message_reaction, and message_reaction_count (default). If not specified, the previous setting will be used.Please note that this parameter doesn't affect updates created before the call to the setWebhook, so unwanted updates may be received for a short period of time.
 func (call *SetWebhookCall) AllowedUpdates(allowedUpdates []UpdateType) *SetWebhookCall {
 	call.request.JSON("allowed_updates", allowedUpdates)
 	return call
@@ -312,9 +312,9 @@ func (call *SendMessageCall) Entities(entities []MessageEntity) *SendMessageCall
 	return call
 }
 
-// DisableWebPagePreview Disables link previews for links in this message
-func (call *SendMessageCall) DisableWebPagePreview(disableWebPagePreview bool) *SendMessageCall {
-	call.request.Bool("disable_web_page_preview", disableWebPagePreview)
+// LinkPreviewOptions Link preview generation options for the message
+func (call *SendMessageCall) LinkPreviewOptions(linkPreviewOptions LinkPreviewOptions) *SendMessageCall {
+	call.request.JSON("link_preview_options", linkPreviewOptions)
 	return call
 }
 
@@ -330,15 +330,9 @@ func (call *SendMessageCall) ProtectContent(protectContent bool) *SendMessageCal
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendMessageCall) ReplyToMessageID(replyToMessageID int) *SendMessageCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendMessageCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendMessageCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendMessageCall) ReplyParameters(replyParameters ReplyParameters) *SendMessageCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -350,7 +344,7 @@ func (call *SendMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendMessageCa
 
 // ForwardMessageCall reprenesents a call to the forwardMessage method.
 // Use this method to forward messages of any kind
-// Service messages can't be forwarded
+// Service messages and messages with protected content can't be forwarded
 // On success, the sent Message is returned.
 type ForwardMessageCall struct {
 	Call[Message]
@@ -415,9 +409,78 @@ func (call *ForwardMessageCall) MessageID(messageID int) *ForwardMessageCall {
 	return call
 }
 
+// ForwardMessagesCall reprenesents a call to the forwardMessages method.
+// Use this method to forward multiple messages of any kind
+// If some of the specified messages can't be found or forwarded, they are skipped
+// Service messages and messages with protected content can't be forwarded
+// Album grouping is kept for forwarded messages
+// On success, an array of MessageId of the sent messages is returned.
+type ForwardMessagesCall struct {
+	Call[MessageID]
+}
+
+// NewForwardMessagesCall constructs a new ForwardMessagesCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// fromChatID - Unique identifier for the chat where the original messages were sent (or channel username in the format @channelusername)
+// messageIds - Identifiers of 1-100 messages in the chat from_chat_id to forward. The identifiers must be specified in a strictly increasing order.
+func NewForwardMessagesCall(chatID PeerID, fromChatID PeerID, messageIds []int) *ForwardMessagesCall {
+	return &ForwardMessagesCall{
+		Call[MessageID]{
+			request: NewRequest("forwardMessages").
+				PeerID("chat_id", chatID).
+				PeerID("from_chat_id", fromChatID).
+				JSON("message_ids", messageIds),
+		},
+	}
+}
+
+// ForwardMessagesCall constructs a new ForwardMessagesCall with required parameters.
+func (client *Client) ForwardMessages(chatID PeerID, fromChatID PeerID, messageIds []int) *ForwardMessagesCall {
+	return BindClient(
+		NewForwardMessagesCall(chatID, fromChatID, messageIds),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func (call *ForwardMessagesCall) ChatID(chatID PeerID) *ForwardMessagesCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *ForwardMessagesCall) MessageThreadID(messageThreadID int) *ForwardMessagesCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
+// FromChatID Unique identifier for the chat where the original messages were sent (or channel username in the format @channelusername)
+func (call *ForwardMessagesCall) FromChatID(fromChatID PeerID) *ForwardMessagesCall {
+	call.request.PeerID("from_chat_id", fromChatID)
+	return call
+}
+
+// MessageIds Identifiers of 1-100 messages in the chat from_chat_id to forward. The identifiers must be specified in a strictly increasing order.
+func (call *ForwardMessagesCall) MessageIds(messageIds []int) *ForwardMessagesCall {
+	call.request.JSON("message_ids", messageIds)
+	return call
+}
+
+// DisableNotification Sends the messages silently. Users will receive a notification with no sound.
+func (call *ForwardMessagesCall) DisableNotification(disableNotification bool) *ForwardMessagesCall {
+	call.request.Bool("disable_notification", disableNotification)
+	return call
+}
+
+// ProtectContent Protects the contents of the forwarded messages from forwarding and saving
+func (call *ForwardMessagesCall) ProtectContent(protectContent bool) *ForwardMessagesCall {
+	call.request.Bool("protect_content", protectContent)
+	return call
+}
+
 // CopyMessageCall reprenesents a call to the copyMessage method.
 // Use this method to copy messages of any kind
-// Service messages and invoice messages can't be copied
+// Service messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied
 // A quiz poll can be copied only if the value of the field correct_option_id is known to the bot
 // The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message
 // Returns the MessageId of the sent message on success.
@@ -502,21 +565,92 @@ func (call *CopyMessageCall) ProtectContent(protectContent bool) *CopyMessageCal
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *CopyMessageCall) ReplyToMessageID(replyToMessageID int) *CopyMessageCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *CopyMessageCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *CopyMessageCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *CopyMessageCall) ReplyParameters(replyParameters ReplyParameters) *CopyMessageCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
 // ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 func (call *CopyMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *CopyMessageCall {
 	call.request.JSON("reply_markup", replyMarkup)
+	return call
+}
+
+// CopyMessagesCall reprenesents a call to the copyMessages method.
+// Use this method to copy messages of any kind
+// If some of the specified messages can't be found or copied, they are skipped
+// Service messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied
+// A quiz poll can be copied only if the value of the field correct_option_id is known to the bot
+// The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message
+// Album grouping is kept for copied messages
+// On success, an array of MessageId of the sent messages is returned.
+type CopyMessagesCall struct {
+	Call[MessageID]
+}
+
+// NewCopyMessagesCall constructs a new CopyMessagesCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// fromChatID - Unique identifier for the chat where the original messages were sent (or channel username in the format @channelusername)
+// messageIds - Identifiers of 1-100 messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly increasing order.
+func NewCopyMessagesCall(chatID PeerID, fromChatID PeerID, messageIds []int) *CopyMessagesCall {
+	return &CopyMessagesCall{
+		Call[MessageID]{
+			request: NewRequest("copyMessages").
+				PeerID("chat_id", chatID).
+				PeerID("from_chat_id", fromChatID).
+				JSON("message_ids", messageIds),
+		},
+	}
+}
+
+// CopyMessagesCall constructs a new CopyMessagesCall with required parameters.
+func (client *Client) CopyMessages(chatID PeerID, fromChatID PeerID, messageIds []int) *CopyMessagesCall {
+	return BindClient(
+		NewCopyMessagesCall(chatID, fromChatID, messageIds),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func (call *CopyMessagesCall) ChatID(chatID PeerID) *CopyMessagesCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageThreadID Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+func (call *CopyMessagesCall) MessageThreadID(messageThreadID int) *CopyMessagesCall {
+	call.request.Int("message_thread_id", messageThreadID)
+	return call
+}
+
+// FromChatID Unique identifier for the chat where the original messages were sent (or channel username in the format @channelusername)
+func (call *CopyMessagesCall) FromChatID(fromChatID PeerID) *CopyMessagesCall {
+	call.request.PeerID("from_chat_id", fromChatID)
+	return call
+}
+
+// MessageIds Identifiers of 1-100 messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly increasing order.
+func (call *CopyMessagesCall) MessageIds(messageIds []int) *CopyMessagesCall {
+	call.request.JSON("message_ids", messageIds)
+	return call
+}
+
+// DisableNotification Sends the messages silently. Users will receive a notification with no sound.
+func (call *CopyMessagesCall) DisableNotification(disableNotification bool) *CopyMessagesCall {
+	call.request.Bool("disable_notification", disableNotification)
+	return call
+}
+
+// ProtectContent Protects the contents of the sent messages from forwarding and saving
+func (call *CopyMessagesCall) ProtectContent(protectContent bool) *CopyMessagesCall {
+	call.request.Bool("protect_content", protectContent)
+	return call
+}
+
+// RemoveCaption Pass True to copy the messages without their captions
+func (call *CopyMessagesCall) RemoveCaption(removeCaption bool) *CopyMessagesCall {
+	call.request.Bool("remove_caption", removeCaption)
 	return call
 }
 
@@ -602,15 +736,9 @@ func (call *SendPhotoCall) ProtectContent(protectContent bool) *SendPhotoCall {
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendPhotoCall) ReplyToMessageID(replyToMessageID int) *SendPhotoCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendPhotoCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendPhotoCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendPhotoCall) ReplyParameters(replyParameters ReplyParameters) *SendPhotoCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -723,15 +851,9 @@ func (call *SendAudioCall) ProtectContent(protectContent bool) *SendAudioCall {
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendAudioCall) ReplyToMessageID(replyToMessageID int) *SendAudioCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendAudioCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendAudioCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendAudioCall) ReplyParameters(replyParameters ReplyParameters) *SendAudioCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -830,15 +952,9 @@ func (call *SendDocumentCall) ProtectContent(protectContent bool) *SendDocumentC
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendDocumentCall) ReplyToMessageID(replyToMessageID int) *SendDocumentCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendDocumentCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendDocumentCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendDocumentCall) ReplyParameters(replyParameters ReplyParameters) *SendDocumentCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -961,15 +1077,9 @@ func (call *SendVideoCall) ProtectContent(protectContent bool) *SendVideoCall {
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendVideoCall) ReplyToMessageID(replyToMessageID int) *SendVideoCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendVideoCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendVideoCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendVideoCall) ReplyParameters(replyParameters ReplyParameters) *SendVideoCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1086,15 +1196,9 @@ func (call *SendAnimationCall) ProtectContent(protectContent bool) *SendAnimatio
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendAnimationCall) ReplyToMessageID(replyToMessageID int) *SendAnimationCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendAnimationCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendAnimationCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendAnimationCall) ReplyParameters(replyParameters ReplyParameters) *SendAnimationCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1188,15 +1292,9 @@ func (call *SendVoiceCall) ProtectContent(protectContent bool) *SendVoiceCall {
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendVoiceCall) ReplyToMessageID(replyToMessageID int) *SendVoiceCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendVoiceCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendVoiceCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendVoiceCall) ReplyParameters(replyParameters ReplyParameters) *SendVoiceCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1283,15 +1381,9 @@ func (call *SendVideoNoteCall) ProtectContent(protectContent bool) *SendVideoNot
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendVideoNoteCall) ReplyToMessageID(replyToMessageID int) *SendVideoNoteCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendVideoNoteCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendVideoNoteCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendVideoNoteCall) ReplyParameters(replyParameters ReplyParameters) *SendVideoNoteCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1360,15 +1452,9 @@ func (call *SendMediaGroupCall) ProtectContent(protectContent bool) *SendMediaGr
 	return call
 }
 
-// ReplyToMessageID If the messages are a reply, ID of the original message
-func (call *SendMediaGroupCall) ReplyToMessageID(replyToMessageID int) *SendMediaGroupCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendMediaGroupCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendMediaGroupCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendMediaGroupCall) ReplyParameters(replyParameters ReplyParameters) *SendMediaGroupCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1462,15 +1548,9 @@ func (call *SendLocationCall) ProtectContent(protectContent bool) *SendLocationC
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendLocationCall) ReplyToMessageID(replyToMessageID int) *SendLocationCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendLocationCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendLocationCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendLocationCall) ReplyParameters(replyParameters ReplyParameters) *SendLocationCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1586,15 +1666,9 @@ func (call *SendVenueCall) ProtectContent(protectContent bool) *SendVenueCall {
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendVenueCall) ReplyToMessageID(replyToMessageID int) *SendVenueCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendVenueCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendVenueCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendVenueCall) ReplyParameters(replyParameters ReplyParameters) *SendVenueCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1682,15 +1756,9 @@ func (call *SendContactCall) ProtectContent(protectContent bool) *SendContactCal
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendContactCall) ReplyToMessageID(replyToMessageID int) *SendContactCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendContactCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendContactCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendContactCall) ReplyParameters(replyParameters ReplyParameters) *SendContactCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1826,15 +1894,9 @@ func (call *SendPollCall) ProtectContent(protectContent bool) *SendPollCall {
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendPollCall) ReplyToMessageID(replyToMessageID int) *SendPollCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendPollCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendPollCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendPollCall) ReplyParameters(replyParameters ReplyParameters) *SendPollCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1900,15 +1962,9 @@ func (call *SendDiceCall) ProtectContent(protectContent bool) *SendDiceCall {
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendDiceCall) ReplyToMessageID(replyToMessageID int) *SendDiceCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendDiceCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendDiceCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendDiceCall) ReplyParameters(replyParameters ReplyParameters) *SendDiceCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -1965,6 +2021,59 @@ func (call *SendChatActionCall) MessageThreadID(messageThreadID int) *SendChatAc
 // Action Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes.
 func (call *SendChatActionCall) Action(action ChatAction) *SendChatActionCall {
 	call.request.Stringer("action", action)
+	return call
+}
+
+// SetMessageReactionCall reprenesents a call to the setMessageReaction method.
+// Use this method to change the chosen reactions on a message
+// Service messages can't be reacted to
+// Automatically forwarded messages from a channel to its discussion group have the same available reactions as messages in the channel
+type SetMessageReactionCall struct {
+	CallNoResult
+}
+
+// NewSetMessageReactionCall constructs a new SetMessageReactionCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageID - Identifier of the target message. If the message belongs to a media group, the reaction is set to the first non-deleted message in the group instead.
+func NewSetMessageReactionCall(chatID PeerID, messageID int) *SetMessageReactionCall {
+	return &SetMessageReactionCall{
+		CallNoResult{
+			request: NewRequest("setMessageReaction").
+				PeerID("chat_id", chatID).
+				Int("message_id", messageID),
+		},
+	}
+}
+
+// SetMessageReactionCall constructs a new SetMessageReactionCall with required parameters.
+func (client *Client) SetMessageReaction(chatID PeerID, messageID int) *SetMessageReactionCall {
+	return BindClient(
+		NewSetMessageReactionCall(chatID, messageID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func (call *SetMessageReactionCall) ChatID(chatID PeerID) *SetMessageReactionCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageID Identifier of the target message. If the message belongs to a media group, the reaction is set to the first non-deleted message in the group instead.
+func (call *SetMessageReactionCall) MessageID(messageID int) *SetMessageReactionCall {
+	call.request.Int("message_id", messageID)
+	return call
+}
+
+// Reaction New list of reaction types to set on the message. Currently, as non-premium users, bots can set up to one reaction per message. A custom emoji reaction can be used if it is either already present on the message or explicitly allowed by chat administrators.
+func (call *SetMessageReactionCall) Reaction(reaction []ReactionType) *SetMessageReactionCall {
+	call.request.JSON("reaction", reaction)
+	return call
+}
+
+// IsBig Pass True to set the reaction with a big animation
+func (call *SetMessageReactionCall) IsBig(isBig bool) *SetMessageReactionCall {
+	call.request.Bool("is_big", isBig)
 	return call
 }
 
@@ -2259,21 +2368,9 @@ func (call *PromoteChatMemberCall) IsAnonymous(isAnonymous bool) *PromoteChatMem
 	return call
 }
 
-// CanManageChat Pass True if the administrator can access the chat event log, chat statistics, boost list in channels, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+// CanManageChat Pass True if the administrator can access the chat event log, get boost list, see hidden supergroup and channel members, report spam messages and ignore slow mode. Implied by any other administrator privilege.
 func (call *PromoteChatMemberCall) CanManageChat(canManageChat bool) *PromoteChatMemberCall {
 	call.request.Bool("can_manage_chat", canManageChat)
-	return call
-}
-
-// CanPostMessages Pass True if the administrator can post messages in the channel; channels only
-func (call *PromoteChatMemberCall) CanPostMessages(canPostMessages bool) *PromoteChatMemberCall {
-	call.request.Bool("can_post_messages", canPostMessages)
-	return call
-}
-
-// CanEditMessages Pass True if the administrator can edit messages of other users and can pin messages; channels only
-func (call *PromoteChatMemberCall) CanEditMessages(canEditMessages bool) *PromoteChatMemberCall {
-	call.request.Bool("can_edit_messages", canEditMessages)
 	return call
 }
 
@@ -2283,31 +2380,13 @@ func (call *PromoteChatMemberCall) CanDeleteMessages(canDeleteMessages bool) *Pr
 	return call
 }
 
-// CanPostStories Pass True if the administrator can post stories in the channel; channels only
-func (call *PromoteChatMemberCall) CanPostStories(canPostStories bool) *PromoteChatMemberCall {
-	call.request.Bool("can_post_stories", canPostStories)
-	return call
-}
-
-// CanEditStories Pass True if the administrator can edit stories posted by other users; channels only
-func (call *PromoteChatMemberCall) CanEditStories(canEditStories bool) *PromoteChatMemberCall {
-	call.request.Bool("can_edit_stories", canEditStories)
-	return call
-}
-
-// CanDeleteStories Pass True if the administrator can delete stories posted by other users; channels only
-func (call *PromoteChatMemberCall) CanDeleteStories(canDeleteStories bool) *PromoteChatMemberCall {
-	call.request.Bool("can_delete_stories", canDeleteStories)
-	return call
-}
-
 // CanManageVideoChats Pass True if the administrator can manage video chats
 func (call *PromoteChatMemberCall) CanManageVideoChats(canManageVideoChats bool) *PromoteChatMemberCall {
 	call.request.Bool("can_manage_video_chats", canManageVideoChats)
 	return call
 }
 
-// CanRestrictMembers Pass True if the administrator can restrict, ban or unban chat members
+// CanRestrictMembers Pass True if the administrator can restrict, ban or unban chat members, or access supergroup statistics
 func (call *PromoteChatMemberCall) CanRestrictMembers(canRestrictMembers bool) *PromoteChatMemberCall {
 	call.request.Bool("can_restrict_members", canRestrictMembers)
 	return call
@@ -2328,6 +2407,36 @@ func (call *PromoteChatMemberCall) CanChangeInfo(canChangeInfo bool) *PromoteCha
 // CanInviteUsers Pass True if the administrator can invite new users to the chat
 func (call *PromoteChatMemberCall) CanInviteUsers(canInviteUsers bool) *PromoteChatMemberCall {
 	call.request.Bool("can_invite_users", canInviteUsers)
+	return call
+}
+
+// CanPostStories Pass True if the administrator can post stories to the chat
+func (call *PromoteChatMemberCall) CanPostStories(canPostStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_post_stories", canPostStories)
+	return call
+}
+
+// CanEditStories Pass True if the administrator can edit stories posted by other users
+func (call *PromoteChatMemberCall) CanEditStories(canEditStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_edit_stories", canEditStories)
+	return call
+}
+
+// CanDeleteStories Pass True if the administrator can delete stories posted by other users
+func (call *PromoteChatMemberCall) CanDeleteStories(canDeleteStories bool) *PromoteChatMemberCall {
+	call.request.Bool("can_delete_stories", canDeleteStories)
+	return call
+}
+
+// CanPostMessages Pass True if the administrator can post messages in the channel, or access channel statistics; channels only
+func (call *PromoteChatMemberCall) CanPostMessages(canPostMessages bool) *PromoteChatMemberCall {
+	call.request.Bool("can_post_messages", canPostMessages)
+	return call
+}
+
+// CanEditMessages Pass True if the administrator can edit messages of other users and can pin messages; channels only
+func (call *PromoteChatMemberCall) CanEditMessages(canEditMessages bool) *PromoteChatMemberCall {
+	call.request.Bool("can_edit_messages", canEditMessages)
 	return call
 }
 
@@ -3096,7 +3205,7 @@ func (call *LeaveChatCall) ChatID(chatID PeerID) *LeaveChatCall {
 }
 
 // GetChatCall reprenesents a call to the getChat method.
-// Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.)
+// Use this method to get up to date information about the chat
 // Returns a Chat object on success.
 type GetChatCall struct {
 	Call[Chat]
@@ -3858,6 +3967,47 @@ func (call *AnswerCallbackQueryCall) CacheTime(cacheTime int) *AnswerCallbackQue
 	return call
 }
 
+// GetUserChatBoostsCall reprenesents a call to the getUserChatBoosts method.
+// Use this method to get the list of boosts added to a chat by a user
+// Requires administrator rights in the chat
+// Returns a UserChatBoosts object.
+type GetUserChatBoostsCall struct {
+	Call[UserChatBoosts]
+}
+
+// NewGetUserChatBoostsCall constructs a new GetUserChatBoostsCall with required parameters.
+// chatID - Unique identifier for the chat or username of the channel (in the format @channelusername)
+// userID - Unique identifier of the target user
+func NewGetUserChatBoostsCall(chatID PeerID, userID UserID) *GetUserChatBoostsCall {
+	return &GetUserChatBoostsCall{
+		Call[UserChatBoosts]{
+			request: NewRequest("getUserChatBoosts").
+				PeerID("chat_id", chatID).
+				UserID("user_id", userID),
+		},
+	}
+}
+
+// GetUserChatBoostsCall constructs a new GetUserChatBoostsCall with required parameters.
+func (client *Client) GetUserChatBoosts(chatID PeerID, userID UserID) *GetUserChatBoostsCall {
+	return BindClient(
+		NewGetUserChatBoostsCall(chatID, userID),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the chat or username of the channel (in the format @channelusername)
+func (call *GetUserChatBoostsCall) ChatID(chatID PeerID) *GetUserChatBoostsCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// UserID Unique identifier of the target user
+func (call *GetUserChatBoostsCall) UserID(userID UserID) *GetUserChatBoostsCall {
+	call.request.UserID("user_id", userID)
+	return call
+}
+
 // SetMyCommandsCall reprenesents a call to the setMyCommands method.
 // Use this method to change the list of the bot's commands
 // See this manual for more details about bot commands
@@ -4388,9 +4538,9 @@ func (call *EditMessageTextCall) Entities(entities []MessageEntity) *EditMessage
 	return call
 }
 
-// DisableWebPagePreview Disables link previews for links in this message
-func (call *EditMessageTextCall) DisableWebPagePreview(disableWebPagePreview bool) *EditMessageTextCall {
-	call.request.Bool("disable_web_page_preview", disableWebPagePreview)
+// LinkPreviewOptions Link preview generation options for the message
+func (call *EditMessageTextCall) LinkPreviewOptions(linkPreviewOptions LinkPreviewOptions) *EditMessageTextCall {
+	call.request.JSON("link_preview_options", linkPreviewOptions)
 	return call
 }
 
@@ -4879,6 +5029,46 @@ func (call *DeleteMessageCall) MessageID(messageID int) *DeleteMessageCall {
 	return call
 }
 
+// DeleteMessagesCall reprenesents a call to the deleteMessages method.
+// Use this method to delete multiple messages simultaneously
+// If some of the specified messages can't be found, they are skipped
+type DeleteMessagesCall struct {
+	CallNoResult
+}
+
+// NewDeleteMessagesCall constructs a new DeleteMessagesCall with required parameters.
+// chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+// messageIds - Identifiers of 1-100 messages to delete. See deleteMessage for limitations on which messages can be deleted
+func NewDeleteMessagesCall(chatID PeerID, messageIds []int) *DeleteMessagesCall {
+	return &DeleteMessagesCall{
+		CallNoResult{
+			request: NewRequest("deleteMessages").
+				PeerID("chat_id", chatID).
+				JSON("message_ids", messageIds),
+		},
+	}
+}
+
+// DeleteMessagesCall constructs a new DeleteMessagesCall with required parameters.
+func (client *Client) DeleteMessages(chatID PeerID, messageIds []int) *DeleteMessagesCall {
+	return BindClient(
+		NewDeleteMessagesCall(chatID, messageIds),
+		client,
+	)
+}
+
+// ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+func (call *DeleteMessagesCall) ChatID(chatID PeerID) *DeleteMessagesCall {
+	call.request.PeerID("chat_id", chatID)
+	return call
+}
+
+// MessageIds Identifiers of 1-100 messages to delete. See deleteMessage for limitations on which messages can be deleted
+func (call *DeleteMessagesCall) MessageIds(messageIds []int) *DeleteMessagesCall {
+	call.request.JSON("message_ids", messageIds)
+	return call
+}
+
 // SendStickerCall reprenesents a call to the sendSticker method.
 // Use this method to send static .WEBP, animated .TGS, or video .WEBM stickers
 // On success, the sent Message is returned.
@@ -4943,15 +5133,9 @@ func (call *SendStickerCall) ProtectContent(protectContent bool) *SendStickerCal
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendStickerCall) ReplyToMessageID(replyToMessageID int) *SendStickerCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendStickerCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendStickerCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendStickerCall) ReplyParameters(replyParameters ReplyParameters) *SendStickerCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -5831,15 +6015,9 @@ func (call *SendInvoiceCall) ProtectContent(protectContent bool) *SendInvoiceCal
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendInvoiceCall) ReplyToMessageID(replyToMessageID int) *SendInvoiceCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendInvoiceCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendInvoiceCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendInvoiceCall) ReplyParameters(replyParameters ReplyParameters) *SendInvoiceCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
@@ -6207,15 +6385,9 @@ func (call *SendGameCall) ProtectContent(protectContent bool) *SendGameCall {
 	return call
 }
 
-// ReplyToMessageID If the message is a reply, ID of the original message
-func (call *SendGameCall) ReplyToMessageID(replyToMessageID int) *SendGameCall {
-	call.request.Int("reply_to_message_id", replyToMessageID)
-	return call
-}
-
-// AllowSendingWithoutReply Pass True if the message should be sent even if the specified replied-to message is not found
-func (call *SendGameCall) AllowSendingWithoutReply(allowSendingWithoutReply bool) *SendGameCall {
-	call.request.Bool("allow_sending_without_reply", allowSendingWithoutReply)
+// ReplyParameters Description of the message to reply to
+func (call *SendGameCall) ReplyParameters(replyParameters ReplyParameters) *SendGameCall {
+	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 

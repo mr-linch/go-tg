@@ -4,6 +4,7 @@ import (
 	"encoding"
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -166,6 +167,8 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 			NewKeyboardButtonRequestLocation("text"),
 			NewKeyboardButtonRequestPoll("text", KeyboardButtonPollType{}),
 			NewKeyboardButtonWebApp("text", WebAppInfo{}),
+			NewKeyboardButtonRequestChat("test", KeyboardButtonRequestChat{RequestID: 1}),
+			NewKeyboardButtonRequestUsers("text", KeyboardButtonRequestUsers{RequestID: 1}),
 		),
 	).WithResizeKeyboardMarkup().
 		WithOneTimeKeyboardMarkup().
@@ -182,6 +185,8 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 				{Text: "text", RequestLocation: true},
 				{Text: "text", RequestPoll: &KeyboardButtonPollType{}},
 				{Text: "text", WebApp: &WebAppInfo{}},
+				{Text: "test", RequestChat: &KeyboardButtonRequestChat{RequestID: 1}},
+				{Text: "text", RequestUsers: &KeyboardButtonRequestUsers{RequestID: 1}},
 			},
 		},
 		ResizeKeyboard:        true,
@@ -710,8 +715,10 @@ func TestMessage_Type(t *testing.T) {
 			Want:    MessageTypeMigrateFromChatID,
 		},
 		{
-			Message: &Message{PinnedMessage: &Message{}},
-			Want:    MessageTypePinnedMessage,
+			Message: &Message{PinnedMessage: &MaybeInaccessibleMessage{
+				Message: &Message{},
+			}},
+			Want: MessageTypePinnedMessage,
 		},
 		{
 			Message: &Message{Invoice: &Invoice{}},
@@ -720,6 +727,14 @@ func TestMessage_Type(t *testing.T) {
 		{
 			Message: &Message{SuccessfulPayment: &SuccessfulPayment{}},
 			Want:    MessageTypeSuccessfulPayment,
+		},
+		{
+			Message: &Message{UsersShared: &UsersShared{}},
+			Want:    MessageTypeUsersShared,
+		},
+		{
+			Message: &Message{ChatShared: &ChatShared{}},
+			Want:    MessageTypeChatShared,
 		},
 		{
 			Message: &Message{ConnectedWebsite: "telegram.me"},
@@ -778,9 +793,26 @@ func TestUpdateType_String(t *testing.T) {
 		{UpdateTypeMyChatMember, "my_chat_member"},
 		{UpdateTypeChatMember, "chat_member"},
 		{UpdateTypeChatJoinRequest, "chat_join_request"},
+		{UpdateTypeMessageReaction, "message_reaction"},
+		{UpdateTypeMessageReactionCount, "message_reaction_count"},
+		{UpdateTypeChatBoost, "chat_boost"},
+		{UpdateTypeRemovedChatBoost, "removed_chat_boost"},
 	} {
-		assert.Equal(t, test.Want, test.Type.String())
+		assert.Equal(t, test.Want, test.Type.String(), "update type: %s", test.Want)
 	}
+}
+
+func TestMessage_IsInaccessible(t *testing.T) {
+	accessible := &Message{
+		Date: time.Now().Unix(),
+	}
+
+	inaccessible := &Message{
+		Date: 0,
+	}
+
+	assert.False(t, accessible.IsInaccessible())
+	assert.True(t, inaccessible.IsInaccessible())
 }
 
 func TestUpdateType_UnmarshalText(t *testing.T) {
@@ -803,18 +835,24 @@ func TestUpdateType_UnmarshalText(t *testing.T) {
 		{"my_chat_member", UpdateTypeMyChatMember, false},
 		{"chat_member", UpdateTypeChatMember, false},
 		{"chat_join_request", UpdateTypeChatJoinRequest, false},
+		{"message_reaction", UpdateTypeMessageReaction, false},
+		{"message_reaction_count", UpdateTypeMessageReactionCount, false},
+		{"chat_boost", UpdateTypeChatBoost, false},
+		{"removed_chat_boost", UpdateTypeRemovedChatBoost, false},
 		{"test", UpdateTypeUnknown, true},
 	} {
-		var typ UpdateType
+		t.Run(test.Text, func(t *testing.T) {
+			var typ UpdateType
 
-		err := typ.UnmarshalText([]byte(test.Text))
+			err := typ.UnmarshalText([]byte(test.Text))
 
-		if test.Err {
-			assert.Error(t, err)
-		} else {
-			assert.NoError(t, err)
-			assert.Equal(t, test.Want, typ)
-		}
+			if test.Err {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, test.Want, typ)
+			}
+		})
 	}
 }
 
@@ -904,6 +942,22 @@ func TestUpdate_Type(t *testing.T) {
 		{
 			Update: &Update{ChatMember: &ChatMemberUpdated{}},
 			Want:   UpdateTypeChatMember,
+		},
+		{
+			Update: &Update{MessageReaction: &MessageReactionUpdated{}},
+			Want:   UpdateTypeMessageReaction,
+		},
+		{
+			Update: &Update{MessageReactionCount: &MessageReactionCountUpdated{}},
+			Want:   UpdateTypeMessageReactionCount,
+		},
+		{
+			Update: &Update{ChatBoost: &ChatBoostUpdated{}},
+			Want:   UpdateTypeChatBoost,
+		},
+		{
+			Update: &Update{RemovedChatBoost: &ChatBoostRemoved{}},
+			Want:   UpdateTypeRemovedChatBoost,
 		},
 	} {
 		assert.Equal(t, test.Want, test.Update.Type())
@@ -1043,7 +1097,9 @@ func TestUpdate_Msg(t *testing.T) {
 		{&Update{EditedMessage: msg}, msg},
 		{&Update{ChannelPost: msg}, msg},
 		{&Update{EditedChannelPost: msg}, msg},
-		{&Update{CallbackQuery: &CallbackQuery{Message: msg}}, msg},
+		{&Update{CallbackQuery: &CallbackQuery{Message: &MaybeInaccessibleMessage{
+			Message: msg,
+		}}}, msg},
 		{&Update{CallbackQuery: &CallbackQuery{}}, nil},
 	} {
 		assert.Equal(t, test.Message, test.Update.Msg())
@@ -1132,5 +1188,201 @@ func TestMenuButtonOneOf_UnmarshalJSON(t *testing.T) {
 		require.NotNil(t, b.WebApp)
 		assert.Equal(t, "web_app", b.WebApp.Type)
 		assert.Equal(t, "12345", b.WebApp.Text)
+	})
+}
+
+func TestMessageOrigin_Type(t *testing.T) {
+	for _, test := range []struct {
+		Origin *MessageOrigin
+		Want   string
+	}{
+		{
+			Origin: &MessageOrigin{},
+			Want:   "unknown",
+		},
+		{
+			Origin: &MessageOrigin{User: &MessageOriginUser{}},
+			Want:   "user",
+		},
+		{
+			Origin: &MessageOrigin{HiddenUser: &MessageOriginHiddenUser{}},
+			Want:   "hidden_user",
+		},
+		{
+			Origin: &MessageOrigin{Chat: &MessageOriginChat{}},
+			Want:   "chat",
+		},
+	} {
+		assert.Equal(t, test.Want, test.Origin.Type())
+	}
+}
+
+func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
+	t.Run("MessageOriginUser", func(t *testing.T) {
+		var b MessageOrigin
+
+		err := b.UnmarshalJSON([]byte(`{"type": "user", "date": 12345, "sender_user": {"id":1}}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, "user", b.Type())
+		require.NotNil(t, b.User)
+		assert.EqualValues(t, 12345, b.User.Date)
+		assert.Equal(t, UserID(1), b.User.SenderUser.ID)
+	})
+
+	t.Run("MessageOriginHiddenUser", func(t *testing.T) {
+		var b MessageOrigin
+
+		err := b.UnmarshalJSON([]byte(`{"type": "hidden_user", "date": 12345, "sender_user_name": "john doe"}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, "hidden_user", b.Type())
+		require.NotNil(t, b.HiddenUser)
+		assert.EqualValues(t, 12345, b.HiddenUser.Date)
+		assert.Equal(t, "john doe", b.HiddenUser.SenderUserName)
+	})
+
+	t.Run("MessageOriginChat", func(t *testing.T) {
+		var b MessageOrigin
+
+		err := b.UnmarshalJSON([]byte(`{"type": "chat", "date": 12345, "sender_chat": {"id":1}, "author_signature": "john doe"}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, "chat", b.Type())
+		require.NotNil(t, b.Chat)
+		assert.EqualValues(t, 12345, b.Chat.Date)
+		assert.Equal(t, ChatID(1), b.Chat.SenderChat.ID)
+		assert.Equal(t, "john doe", b.Chat.AuthorSignature)
+	})
+
+	t.Run("MessageOriginChannel", func(t *testing.T) {
+		var b MessageOrigin
+
+		err := b.UnmarshalJSON([]byte(`{"type": "channel", "date": 12345, "chat": {"id":1}, "message_id": 2, "author_signature": "john doe"}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, "channel", b.Type())
+		require.NotNil(t, b.Channel)
+		assert.EqualValues(t, 12345, b.Channel.Date)
+		assert.Equal(t, ChatID(1), b.Channel.Chat.ID)
+		assert.Equal(t, 2, b.Channel.MessageID)
+		assert.Equal(t, "john doe", b.Channel.AuthorSignature)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		var b MessageOrigin
+
+		err := b.UnmarshalJSON([]byte(`{"type": "unknown"`))
+		require.Error(t, err)
+
+		err = b.UnmarshalJSON([]byte(`{"type": "unknown", "date": 12345}`))
+		require.Error(t, err)
+	})
+}
+
+func TestReactionType(t *testing.T) {
+	t.Run("Emoji", func(t *testing.T) {
+		var r ReactionType
+
+		err := r.UnmarshalJSON([]byte(`{"type": "emoji", "emoji": "😀"}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, "emoji", r.Type())
+		require.NotNil(t, r.Emoji)
+		assert.Equal(t, "😀", r.Emoji.Emoji)
+	})
+
+	t.Run("CustomEmoji", func(t *testing.T) {
+		var r ReactionType
+
+		err := r.UnmarshalJSON([]byte(`{"type": "custom_emoji", "custom_emoji_id": "12345"}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, "custom_emoji", r.Type())
+		require.NotNil(t, r.CustomEmoji)
+		assert.Equal(t, "12345", r.CustomEmoji.CustomEmojiID)
+	})
+
+	t.Run("Unknown", func(t *testing.T) {
+		var r ReactionType
+
+		err := r.UnmarshalJSON([]byte(`{"type": "unknown"}`))
+		require.Error(t, err)
+	})
+}
+
+func TestReactionType_MarshalJSON(t *testing.T) {
+	t.Run("Emoji", func(t *testing.T) {
+		r := ReactionType{
+			Emoji: &ReactionTypeEmoji{Emoji: "😀"},
+		}
+
+		assert.Equal(t, "emoji", r.Type())
+
+		b, err := json.Marshal(r)
+		require.NoError(t, err)
+
+		assert.Equal(t, `{"type":"emoji","emoji":"😀"}`, string(b))
+	})
+
+	t.Run("CustomEmoji", func(t *testing.T) {
+		r := &ReactionType{
+			CustomEmoji: &ReactionTypeCustomEmoji{CustomEmojiID: "12345"},
+		}
+
+		assert.Equal(t, "custom_emoji", r.Type())
+
+		b, err := json.Marshal(r)
+		require.NoError(t, err)
+
+		assert.Equal(t, `{"type":"custom_emoji","custom_emoji_id":"12345"}`, string(b))
+	})
+
+	t.Run("Unknown", func(t *testing.T) {
+		r := ReactionType{}
+
+		assert.Equal(t, "unknown", r.Type())
+
+		_, err := json.Marshal(r)
+		require.Error(t, err)
+	})
+}
+
+func TestMaybeInaccessibleMessage(t *testing.T) {
+	t.Run("InaccessibleMessage", func(t *testing.T) {
+		var m MaybeInaccessibleMessage
+
+		err := m.UnmarshalJSON([]byte(`{"chat": {"id": 1}, "message_id": 2, "date": 0}`))
+		require.NoError(t, err)
+
+		assert.True(t, m.IsInaccessible())
+		assert.Equal(t, ChatID(1), m.Chat().ID)
+		assert.Equal(t, 2, m.MessageID())
+		require.NotNil(t, m.InaccessibleMessage)
+		assert.Equal(t, ChatID(1), m.InaccessibleMessage.Chat.ID)
+		assert.EqualValues(t, 2, m.InaccessibleMessage.MessageID)
+		assert.EqualValues(t, 0, m.InaccessibleMessage.Date)
+	})
+
+	t.Run("Message", func(t *testing.T) {
+		var m MaybeInaccessibleMessage
+
+		err := m.UnmarshalJSON([]byte(`{"message_id": 2, "date": 1234, "chat": {"id": 1}}`))
+		require.NoError(t, err)
+
+		assert.Equal(t, ChatID(1), m.Chat().ID)
+
+		assert.True(t, m.IsAccessible())
+		assert.Equal(t, 2, m.MessageID())
+		require.NotNil(t, m.Message)
+		assert.Equal(t, 2, m.Message.ID)
+		assert.EqualValues(t, 1234, m.Message.Date)
+	})
+
+	t.Run("UnmarshalError", func(t *testing.T) {
+		var m MaybeInaccessibleMessage
+
+		err := m.UnmarshalJSON([]byte(`{"chat": {"id": 1}`))
+		require.Error(t, err)
 	})
 }

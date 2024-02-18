@@ -271,6 +271,10 @@ func NewInlineKeyboardButtonCallback(text string, query string) InlineKeyboardBu
 	}
 }
 
+type CallbackDataEncoder[T any] interface {
+	Encode(data T) (string, error)
+}
+
 // NewInlineKeyboardButtonWebApp creates a button that open a web app.
 func NewInlineKeyboardButtonWebApp(text string, webApp WebAppInfo) InlineKeyboardButton {
 	return InlineKeyboardButton{
@@ -405,6 +409,24 @@ func NewKeyboardButtonWebApp(text string, webApp WebAppInfo) KeyboardButton {
 	return KeyboardButton{
 		Text:   text,
 		WebApp: &webApp,
+	}
+}
+
+// NewKeyboardButtonRequestUsers creates a reply keyboard button that request a user from user.
+// Available in private chats only.
+func NewKeyboardButtonRequestUsers(text string, config KeyboardButtonRequestUsers) KeyboardButton {
+	return KeyboardButton{
+		Text:         text,
+		RequestUsers: &config,
+	}
+}
+
+// NewKeyboardButtonRequestChats creates a reply keyboard button that request a chat from user.
+// Available in private chats only.
+func NewKeyboardButtonRequestChat(text string, config KeyboardButtonRequestChat) KeyboardButton {
+	return KeyboardButton{
+		Text:        text,
+		RequestChat: &config,
 	}
 }
 
@@ -934,6 +956,8 @@ const (
 	MessageTypePinnedMessage
 	MessageTypeInvoice
 	MessageTypeSuccessfulPayment
+	MessageTypeUsersShared
+	MessageTypeChatShared
 	MessageTypeConnectedWebsite
 	MessageTypePassportData
 	MessageTypeProximityAlertTriggered
@@ -1004,6 +1028,10 @@ func (msg *Message) Type() MessageType {
 		return MessageTypeInvoice
 	case msg.SuccessfulPayment != nil:
 		return MessageTypeSuccessfulPayment
+	case msg.UsersShared != nil:
+		return MessageTypeUsersShared
+	case msg.ChatShared != nil:
+		return MessageTypeChatShared
 	case msg.ConnectedWebsite != "":
 		return MessageTypeConnectedWebsite
 	case msg.PassportData != nil:
@@ -1025,6 +1053,11 @@ func (msg *Message) Type() MessageType {
 	}
 }
 
+// IsInaccessible returns true if message is inaccessible.
+func (msg *Message) IsInaccessible() bool {
+	return msg.Date == 0
+}
+
 // UpdateType it's type for describe content of Update.
 type UpdateType int
 
@@ -1044,6 +1077,10 @@ const (
 	UpdateTypeMyChatMember
 	UpdateTypeChatMember
 	UpdateTypeChatJoinRequest
+	UpdateTypeMessageReaction
+	UpdateTypeMessageReactionCount
+	UpdateTypeChatBoost
+	UpdateTypeRemovedChatBoost
 )
 
 // MarshalText implements encoding.TextMarshaler.
@@ -1086,6 +1123,14 @@ func (typ *UpdateType) UnmarshalText(v []byte) error {
 		*typ = UpdateTypeChatMember
 	case "chat_join_request":
 		*typ = UpdateTypeChatJoinRequest
+	case "message_reaction":
+		*typ = UpdateTypeMessageReaction
+	case "message_reaction_count":
+		*typ = UpdateTypeMessageReactionCount
+	case "chat_boost":
+		*typ = UpdateTypeChatBoost
+	case "removed_chat_boost":
+		*typ = UpdateTypeRemovedChatBoost
 	default:
 		return fmt.Errorf("unknown update type")
 	}
@@ -1095,7 +1140,7 @@ func (typ *UpdateType) UnmarshalText(v []byte) error {
 
 // String returns string representation of UpdateType.
 func (typ UpdateType) String() string {
-	if typ > UpdateTypeUnknown && typ <= UpdateTypeChatJoinRequest {
+	if typ > UpdateTypeUnknown && typ <= UpdateTypeRemovedChatBoost {
 		return [...]string{
 			"message",
 			"edited_message",
@@ -1111,6 +1156,10 @@ func (typ UpdateType) String() string {
 			"my_chat_member",
 			"chat_member",
 			"chat_join_request",
+			"message_reaction",
+			"message_reaction_count",
+			"chat_boost",
+			"removed_chat_boost",
 		}[typ-1]
 	}
 
@@ -1147,6 +1196,14 @@ func (update *Update) Type() UpdateType {
 		return UpdateTypeChatMember
 	case update.ChatJoinRequest != nil:
 		return UpdateTypeChatJoinRequest
+	case update.MessageReaction != nil:
+		return UpdateTypeMessageReaction
+	case update.MessageReactionCount != nil:
+		return UpdateTypeMessageReactionCount
+	case update.ChatBoost != nil:
+		return UpdateTypeChatBoost
+	case update.RemovedChatBoost != nil:
+		return UpdateTypeRemovedChatBoost
 	default:
 		return UpdateTypeUnknown
 	}
@@ -1166,8 +1223,8 @@ func (update *Update) Msg() *Message {
 		return update.ChannelPost
 	case update.EditedChannelPost != nil:
 		return update.EditedChannelPost
-	case update.CallbackQuery != nil && update.CallbackQuery.Message != nil:
-		return update.CallbackQuery.Message
+	case update.CallbackQuery != nil && update.CallbackQuery.Message != nil && update.CallbackQuery.Message.Message != nil:
+		return update.CallbackQuery.Message.Message
 	default:
 		return nil
 	}
@@ -1380,5 +1437,182 @@ func (sticker *StickerType) UnmarshalText(v []byte) error {
 	return nil
 }
 
-// Story is empty type.
-type Story struct{}
+// ForumTopicClosed represents a service message about a forum topic closed in the chat. Currently holds no information.
+type ForumTopicClosed struct{}
+
+// ForumTopicReopened represents a service message about a forum topic reopened in the chat. Currently holds no information.
+type ForumTopicReopened struct{}
+
+// GeneralForumTopicHidden represents a service message about General forum topic hidden in the chat. Currently holds no information.
+type GeneralForumTopicHidden struct{}
+
+// GeneralForumTopicUnhidden represents a service message about General forum topic unhidden in the chat. Currently holds no information.
+type GeneralForumTopicUnhidden struct{}
+
+// GiveawayCreated represents a service message about a giveaway created in the chat. Currently holds no information.
+type GiveawayCreated struct{}
+
+// VideoChatStarted represents a service message about a video chat started in the chat. Currently holds no information.
+type VideoChatStarted struct{}
+
+// MessageOrigin this object describes the origin of a message.
+// It can be one of:
+//   - [MessageOriginUser]
+//   - [MessageOriginHiddenUser]
+//   - [MessageOriginChat]
+//   - [MessageOriginChannel]
+type MessageOrigin struct {
+	User       *MessageOriginUser
+	HiddenUser *MessageOriginHiddenUser
+	Chat       *MessageOriginChat
+	Channel    *MessageOriginChannel
+}
+
+func (origin *MessageOrigin) UnmarshalJSON(v []byte) error {
+	var partial struct {
+		Type string `json:"type"`
+	}
+
+	if err := json.Unmarshal(v, &partial); err != nil {
+		return fmt.Errorf("unmarshal MessageOrigin partial: %w", err)
+	}
+
+	switch partial.Type {
+	case "user":
+		origin.User = &MessageOriginUser{}
+		return json.Unmarshal(v, origin.User)
+	case "hidden_user":
+		origin.HiddenUser = &MessageOriginHiddenUser{}
+		return json.Unmarshal(v, origin.HiddenUser)
+	case "chat":
+		origin.Chat = &MessageOriginChat{}
+		return json.Unmarshal(v, origin.Chat)
+	case "channel":
+		origin.Channel = &MessageOriginChannel{}
+		return json.Unmarshal(v, origin.Channel)
+	default:
+		return fmt.Errorf("unknown MessageOrigin type: %s", partial.Type)
+	}
+}
+
+func (origin *MessageOrigin) Type() string {
+	switch {
+	case origin.User != nil:
+		return "user"
+	case origin.HiddenUser != nil:
+		return "hidden_user"
+	case origin.Chat != nil:
+		return "chat"
+	case origin.Channel != nil:
+		return "channel"
+	default:
+		return "unknown"
+	}
+}
+
+// ReactionType it's type for describe content of Reaction.
+// It can be one of:
+//   - [ReactionTypeEmoji]
+//   - [ReactionTypeCustomEmoji]
+type ReactionType struct {
+	Emoji       *ReactionTypeEmoji
+	CustomEmoji *ReactionTypeCustomEmoji
+}
+
+func (reaction ReactionType) MarshalJSON() ([]byte, error) {
+	switch {
+	case reaction.Emoji != nil:
+		reaction.Emoji.Type = "emoji"
+		return json.Marshal(reaction.Emoji)
+	case reaction.CustomEmoji != nil:
+		reaction.CustomEmoji.Type = "custom_emoji"
+		return json.Marshal(reaction.CustomEmoji)
+	default:
+		return nil, fmt.Errorf("unknown ReactionType type")
+	}
+}
+
+func (reaction *ReactionType) UnmarshalJSON(v []byte) error {
+	var partial struct {
+		Type string `json:"type"`
+	}
+
+	if err := json.Unmarshal(v, &partial); err != nil {
+		return fmt.Errorf("unmarshal ReactionType partial: %w", err)
+	}
+
+	switch partial.Type {
+	case "emoji":
+		reaction.Emoji = &ReactionTypeEmoji{}
+		return json.Unmarshal(v, reaction.Emoji)
+	case "custom_emoji":
+		reaction.CustomEmoji = &ReactionTypeCustomEmoji{}
+		return json.Unmarshal(v, reaction.CustomEmoji)
+	default:
+		return fmt.Errorf("unknown ReactionType type: %s", partial.Type)
+	}
+}
+
+func (reaction *ReactionType) Type() string {
+	switch {
+	case reaction.Emoji != nil:
+		return "emoji"
+	case reaction.CustomEmoji != nil:
+		return "custom_emoji"
+	default:
+		return "unknown"
+	}
+}
+
+// This object describes a message that can be inaccessible to the bot.
+// It can be one of:
+//   - [Message]
+//   - [InaccessibleMessage]
+type MaybeInaccessibleMessage struct {
+	Message             *Message
+	InaccessibleMessage *InaccessibleMessage
+}
+
+// IsInaccessible returns true if message is inaccessible.
+func (mim *MaybeInaccessibleMessage) IsInaccessible() bool {
+	return mim.InaccessibleMessage != nil
+}
+
+// IsAccessible returns true if message is accessible.
+func (mim *MaybeInaccessibleMessage) IsAccessible() bool {
+	return mim.Message != nil
+}
+
+func (mim *MaybeInaccessibleMessage) Chat() Chat {
+	if mim.InaccessibleMessage != nil {
+		return mim.InaccessibleMessage.Chat
+	}
+
+	return mim.Message.Chat
+}
+
+func (mim *MaybeInaccessibleMessage) MessageID() int {
+	if mim.InaccessibleMessage != nil {
+		return mim.InaccessibleMessage.MessageID
+	}
+
+	return mim.Message.ID
+}
+
+func (mim *MaybeInaccessibleMessage) UnmarshalJSON(v []byte) error {
+	var partial struct {
+		Date int64 `json:"date"`
+	}
+
+	if err := json.Unmarshal(v, &partial); err != nil {
+		return fmt.Errorf("unmarshal MaybeInaccessibleMessage partial: %w", err)
+	}
+
+	if partial.Date == 0 {
+		mim.InaccessibleMessage = &InaccessibleMessage{}
+		return json.Unmarshal(v, mim.InaccessibleMessage)
+	} else {
+		mim.Message = &Message{}
+		return json.Unmarshal(v, mim.Message)
+	}
+}

@@ -269,3 +269,31 @@ func (joinRequest *ChatJoinRequestUpdate) Approve() *tg.ApproveChatJoinRequestCa
 func (joinRequest *ChatJoinRequestUpdate) Decline() *tg.DeclineChatJoinRequestCall {
 	return joinRequest.Client.DeclineChatJoinRequest(joinRequest.Chat, joinRequest.From.ID)
 }
+
+// MessageReactionUpdate it's extend wrapper around [tg.MessageReactionUpdated].
+type MessageReactionUpdate struct {
+	*tg.MessageReactionUpdated
+	Update *Update
+	Client *tg.Client
+}
+
+// MessageReactionCountUpdate it's extend wrapper around [tg.MessageReactionCountUpdated].
+type MessageReactionCountUpdate struct {
+	*tg.MessageReactionCountUpdated
+	Update *Update
+	Client *tg.Client
+}
+
+// ChatBoostUpdate it's extend wrapper around [tg.ChatBoostUpdated].
+type ChatBoostUpdate struct {
+	*tg.ChatBoostUpdated
+	Update *Update
+	Client *tg.Client
+}
+
+// RemovedChatBoostUpdate it's extend wrapper around [tg.RemovedChatBoost].
+type RemovedChatBoostUpdate struct {
+	*tg.ChatBoostRemoved
+	Update *Update
+	Client *tg.Client
+}

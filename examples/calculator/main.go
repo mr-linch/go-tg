@@ -30,14 +30,16 @@ func main() {
 			// handle other buttons
 			var currentText string
 
-			if cbq.Message == nil {
+			if cbq.Message.IsInaccessible() {
 				return cbq.AnswerText(
 					tg.HTML.Italic("this keyboard is too old, please /start again"),
 					true,
 				).DoVoid(ctx)
 			}
 
-			currentText = cbq.Message.Text
+			msg := cbq.Message.Message
+
+			currentText = msg.Text
 
 			if currentText == typingMessage {
 				currentText = ""
@@ -50,8 +52,8 @@ func main() {
 			}
 
 			return cbq.Client.EditMessageText(
-				cbq.Message.Chat.ID,
-				cbq.Message.ID,
+				msg.Chat.ID,
+				msg.ID,
 				currentText,
 			).ReplyMarkup(newKeyboard()).DoVoid(ctx)
 		}),

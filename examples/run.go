@@ -82,6 +82,26 @@ func run(ctx context.Context, handler tgb.Handler) error {
 			handler,
 			client,
 			tgb.WithPollerLogger(log.Default()),
+			tgb.WithPollerAllowedUpdates(
+				tg.UpdateTypeMessage,
+				tg.UpdateTypeEditedMessage,
+				tg.UpdateTypeChannelPost,
+				tg.UpdateTypeEditedChannelPost,
+				tg.UpdateTypeMessageReaction,
+				tg.UpdateTypeMessageReactionCount,
+				tg.UpdateTypeInlineQuery,
+				tg.UpdateTypeChosenInlineResult,
+				tg.UpdateTypeCallbackQuery,
+				tg.UpdateTypeShippingQuery,
+				tg.UpdateTypePreCheckoutQuery,
+				tg.UpdateTypePoll,
+				tg.UpdateTypePollAnswer,
+				tg.UpdateTypeMyChatMember,
+				tg.UpdateTypeChatMember,
+				tg.UpdateTypeChatJoinRequest,
+				tg.UpdateTypeChatBoost,
+				tg.UpdateTypeRemovedChatBoost,
+			),
 		).Run(ctx)
 	}
 

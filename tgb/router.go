@@ -157,6 +157,26 @@ func (bot *Router) ChatJoinRequest(handler ChatJoinRequestHandler, filters ...Fi
 	return bot.register(tg.UpdateTypeChatJoinRequest, handler, filters...)
 }
 
+// MessageReaction register handlers for Update with not empty MessageReaction field.
+func (bot *Router) MessageReaction(handler MessageReactionHandler, filters ...Filter) *Router {
+	return bot.register(tg.UpdateTypeMessageReaction, handler, filters...)
+}
+
+// MessageReactionCount register handlers for Update with not empty MessageReactionCount field.
+func (bot *Router) MessageReactionCount(handler MessageReactionCountHandler, filters ...Filter) *Router {
+	return bot.register(tg.UpdateTypeMessageReactionCount, handler, filters...)
+}
+
+// ChatBoost register handlers for Update with not empty ChatBoost field.
+func (bot *Router) ChatBoost(handler ChatBoostHandler, filters ...Filter) *Router {
+	return bot.register(tg.UpdateTypeChatBoost, handler, filters...)
+}
+
+// RemovedChatBoost register handlers for Update with not empty RemovedChatBoost field.
+func (bot *Router) RemovedChatBoost(handler RemovedChatBoostHandler, filters ...Filter) *Router {
+	return bot.register(tg.UpdateTypeRemovedChatBoost, handler, filters...)
+}
+
 // Error registers a handler for errors.
 // If any error occurs in the chain, it will be passed to that handler.
 // By default, errors are returned back by handler method.

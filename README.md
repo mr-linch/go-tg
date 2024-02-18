@@ -116,11 +116,20 @@ func run(ctx context.Context) error {
     // handle other messages
     Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
       return msg.Copy(msg.Chat).DoVoid(ctx)
-    })
+    }).
+    MessageReaction(func(ctx context.Context, reaction *tgb.MessageReactionUpdate) error {
+			// sets same reaction to the message
+			answer := tg.NewSetMessageReactionCall(reaction.Chat, reaction.MessageID).Reaction(reaction.NewReaction)
+			return reaction.Update.Reply(ctx, answer)
+		})
 
   return tgb.NewPoller(
     router,
     client,
+    tgb.WithPollerAllowedUpdates(
+			tg.UpdateTypeMessage,
+      tg.UpdateTypeMessageReaction,
+    )
   ).Run(ctx)
 }
 ```
