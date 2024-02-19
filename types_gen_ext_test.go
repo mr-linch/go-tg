@@ -1386,3 +1386,118 @@ func TestMaybeInaccessibleMessage(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestWebhookInfo_DateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+	b := time.Now().Truncate(time.Second).Add(time.Second)
+
+	w := WebhookInfo{
+		LastErrorDate:                a.Unix(),
+		LastSynchronizationErrorDate: b.Unix(),
+	}
+
+	assert.Equal(t, a, w.LastErrorDateTime())
+	assert.Equal(t, b, w.LastSyncronizationErrorDateTime())
+
+}
+
+func TestChat_EmojiStatusExpirationDateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	c := Chat{
+		EmojiStatusExpirationDate: a.Unix(),
+	}
+
+	assert.Equal(t, a, c.EmojiStatusExpirationDateTime())
+
+}
+
+func TestMessage_DateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	m := Message{
+		Date: a.Unix(),
+	}
+
+	assert.Equal(t, a, m.DateTime())
+}
+
+func TestMessage_EditDateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	m := Message{
+		EditDate: a.Unix(),
+	}
+
+	assert.Equal(t, a, m.EditDateTime())
+}
+
+func TestInaccessibleMessage_DateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	m := InaccessibleMessage{
+		Date: a.Unix(),
+	}
+
+	assert.Equal(t, a, m.DateTime())
+}
+
+func TestMessageOriginUser_DateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	m := MessageOriginUser{
+		Date: a.Unix(),
+	}
+
+	assert.Equal(t, a, m.DateTime())
+}
+
+func TestMessageOriginHiddenUser_DateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	m := MessageOriginHiddenUser{
+		Date: a.Unix(),
+	}
+
+	assert.Equal(t, a, m.DateTime())
+}
+
+func TestMessageOriginChat_DateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	m := MessageOriginChat{
+		Date: a.Unix(),
+	}
+
+	assert.Equal(t, a, m.DateTime())
+}
+
+func TestMessageOriginChannel_DateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	m := MessageOriginChannel{
+		Date: a.Unix(),
+	}
+
+	assert.Equal(t, a, m.DateTime())
+}
+
+func TestPoll_CloseDateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	p := Poll{
+		CloseDate: a.Unix(),
+	}
+
+	assert.Equal(t, a, p.CloseDateTime())
+}
+
+func TestVideoChatScheduled_StartDateTime(t *testing.T) {
+	a := time.Now().Truncate(time.Second)
+
+	v := VideoChatScheduled{
+		StartDate: a.Unix(),
+	}
+
+	assert.Equal(t, a, v.StartDateTime())
+}

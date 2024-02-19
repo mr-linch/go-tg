@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 type ChatID int64
@@ -1053,6 +1054,16 @@ func (msg *Message) Type() MessageType {
 	}
 }
 
+// DateTime returns [time.Time] representation of Date field.
+func (msg *Message) DateTime() time.Time {
+	return time.Unix(msg.Date, 0)
+}
+
+// EditDateTime returns [time.Time] representation of EditDate field.
+func (msg *Message) EditDateTime() time.Time {
+	return time.Unix(msg.EditDate, 0)
+}
+
 // IsInaccessible returns true if message is inaccessible.
 func (msg *Message) IsInaccessible() bool {
 	return msg.Date == 0
@@ -1615,4 +1626,58 @@ func (mim *MaybeInaccessibleMessage) UnmarshalJSON(v []byte) error {
 		mim.Message = &Message{}
 		return json.Unmarshal(v, mim.Message)
 	}
+}
+
+// LastErrorDateTime returns [time.Time] representation of corresponding unix timestamp field.
+func (webhookInfo *WebhookInfo) LastErrorDateTime() time.Time {
+	return time.Unix(webhookInfo.LastErrorDate, 0)
+}
+
+// LastSyncronizationDateTime returns [time.Time] representation of corresponding unix timestamp field.
+func (webhookInfo *WebhookInfo) LastSyncronizationErrorDateTime() time.Time {
+	return time.Unix(webhookInfo.LastSynchronizationErrorDate, 0)
+}
+
+// EmojiStatusExpirationDateTime returns [time.Time] representation of corresponding unix timestamp field.
+func (chat *Chat) EmojiStatusExpirationDateTime() time.Time {
+	return time.Unix(chat.EmojiStatusExpirationDate, 0)
+}
+
+// DateTime returns [time.Time] representation of Date field.
+func (msg *InaccessibleMessage) DateTime() time.Time {
+	return time.Unix(msg.Date, 0)
+}
+
+// DateTime returns [time.Time] representation of Date field.
+func (msg *MessageOriginUser) DateTime() time.Time {
+	return time.Unix(msg.Date, 0)
+}
+
+// DateTime returns [time.Time] representation of Date field.
+func (msg *MessageOriginHiddenUser) DateTime() time.Time {
+	return time.Unix(msg.Date, 0)
+}
+
+// DateTime returns [time.Time] representation of Date field.
+func (msg *MessageOriginChat) DateTime() time.Time {
+	return time.Unix(msg.Date, 0)
+}
+
+// DateTime returns [time.Time] representation of Date field.
+func (msg *MessageOriginChannel) DateTime() time.Time {
+	return time.Unix(msg.Date, 0)
+}
+
+// CloseDateTime returns [time.Time] representation of CloseDate field.
+func (poll *Poll) CloseDateTime() time.Time {
+	return time.Unix(poll.CloseDate, 0)
+}
+
+func (vcs *VideoChatScheduled) StartDateTime() time.Time {
+	return time.Unix(vcs.StartDate, 0)
+}
+
+// WinnerSelectionDateTime returns [time.Time] representation of WinnersSelectionDate field.
+func (gaw *Giveaway) WinnerSelectionDateTime() time.Time {
+	return time.Unix(gaw.WinnersSelectionDate, 0)
 }
