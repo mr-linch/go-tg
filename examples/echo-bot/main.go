@@ -57,5 +57,10 @@ func main() {
 			answer := tg.NewSetMessageReactionCall(reaction.Chat, reaction.MessageID).Reaction(reaction.NewReaction)
 			return reaction.Update.Reply(ctx, answer)
 		}),
+
+		tg.WithClientInterceptors(
+			tg.NewRetryFloodErrorInterceptor(3, 30*time.Second),
+			tg.NewRetryInternalServerErrorInterceptor(10, 5*time.Second),
+		),
 	)
 }

@@ -15,19 +15,19 @@ import (
 
 // Run runs bot with given router.
 // Exit on error.
-func Run(handler tgb.Handler) {
+func Run(handler tgb.Handler, opts ...tg.ClientOption) {
 	ctx := context.Background()
 
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt, os.Kill, syscall.SIGTERM)
 	defer cancel()
 
-	if err := run(ctx, handler); err != nil {
+	if err := run(ctx, handler, opts...); err != nil {
 		log.Printf("error: %v", err)
 		defer os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, handler tgb.Handler) error {
+func run(ctx context.Context, handler tgb.Handler, opts ...tg.ClientOption) error {
 	// define flags
 	var (
 		flagToken         string
@@ -49,9 +49,9 @@ func run(ctx context.Context, handler tgb.Handler) error {
 		return fmt.Errorf("token is required, provide it with -token flag")
 	}
 
-	opts := []tg.ClientOption{
+	opts = append(opts,
 		tg.WithClientServerURL(flagServer),
-	}
+	)
 
 	if flagTestEnv {
 		opts = append(opts, tg.WithClientTestEnv())
