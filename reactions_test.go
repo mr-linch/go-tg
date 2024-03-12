@@ -37,6 +37,13 @@ func TestReactionType(t *testing.T) {
 		err := r.UnmarshalJSON([]byte(`{"type": "unknown"}`))
 		require.Error(t, err)
 	})
+
+	t.Run("InvalidFieldType", func(t *testing.T) {
+		var r ReactionType
+
+		err := r.UnmarshalJSON([]byte(`{"type": 123}`))
+		require.Error(t, err)
+	})
 }
 
 func TestReactionType_MarshalJSON(t *testing.T) {

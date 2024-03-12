@@ -69,6 +69,8 @@ func (reaction *ReactionType) Type() string {
 	}
 }
 
+// Ported from https://github.com/grammyjs/emoji/blob/main/src/reactiondata.ts
+
 // Define all available reactions that can be used in the bot.
 var (
 	ReactionTypeEmojiThumbsUp                   = NewReactionTypeEmoji("👍")
