@@ -1526,6 +1526,16 @@ type ReactionType struct {
 	CustomEmoji *ReactionTypeCustomEmoji
 }
 
+// NewReactionTypeEmoji returns ReactionType with emoji subtype.
+func NewReactionTypeEmoji(emoji string) ReactionType {
+	return ReactionType{Emoji: &ReactionTypeEmoji{Emoji: emoji}}
+}
+
+// NewReactionTypeCustomEmoji returns ReactionType with custom emoji subtype.
+func NewReactionTypeCustomEmoji(id string) ReactionType {
+	return ReactionType{CustomEmoji: &ReactionTypeCustomEmoji{CustomEmojiID: id}}
+}
+
 func (reaction ReactionType) MarshalJSON() ([]byte, error) {
 	switch {
 	case reaction.Emoji != nil:

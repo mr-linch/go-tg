@@ -202,6 +202,6 @@ func NewInterceptorMethodFilter(interceptor Interceptor, methods ...string) Inte
 			return interceptor(ctx, req, dst, invoker)
 		}
 
-		return nil
+		return invoker(ctx, req, dst)
 	}
 }
