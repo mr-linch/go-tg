@@ -64,7 +64,7 @@ func main() {
 
 			reaction := tg.ReactionTypeEmojiAll[rand.Int()%len(tg.ReactionTypeEmojiAll)]
 
-			return mu.Update.Reply(ctx, tg.NewSetMessageReactionCall(mu.Chat, msg.ID).Reaction([]tg.ReactionType{reaction}))
+			return mu.Update.Reply(ctx, mu.React(reaction).IsBig(true))
 		}, tgb.Command("react")).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle other messages
@@ -72,7 +72,8 @@ func main() {
 		}).
 		MessageReaction(func(ctx context.Context, reaction *tgb.MessageReactionUpdate) error {
 			// sets same reaction to the message
-			answer := tg.NewSetMessageReactionCall(reaction.Chat, reaction.MessageID).Reaction(reaction.NewReaction)
+			answer := tg.NewSetMessageReactionCall(reaction.Chat, reaction.MessageID).
+				Reaction(reaction.NewReaction)
 			return reaction.Update.Reply(ctx, answer)
 		}),
 
