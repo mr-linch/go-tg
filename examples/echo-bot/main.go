@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"regexp"
 	"time"
 
@@ -52,14 +53,35 @@ func main() {
 			)).DoVoid(ctx)
 
 		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
+		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
+			// react to replied message with random reaction
+
+			msg := mu.ReplyToMessage
+
+			if msg == nil {
+				return mu.Update.Reply(ctx, mu.Answer("Reply to a message to get a reaction."))
+			}
+
+			reaction := tg.ReactionTypeEmojiAll[rand.Int()%len(tg.ReactionTypeEmojiAll)]
+
+			return mu.Update.Reply(ctx, mu.React(reaction).IsBig(true))
+		}, tgb.Command("react")).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle other messages
 			return msg.Update.Reply(ctx, msg.Copy(msg.Chat))
 		}).
 		MessageReaction(func(ctx context.Context, reaction *tgb.MessageReactionUpdate) error {
 			// sets same reaction to the message
-			answer := tg.NewSetMessageReactionCall(reaction.Chat, reaction.MessageID).Reaction(reaction.NewReaction)
+			answer := tg.NewSetMessageReactionCall(reaction.Chat, reaction.MessageID).
+				Reaction(reaction.NewReaction)
 			return reaction.Update.Reply(ctx, answer)
 		}),
+
+		tg.WithClientInterceptors(
+			tg.NewInterceptorMethodFilter(
+				tg.NewInterceptorDefaultParseMethod(tg.HTML),
+				"sendMessage",
+			),
+		),
 	)
 }
