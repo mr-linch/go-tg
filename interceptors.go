@@ -14,39 +14,46 @@ type InterceptorInvoker func(ctx context.Context, req *Request, dst any) error
 // Interceptor is a function that intercepts request and response.
 type Interceptor func(ctx context.Context, req *Request, dst any, invoker InterceptorInvoker) error
 
-type retryFloodErrorOpts struct {
+type interceptorRetryFloodErrorOpts struct {
 	tries         int
 	maxRetryAfter time.Duration
 	timeAfter     func(time.Duration) <-chan time.Time
 }
 
-// RetryFloodErrorOption is an option for NewRetryFloodErrorInterceptor.
-type RetryFloodErrorOption func(*retryFloodErrorOpts)
+// InterceptorRetryFloodErrorOption is an option for NewRetryFloodErrorInterceptor.
+type InterceptorRetryFloodErrorOption func(*interceptorRetryFloodErrorOpts)
 
-// WithRetryFloodErrorTries sets the number of tries.
-func WithRetryFloodErrorTries(tries int) RetryFloodErrorOption {
-	return func(o *retryFloodErrorOpts) {
+// WithInterceptorRetryFloodErrorTries sets the number of tries.
+func WithInterceptorRetryFloodErrorTries(tries int) InterceptorRetryFloodErrorOption {
+	return func(o *interceptorRetryFloodErrorOpts) {
 		o.tries = tries
 	}
 }
 
-// WithRetryFloodErrorMaxRetryAfter sets the maximum retry after duration.
-func WithRetryFloodErrorMaxRetryAfter(maxRetryAfter time.Duration) RetryFloodErrorOption {
-	return func(o *retryFloodErrorOpts) {
+// WithInterceptorRetryFloodErrorMaxRetryAfter sets the maximum retry after duration.
+func WithInterceptorRetryFloodErrorMaxRetryAfter(maxRetryAfter time.Duration) InterceptorRetryFloodErrorOption {
+	return func(o *interceptorRetryFloodErrorOpts) {
 		o.maxRetryAfter = maxRetryAfter
 	}
 }
 
-// WithRetryFloodErrorTimeAfter sets the time.After function.
-func WithRetryFloodErrorTimeAfter(timeAfter func(time.Duration) <-chan time.Time) RetryFloodErrorOption {
-	return func(o *retryFloodErrorOpts) {
+// WithInterceptorRetryFloodErrorTimeAfter sets the time.After function.
+func WithInterceptorRetryFloodErrorTimeAfter(timeAfter func(time.Duration) <-chan time.Time) InterceptorRetryFloodErrorOption {
+	return func(o *interceptorRetryFloodErrorOpts) {
 		o.timeAfter = timeAfter
 	}
 }
 
-// NewRetryFloodErrorInterceptor returns a new interceptor that retries the request if the error is flood error.
-func NewRetryFloodErrorInterceptor(opts ...RetryFloodErrorOption) Interceptor {
-	options := retryFloodErrorOpts{
+// NewInterceptorRetryFloodError returns a new interceptor that retries the request if the error is flood error.
+// With that interceptor, calling of method that hit limit will be look like it will look like the request just takes unusually long.
+// Under the hood, multiple HTTP requests are being performed, with the appropriate delays in between.
+//
+// Default tries is 3, maxRetryAfter is 1 hour, timeAfter is time.After.
+// The interceptor will retry the request if the error is flood error with RetryAfter less than maxRetryAfter.
+// The interceptor will wait for RetryAfter duration before retrying the request.
+// The interceptor will retry the request for tries times.
+func NewInterceptorRetryFloodError(opts ...InterceptorRetryFloodErrorOption) Interceptor {
+	options := interceptorRetryFloodErrorOpts{
 		tries:         3,
 		maxRetryAfter: time.Hour,
 		timeAfter:     time.After,
@@ -86,40 +93,48 @@ func NewRetryFloodErrorInterceptor(opts ...RetryFloodErrorOption) Interceptor {
 	}
 }
 
-type retryInternalServerErrorOpts struct {
+type interceptorRetryInternalServerErrorOpts struct {
 	tries     int
 	delay     time.Duration
 	timeAfter func(time.Duration) <-chan time.Time
 }
 
 // RetryInternalServerErrorOption is an option for NewRetryInternalServerErrorInterceptor.
-type RetryInternalServerErrorOption func(*retryInternalServerErrorOpts)
+type RetryInternalServerErrorOption func(*interceptorRetryInternalServerErrorOpts)
 
-// WithRetryInternalServerErrorTries sets the number of tries.
-func WithRetryInternalServerErrorTries(tries int) RetryInternalServerErrorOption {
-	return func(o *retryInternalServerErrorOpts) {
+// WithInterceptorRetryInternalServerErrorTries sets the number of tries.
+func WithInterceptorRetryInternalServerErrorTries(tries int) RetryInternalServerErrorOption {
+	return func(o *interceptorRetryInternalServerErrorOpts) {
 		o.tries = tries
 	}
 }
 
-// WithRetryInternalServerErrorDelay sets the delay between tries.
+// WithInterceptorRetryInternalServerErrorDelay sets the delay between tries.
 // The delay calculated as delay * 2^i + random jitter, where i is the number of tries.
-func WithRetryInternalServerErrorDelay(delay time.Duration) RetryInternalServerErrorOption {
-	return func(o *retryInternalServerErrorOpts) {
+func WithInterceptorRetryInternalServerErrorDelay(delay time.Duration) RetryInternalServerErrorOption {
+	return func(o *interceptorRetryInternalServerErrorOpts) {
 		o.delay = delay
 	}
 }
 
-// WithRetryInternalServerErrorTimeAfter sets the time.After function.
-func WithRetryInternalServerErrorTimeAfter(timeAfter func(time.Duration) <-chan time.Time) RetryInternalServerErrorOption {
-	return func(o *retryInternalServerErrorOpts) {
+// WithInterceptorRetryInternalServerErrorTimeAfter sets the time.After function.
+func WithInterceptorRetryInternalServerErrorTimeAfter(timeAfter func(time.Duration) <-chan time.Time) RetryInternalServerErrorOption {
+	return func(o *interceptorRetryInternalServerErrorOpts) {
 		o.timeAfter = timeAfter
 	}
 }
 
-// NewRetryInternalServerErrorInterceptor returns a new interceptor that retries the request if the error is internal server error.
-func NewRetryInternalServerErrorInterceptor(opts ...RetryInternalServerErrorOption) Interceptor {
-	options := &retryInternalServerErrorOpts{
+// NewInterceptorRetryInternalServerError returns a new interceptor that retries the request if the error is internal server error.
+//
+// With that interceptor, calling of method that hit limit will be look like it will look like the request just takes unusually long.
+// Under the hood, multiple HTTP requests are being performed, with the appropriate delays in between.
+//
+// Default tries is 10, delay is 100ms, timeAfter is time.After.
+// The interceptor will retry the request if the error is internal server error.
+// The interceptor will wait for delay * 2^i + random jitter before retrying the request, where i is the number of tries.
+// The interceptor will retry the request for ten times.
+func NewInterceptorRetryInternalServerError(opts ...RetryInternalServerErrorOption) Interceptor {
+	options := &interceptorRetryInternalServerErrorOpts{
 		tries:     10,
 		delay:     time.Millisecond * 100,
 		timeAfter: time.After,
@@ -156,5 +171,37 @@ func NewRetryInternalServerErrorInterceptor(opts ...RetryInternalServerErrorOpti
 		}
 
 		return err
+	}
+}
+
+// NewInterceptorDefaultParseMethod returns a new interceptor that sets the parse_method to the request if it is empty.
+// Use in combination with NewInterceptorMethodFilter to filter and specify only needed methods.
+// Like:
+//
+//	NewInterceptorMethodFilter(NewInterceptorDefaultParseMethod(tg.HTML), "sendMessage", "editMessageText")
+func NewInterceptorDefaultParseMethod(pm ParseMode) Interceptor {
+	return func(ctx context.Context, req *Request, dst any, invoker InterceptorInvoker) error {
+		if !req.Has("parse_mode") {
+			req.Stringer("parse_mode", pm)
+		}
+
+		return invoker(ctx, req, dst)
+	}
+}
+
+// ТewInterceptorMethodFilter returns a new filtering interceptor
+// that calls the interceptor only for specified methods.
+func NewInterceptorMethodFilter(interceptor Interceptor, methods ...string) Interceptor {
+	methodMap := make(map[string]struct{}, len(methods))
+	for _, method := range methods {
+		methodMap[method] = struct{}{}
+	}
+
+	return func(ctx context.Context, req *Request, dst any, invoker InterceptorInvoker) error {
+		if _, ok := methodMap[req.Method]; ok {
+			return interceptor(ctx, req, dst, invoker)
+		}
+
+		return nil
 	}
 }

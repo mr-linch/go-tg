@@ -223,3 +223,12 @@ func TestRequest_MarshalJSON(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestRequest_Has(t *testing.T) {
+	r := NewRequest("sendMessage")
+
+	r.String("chat_id", "1")
+
+	assert.True(t, r.Has("chat_id"))
+	assert.False(t, r.Has("text"))
+}

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewRetryFloodErrorInterceptor(t *testing.T) {
+func TestNewInterceptorRetryFloodError(t *testing.T) {
 	t.Run("TestNoError", func(t *testing.T) {
 		var calls int
 
@@ -18,7 +18,7 @@ func TestNewRetryFloodErrorInterceptor(t *testing.T) {
 			return nil
 		})
 
-		interceptor := NewRetryFloodErrorInterceptor()
+		interceptor := NewInterceptorRetryFloodError()
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
@@ -34,7 +34,7 @@ func TestNewRetryFloodErrorInterceptor(t *testing.T) {
 			return errors.New("test")
 		})
 
-		interceptor := NewRetryFloodErrorInterceptor()
+		interceptor := NewInterceptorRetryFloodError()
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
@@ -52,10 +52,10 @@ func TestNewRetryFloodErrorInterceptor(t *testing.T) {
 
 		var timeAfterCalls int
 
-		interceptor := NewRetryFloodErrorInterceptor(
-			WithRetryFloodErrorTries(3),
-			WithRetryFloodErrorMaxRetryAfter(time.Second*2),
-			WithRetryFloodErrorTimeAfter(func(time.Duration) <-chan time.Time {
+		interceptor := NewInterceptorRetryFloodError(
+			WithInterceptorRetryFloodErrorTries(3),
+			WithInterceptorRetryFloodErrorMaxRetryAfter(time.Second*2),
+			WithInterceptorRetryFloodErrorTimeAfter(func(time.Duration) <-chan time.Time {
 				timeAfterCalls++
 				result := make(chan time.Time, 1)
 				result <- time.Now()
@@ -80,10 +80,10 @@ func TestNewRetryFloodErrorInterceptor(t *testing.T) {
 
 		var timeAfterCalls int
 
-		interceptor := NewRetryFloodErrorInterceptor(
-			WithRetryFloodErrorTries(3),
-			WithRetryFloodErrorMaxRetryAfter(time.Second),
-			WithRetryFloodErrorTimeAfter(func(time.Duration) <-chan time.Time {
+		interceptor := NewInterceptorRetryFloodError(
+			WithInterceptorRetryFloodErrorTries(3),
+			WithInterceptorRetryFloodErrorMaxRetryAfter(time.Second),
+			WithInterceptorRetryFloodErrorTimeAfter(func(time.Duration) <-chan time.Time {
 				timeAfterCalls++
 				result := make(chan time.Time, 1)
 				result <- time.Now()
@@ -109,9 +109,9 @@ func TestNewRetryFloodErrorInterceptor(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond)
 		defer cancel()
 
-		interceptor := NewRetryFloodErrorInterceptor(
-			WithRetryFloodErrorTries(10),
-			WithRetryFloodErrorMaxRetryAfter(time.Second*2),
+		interceptor := NewInterceptorRetryFloodError(
+			WithInterceptorRetryFloodErrorTries(10),
+			WithInterceptorRetryFloodErrorMaxRetryAfter(time.Second*2),
 		)
 
 		err := interceptor(ctx, &Request{}, nil, invoker)
@@ -121,7 +121,7 @@ func TestNewRetryFloodErrorInterceptor(t *testing.T) {
 	})
 }
 
-func TestNewRetryInternalServerErrorInterceptor(t *testing.T) {
+func TestNewInterceptorRetryInternalServerError(t *testing.T) {
 	t.Run("TestNoError", func(t *testing.T) {
 		var calls int
 
@@ -130,7 +130,7 @@ func TestNewRetryInternalServerErrorInterceptor(t *testing.T) {
 			return nil
 		})
 
-		interceptor := NewRetryInternalServerErrorInterceptor()
+		interceptor := NewInterceptorRetryInternalServerError()
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
@@ -146,7 +146,7 @@ func TestNewRetryInternalServerErrorInterceptor(t *testing.T) {
 			return errors.New("test")
 		})
 
-		interceptor := NewRetryInternalServerErrorInterceptor()
+		interceptor := NewInterceptorRetryInternalServerError()
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
@@ -164,10 +164,10 @@ func TestNewRetryInternalServerErrorInterceptor(t *testing.T) {
 
 		var timeAfterCalls int
 
-		interceptor := NewRetryInternalServerErrorInterceptor(
-			WithRetryInternalServerErrorTries(3),
-			WithRetryInternalServerErrorDelay(time.Millisecond),
-			WithRetryInternalServerErrorTimeAfter(func(time.Duration) <-chan time.Time {
+		interceptor := NewInterceptorRetryInternalServerError(
+			WithInterceptorRetryInternalServerErrorTries(3),
+			WithInterceptorRetryInternalServerErrorDelay(time.Millisecond),
+			WithInterceptorRetryInternalServerErrorTimeAfter(func(time.Duration) <-chan time.Time {
 				defer func() { timeAfterCalls++ }()
 
 				result := make(chan time.Time, 1)
@@ -194,14 +194,78 @@ func TestNewRetryInternalServerErrorInterceptor(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond)
 		defer cancel()
 
-		interceptor := NewRetryInternalServerErrorInterceptor(
-			WithRetryInternalServerErrorTries(10),
-			WithRetryInternalServerErrorDelay(time.Millisecond),
+		interceptor := NewInterceptorRetryInternalServerError(
+			WithInterceptorRetryInternalServerErrorTries(10),
+			WithInterceptorRetryInternalServerErrorDelay(time.Millisecond),
 		)
 
 		err := interceptor(ctx, &Request{}, nil, invoker)
 
 		assert.Error(t, err, "should return error")
+		assert.Equal(t, 1, calls, "should call invoker once")
+	})
+}
+
+func TestNewInterceptorMethodFilter(t *testing.T) {
+	t.Run("InWhitelist", func(t *testing.T) {
+		req := NewRequest("sendMessage")
+
+		var calls int
+
+		interceptor := Interceptor(func(ctx context.Context, req *Request, dst any, invoker InterceptorInvoker) error {
+			calls++
+			return invoker(ctx, req, dst)
+		})
+
+		interceptor = NewInterceptorMethodFilter(interceptor, "sendMessage")
+
+		err := interceptor(context.Background(), req, nil, InterceptorInvoker(func(ctx context.Context, req *Request, dst any) error {
+			return nil
+		}))
+
+		assert.NoError(t, err, "should no return error")
+		assert.Equal(t, 1, calls, "should call invoker once")
+	})
+
+	t.Run("NotInWhitelist", func(t *testing.T) {
+		req := NewRequest("editMessageText")
+
+		var calls int
+
+		interceptor := Interceptor(func(ctx context.Context, req *Request, dst any, invoker InterceptorInvoker) error {
+			calls++
+			return invoker(ctx, req, dst)
+		})
+
+		interceptor = NewInterceptorMethodFilter(interceptor, "sendMessage")
+
+		err := interceptor(context.Background(), req, nil, InterceptorInvoker(func(ctx context.Context, req *Request, dst any) error {
+			return nil
+		}))
+
+		assert.NoError(t, err, "should no return error")
+		assert.Equal(t, 0, calls, "should call invoker once")
+	})
+}
+
+func TestNewInterceptorDefaultParseMethod(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		req := NewRequest("sendMessage")
+		dst := &Response{}
+
+		var calls int
+
+		invoker := InterceptorInvoker(func(ctx context.Context, req *Request, dst any) error {
+			calls++
+			assert.Equal(t, HTML.String(), req.args["parse_mode"], "should set parse_mode to HTML")
+			return nil
+		})
+
+		interceptor := NewInterceptorDefaultParseMethod(HTML)
+
+		err := interceptor(context.Background(), req, dst, invoker)
+
+		assert.NoError(t, err, "should no return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 }
