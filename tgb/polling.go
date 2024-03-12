@@ -146,11 +146,14 @@ func (poller *Poller) Run(ctx context.Context) error {
 
 	var offset int
 
+	defer func() {
+		poller.log("shutdown...")
+		poller.wg.Wait()
+	}()
+
 	for {
 		select {
 		case <-ctx.Done():
-			poller.log("shutdown...")
-			poller.wg.Wait()
 			return nil
 		default:
 
@@ -167,9 +170,14 @@ func (poller *Poller) Run(ctx context.Context) error {
 			updates, err := call.Do(ctx)
 
 			if err != nil && !errors.Is(err, context.Canceled) {
+				poller.log("error '%s' when getting updates, retrying in %v...", err, poller.retryAfter)
+
 				if poller.retryAfter > 0 {
-					poller.log("error getting updates, retrying in %v...", poller.retryAfter)
-					time.Sleep(poller.retryAfter)
+					select {
+					case <-time.After(poller.retryAfter):
+					case <-ctx.Done():
+						return nil
+					}
 				}
 				continue
 			}

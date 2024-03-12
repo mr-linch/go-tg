@@ -986,7 +986,8 @@ func TestMessageEntityType_String(t *testing.T) {
 		{MessageEntityTypePre, "pre"},
 		{MessageEntityTypeTextLink, "text_link"},
 		{MessageEntityTypeTextMention, "text_mention"},
-		{MessageEntityCustomEmoji, "custom_emoji"},
+		{MessageEntityTypeCustomEmoji, "custom_emoji"},
+		{MessageEntityTypeBlockquote, "blockquote"},
 	} {
 		assert.Equal(t, test.Want, test.Type.String())
 	}
@@ -1015,7 +1016,8 @@ func TestMessageEntityType_MarshalText(t *testing.T) {
 		{MessageEntityTypePre, []byte("pre"), false},
 		{MessageEntityTypeTextLink, []byte("text_link"), false},
 		{MessageEntityTypeTextMention, []byte("text_mention"), false},
-		{MessageEntityCustomEmoji, []byte("custom_emoji"), false},
+		{MessageEntityTypeCustomEmoji, []byte("custom_emoji"), false},
+		{MessageEntityTypeBlockquote, []byte("blockquote"), false},
 	} {
 		b, err := test.Type.MarshalText()
 		if test.Err {
@@ -1050,7 +1052,8 @@ func TestMessageEntityType_UnmarshalText(t *testing.T) {
 		{"pre", MessageEntityTypePre, false},
 		{"text_link", MessageEntityTypeTextLink, false},
 		{"text_mention", MessageEntityTypeTextMention, false},
-		{"custom_emoji", MessageEntityCustomEmoji, false},
+		{"custom_emoji", MessageEntityTypeCustomEmoji, false},
+		{"blockquote", MessageEntityTypeBlockquote, false},
 	} {
 		var e MessageEntityType
 

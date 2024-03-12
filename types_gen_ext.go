@@ -1295,6 +1295,9 @@ const (
 	// <tg-spoiler>spoiler</tg-spoiler>
 	MessageEntityTypeSpoiler
 
+	// <blockquote>quote</blockquote>
+	MessageEntityTypeBlockquote
+
 	// <code>code</code>
 	MessageEntityTypeCode
 
@@ -1308,12 +1311,12 @@ const (
 	MessageEntityTypeTextMention
 
 	// for inline custom emoji sticker
-	MessageEntityCustomEmoji
+	MessageEntityTypeCustomEmoji
 )
 
 // String returns string representation of MessageEntityType.
 func (met MessageEntityType) String() string {
-	if met > MessageEntityTypeUnknown && met <= MessageEntityCustomEmoji {
+	if met > MessageEntityTypeUnknown && met <= MessageEntityTypeCustomEmoji {
 		return [...]string{
 			"mention",
 			"hashtag",
@@ -1327,6 +1330,7 @@ func (met MessageEntityType) String() string {
 			"underline",
 			"strikethrough",
 			"spoiler",
+			"blockquote",
 			"code",
 			"pre",
 			"text_link",
@@ -1383,7 +1387,9 @@ func (met *MessageEntityType) UnmarshalText(v []byte) error {
 	case "text_mention":
 		*met = MessageEntityTypeTextMention
 	case "custom_emoji":
-		*met = MessageEntityCustomEmoji
+		*met = MessageEntityTypeCustomEmoji
+	case "blockquote":
+		*met = MessageEntityTypeBlockquote
 	default:
 		return fmt.Errorf("unknown message entity type")
 	}
