@@ -178,7 +178,7 @@ func (msg *MessageUpdate) EditReplyMarkup(markup tg.InlineKeyboardMarkup) *tg.Ed
 }
 
 // React to incoming message.
-// No arguments means remove all reactions.
+// No
 func (msg *MessageUpdate) React(reactions ...tg.ReactionType) *tg.SetMessageReactionCall {
 	return msg.Client.SetMessageReaction(msg.Chat, msg.ID).
 		Reaction(reactions)

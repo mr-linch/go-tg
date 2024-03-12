@@ -19,7 +19,7 @@ func main() {
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer(tg.HTML.Italic(typingMessage)).
 				ParseMode(tg.HTML).
-				ReplyMarkup(newKeyboard()).
+				ReplyMarkup(newCalculatorMessageKeyboard()).
 				DoVoid(ctx)
 		}).
 		CallbackQuery(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate) error {
@@ -55,12 +55,12 @@ func main() {
 				msg.Chat.ID,
 				msg.ID,
 				currentText,
-			).ReplyMarkup(newKeyboard()).DoVoid(ctx)
+			).ReplyMarkup(newCalculatorMessageKeyboard()).DoVoid(ctx)
 		}),
 	)
 }
 
-func newKeyboard() tg.InlineKeyboardMarkup {
+func newCalculatorMessageKeyboard() tg.InlineKeyboardMarkup {
 	layout := tg.NewButtonLayout[tg.InlineKeyboardButton](3).Row(
 		tg.NewInlineKeyboardButtonCallback("+", "+"),
 		tg.NewInlineKeyboardButtonCallback("-", "-"),
