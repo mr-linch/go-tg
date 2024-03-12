@@ -29,7 +29,7 @@ func main() {
 					tg.HTML.Line("Send me a message and I will echo it back to you. Also you can send me a reaction and I will react with the same emoji."),
 					tg.HTML.Italic("🚀 Powered by", tg.HTML.Spoiler("go-tg")),
 				),
-			).ParseMode(tg.HTML).LinkPreviewOptions(tg.LinkPreviewOptions{
+			).LinkPreviewOptions(tg.LinkPreviewOptions{
 				URL:              "https://github.com/mr-linch/go-tg",
 				PreferLargeMedia: true,
 			}).DoVoid(ctx)
@@ -41,7 +41,11 @@ func main() {
 				return fmt.Errorf("answer chat action: %w", err)
 			}
 
-			time.Sleep(time.Second)
+			select {
+			case <-time.After(1 * time.Second):
+			case <-ctx.Done():
+				return ctx.Err()
+			}
 
 			return msg.AnswerPhoto(tg.NewFileArgUpload(
 				tg.NewInputFileBytes("gopher.png", gopherPNG),

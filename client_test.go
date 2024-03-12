@@ -157,3 +157,35 @@ func TestClient_Execute(t *testing.T) {
 		}
 	})
 }
+
+func TestClientInterceptors(t *testing.T) {
+	t.Run("Simple", func(t *testing.T) {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "POST", r.Method)
+			assert.Equal(t, "/bot1234:secret/getMe", r.URL.Path)
+
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"ok":true,"result":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot","can_join_groups":true,"can_read_all_group_messages":false,"supports_inline_queries":false}}`))
+		}))
+
+		defer ts.Close()
+
+		calls := 0
+
+		client := New(
+			"1234:secret",
+			WithClientDoer(ts.Client()),
+			WithClientServerURL(ts.URL),
+			WithClientInterceptors(func(ctx context.Context, req *Request, dst any, invoker InterceptorInvoker) error {
+				calls++
+				return invoker(ctx, req, dst)
+			}),
+		)
+		ctx := context.Background()
+
+		err := client.Do(ctx, NewRequest("getMe"), nil)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, calls)
+	})
+}

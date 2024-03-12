@@ -83,6 +83,14 @@ func (r *Request) File(name string, arg FileArg) *Request {
 	return r.InputFile(name, arg.Upload)
 }
 
+func (r *Request) Has(name string) bool {
+	_, inJSON := r.json[name]
+	_, inArgs := r.args[name]
+	_, inFiles := r.files[name]
+
+	return inJSON || inArgs || inFiles
+}
+
 func (r *Request) InputMediaSlice(name string, im []InputMedia) *Request {
 	for _, v := range im {
 		r.InputMedia(v)

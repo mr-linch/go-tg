@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 type ChatID int64
@@ -1621,4 +1622,9 @@ func (mim *MaybeInaccessibleMessage) UnmarshalJSON(v []byte) error {
 		mim.Message = &Message{}
 		return json.Unmarshal(v, mim.Message)
 	}
+}
+
+// RetryAfterDuration returns duration for retry after.
+func (rp *ResponseParameters) RetryAfterDuration() time.Duration {
+	return time.Duration(rp.RetryAfter) * time.Second
 }
