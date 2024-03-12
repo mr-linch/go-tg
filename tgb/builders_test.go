@@ -31,9 +31,9 @@ func TestTextMessageBuilder(t *testing.T) {
 		require.True(t, ok)
 		assert.Equal(t, "1", arg)
 
-		arg, ok = call.Request().GetArg("text2")
+		arg, ok = call.Request().GetArg("text")
 		require.True(t, ok)
-		assert.Equal(t, "text", arg)
+		assert.Equal(t, "text2", arg)
 
 		jsonArg, ok := call.Request().GetJSON("link_preview_options")
 		require.True(t, ok)
