@@ -232,3 +232,25 @@ func TestRequest_Has(t *testing.T) {
 	assert.True(t, r.Has("chat_id"))
 	assert.False(t, r.Has("text"))
 }
+
+func TestRequest_Get(t *testing.T) {
+	r := NewRequest("sendMessage")
+
+	r.String("chat_id", "1")
+
+	v, ok := r.GetArg("chat_id")
+	assert.True(t, ok)
+	assert.Equal(t, "1", v)
+}
+
+func TestRequest_GetJSON(t *testing.T) {
+	r := NewRequest("sendMessage")
+
+	replyMarkup := InlineKeyboardMarkup{}
+
+	r.JSON("reply_markup", replyMarkup)
+
+	v, ok := r.GetJSON("reply_markup")
+	assert.True(t, ok)
+	assert.Equal(t, replyMarkup, v)
+}

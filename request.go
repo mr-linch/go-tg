@@ -91,6 +91,16 @@ func (r *Request) Has(name string) bool {
 	return inJSON || inArgs || inFiles
 }
 
+func (r *Request) GetArg(name string) (string, bool) {
+	v, ok := r.args[name]
+	return v, ok
+}
+
+func (r *Request) GetJSON(name string) (any, bool) {
+	v, ok := r.json[name]
+	return v, ok
+}
+
 func (r *Request) InputMediaSlice(name string, im []InputMedia) *Request {
 	for _, v := range im {
 		r.InputMedia(v)
