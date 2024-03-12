@@ -21,6 +21,7 @@
   - [Helper methods](#helper-methods)
   - [Sending files](#sending-files)
   - [Downloading files](#downloading-files)
+  - [Interceptors](#interceptors)
 - [Updates](#updates)
   - [Handlers](#handlers)
   - [Typed Handlers](#typed-handlers)
@@ -349,6 +350,47 @@ defer f.Close()
 
 // ...
 ```
+
+### Interceptors
+
+Interceptors are used to modify or process the request before it is sent to the server and the response before it is returned to the caller. It's like a [[tgb.Middleware](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Middleware)], but for outgoing requests.
+
+All interceptors should be registered on the client before the request is made.
+
+```go
+client := tg.New("<TOKEN>",
+  tg.WithClientInterceptors(
+    tg.Interceptor(func(ctx context.Context, req *tg.Request, dst any, invoker tg.InterceptorInvoker) error {
+      started := time.Now()
+
+      // before request
+      err := invoker(ctx, req, dst)
+      // after request
+
+      log.Print("call %s took %s", req.Method, time.Since(started))
+
+      return err
+    }),
+  ),
+)
+```
+
+
+Arguments of the interceptor are:
+  - `ctx` - context of the request;
+  - `req` - request object [tg.Request](https://pkg.go.dev/github.com/mr-linch/go-tg#Request);
+  - `dst` - pointer to destination for the response, can be `nil` if the request is made with `DoVoid` method;
+  - `invoker` - function for calling the next interceptor or the actual request.
+
+Contrib package has some useful interceptors:
+  - [InterceptorRetryFloodError](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorRetryFloodError) - retry request if the server returns a flood error. Parameters can be customized via options;
+  - [InterceptorRetryInternalServerError](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorRetryInternalServerError) - retry request if the server returns an error. Parameters can be customized via options;
+  - [InterceptorMethodFilter](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorMethodFilter) - call underlying interceptor only for specified methods;
+  - [InterceptorDefaultParseMethod](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorDefaultParseMethod) - set default `parse_mode` for messages if not specified.
+
+Interceptors are called in the order they are registered.
+
+Example of using retry flood interceptor: [examples/retry-flood](https://github.com/mr-linch/go-tg/blob/main/examples/retry-flood/main.go)
 
 ## Updates
 

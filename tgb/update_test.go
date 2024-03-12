@@ -334,6 +334,16 @@ func TestMessageUpdateHelpers(t *testing.T) {
 			},
 		},
 		{
+			Name:           "React",
+			Request:        msg.React(tg.ReactionTypeEmojiThumbsUp).Request(),
+			ExceptedMethod: "setMessageReaction",
+			ExpectedArgs: map[string]string{
+				"chat_id":    "123",
+				"message_id": "1",
+				"reaction":   `[{"type":"emoji","emoji":"👍"}]`,
+			},
+		},
+		{
 			Name: "AnswerMediaGroup",
 			Request: msg.AnswerMediaGroup([]tg.InputMedia{
 				&tg.InputMediaPhoto{

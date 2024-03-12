@@ -986,7 +986,8 @@ func TestMessageEntityType_String(t *testing.T) {
 		{MessageEntityTypePre, "pre"},
 		{MessageEntityTypeTextLink, "text_link"},
 		{MessageEntityTypeTextMention, "text_mention"},
-		{MessageEntityCustomEmoji, "custom_emoji"},
+		{MessageEntityTypeCustomEmoji, "custom_emoji"},
+		{MessageEntityTypeBlockquote, "blockquote"},
 	} {
 		assert.Equal(t, test.Want, test.Type.String())
 	}
@@ -1015,7 +1016,8 @@ func TestMessageEntityType_MarshalText(t *testing.T) {
 		{MessageEntityTypePre, []byte("pre"), false},
 		{MessageEntityTypeTextLink, []byte("text_link"), false},
 		{MessageEntityTypeTextMention, []byte("text_mention"), false},
-		{MessageEntityCustomEmoji, []byte("custom_emoji"), false},
+		{MessageEntityTypeCustomEmoji, []byte("custom_emoji"), false},
+		{MessageEntityTypeBlockquote, []byte("blockquote"), false},
 	} {
 		b, err := test.Type.MarshalText()
 		if test.Err {
@@ -1050,7 +1052,8 @@ func TestMessageEntityType_UnmarshalText(t *testing.T) {
 		{"pre", MessageEntityTypePre, false},
 		{"text_link", MessageEntityTypeTextLink, false},
 		{"text_mention", MessageEntityTypeTextMention, false},
-		{"custom_emoji", MessageEntityCustomEmoji, false},
+		{"custom_emoji", MessageEntityTypeCustomEmoji, false},
+		{"blockquote", MessageEntityTypeBlockquote, false},
 	} {
 		var e MessageEntityType
 
@@ -1276,74 +1279,6 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 		require.Error(t, err)
 
 		err = b.UnmarshalJSON([]byte(`{"type": "unknown", "date": 12345}`))
-		require.Error(t, err)
-	})
-}
-
-func TestReactionType(t *testing.T) {
-	t.Run("Emoji", func(t *testing.T) {
-		var r ReactionType
-
-		err := r.UnmarshalJSON([]byte(`{"type": "emoji", "emoji": "😀"}`))
-		require.NoError(t, err)
-
-		assert.Equal(t, "emoji", r.Type())
-		require.NotNil(t, r.Emoji)
-		assert.Equal(t, "😀", r.Emoji.Emoji)
-	})
-
-	t.Run("CustomEmoji", func(t *testing.T) {
-		var r ReactionType
-
-		err := r.UnmarshalJSON([]byte(`{"type": "custom_emoji", "custom_emoji_id": "12345"}`))
-		require.NoError(t, err)
-
-		assert.Equal(t, "custom_emoji", r.Type())
-		require.NotNil(t, r.CustomEmoji)
-		assert.Equal(t, "12345", r.CustomEmoji.CustomEmojiID)
-	})
-
-	t.Run("Unknown", func(t *testing.T) {
-		var r ReactionType
-
-		err := r.UnmarshalJSON([]byte(`{"type": "unknown"}`))
-		require.Error(t, err)
-	})
-}
-
-func TestReactionType_MarshalJSON(t *testing.T) {
-	t.Run("Emoji", func(t *testing.T) {
-		r := ReactionType{
-			Emoji: &ReactionTypeEmoji{Emoji: "😀"},
-		}
-
-		assert.Equal(t, "emoji", r.Type())
-
-		b, err := json.Marshal(r)
-		require.NoError(t, err)
-
-		assert.Equal(t, `{"type":"emoji","emoji":"😀"}`, string(b))
-	})
-
-	t.Run("CustomEmoji", func(t *testing.T) {
-		r := &ReactionType{
-			CustomEmoji: &ReactionTypeCustomEmoji{CustomEmojiID: "12345"},
-		}
-
-		assert.Equal(t, "custom_emoji", r.Type())
-
-		b, err := json.Marshal(r)
-		require.NoError(t, err)
-
-		assert.Equal(t, `{"type":"custom_emoji","custom_emoji_id":"12345"}`, string(b))
-	})
-
-	t.Run("Unknown", func(t *testing.T) {
-		r := ReactionType{}
-
-		assert.Equal(t, "unknown", r.Type())
-
-		_, err := json.Marshal(r)
 		require.Error(t, err)
 	})
 }

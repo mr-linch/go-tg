@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 type ChatID int64
@@ -1294,6 +1295,9 @@ const (
 	// <tg-spoiler>spoiler</tg-spoiler>
 	MessageEntityTypeSpoiler
 
+	// <blockquote>quote</blockquote>
+	MessageEntityTypeBlockquote
+
 	// <code>code</code>
 	MessageEntityTypeCode
 
@@ -1307,12 +1311,12 @@ const (
 	MessageEntityTypeTextMention
 
 	// for inline custom emoji sticker
-	MessageEntityCustomEmoji
+	MessageEntityTypeCustomEmoji
 )
 
 // String returns string representation of MessageEntityType.
 func (met MessageEntityType) String() string {
-	if met > MessageEntityTypeUnknown && met <= MessageEntityCustomEmoji {
+	if met > MessageEntityTypeUnknown && met <= MessageEntityTypeCustomEmoji {
 		return [...]string{
 			"mention",
 			"hashtag",
@@ -1326,6 +1330,7 @@ func (met MessageEntityType) String() string {
 			"underline",
 			"strikethrough",
 			"spoiler",
+			"blockquote",
 			"code",
 			"pre",
 			"text_link",
@@ -1382,7 +1387,9 @@ func (met *MessageEntityType) UnmarshalText(v []byte) error {
 	case "text_mention":
 		*met = MessageEntityTypeTextMention
 	case "custom_emoji":
-		*met = MessageEntityCustomEmoji
+		*met = MessageEntityTypeCustomEmoji
+	case "blockquote":
+		*met = MessageEntityTypeBlockquote
 	default:
 		return fmt.Errorf("unknown message entity type")
 	}
@@ -1510,60 +1517,6 @@ func (origin *MessageOrigin) Type() string {
 	}
 }
 
-// ReactionType it's type for describe content of Reaction.
-// It can be one of:
-//   - [ReactionTypeEmoji]
-//   - [ReactionTypeCustomEmoji]
-type ReactionType struct {
-	Emoji       *ReactionTypeEmoji
-	CustomEmoji *ReactionTypeCustomEmoji
-}
-
-func (reaction ReactionType) MarshalJSON() ([]byte, error) {
-	switch {
-	case reaction.Emoji != nil:
-		reaction.Emoji.Type = "emoji"
-		return json.Marshal(reaction.Emoji)
-	case reaction.CustomEmoji != nil:
-		reaction.CustomEmoji.Type = "custom_emoji"
-		return json.Marshal(reaction.CustomEmoji)
-	default:
-		return nil, fmt.Errorf("unknown ReactionType type")
-	}
-}
-
-func (reaction *ReactionType) UnmarshalJSON(v []byte) error {
-	var partial struct {
-		Type string `json:"type"`
-	}
-
-	if err := json.Unmarshal(v, &partial); err != nil {
-		return fmt.Errorf("unmarshal ReactionType partial: %w", err)
-	}
-
-	switch partial.Type {
-	case "emoji":
-		reaction.Emoji = &ReactionTypeEmoji{}
-		return json.Unmarshal(v, reaction.Emoji)
-	case "custom_emoji":
-		reaction.CustomEmoji = &ReactionTypeCustomEmoji{}
-		return json.Unmarshal(v, reaction.CustomEmoji)
-	default:
-		return fmt.Errorf("unknown ReactionType type: %s", partial.Type)
-	}
-}
-
-func (reaction *ReactionType) Type() string {
-	switch {
-	case reaction.Emoji != nil:
-		return "emoji"
-	case reaction.CustomEmoji != nil:
-		return "custom_emoji"
-	default:
-		return "unknown"
-	}
-}
-
 // This object describes a message that can be inaccessible to the bot.
 // It can be one of:
 //   - [Message]
@@ -1615,4 +1568,9 @@ func (mim *MaybeInaccessibleMessage) UnmarshalJSON(v []byte) error {
 		mim.Message = &Message{}
 		return json.Unmarshal(v, mim.Message)
 	}
+}
+
+// RetryAfterDuration returns duration for retry after.
+func (rp *ResponseParameters) RetryAfterDuration() time.Duration {
+	return time.Duration(rp.RetryAfter) * time.Second
 }

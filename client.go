@@ -35,6 +35,9 @@ type Client struct {
 	// contains cached bot info
 	me     *User
 	meLock sync.Mutex
+
+	interceptors []Interceptor
+	invoker      InterceptorInvoker
 }
 
 // ClientOption is a function that sets some option for Client.
@@ -62,6 +65,13 @@ func WithClientTestEnv() ClientOption {
 	}
 }
 
+// WithClientInterceptor adds interceptor to client.
+func WithClientInterceptors(ints ...Interceptor) ClientOption {
+	return func(c *Client) {
+		c.interceptors = append(c.interceptors, ints...)
+	}
+}
+
 // New creates new Client with given token and options.
 func New(token string, options ...ClientOption) *Client {
 	c := &Client{
@@ -78,7 +88,23 @@ func New(token string, options ...ClientOption) *Client {
 		option(c)
 	}
 
+	c.invoker = c.buildInvoker()
+
 	return c
+}
+
+func (client *Client) buildInvoker() InterceptorInvoker {
+	invoker := client.invoke
+
+	for i := len(client.interceptors) - 1; i >= 0; i-- {
+		invoker = func(next InterceptorInvoker, interceptor Interceptor) InterceptorInvoker {
+			return func(ctx context.Context, req *Request, dst any) error {
+				return interceptor(ctx, req, dst, next)
+			}
+		}(invoker, client.interceptors[i])
+	}
+
+	return invoker
 }
 
 func (client *Client) Token() string {
@@ -245,7 +271,7 @@ func (client *Client) executeStreaming(
 	}
 }
 
-func (client *Client) Do(ctx context.Context, req *Request, dst interface{}) error {
+func (client *Client) invoke(ctx context.Context, req *Request, dst any) error {
 	res, err := client.execute(ctx, req)
 	if err != nil {
 		return fmt.Errorf("execute: %w", err)
@@ -266,6 +292,10 @@ func (client *Client) Do(ctx context.Context, req *Request, dst interface{}) err
 	}
 
 	return nil
+}
+
+func (client *Client) Do(ctx context.Context, req *Request, dst interface{}) error {
+	return client.invoker(ctx, req, dst)
 }
 
 // Download file by path from Client.GetFile method.

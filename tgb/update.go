@@ -177,6 +177,13 @@ func (msg *MessageUpdate) EditReplyMarkup(markup tg.InlineKeyboardMarkup) *tg.Ed
 	return msg.Client.EditMessageReplyMarkup(msg.Chat, msg.ID).ReplyMarkup(markup)
 }
 
+// React to incoming message.
+// No arguments means remove all reactions from the message.
+func (msg *MessageUpdate) React(reactions ...tg.ReactionType) *tg.SetMessageReactionCall {
+	return msg.Client.SetMessageReaction(msg.Chat, msg.ID).
+		Reaction(reactions)
+}
+
 type CallbackQueryUpdate struct {
 	*tg.CallbackQuery
 
