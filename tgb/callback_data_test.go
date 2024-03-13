@@ -271,7 +271,7 @@ func TestCallbackDataParserDecode(t *testing.T) {
 func TestCallbackDataFilter(t *testing.T) {
 	t.Run("ButtonError", func(t *testing.T) {
 		type test struct {
-			invalidType chan int
+			invalidType chan int // nolint:unused
 		}
 
 		filter := NewCallbackDataFilter[test]("prefix")
@@ -305,7 +305,7 @@ func TestCallbackDataFilter(t *testing.T) {
 
 	t.Run("MustButtonError", func(t *testing.T) {
 		type test struct {
-			invalidType chan int
+			invalidType chan int // nolint:unused
 		}
 
 		filter := NewCallbackDataFilter[test]("prefix")
