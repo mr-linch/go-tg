@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// Primitive API client for https://jsonplaceholder.typicode.com
 type API struct {
 	BaseURL string
 	Client  *http.Client

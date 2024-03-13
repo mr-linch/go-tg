@@ -1,8 +1,10 @@
 package tgb
 
 import (
+	"context"
 	"testing"
 
+	tg "github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -263,5 +265,318 @@ func TestCallbackDataParserDecode(t *testing.T) {
 		var dst test
 		err := DecodeCallbackData("1", &dst)
 		assert.ErrorContains(t, err, "unsupported field type: chan")
+	})
+}
+
+func TestCallbackDataFilter(t *testing.T) {
+	t.Run("ButtonError", func(t *testing.T) {
+		type test struct {
+			invalidType chan int
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		_, err := filter.Button("test", test{})
+		require.Error(t, err)
+	})
+
+	t.Run("ButtonOk", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		btn, err := filter.Button("test", test{Bool: true})
+		require.NoError(t, err)
+		assert.Equal(t, "prefix:1", btn.CallbackData)
+	})
+
+	t.Run("MustButtonOk", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		btn := filter.MustButton("test", test{Bool: true})
+		assert.Equal(t, "prefix:1", btn.CallbackData)
+	})
+
+	t.Run("MustButtonError", func(t *testing.T) {
+		type test struct {
+			invalidType chan int
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		x := filter.MustButton("test", test{})
+		assert.Zero(t, x)
+	})
+
+	t.Run("CallbackDataEmpty", func(t *testing.T) {
+		type empty struct{}
+
+		filter := NewCallbackDataFilter[empty]("prefix")
+
+		btn := filter.MustButton("test", empty{})
+
+		assert.Equal(t, "prefix:", btn.CallbackData)
+	})
+
+	t.Run("Decode", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		btn := filter.MustButton("test", test{Bool: true})
+
+		decoded, err := filter.Decode(btn.CallbackData)
+		require.NoError(t, err)
+		assert.Equal(t, test{Bool: true}, decoded)
+	})
+
+	t.Run("DecodeErrorInvalidPrefix", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		_, err := filter.Decode("invalid:1")
+		assert.ErrorContains(t, err, "invalid prefix")
+	})
+
+	t.Run("DecodeErrorInvalidData", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		_, err := filter.Decode("prefix:invalid")
+		assert.ErrorContains(t, err, "invalid bool value")
+	})
+
+	t.Run("Handler", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		calls := 0
+
+		handler := filter.Handler(func(ctx context.Context, cbq *CallbackQueryUpdate, cbd test) error {
+			calls++
+			assert.Equal(t, test{Bool: true}, cbd)
+			return nil
+		})
+
+		err := handler(context.Background(), &CallbackQueryUpdate{
+			CallbackQuery: &tg.CallbackQuery{
+				Data: filter.MustButton("test", test{Bool: true}).CallbackData,
+			},
+		})
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, calls)
+	})
+
+	t.Run("HandlerError", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		handler := filter.Handler(func(ctx context.Context, cbq *CallbackQueryUpdate, cbd test) error {
+			return assert.AnError
+		})
+
+		err := handler(context.Background(), &CallbackQueryUpdate{
+			CallbackQuery: &tg.CallbackQuery{
+				Data: filter.MustButton("test", test{Bool: true}).CallbackData,
+			},
+		})
+
+		assert.ErrorContains(t, err, "assert.AnError")
+	})
+
+	t.Run("HandlerErrorInvalidData", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		handler := filter.Handler(func(ctx context.Context, cbq *CallbackQueryUpdate, cbd test) error {
+			return assert.AnError
+		})
+
+		err := handler(context.Background(), &CallbackQueryUpdate{
+			CallbackQuery: &tg.CallbackQuery{
+				Data: "invalid:1",
+			},
+		})
+
+		assert.ErrorContains(t, err, "invalid prefix")
+	})
+
+	t.Run("HandlerFilterTrue", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		allowed, err := filter.Filter().Allow(context.Background(), &Update{
+			Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{
+					Data: "prefix:1",
+				},
+			},
+		})
+		require.NoError(t, err)
+		assert.True(t, allowed)
+	})
+
+	t.Run("HandlerFilterFalse", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		allowed, err := filter.Filter().Allow(context.Background(), &Update{
+			Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{
+					Data: "prefix-other:1",
+				},
+			},
+		})
+		require.NoError(t, err)
+		assert.False(t, allowed)
+	})
+
+	t.Run("HanlerFilterNotCallbackQuery", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		allowed, err := filter.Filter().Allow(context.Background(), &Update{
+			Update: &tg.Update{
+				Message: &tg.Message{},
+			},
+		})
+		require.NoError(t, err)
+		assert.False(t, allowed)
+	})
+
+	t.Run("HandlerFilterFuncNotCallbackQuery", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		allowed, err := filter.FilterFunc(func(v test) bool {
+			return true
+		}).Allow(context.Background(), &Update{
+			Update: &tg.Update{
+				Message: &tg.Message{},
+			},
+		})
+
+		require.NoError(t, err)
+		assert.False(t, allowed)
+	})
+
+	t.Run("HandlerFilterFuncDecodeError", func(t *testing.T) {
+		type test struct {
+			Bool chan int
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		allowed, err := filter.FilterFunc(func(v test) bool {
+			return true
+		}).Allow(context.Background(), &Update{
+			Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{
+					Data: "prefix:invalid",
+				},
+			},
+		})
+
+		require.Error(t, err)
+		assert.False(t, allowed)
+	})
+
+	t.Run("HandlerFilterFuncTrue", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		allowed, err := filter.FilterFunc(func(v test) bool {
+			return true
+		}).Allow(context.Background(), &Update{
+			Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{
+					Data: "prefix:1",
+				},
+			},
+		})
+
+		require.NoError(t, err)
+		assert.True(t, allowed)
+	})
+
+	t.Run("HandlerFilterFuncFalse", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		allowed, err := filter.FilterFunc(func(v test) bool {
+			return false
+		}).Allow(context.Background(), &Update{
+			Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{
+					Data: "prefix:1",
+				},
+			},
+		})
+
+		require.NoError(t, err)
+		assert.False(t, allowed)
+	})
+
+	t.Run("HandlerFilterFuncOKParsed", func(t *testing.T) {
+		type test struct {
+			Bool bool
+		}
+
+		filter := NewCallbackDataFilter[test]("prefix")
+
+		allowed, err := filter.FilterFunc(func(v test) bool {
+			return v.Bool
+		}).Allow(context.Background(), &Update{
+			Update: &tg.Update{
+				CallbackQuery: &tg.CallbackQuery{
+					Data: "prefix:1",
+				},
+			},
+		})
+
+		require.NoError(t, err)
+		assert.True(t, allowed)
 	})
 }
