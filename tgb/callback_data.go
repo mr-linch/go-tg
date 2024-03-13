@@ -304,21 +304,22 @@ func DecodeCallbackData(data string, dst any) error {
 	return DefaultCallbackDataCodec.Decode(data, dst)
 }
 
-type CallbackDataPrefixFilter[T any] struct {
+type CallbackDataFilter[T any] struct {
 	prefix string
 	codec  *CallbackDataCodec
 }
 
 // NewCallbackDataFilter creates a new CallbackDataPrefixFilter with default options.
-func NewCallbackDataFilter[T any](prefix string, opts ...CallbackDataCodecOption) *CallbackDataPrefixFilter[T] {
-	return &CallbackDataPrefixFilter[T]{
+func NewCallbackDataFilter[T any](prefix string, opts ...CallbackDataCodecOption) *CallbackDataFilter[T] {
+	return &CallbackDataFilter[T]{
 		prefix: prefix,
 		codec:  NewCallackDataCodec(opts...),
 	}
 }
 
-// If we have a error, zero value will be returned
-func (p *CallbackDataPrefixFilter[T]) Button(text string, v T) tg.InlineKeyboardButton {
+// MustButton returns a new tg.InlineKeyboardButton with the given data as callback data.
+// If an error occurs while encoding, empty button will be returned.
+func (p *CallbackDataFilter[T]) MustButton(text string, v T) tg.InlineKeyboardButton {
 	data, err := p.Encode(v)
 	if err != nil {
 		return tg.InlineKeyboardButton{}
@@ -327,7 +328,19 @@ func (p *CallbackDataPrefixFilter[T]) Button(text string, v T) tg.InlineKeyboard
 	return tg.NewInlineKeyboardButtonCallback(text, data)
 }
 
-func (p *CallbackDataPrefixFilter[T]) Encode(src T) (string, error) {
+// Button returns a new tg.InlineKeyboardButton with the given data as callback data.
+// If an error occurs while encoding, it will be returned.
+func (p *CallbackDataFilter[T]) Button(text string, v T) (tg.InlineKeyboardButton, error) {
+	data, err := p.Encode(v)
+	if err != nil {
+		return tg.InlineKeyboardButton{}, fmt.Errorf("encode: %w", err)
+	}
+
+	return tg.NewInlineKeyboardButtonCallback(text, data), nil
+}
+
+// Encode serializes a struct into callback data using the filter's parser.
+func (p *CallbackDataFilter[T]) Encode(src T) (string, error) {
 	body, err := p.codec.Encode(src)
 	if err != nil {
 		return "", fmt.Errorf("body decode: %w", err)
@@ -342,7 +355,10 @@ func (p *CallbackDataPrefixFilter[T]) Encode(src T) (string, error) {
 	return builder.String(), nil
 }
 
-func (p *CallbackDataPrefixFilter[T]) Decode(data string) (T, error) {
+// Decode deserializes callback data into a struct using the filter's codec.
+// It checks if the data has the correct prefix.
+// If not, an error will be returned.
+func (p *CallbackDataFilter[T]) Decode(data string) (T, error) {
 	var dst T
 	if !strings.HasPrefix(data, p.prefix) {
 		return dst, fmt.Errorf("invalid prefix: expected %v, got %v", p.prefix, data)
@@ -359,7 +375,9 @@ func (p *CallbackDataPrefixFilter[T]) Decode(data string) (T, error) {
 }
 
 // Filter returns a tgb.Filter for the given prefix
-func (p *CallbackDataPrefixFilter[T]) Filter() Filter {
+// It checks if the data has the correct prefix.
+// If not, it will return false.
+func (p *CallbackDataFilter[T]) Filter() Filter {
 	prefixWithDelimiter := p.prefix + string(p.codec.delimiter)
 
 	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
@@ -375,8 +393,9 @@ func (p *CallbackDataPrefixFilter[T]) Filter() Filter {
 	})
 }
 
-// FilterFunc returns a tgb.Filter for the given prefix
-func (p *CallbackDataPrefixFilter[T]) FilterFunc(check func(v T) bool) Filter {
+// FilterFunc returns a tgb.Filter for the given prefix and a custom data check function.
+// It checks if the data has the correct prefix and if the custom function returns true.
+func (p *CallbackDataFilter[T]) FilterFunc(check func(v T) bool) Filter {
 	prefixWithDelimiter := p.prefix + string(p.codec.delimiter)
 
 	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
@@ -397,9 +416,11 @@ func (p *CallbackDataPrefixFilter[T]) FilterFunc(check func(v T) bool) Filter {
 	})
 }
 
-type CallbackDataPrefixFilterHandler[T any] func(ctx context.Context, cbq *CallbackQueryUpdate, cbd T) error
+type CallbackDataFilterHandler[T any] func(ctx context.Context, cbq *CallbackQueryUpdate, cbd T) error
 
-func (p *CallbackDataPrefixFilter[T]) Handler(handler CallbackDataPrefixFilterHandler[T]) CallbackQueryHandler {
+// Handler returns a tgb.CallbackQueryHandler that wraps the given handler with decoded callback data.
+// If an error occurs while decoding, it will be returned and passed handler will not be called.
+func (p *CallbackDataFilter[T]) Handler(handler CallbackDataFilterHandler[T]) CallbackQueryHandler {
 	return func(ctx context.Context, cqu *CallbackQueryUpdate) error {
 		cbd, err := p.Decode(cqu.CallbackQuery.Data)
 		if err != nil {
@@ -408,5 +429,4 @@ func (p *CallbackDataPrefixFilter[T]) Handler(handler CallbackDataPrefixFilterHa
 
 		return handler(ctx, cqu, cbd)
 	}
-
 }

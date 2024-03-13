@@ -58,7 +58,7 @@ var (
 func newUserListMessage(pm tg.ParseMode, users []User) *tgb.TextMessageCallBuilder {
 	buttons := make([]tg.InlineKeyboardButton, 0, len(users))
 	for _, user := range users {
-		buttons = append(buttons, userDetailsCallbackDataFilter.Button(
+		buttons = append(buttons, userDetailsCallbackDataFilter.MustButton(
 			user.Name,
 			userDetailsCallbackData{UserID: user.ID},
 		))
@@ -85,7 +85,7 @@ func newUserDetailsMessage(pm tg.ParseMode, user User, posts []Post) *tgb.TextMe
 	buttons := make([]tg.InlineKeyboardButton, 0, len(posts)+1)
 
 	for _, post := range posts {
-		buttons = append(buttons, postDetailsCallbackDataFilter.Button(
+		buttons = append(buttons, postDetailsCallbackDataFilter.MustButton(
 			post.Title,
 			postDetailsCallbackData{PostID: post.ID, UserID: user.ID},
 		))
@@ -93,7 +93,7 @@ func newUserDetailsMessage(pm tg.ParseMode, user User, posts []Post) *tgb.TextMe
 
 	layout := tg.NewButtonLayout[tg.InlineKeyboardButton](2)
 
-	layout.Row(userLocationCallbackDataFilter.Button("📍 Location", userLocationCallbackData{
+	layout.Row(userLocationCallbackDataFilter.MustButton("📍 Location", userLocationCallbackData{
 		UserID: user.ID,
 		Lat:    user.Address.Geo.Lat,
 		Lng:    user.Address.Geo.Lng,
@@ -101,9 +101,9 @@ func newUserDetailsMessage(pm tg.ParseMode, user User, posts []Post) *tgb.TextMe
 
 	layout.Add(buttons...)
 
-	layout.Row(userListCallbackDataFilter.Button("🔙 Back", struct{}{}))
+	layout.Row(userListCallbackDataFilter.MustButton("🔙 Back", struct{}{}))
 
-	buttons = append(buttons, userListCallbackDataFilter.Button("🔙 Back", struct{}{}))
+	buttons = append(buttons, userListCallbackDataFilter.MustButton("🔙 Back", struct{}{}))
 
 	return tgb.NewTextMessageCallBuilder(
 		pm.Text(
@@ -139,14 +139,14 @@ func newPostDetails(pm tg.ParseMode, userID int, post Post, comments []Comment) 
 	buttons := make([]tg.InlineKeyboardButton, 0, len(comments)+1)
 
 	for _, comment := range comments {
-		buttons = append(buttons, commentDetailsCallbackDataFilter.Button("💬 "+comment.Name, commentDetailsCallbackData{
+		buttons = append(buttons, commentDetailsCallbackDataFilter.MustButton("💬 "+comment.Name, commentDetailsCallbackData{
 			UserID:    userID,
 			PostID:    post.ID,
 			CommentID: comment.ID,
 		}))
 	}
 
-	buttons = append(buttons, userDetailsCallbackDataFilter.Button("🔙 Back", userDetailsCallbackData{
+	buttons = append(buttons, userDetailsCallbackDataFilter.MustButton("🔙 Back", userDetailsCallbackData{
 		UserID: userID,
 	}))
 
@@ -168,12 +168,12 @@ func newPostDetails(pm tg.ParseMode, userID int, post Post, comments []Comment) 
 
 func newCommentDetails(pm tg.ParseMode, userID int, postID int, comment Comment) *tgb.TextMessageCallBuilder {
 	buttons := []tg.InlineKeyboardButton{
-		postDetailsCallbackDataFilter.Button("🔙 Back to Post", postDetailsCallbackData{
+		postDetailsCallbackDataFilter.MustButton("🔙 Back to Post", postDetailsCallbackData{
 			UserID: userID,
 			PostID: postID,
 		}),
 
-		userDetailsCallbackDataFilter.Button("🔙 Back to User", userDetailsCallbackData{
+		userDetailsCallbackDataFilter.MustButton("🔙 Back to User", userDetailsCallbackData{
 			UserID: userID,
 		}),
 	}
