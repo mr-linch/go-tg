@@ -54,10 +54,8 @@ type Comment struct {
 }
 
 func (a *API) request(ctx context.Context, path string, params url.Values, dst any) error {
-	endpoint, err := url.JoinPath(a.BaseURL, path)
-	if err != nil {
-		return fmt.Errorf("build endpoint: %w", err)
-	}
+	// better use url.JoinPath, but it's not available at go1.18 that specified as minimal version
+	endpoint := a.BaseURL + path
 
 	if len(params) > 0 {
 		endpoinAsURL, err := url.Parse(endpoint)
