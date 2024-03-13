@@ -8,12 +8,12 @@ import (
 )
 
 func TestNewCallbackDataParser(t *testing.T) {
-	parser := NewCallbackDataParser(
-		WithCallbackDataDelimiter('$'),
-		WithCallbackDataIntBase(16),
-		WithCallbackDataFloatFmt('e'),
-		WithCallbackDataFloatPrec(3),
-		WithCallbackDataDisableLengthCheck(true),
+	parser := NewCallackDataCodec(
+		WithCallbackDataCodecDelimiter('$'),
+		WithCallbackDataCodecIntBase(16),
+		WithCallbackDataCodecFloatFmt('e'),
+		WithCallbackDataCodecFloatPrec(3),
+		WithCallbackDataCodecDisableLengthCheck(true),
 	)
 
 	assert.Equal(t, '$', parser.delimiter)

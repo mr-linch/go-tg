@@ -1,14 +1,17 @@
 package tgb
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/mr-linch/go-tg"
 )
 
-// CallbackDataParser is a helper for parsing and serializing callback data.
-type CallbackDataParser struct {
+// CallbackDataCodec is a helper for parsing and serializing callback data.
+type CallbackDataCodec struct {
 	delimiter          rune
 	intBase            int
 	floatFmt           byte
@@ -29,52 +32,52 @@ func (e *CallbackDataIsTooLongError) Error() string {
 }
 
 // NewCallbackDataParser creates a new CallbackDataParser with default options.
-type CallbackDataParserOption func(*CallbackDataParser)
+type CallbackDataCodecOption func(*CallbackDataCodec)
 
-// WithCallbackDataDelimiter sets a delimiter for callback data.
+// WithCallbackDataCodecDelimiter sets a delimiter for callback data.
 // Default is ':'.
-func WithCallbackDataDelimiter(delimiter rune) CallbackDataParserOption {
-	return func(p *CallbackDataParser) {
+func WithCallbackDataCodecDelimiter(delimiter rune) CallbackDataCodecOption {
+	return func(p *CallbackDataCodec) {
 		p.delimiter = delimiter
 	}
 }
 
-// WithCallbackDataIntBase sets a base for integer fields in callback data.
+// WithCallbackDataCodecIntBase sets a base for integer fields in callback data.
 // Default is 36.
-func WithCallbackDataIntBase(base int) CallbackDataParserOption {
-	return func(p *CallbackDataParser) {
+func WithCallbackDataCodecIntBase(base int) CallbackDataCodecOption {
+	return func(p *CallbackDataCodec) {
 		p.intBase = base
 	}
 }
 
-// WithCallbackDataFloatFmt sets a format for float fields in callback data.
+// WithCallbackDataCodecFloatFmt sets a format for float fields in callback data.
 // Default is 'f'.
-func WithCallbackDataFloatFmt(fmt byte) CallbackDataParserOption {
-	return func(p *CallbackDataParser) {
+func WithCallbackDataCodecFloatFmt(fmt byte) CallbackDataCodecOption {
+	return func(p *CallbackDataCodec) {
 		p.floatFmt = fmt
 	}
 }
 
-// WithCallbackDataFloatPrec sets a precision for float fields in callback data.
+// WithCallbackDataCodecFloatPrec sets a precision for float fields in callback data.
 // Default is -1.
-func WithCallbackDataFloatPrec(prec int) CallbackDataParserOption {
-	return func(p *CallbackDataParser) {
+func WithCallbackDataCodecFloatPrec(prec int) CallbackDataCodecOption {
+	return func(p *CallbackDataCodec) {
 		p.floatPrec = prec
 	}
 }
 
-// WithCallbackDataDisableLengthCheck disables length check for callback data.
+// WithCallbackDataCodecDisableLengthCheck disables length check for callback data.
 // Default is false.
-func WithCallbackDataDisableLengthCheck(disable bool) CallbackDataParserOption {
-	return func(p *CallbackDataParser) {
+func WithCallbackDataCodecDisableLengthCheck(disable bool) CallbackDataCodecOption {
+	return func(p *CallbackDataCodec) {
 		p.disableLengthCheck = disable
 	}
 }
 
-// NewCallbackDataParser creates a new CallbackDataParser with custom options.
+// NewCallackDataCodec creates a new CallbackDataParser with custom options.
 // With no options it will use ':' as a delimiter, 36 as a base for integer fields, 'f' as a format and -1 as a precision for float fields.
-func NewCallbackDataParser(opts ...CallbackDataParserOption) *CallbackDataParser {
-	parser := &CallbackDataParser{
+func NewCallackDataCodec(opts ...CallbackDataCodecOption) *CallbackDataCodec {
+	parser := &CallbackDataCodec{
 		delimiter:          ':',
 		intBase:            36,
 		floatFmt:           'f',
@@ -89,7 +92,7 @@ func NewCallbackDataParser(opts ...CallbackDataParserOption) *CallbackDataParser
 	return parser
 }
 
-func (p *CallbackDataParser) getIntFieldBaseOrDefault(field reflect.StructField) (int, error) {
+func (p *CallbackDataCodec) getIntFieldBaseOrDefault(field reflect.StructField) (int, error) {
 	baseStr, ok := field.Tag.Lookup("tgbase")
 	if !ok {
 		return p.intBase, nil
@@ -103,7 +106,7 @@ func (p *CallbackDataParser) getIntFieldBaseOrDefault(field reflect.StructField)
 	return base, nil
 }
 
-func (p *CallbackDataParser) getFloatFieldFmtOrDefault(field reflect.StructField) (byte, error) {
+func (p *CallbackDataCodec) getFloatFieldFmtOrDefault(field reflect.StructField) (byte, error) {
 	fmtStr, ok := field.Tag.Lookup("tgfmt")
 	if !ok {
 		return p.floatFmt, nil
@@ -116,7 +119,7 @@ func (p *CallbackDataParser) getFloatFieldFmtOrDefault(field reflect.StructField
 	return fmtStr[0], nil
 }
 
-func (p *CallbackDataParser) getFloatFieldPrecOrDefault(field reflect.StructField) (int, error) {
+func (p *CallbackDataCodec) getFloatFieldPrecOrDefault(field reflect.StructField) (int, error) {
 	precStr, ok := field.Tag.Lookup("tgprec")
 	if !ok {
 		return p.floatPrec, nil
@@ -133,7 +136,7 @@ func (p *CallbackDataParser) getFloatFieldPrecOrDefault(field reflect.StructFiel
 // MarshalCallbackData serializes a struct into callback data.
 // This data will be in format prefix:field_value_1:field_value_2:...:field_value_n
 // Only plain structures are supported.
-func (p *CallbackDataParser) Encode(src any) (string, error) {
+func (p *CallbackDataCodec) Encode(src any) (string, error) {
 	structValue := reflect.ValueOf(src)
 
 	if structValue.Type().Kind() == reflect.Ptr {
@@ -209,7 +212,7 @@ func (p *CallbackDataParser) Encode(src any) (string, error) {
 	return result.String(), nil
 }
 
-func (p *CallbackDataParser) Decode(data string, dst any) error {
+func (p *CallbackDataCodec) Decode(data string, dst any) error {
 	structValue := reflect.ValueOf(dst)
 
 	if structValue.Type().Kind() != reflect.Ptr {
@@ -289,14 +292,121 @@ func (p *CallbackDataParser) Decode(data string, dst any) error {
 	return nil
 }
 
-var DefaultCallbackDataParser = NewCallbackDataParser()
+var DefaultCallbackDataCodec = NewCallackDataCodec()
 
 // EncodeCallbackData serializes a struct into callback data using default parser.
 func EncodeCallbackData(src any) (string, error) {
-	return DefaultCallbackDataParser.Encode(src)
+	return DefaultCallbackDataCodec.Encode(src)
 }
 
 // DecodeCallbackData deserializes callback data into a struct using default parser.
 func DecodeCallbackData(data string, dst any) error {
-	return DefaultCallbackDataParser.Decode(data, dst)
+	return DefaultCallbackDataCodec.Decode(data, dst)
+}
+
+type CallbackDataPrefixFilter[T any] struct {
+	prefix string
+	codec  *CallbackDataCodec
+}
+
+// NewCallbackDataFilter creates a new CallbackDataPrefixFilter with default options.
+func NewCallbackDataFilter[T any](prefix string, opts ...CallbackDataCodecOption) *CallbackDataPrefixFilter[T] {
+	return &CallbackDataPrefixFilter[T]{
+		prefix: prefix,
+		codec:  NewCallackDataCodec(opts...),
+	}
+}
+
+// If we have a error, zero value will be returned
+func (p *CallbackDataPrefixFilter[T]) Button(text string, v T) tg.InlineKeyboardButton {
+	data, err := p.Encode(v)
+	if err != nil {
+		return tg.InlineKeyboardButton{}
+	}
+
+	return tg.NewInlineKeyboardButtonCallback(text, data)
+}
+
+func (p *CallbackDataPrefixFilter[T]) Encode(src T) (string, error) {
+	body, err := p.codec.Encode(src)
+	if err != nil {
+		return "", fmt.Errorf("body decode: %w", err)
+	}
+
+	var builder strings.Builder
+
+	builder.WriteString(p.prefix)
+	builder.WriteRune(p.codec.delimiter)
+	builder.WriteString(body)
+
+	return builder.String(), nil
+}
+
+func (p *CallbackDataPrefixFilter[T]) Decode(data string) (T, error) {
+	var dst T
+	if !strings.HasPrefix(data, p.prefix) {
+		return dst, fmt.Errorf("invalid prefix: expected %v, got %v", p.prefix, data)
+	}
+
+	data = strings.TrimPrefix(data, p.prefix+string(p.codec.delimiter))
+
+	err := p.codec.Decode(data, &dst)
+	if err != nil {
+		return dst, fmt.Errorf("body decode: %w", err)
+	}
+
+	return dst, nil
+}
+
+// Filter returns a tgb.Filter for the given prefix
+func (p *CallbackDataPrefixFilter[T]) Filter() Filter {
+	prefixWithDelimiter := p.prefix + string(p.codec.delimiter)
+
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
+		if update.CallbackQuery == nil {
+			return false, nil
+		}
+
+		if strings.HasPrefix(update.CallbackQuery.Data, prefixWithDelimiter) {
+			return true, nil
+		}
+
+		return false, nil
+	})
+}
+
+// FilterFunc returns a tgb.Filter for the given prefix
+func (p *CallbackDataPrefixFilter[T]) FilterFunc(check func(v T) bool) Filter {
+	prefixWithDelimiter := p.prefix + string(p.codec.delimiter)
+
+	return FilterFunc(func(ctx context.Context, update *Update) (bool, error) {
+		if update.CallbackQuery == nil {
+			return false, nil
+		}
+
+		v, err := p.Decode(update.CallbackQuery.Data)
+		if err != nil {
+			return false, fmt.Errorf("decode: %w", err)
+		}
+
+		if strings.HasPrefix(update.CallbackQuery.Data, prefixWithDelimiter) && check(v) {
+			return true, nil
+		}
+
+		return false, nil
+	})
+}
+
+type CallbackDataPrefixFilterHandler[T any] func(ctx context.Context, cbq *CallbackQueryUpdate, cbd T) error
+
+func (p *CallbackDataPrefixFilter[T]) Handler(handler CallbackDataPrefixFilterHandler[T]) CallbackQueryHandler {
+	return func(ctx context.Context, cqu *CallbackQueryUpdate) error {
+		cbd, err := p.Decode(cqu.CallbackQuery.Data)
+		if err != nil {
+			return fmt.Errorf("decode: %w", err)
+		}
+
+		return handler(ctx, cqu, cbd)
+	}
+
 }

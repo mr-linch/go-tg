@@ -15,3 +15,5 @@ Listen port set to `:8000` by default, you can override it with the `-webhook-li
 | [text-filter](https://github.com/mr-linch/go-tg/tree/main/examples/text-filter)           | Text Filter usage                                                 | Text filter, reply keyboard markup                             |
 | [webapps](https://github.com/mr-linch/go-tg/tree/main/examples/webapps)                   | Parse and validate Login Widget & WebApp data, host simple webapp | WebApps, Login Widget, Embed webhook to http.Mux               |
 | [session-filter](https://github.com/mr-linch/go-tg/tree/main/examples/session-filter)     | Simple form filling with persistent session                       | Router, Session Manager, Session Filters                       |
+| [menu](https://github.com/mr-linch/go-tg/tree/main/examples/menu) | Hiearchical menu with API integration | ButtonLayout, TextMessageBuilder, CallbackDataFilter |
+| [retry-flood](https://github.com/mr-linch/go-tg/tree/main/examples/retry-flood) | Retry on flood error | Interceptors |
