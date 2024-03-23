@@ -3,17 +3,17 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   lint:
-    name: Lint
+    name: Lint & Tidy
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.18"
+          go-version: stable
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,22 +21,10 @@ jobs:
       - name: Lint
         uses: golangci/golangci-lint-action@v4
         with:
-          version: v1.46
-
-  tidy:
-    name: Go Tidy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.18"
-
-      - name: Checkout
-        uses: actions/checkout@v4
+          version: v1.57
 
       - name: Tidy
-        run: make go-tidy
+        run: go mod tidy
 
       - name: Check Git Status
         run: |
@@ -49,14 +37,34 @@ jobs:
             echo "No changes after tidy, continuing"
           fi
 
-  test:
-    name: Test
+  test-go-1-18:
+    name: Test go1.18
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.18"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test
+        run: go test -timeout 30s -v -race -coverprofile=coverage.txt ./...
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+
+  test-go-latest:
+    name: Test latest stable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
 
       - name: Checkout
         uses: actions/checkout@v4
