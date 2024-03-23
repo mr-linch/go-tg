@@ -52,6 +52,11 @@ jobs:
       - name: Test
         run: go test -timeout 30s -v -race -coverprofile=coverage.txt ./...
 
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+
   test-go-latest:
     name: Test latest stable
     runs-on: ubuntu-latest

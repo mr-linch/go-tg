@@ -1,2 +1,3 @@
 ignore:
   - methods_gen.go
+  - examples
