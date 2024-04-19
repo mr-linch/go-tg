@@ -178,7 +178,7 @@ type Chat struct {
 	ActiveUsernames []string `json:"active_usernames,omitempty"`
 
 	// Optional. For private chats, the date of birth of the user. Returned only in getChat.
-	Birthdate *Birthdate `json:"birthdate,omitempty"`
+	Birthdate int64 `json:"birthdate,omitempty"`
 
 	// Optional. For private chats with business accounts, the intro of the business. Returned only in getChat.
 	BusinessIntro *BusinessIntro `json:"business_intro,omitempty"`
@@ -1180,7 +1180,7 @@ type Giveaway struct {
 	Chats []Chat `json:"chats"`
 
 	// Point in time (Unix timestamp) when winners of the giveaway will be selected
-	WinnersSelectionDate int `json:"winners_selection_date"`
+	WinnersSelectionDate int64 `json:"winners_selection_date"`
 
 	// The number of users which are supposed to be selected as winners of the giveaway
 	WinnerCount int `json:"winner_count"`
@@ -1210,7 +1210,7 @@ type GiveawayWinners struct {
 	GiveawayMessageID int `json:"giveaway_message_id"`
 
 	// Point in time (Unix timestamp) when winners of the giveaway were selected
-	WinnersSelectionDate int `json:"winners_selection_date"`
+	WinnersSelectionDate int64 `json:"winners_selection_date"`
 
 	// Total number of winners in the giveaway
 	WinnerCount int `json:"winner_count"`
@@ -1561,7 +1561,7 @@ type ChatInviteLink struct {
 	Name string `json:"name,omitempty"`
 
 	// Optional. Point in time (Unix timestamp) when the link will expire or has been expired
-	ExpireDate int `json:"expire_date,omitempty"`
+	ExpireDate int64 `json:"expire_date,omitempty"`
 
 	// Optional. The maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
 	MemberLimit int `json:"member_limit,omitempty"`
@@ -1627,7 +1627,7 @@ type ChatMemberUpdated struct {
 	From User `json:"from"`
 
 	// Date the change was done in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Previous information about the chat member
 	OldChatMember ChatMember `json:"old_chat_member"`
@@ -1795,7 +1795,7 @@ type ChatMemberRestricted struct {
 	CanManageTopics bool `json:"can_manage_topics"`
 
 	// Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever
-	UntilDate int `json:"until_date"`
+	UntilDate int64 `json:"until_date"`
 }
 
 // ChatMemberLeft represents a chat member that isn't currently a member of the chat, but may join it themselves.
@@ -1816,7 +1816,7 @@ type ChatMemberBanned struct {
 	User User `json:"user"`
 
 	// Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever
-	UntilDate int `json:"until_date"`
+	UntilDate int64 `json:"until_date"`
 }
 
 // ChatJoinRequest represents a join request sent to a chat.
@@ -1831,7 +1831,7 @@ type ChatJoinRequest struct {
 	UserChatID ChatID `json:"user_chat_id"`
 
 	// Date the request was sent in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Optional. Bio of the user.
 	Bio string `json:"bio,omitempty"`
@@ -1987,7 +1987,7 @@ type MessageReactionUpdated struct {
 	ActorChat *Chat `json:"actor_chat,omitempty"`
 
 	// Date of the change in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Previous list of reaction types that were set by the user
 	OldReaction []ReactionType `json:"old_reaction"`
@@ -2005,7 +2005,7 @@ type MessageReactionCountUpdated struct {
 	MessageID int `json:"message_id"`
 
 	// Date of the change in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// List of reactions that are present on the message
 	Reactions []ReactionCount `json:"reactions"`
@@ -2179,10 +2179,10 @@ type ChatBoost struct {
 	BoostID string `json:"boost_id"`
 
 	// Point in time (Unix timestamp) when the chat was boosted
-	AddDate int `json:"add_date"`
+	AddDate int64 `json:"add_date"`
 
 	// Point in time (Unix timestamp) when the boost will automatically expire, unless the booster's Telegram Premium subscription is prolonged
-	ExpirationDate int `json:"expiration_date"`
+	ExpirationDate int64 `json:"expiration_date"`
 
 	// Source of the added boost
 	Source ChatBoostSource `json:"source"`
@@ -2206,7 +2206,7 @@ type ChatBoostRemoved struct {
 	BoostID string `json:"boost_id"`
 
 	// Point in time (Unix timestamp) when the boost was removed
-	RemoveDate int `json:"remove_date"`
+	RemoveDate int64 `json:"remove_date"`
 
 	// Source of the removed boost
 	Source ChatBoostSource `json:"source"`
@@ -2230,7 +2230,7 @@ type BusinessConnection struct {
 	UserChatID int64 `json:"user_chat_id"`
 
 	// Date the connection was established in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// True, if the bot can act on behalf of the business account in chats that were active in the last 24 hours
 	CanReply bool `json:"can_reply"`
@@ -3568,7 +3568,7 @@ type PassportFile struct {
 	FileSize int `json:"file_size"`
 
 	// Unix time when the file was uploaded
-	FileDate int `json:"file_date"`
+	FileDate int64 `json:"file_date"`
 }
 
 // EncryptedPassportElement describes documents or other Telegram Passport elements shared with the bot by the user.
