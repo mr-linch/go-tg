@@ -1931,8 +1931,8 @@ func (call *SendPollCall) Explanation(explanation string) *SendPollCall {
 }
 
 // ExplanationParseMode Mode for parsing entities in the explanation. See formatting options for more details.
-func (call *SendPollCall) ExplanationParseMode(explanationParseMode string) *SendPollCall {
-	call.request.String("explanation_parse_mode", explanationParseMode)
+func (call *SendPollCall) ExplanationParseMode(explanationParseMode ParseMode) *SendPollCall {
+	call.request.Stringer("explanation_parse_mode", explanationParseMode)
 	return call
 }
 

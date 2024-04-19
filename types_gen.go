@@ -664,7 +664,7 @@ type ReplyParameters struct {
 	Quote string `json:"quote,omitempty"`
 
 	// Optional. Mode for parsing entities in the quote. See formatting options for more details.
-	QuoteParseMode string `json:"quote_parse_mode,omitempty"`
+	QuoteParseMode ParseMode `json:"quote_parse_mode,omitempty"`
 
 	// Optional. A JSON-serialized list of special entities that appear in the quote. It can be specified instead of quote_parse_mode.
 	QuoteEntities []MessageEntity `json:"quote_entities,omitempty"`
@@ -1887,6 +1887,18 @@ type ChatPermissions struct {
 
 // Birthdate
 type Birthdate struct {
+	// Day of the user's birth; 1-31
+	Day int `json:"day"`
+
+	// Month of the user's birth; 1-12
+	Month int `json:"month"`
+
+	// Optional. Year of the user's birth
+	Year int `json:"year,omitempty"`
+}
+
+// BusinessIntro
+type BusinessIntro struct {
 	// Optional. Title text of the business intro
 	Title string `json:"title,omitempty"`
 
@@ -1897,8 +1909,8 @@ type Birthdate struct {
 	Sticker *Sticker `json:"sticker,omitempty"`
 }
 
-// BusinessIntro
-type BusinessIntro struct {
+// BusinessLocation
+type BusinessLocation struct {
 	// Address of the business
 	Address string `json:"address"`
 
@@ -1906,31 +1918,22 @@ type BusinessIntro struct {
 	Location *Location `json:"location,omitempty"`
 }
 
-// BusinessLocation
-type BusinessLocation struct {
-	// The minute's sequence number in a week, starting on Monday, marking the start of the time interval during which the business is open; 0 - 7  24  60
+// BusinessOpeningHoursInterval
+type BusinessOpeningHoursInterval struct {
+	// The minute's sequence number in a week, starting on Monday, marking the start of the time interval during which the business is open; 0 - 7 * 24 * 60
 	OpeningMinute int `json:"opening_minute"`
 
-	// The minute's sequence number in a week, starting on Monday, marking the end of the time interval during which the business is open; 0 - 8  24  60
+	// The minute's sequence number in a week, starting on Monday, marking the end of the time interval during which the business is open; 0 - 8 * 24 * 60
 	ClosingMinute int `json:"closing_minute"`
 }
 
-// BusinessOpeningHoursInterval
-type BusinessOpeningHoursInterval struct {
+// BusinessOpeningHours
+type BusinessOpeningHours struct {
 	// Unique name of the time zone for which the opening hours are defined
 	TimeZoneName string `json:"time_zone_name"`
 
 	// List of time intervals describing business opening hours
 	OpeningHours []BusinessOpeningHoursInterval `json:"opening_hours"`
-}
-
-// BusinessOpeningHours
-type BusinessOpeningHours struct {
-	// The location to which the supergroup is connected. Can't be a live location.
-	Location Location `json:"location"`
-
-	// Location address; 1-64 characters, as defined by the chat owner
-	Address string `json:"address"`
 }
 
 // ChatLocation represents a location to which a chat is connected.
