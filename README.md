@@ -3,7 +3,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/mr-linch/go-tg.svg)](https://pkg.go.dev/github.com/mr-linch/go-tg)
 [![go.mod](https://img.shields.io/github/go-mod/go-version/mr-linch/go-tg)](go.mod)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/mr-linch/go-tg?label=latest%20release)](https://github.com/mr-linch/go-tg/releases/latest)
-![Telegram Bot API](https://img.shields.io/badge/Telegram%20Bot%20API-7.1-blue?logo=telegram)
+![Telegram Bot API](https://img.shields.io/badge/Telegram%20Bot%20API-7.2-blue?logo=telegram)
 [![CI](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml/badge.svg)](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/mr-linch/go-tg/branch/main/graph/badge.svg?token=9EI5CEIYXL)](https://codecov.io/gh/mr-linch/go-tg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mr-linch/go-tg)](https://goreportcard.com/report/github.com/mr-linch/go-tg)
@@ -29,9 +29,9 @@
   - [Receive updates via Webhook](#receive-updates-via-webhook)
   - [Routing updates](#routing-updates)
 - [Extensions](#extensions)
-  - [Sessions](#sessions) 
+  - [Sessions](#sessions)
 - [Related Projects](#related-projects)
-- [Projects using this package]
+- [Projects using this package](#projects-using-this-package)
 - [Thanks](#thanks)
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
@@ -40,14 +40,16 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
 
 ## Features
 
-- Code for Bot API types and methods is generated with embedded official documentation.
-- Support [context.Context](https://pkg.go.dev/context).
-- API Client and bot framework are strictly separated, you can use them independently.
-- No runtime reflection overhead.
-- Supports Webhook and Polling natively;
-- [Webhook reply](https://core.telegram.org/bots/faq#how-can-i-make-requests-in-response-to-updates) for high load bots;
-- Handlers, filters, and middleware are supported.
-- [WebApps](https://core.telegram.org/bots/webapps) and [Login Widget](https://core.telegram.org/widgets/login) helpers.
+- :rocket: Code for Bot API types and methods is generated with embedded official documentation.
+- :white_check_mark: Support [context.Context](https://pkg.go.dev/context).
+- :link: API Client and bot framework are strictly separated, you can use them independently.
+- :zap: No runtime reflection overhead.
+- :arrows_counterclockwise: Supports Webhook and Polling natively;
+- :mailbox_with_mail: [Webhook reply](https://core.telegram.org/bots/faq#how-can-i-make-requests-in-response-to-updates) for high load bots;
+- :raised_hands: Handlers, filters, and middleware are supported.
+- :globe_with_meridians: [WebApps](https://core.telegram.org/bots/webapps) and [Login Widget](https://core.telegram.org/widgets/login) helpers.
+- :handshake: Business connections support
+
 
 ## Install
 
@@ -375,18 +377,19 @@ client := tg.New("<TOKEN>",
 )
 ```
 
-
 Arguments of the interceptor are:
-  - `ctx` - context of the request;
-  - `req` - request object [tg.Request](https://pkg.go.dev/github.com/mr-linch/go-tg#Request);
-  - `dst` - pointer to destination for the response, can be `nil` if the request is made with `DoVoid` method;
-  - `invoker` - function for calling the next interceptor or the actual request.
+
+- `ctx` - context of the request;
+- `req` - request object [tg.Request](https://pkg.go.dev/github.com/mr-linch/go-tg#Request);
+- `dst` - pointer to destination for the response, can be `nil` if the request is made with `DoVoid` method;
+- `invoker` - function for calling the next interceptor or the actual request.
 
 Contrib package has some useful interceptors:
-  - [InterceptorRetryFloodError](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorRetryFloodError) - retry request if the server returns a flood error. Parameters can be customized via options;
-  - [InterceptorRetryInternalServerError](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorRetryInternalServerError) - retry request if the server returns an error. Parameters can be customized via options;
-  - [InterceptorMethodFilter](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorMethodFilter) - call underlying interceptor only for specified methods;
-  - [InterceptorDefaultParseMethod](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorDefaultParseMethod) - set default `parse_mode` for messages if not specified.
+
+- [InterceptorRetryFloodError](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorRetryFloodError) - retry request if the server returns a flood error. Parameters can be customized via options;
+- [InterceptorRetryInternalServerError](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorRetryInternalServerError) - retry request if the server returns an error. Parameters can be customized via options;
+- [InterceptorMethodFilter](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorMethodFilter) - call underlying interceptor only for specified methods;
+- [InterceptorDefaultParseMethod](https://pkg.go.dev/github.com/mr-linch/go-tg#NewInterceptorDefaultParseMethod) - set default `parse_mode` for messages if not specified.
 
 Interceptors are called in the order they are registered.
 
@@ -451,7 +454,7 @@ These handlers will only be called for updates of a certain type, the rest will 
 
 List of typed handlers:
 
-- [`tgb.MessageHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageHandler) with [`tgb.MessageUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageUpdate) for `message`, `edited_message`, `channel_post`, `edited_channel_post`;
+- [`tgb.MessageHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageHandler) with [`tgb.MessageUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageUpdate) for `message`, `edited_message`, `channel_post`, `edited_channel_post`, `business_message`, `edited_business_message`;
 - [`tgb.InlineQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryHandler) with [`tgb.InlineQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryUpdate) for `inline_query`
 - [`tgb.ChosenInlineResult`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResult) with [`tgb.ChosenInlineResultUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultUpdate) for `chosen_inline_result`;
 - [`tgb.CallbackQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryHandler) with [`tgb.CallbackQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryUpdate) for `callback_query`;
@@ -752,7 +755,8 @@ See [session](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session) package 
 - [`bots-house/docker-telegram-bot-api`](https://github.com/bots-house/docker-telegram-bot-api) - docker image for running self-hosted Telegram Bot API with automated CI build;
 
 ## Projects using this package
- - [@ttkeeperbot](https://t.me/ttkeeperbot) - Automatically upload tiktoks in groups and verify users 🇺🇦
+
+- [@ttkeeperbot](https://t.me/ttkeeperbot) - Automatically upload tiktoks in groups and verify users 🇺🇦
 
 ## Thanks
 

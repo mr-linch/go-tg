@@ -839,6 +839,10 @@ func TestUpdateType_UnmarshalText(t *testing.T) {
 		{"message_reaction_count", UpdateTypeMessageReactionCount, false},
 		{"chat_boost", UpdateTypeChatBoost, false},
 		{"removed_chat_boost", UpdateTypeRemovedChatBoost, false},
+		{"business_connection", UpdateTypeBusinessConnection, false},
+		{"business_message", UpdateTypeBusinessMessage, false},
+		{"edited_business_message", UpdateTypeEditedBusinessMessage, false},
+		{"deleted_business_messages", UpdateTypeDeletedBusinessMessages, false},
 		{"test", UpdateTypeUnknown, true},
 	} {
 		t.Run(test.Text, func(t *testing.T) {
@@ -958,6 +962,22 @@ func TestUpdate_Type(t *testing.T) {
 		{
 			Update: &Update{RemovedChatBoost: &ChatBoostRemoved{}},
 			Want:   UpdateTypeRemovedChatBoost,
+		},
+		{
+			Update: &Update{BusinessConnection: &BusinessConnection{}},
+			Want:   UpdateTypeBusinessConnection,
+		},
+		{
+			Update: &Update{BusinessMessage: &Message{}},
+			Want:   UpdateTypeBusinessMessage,
+		},
+		{
+			Update: &Update{EditedBusinessMessage: &Message{}},
+			Want:   UpdateTypeEditedBusinessMessage,
+		},
+		{
+			Update: &Update{DeletedBusinessMessages: &BusinessMessagesDeleted{}},
+			Want:   UpdateTypeDeletedBusinessMessages,
 		},
 	} {
 		assert.Equal(t, test.Want, test.Update.Type())
@@ -1104,6 +1124,8 @@ func TestUpdate_Msg(t *testing.T) {
 			Message: msg,
 		}}}, msg},
 		{&Update{CallbackQuery: &CallbackQuery{}}, nil},
+		{&Update{BusinessMessage: msg}, msg},
+		{&Update{EditedBusinessMessage: msg}, msg},
 	} {
 		assert.Equal(t, test.Message, test.Update.Msg())
 	}

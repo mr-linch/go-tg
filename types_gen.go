@@ -5,6 +5,7 @@ package tg
 
 import (
 	"net/url"
+	"time"
 )
 
 // Update this object represents an incoming update.At most one of the optional parameters can be present in any given update.
@@ -23,6 +24,18 @@ type Update struct {
 
 	// Optional. New version of a channel post that is known to the bot and was edited. This update may at times be triggered by changes to message fields that are either unavailable or not actively used by your bot.
 	EditedChannelPost *Message `json:"edited_channel_post,omitempty"`
+
+	// Optional. The bot was connected to or disconnected from a business account, or a user edited an existing connection with the bot
+	BusinessConnection *BusinessConnection `json:"business_connection,omitempty"`
+
+	// Optional. New non-service message from a connected business account
+	BusinessMessage *Message `json:"business_message,omitempty"`
+
+	// Optional. New version of a message from a connected business account
+	EditedBusinessMessage *Message `json:"edited_business_message,omitempty"`
+
+	// Optional. Messages were deleted from a connected business account
+	DeletedBusinessMessages *BusinessMessagesDeleted `json:"deleted_business_messages,omitempty"`
 
 	// Optional. A reaction to a message was changed by a user. The bot must be an administrator in the chat and must explicitly specify "message_reaction" in the list of allowed_updates to receive these updates. The update isn't received for reactions set by bots.
 	MessageReaction *MessageReactionUpdated `json:"message_reaction,omitempty"`
@@ -97,6 +110,16 @@ type WebhookInfo struct {
 	AllowedUpdates []UpdateType `json:"allowed_updates,omitempty"`
 }
 
+// LastErrorDateTime returns time.Time representation of LastErrorDate field.
+func (s *WebhookInfo) LastErrorDateTime() time.Time {
+	return time.Unix(s.LastErrorDate, 0)
+}
+
+// LastSynchronizationErrorDateTime returns time.Time representation of LastSynchronizationErrorDate field.
+func (s *WebhookInfo) LastSynchronizationErrorDateTime() time.Time {
+	return time.Unix(s.LastSynchronizationErrorDate, 0)
+}
+
 // User this object represents a Telegram user or bot.
 type User struct {
 	// Unique identifier for this user or bot.
@@ -131,6 +154,9 @@ type User struct {
 
 	// Optional. True, if the bot supports inline queries. Returned only in getMe.
 	SupportsInlineQueries bool `json:"supports_inline_queries,omitempty"`
+
+	// Optional. True, if the bot can be connected to a Telegram Business account to receive its messages. Returned only in getMe.
+	CanConnectToBusiness bool `json:"can_connect_to_business,omitempty"`
 }
 
 // Chat this object represents a chat.
@@ -162,6 +188,21 @@ type Chat struct {
 	// Optional. If non-empty, the list of all active chat usernames; for private chats, supergroups and channels. Returned only in getChat.
 	ActiveUsernames []string `json:"active_usernames,omitempty"`
 
+	// Optional. For private chats, the date of birth of the user. Returned only in getChat.
+	Birthdate int64 `json:"birthdate,omitempty"`
+
+	// Optional. For private chats with business accounts, the intro of the business. Returned only in getChat.
+	BusinessIntro *BusinessIntro `json:"business_intro,omitempty"`
+
+	// Optional. For private chats with business accounts, the location of the business. Returned only in getChat.
+	BusinessLocation *BusinessLocation `json:"business_location,omitempty"`
+
+	// Optional. For private chats with business accounts, the opening hours of the business. Returned only in getChat.
+	BusinessOpeningHours *BusinessOpeningHours `json:"business_opening_hours,omitempty"`
+
+	// Optional. For private chats, the personal channel of the user. Returned only in getChat.
+	PersonalChat *Chat `json:"personal_chat,omitempty"`
+
 	// Optional. List of available reactions allowed in the chat. If omitted, then all emoji reactions are allowed. Returned only in getChat.
 	AvailableReactions []ReactionType `json:"available_reactions,omitempty"`
 
@@ -181,7 +222,7 @@ type Chat struct {
 	EmojiStatusCustomEmojiID string `json:"emoji_status_custom_emoji_id,omitempty"`
 
 	// Optional. Expiration date of the emoji status of the chat or the other party in a private chat, in Unix time, if any. Returned only in getChat.
-	EmojiStatusExpirationDate int `json:"emoji_status_expiration_date,omitempty"`
+	EmojiStatusExpirationDate int64 `json:"emoji_status_expiration_date,omitempty"`
 
 	// Optional. Bio of the other party in a private chat. Returned only in getChat.
 	Bio string `json:"bio,omitempty"`
@@ -247,6 +288,16 @@ type Chat struct {
 	Location *ChatLocation `json:"location,omitempty"`
 }
 
+// BirthdateTime returns time.Time representation of Birthdate field.
+func (s *Chat) BirthdateTime() time.Time {
+	return time.Unix(s.Birthdate, 0)
+}
+
+// EmojiStatusExpirationDateTime returns time.Time representation of EmojiStatusExpirationDate field.
+func (s *Chat) EmojiStatusExpirationDateTime() time.Time {
+	return time.Unix(s.EmojiStatusExpirationDate, 0)
+}
+
 // Message this object represents a message.
 type Message struct {
 	// Unique message identifier inside this chat
@@ -264,8 +315,14 @@ type Message struct {
 	// Optional. If the sender of the message boosted the chat, the number of boosts added by the user
 	SenderBoostCount int `json:"sender_boost_count,omitempty"`
 
+	// Optional. The bot that actually sent the message on behalf of the business account. Available only for outgoing messages sent on behalf of the connected business account.
+	SenderBusinessBot *User `json:"sender_business_bot,omitempty"`
+
 	// Date the message was sent in Unix time. It is always a positive number, representing a valid date.
 	Date int64 `json:"date"`
+
+	// Optional. Unique identifier of the business connection from which the message was received. If non-empty, the message belongs to a chat of the corresponding business account that is independent from any potential bot chat which might share the same identifier.
+	BusinessConnectionID string `json:"business_connection_id,omitempty"`
 
 	// Chat the message belongs to
 	Chat Chat `json:"chat"`
@@ -299,6 +356,9 @@ type Message struct {
 
 	// Optional. True, if the message can't be forwarded
 	HasProtectedContent bool `json:"has_protected_content,omitempty"`
+
+	// Optional. True, if the message was sent by an implicit action, for example, as an away or a greeting business message, or as a scheduled message
+	IsFromOffline bool `json:"is_from_offline,omitempty"`
 
 	// Optional. The unique identifier of a media message group this message belongs to
 	MediaGroupID string `json:"media_group_id,omitempty"`
@@ -481,6 +541,16 @@ type Message struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 }
 
+// DateTime returns time.Time representation of Date field.
+func (s *Message) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
+}
+
+// EditDateTime returns time.Time representation of EditDate field.
+func (s *Message) EditDateTime() time.Time {
+	return time.Unix(s.EditDate, 0)
+}
+
 // MessageID this object represents a unique message identifier.
 type MessageID struct {
 	// Unique message identifier
@@ -497,6 +567,11 @@ type InaccessibleMessage struct {
 
 	// Always 0. The field can be used to differentiate regular and inaccessible messages.
 	Date int64 `json:"date"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *InaccessibleMessage) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // MessageEntity this object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
@@ -615,10 +690,10 @@ type ReplyParameters struct {
 	// Identifier of the message that will be replied to in the current chat, or in the chat chat_id if it is specified
 	MessageID int `json:"message_id"`
 
-	// Optional. If the message to be replied to is from a different chat, unique identifier for the chat or username of the channel (in the format @channelusername)
+	// Optional. If the message to be replied to is from a different chat, unique identifier for the chat or username of the channel (in the format @channelusername). Not supported for messages sent on behalf of a business account.
 	ChatID PeerID `json:"chat_id,omitempty"`
 
-	// Optional. Pass True if the message should be sent even if the specified message to be replied to is not found; can be used only for replies in the same chat and forum topic.
+	// Optional. Pass True if the message should be sent even if the specified message to be replied to is not found. Always False for replies in another chat or forum topic. Always True for messages sent on behalf of a business account.
 	AllowSendingWithoutReply bool `json:"allow_sending_without_reply,omitempty"`
 
 	// Optional. Quoted part of the message to be replied to; 0-1024 characters after entities parsing. The quote must be an exact substring of the message to be replied to, including bold, italic, underline, strikethrough, spoiler, and custom_emoji entities. The message will fail to send if the quote isn't found in the original message.
@@ -646,6 +721,11 @@ type MessageOriginUser struct {
 	SenderUser User `json:"sender_user"`
 }
 
+// DateTime returns time.Time representation of Date field.
+func (s *MessageOriginUser) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
+}
+
 // MessageOriginHiddenUser the message was originally sent by an unknown user.
 type MessageOriginHiddenUser struct {
 	// Type of the message origin, always “hidden_user”
@@ -656,6 +736,11 @@ type MessageOriginHiddenUser struct {
 
 	// Name of the user that sent the message originally
 	SenderUserName string `json:"sender_user_name"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageOriginHiddenUser) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // MessageOriginChat the message was originally sent on behalf of a chat to a group chat.
@@ -671,6 +756,11 @@ type MessageOriginChat struct {
 
 	// Optional. For messages originally sent by an anonymous chat administrator, original message author signature
 	AuthorSignature string `json:"author_signature,omitempty"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageOriginChat) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // MessageOriginChannel the message was originally sent to a channel chat.
@@ -689,6 +779,11 @@ type MessageOriginChannel struct {
 
 	// Optional. Signature of the original post author
 	AuthorSignature string `json:"author_signature,omitempty"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageOriginChannel) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // PhotoSize this object represents one size of a photo or a file / sticker thumbnail.
@@ -958,16 +1053,21 @@ type Poll struct {
 	OpenPeriod int `json:"open_period,omitempty"`
 
 	// Optional. Point in time (Unix timestamp) when the poll will be automatically closed
-	CloseDate int `json:"close_date,omitempty"`
+	CloseDate int64 `json:"close_date,omitempty"`
+}
+
+// CloseDateTime returns time.Time representation of CloseDate field.
+func (s *Poll) CloseDateTime() time.Time {
+	return time.Unix(s.CloseDate, 0)
 }
 
 // Location this object represents a point on the map.
 type Location struct {
-	// Longitude as defined by sender
-	Longitude float64 `json:"longitude"`
-
 	// Latitude as defined by sender
 	Latitude float64 `json:"latitude"`
+
+	// Longitude as defined by sender
+	Longitude float64 `json:"longitude"`
 
 	// Optional. The radius of uncertainty for the location, measured in meters; 0-1500
 	HorizontalAccuracy float64 `json:"horizontal_accuracy,omitempty"`
@@ -1060,22 +1160,49 @@ type ForumTopicEdited struct {
 	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
 }
 
+// SharedUser this object contains information about a user that was shared with the bot using a KeyboardButtonRequestUser button.
+type SharedUser struct {
+	// Identifier of the shared user. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so 64-bit integers or double-precision float types are safe for storing these identifiers. The bot may not have access to the user and could be unable to use this identifier, unless the user is already known to the bot by some other means.
+	UserID int `json:"user_id"`
+
+	// Optional. First name of the user, if the name was requested by the bot
+	FirstName string `json:"first_name,omitempty"`
+
+	// Optional. Last name of the user, if the name was requested by the bot
+	LastName string `json:"last_name,omitempty"`
+
+	// Optional. Username of the user, if the username was requested by the bot
+	Username string `json:"username,omitempty"`
+
+	// Optional. Available sizes of the chat photo, if the photo was requested by the bot
+	Photo []PhotoSize `json:"photo,omitempty"`
+}
+
 // UsersShared this object contains information about the users whose identifiers were shared with the bot using a KeyboardButtonRequestUsers button.
 type UsersShared struct {
 	// Identifier of the request
 	RequestID int `json:"request_id"`
 
-	// Identifiers of the shared users. These numbers may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting them. But they have at most 52 significant bits, so 64-bit integers or double-precision float types are safe for storing these identifiers. The bot may not have access to the users and could be unable to use these identifiers, unless the users are already known to the bot by some other means.
-	UserIDs []UserID `json:"user_ids"`
+	// Information about users shared with the bot.
+	Users []SharedUser `json:"users"`
 }
 
-// ChatShared this object contains information about the chat whose identifier was shared with the bot using a KeyboardButtonRequestChat button.
+// ChatShared this object contains information about a chat that was shared with the bot using a KeyboardButtonRequestChat button.
 type ChatShared struct {
 	// Identifier of the request
 	RequestID int `json:"request_id"`
 
 	// Identifier of the shared chat.  The bot may not have access to the chat and could be unable to use this identifier, unless the chat is already known to the bot by some other means.
 	ChatID ChatID `json:"chat_id"`
+
+	// Optional. Title of the chat, if the title was requested by the bot.
+	Title string `json:"title,omitempty"`
+
+	// Optional. Username of the chat, if the username was requested by the bot and available.
+	Username string `json:"username,omitempty"`
+
+	// Optional. Available sizes of the chat photo, if the photo was requested by the bot
+	Photo []PhotoSize `json:"photo,omitempty"`
 }
 
 // WriteAccessAllowed this object represents a service message about a user allowing a bot to write messages after adding it to the attachment menu, launching a Web App from a link, or accepting an explicit request from a Web App sent by the method requestWriteAccess.
@@ -1093,7 +1220,12 @@ type WriteAccessAllowed struct {
 // VideoChatScheduled this object represents a service message about a video chat scheduled in the chat.
 type VideoChatScheduled struct {
 	// Point in time (Unix timestamp) when the video chat is supposed to be started by a chat administrator
-	StartDate int `json:"start_date"`
+	StartDate int64 `json:"start_date"`
+}
+
+// StartDateTime returns time.Time representation of StartDate field.
+func (s *VideoChatScheduled) StartDateTime() time.Time {
+	return time.Unix(s.StartDate, 0)
 }
 
 // VideoChatEnded this object represents a service message about a video chat ended in the chat.
@@ -1114,7 +1246,7 @@ type Giveaway struct {
 	Chats []Chat `json:"chats"`
 
 	// Point in time (Unix timestamp) when winners of the giveaway will be selected
-	WinnersSelectionDate int `json:"winners_selection_date"`
+	WinnersSelectionDate int64 `json:"winners_selection_date"`
 
 	// The number of users which are supposed to be selected as winners of the giveaway
 	WinnerCount int `json:"winner_count"`
@@ -1135,6 +1267,11 @@ type Giveaway struct {
 	PremiumSubscriptionMonthCount int `json:"premium_subscription_month_count,omitempty"`
 }
 
+// WinnersSelectionDateTime returns time.Time representation of WinnersSelectionDate field.
+func (s *Giveaway) WinnersSelectionDateTime() time.Time {
+	return time.Unix(s.WinnersSelectionDate, 0)
+}
+
 // GiveawayWinners this object represents a message about the completion of a giveaway with public winners.
 type GiveawayWinners struct {
 	// The chat that created the giveaway
@@ -1144,7 +1281,7 @@ type GiveawayWinners struct {
 	GiveawayMessageID int `json:"giveaway_message_id"`
 
 	// Point in time (Unix timestamp) when winners of the giveaway were selected
-	WinnersSelectionDate int `json:"winners_selection_date"`
+	WinnersSelectionDate int64 `json:"winners_selection_date"`
 
 	// Total number of winners in the giveaway
 	WinnerCount int `json:"winner_count"`
@@ -1169,6 +1306,11 @@ type GiveawayWinners struct {
 
 	// Optional. Description of additional giveaway prize
 	PrizeDescription string `json:"prize_description,omitempty"`
+}
+
+// WinnersSelectionDateTime returns time.Time representation of WinnersSelectionDate field.
+func (s *GiveawayWinners) WinnersSelectionDateTime() time.Time {
+	return time.Unix(s.WinnersSelectionDate, 0)
 }
 
 // GiveawayCompleted this object represents a service message about the completion of a giveaway without public winners.
@@ -1276,7 +1418,7 @@ type KeyboardButton struct {
 	WebApp *WebAppInfo `json:"web_app,omitempty"`
 }
 
-// KeyboardButtonRequestUsers this object defines the criteria used to request suitable users. The identifiers of the selected users will be shared with the bot when the corresponding button is pressed. More about requesting users »
+// KeyboardButtonRequestUsers this object defines the criteria used to request suitable users. Information about the selected users will be shared with the bot when the corresponding button is pressed. More about requesting users »
 type KeyboardButtonRequestUsers struct {
 	// Signed 32-bit identifier of the request that will be received back in the UsersShared object. Must be unique within the message
 	RequestID int `json:"request_id"`
@@ -1289,9 +1431,18 @@ type KeyboardButtonRequestUsers struct {
 
 	// Optional. The maximum number of users to be selected; 1-10. Defaults to 1.
 	MaxQuantity int `json:"max_quantity,omitempty"`
+
+	// Optional. Pass True to request the users' first and last name
+	RequestName bool `json:"request_name,omitempty"`
+
+	// Optional. Pass True to request the users' username
+	RequestUsername bool `json:"request_username,omitempty"`
+
+	// Optional. Pass True to request the users' photo
+	RequestPhoto bool `json:"request_photo,omitempty"`
 }
 
-// KeyboardButtonRequestChat this object defines the criteria used to request a suitable chat. The identifier of the selected chat will be shared with the bot when the corresponding button is pressed. More about requesting chats »
+// KeyboardButtonRequestChat this object defines the criteria used to request a suitable chat. Information about the selected chat will be shared with the bot when the corresponding button is pressed. The bot will be granted requested rights in the сhat if appropriate More about requesting chats »
 type KeyboardButtonRequestChat struct {
 	// Signed 32-bit identifier of the request, which will be received back in the ChatShared object. Must be unique within the message
 	RequestID int `json:"request_id"`
@@ -1316,6 +1467,15 @@ type KeyboardButtonRequestChat struct {
 
 	// Optional. Pass True to request a chat with the bot as a member. Otherwise, no additional restrictions are applied.
 	BotIsMember bool `json:"bot_is_member,omitempty"`
+
+	// Optional. Pass True to request the chat's title
+	RequestTitle bool `json:"request_title,omitempty"`
+
+	// Optional. Pass True to request the chat's username
+	RequestUsername bool `json:"request_username,omitempty"`
+
+	// Optional. Pass True to request the chat's photo
+	RequestPhoto bool `json:"request_photo,omitempty"`
 }
 
 // KeyboardButtonPollType this object represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
@@ -1477,13 +1637,18 @@ type ChatInviteLink struct {
 	Name string `json:"name,omitempty"`
 
 	// Optional. Point in time (Unix timestamp) when the link will expire or has been expired
-	ExpireDate int `json:"expire_date,omitempty"`
+	ExpireDate int64 `json:"expire_date,omitempty"`
 
 	// Optional. The maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
 	MemberLimit int `json:"member_limit,omitempty"`
 
 	// Optional. Number of pending join requests created using this link
 	PendingJoinRequestCount int `json:"pending_join_request_count,omitempty"`
+}
+
+// ExpireDateTime returns time.Time representation of ExpireDate field.
+func (s *ChatInviteLink) ExpireDateTime() time.Time {
+	return time.Unix(s.ExpireDate, 0)
 }
 
 // ChatAdministratorRights represents the rights of an administrator in a chat.
@@ -1521,16 +1686,16 @@ type ChatAdministratorRights struct {
 	// True, if the administrator can delete stories posted by other users
 	CanDeleteStories bool `json:"can_delete_stories"`
 
-	// Optional. True, if the administrator can post messages in the channel, or access channel statistics; channels only
+	// Optional. True, if the administrator can post messages in the channel, or access channel statistics; for channels only
 	CanPostMessages bool `json:"can_post_messages,omitempty"`
 
-	// Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
+	// Optional. True, if the administrator can edit messages of other users and can pin messages; for channels only
 	CanEditMessages bool `json:"can_edit_messages,omitempty"`
 
-	// Optional. True, if the user is allowed to pin messages; groups and supergroups only
+	// Optional. True, if the user is allowed to pin messages; for groups and supergroups only
 	CanPinMessages bool `json:"can_pin_messages,omitempty"`
 
-	// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
+	// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
 	CanManageTopics bool `json:"can_manage_topics,omitempty"`
 }
 
@@ -1543,7 +1708,7 @@ type ChatMemberUpdated struct {
 	From User `json:"from"`
 
 	// Date the change was done in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Previous information about the chat member
 	OldChatMember ChatMember `json:"old_chat_member"`
@@ -1556,6 +1721,11 @@ type ChatMemberUpdated struct {
 
 	// Optional. True, if the user joined the chat via a chat folder invite link
 	ViaChatFolderInviteLink bool `json:"via_chat_folder_invite_link,omitempty"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *ChatMemberUpdated) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // ChatMember this object contains information about one member of a chat. Currently, the following 6 types of chat members are supported:
@@ -1632,16 +1802,16 @@ type ChatMemberAdministrator struct {
 	// True, if the administrator can delete stories posted by other users
 	CanDeleteStories bool `json:"can_delete_stories"`
 
-	// Optional. True, if the administrator can post messages in the channel, or access channel statistics; channels only
+	// Optional. True, if the administrator can post messages in the channel, or access channel statistics; for channels only
 	CanPostMessages bool `json:"can_post_messages,omitempty"`
 
-	// Optional. True, if the administrator can edit messages of other users and can pin messages; channels only
+	// Optional. True, if the administrator can edit messages of other users and can pin messages; for channels only
 	CanEditMessages bool `json:"can_edit_messages,omitempty"`
 
-	// Optional. True, if the user is allowed to pin messages; groups and supergroups only
+	// Optional. True, if the user is allowed to pin messages; for groups and supergroups only
 	CanPinMessages bool `json:"can_pin_messages,omitempty"`
 
-	// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only
+	// Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
 	CanManageTopics bool `json:"can_manage_topics,omitempty"`
 
 	// Optional. Custom title for this user
@@ -1711,7 +1881,12 @@ type ChatMemberRestricted struct {
 	CanManageTopics bool `json:"can_manage_topics"`
 
 	// Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever
-	UntilDate int `json:"until_date"`
+	UntilDate int64 `json:"until_date"`
+}
+
+// UntilDateTime returns time.Time representation of UntilDate field.
+func (s *ChatMemberRestricted) UntilDateTime() time.Time {
+	return time.Unix(s.UntilDate, 0)
 }
 
 // ChatMemberLeft represents a chat member that isn't currently a member of the chat, but may join it themselves.
@@ -1732,7 +1907,12 @@ type ChatMemberBanned struct {
 	User User `json:"user"`
 
 	// Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever
-	UntilDate int `json:"until_date"`
+	UntilDate int64 `json:"until_date"`
+}
+
+// UntilDateTime returns time.Time representation of UntilDate field.
+func (s *ChatMemberBanned) UntilDateTime() time.Time {
+	return time.Unix(s.UntilDate, 0)
 }
 
 // ChatJoinRequest represents a join request sent to a chat.
@@ -1747,13 +1927,18 @@ type ChatJoinRequest struct {
 	UserChatID ChatID `json:"user_chat_id"`
 
 	// Date the request was sent in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Optional. Bio of the user.
 	Bio string `json:"bio,omitempty"`
 
 	// Optional. Chat invite link that was used by the user to send the join request
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *ChatJoinRequest) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
@@ -1799,6 +1984,57 @@ type ChatPermissions struct {
 
 	// Optional. True, if the user is allowed to create forum topics. If omitted defaults to the value of can_pin_messages
 	CanManageTopics bool `json:"can_manage_topics,omitempty"`
+}
+
+// Birthdate
+type Birthdate struct {
+	// Day of the user's birth; 1-31
+	Day int `json:"day"`
+
+	// Month of the user's birth; 1-12
+	Month int `json:"month"`
+
+	// Optional. Year of the user's birth
+	Year int `json:"year,omitempty"`
+}
+
+// BusinessIntro
+type BusinessIntro struct {
+	// Optional. Title text of the business intro
+	Title string `json:"title,omitempty"`
+
+	// Optional. Message text of the business intro
+	Message string `json:"message,omitempty"`
+
+	// Optional. Sticker of the business intro
+	Sticker *Sticker `json:"sticker,omitempty"`
+}
+
+// BusinessLocation
+type BusinessLocation struct {
+	// Address of the business
+	Address string `json:"address"`
+
+	// Optional. Location of the business
+	Location *Location `json:"location,omitempty"`
+}
+
+// BusinessOpeningHoursInterval
+type BusinessOpeningHoursInterval struct {
+	// The minute's sequence number in a week, starting on Monday, marking the start of the time interval during which the business is open; 0 - 7 * 24 * 60
+	OpeningMinute int `json:"opening_minute"`
+
+	// The minute's sequence number in a week, starting on Monday, marking the end of the time interval during which the business is open; 0 - 8 * 24 * 60
+	ClosingMinute int `json:"closing_minute"`
+}
+
+// BusinessOpeningHours
+type BusinessOpeningHours struct {
+	// Unique name of the time zone for which the opening hours are defined
+	TimeZoneName string `json:"time_zone_name"`
+
+	// List of time intervals describing business opening hours
+	OpeningHours []BusinessOpeningHoursInterval `json:"opening_hours"`
 }
 
 // ChatLocation represents a location to which a chat is connected.
@@ -1852,13 +2088,18 @@ type MessageReactionUpdated struct {
 	ActorChat *Chat `json:"actor_chat,omitempty"`
 
 	// Date of the change in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// Previous list of reaction types that were set by the user
 	OldReaction []ReactionType `json:"old_reaction"`
 
 	// New list of reaction types that have been set by the user
 	NewReaction []ReactionType `json:"new_reaction"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageReactionUpdated) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // MessageReactionCountUpdated this object represents reaction changes on a message with anonymous reactions.
@@ -1870,10 +2111,15 @@ type MessageReactionCountUpdated struct {
 	MessageID int `json:"message_id"`
 
 	// Date of the change in Unix time
-	Date int `json:"date"`
+	Date int64 `json:"date"`
 
 	// List of reactions that are present on the message
 	Reactions []ReactionCount `json:"reactions"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageReactionCountUpdated) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // ForumTopic this object represents a forum topic.
@@ -2044,13 +2290,23 @@ type ChatBoost struct {
 	BoostID string `json:"boost_id"`
 
 	// Point in time (Unix timestamp) when the chat was boosted
-	AddDate int `json:"add_date"`
+	AddDate int64 `json:"add_date"`
 
 	// Point in time (Unix timestamp) when the boost will automatically expire, unless the booster's Telegram Premium subscription is prolonged
-	ExpirationDate int `json:"expiration_date"`
+	ExpirationDate int64 `json:"expiration_date"`
 
 	// Source of the added boost
 	Source ChatBoostSource `json:"source"`
+}
+
+// AddDateTime returns time.Time representation of AddDate field.
+func (s *ChatBoost) AddDateTime() time.Time {
+	return time.Unix(s.AddDate, 0)
+}
+
+// ExpirationDateTime returns time.Time representation of ExpirationDate field.
+func (s *ChatBoost) ExpirationDateTime() time.Time {
+	return time.Unix(s.ExpirationDate, 0)
 }
 
 // ChatBoostUpdated this object represents a boost added to a chat or changed.
@@ -2071,16 +2327,59 @@ type ChatBoostRemoved struct {
 	BoostID string `json:"boost_id"`
 
 	// Point in time (Unix timestamp) when the boost was removed
-	RemoveDate int `json:"remove_date"`
+	RemoveDate int64 `json:"remove_date"`
 
 	// Source of the removed boost
 	Source ChatBoostSource `json:"source"`
+}
+
+// RemoveDateTime returns time.Time representation of RemoveDate field.
+func (s *ChatBoostRemoved) RemoveDateTime() time.Time {
+	return time.Unix(s.RemoveDate, 0)
 }
 
 // UserChatBoosts this object represents a list of boosts added to a chat by a user.
 type UserChatBoosts struct {
 	// The list of boosts added to the chat by the user
 	Boosts []ChatBoost `json:"boosts"`
+}
+
+// BusinessConnection describes the connection of the bot with a business account.
+type BusinessConnection struct {
+	// Unique identifier of the business connection
+	ID string `json:"id"`
+
+	// Business account user that created the business connection
+	User User `json:"user"`
+
+	// Identifier of a private chat with the user who created the business connection.
+	UserChatID int64 `json:"user_chat_id"`
+
+	// Date the connection was established in Unix time
+	Date int64 `json:"date"`
+
+	// True, if the bot can act on behalf of the business account in chats that were active in the last 24 hours
+	CanReply bool `json:"can_reply"`
+
+	// True, if the connection is active
+	IsEnabled bool `json:"is_enabled"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *BusinessConnection) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
+}
+
+// BusinessMessagesDeleted this object is received when messages are deleted from a connected business account.
+type BusinessMessagesDeleted struct {
+	// Unique identifier of the business connection
+	BusinessConnectionID string `json:"business_connection_id"`
+
+	// Information about a chat in the business account. The bot may not have access to the chat or the corresponding user.
+	Chat Chat `json:"chat"`
+
+	// A JSON-serialized list of identifiers of deleted messages in the chat of the business account
+	MessageIds []int `json:"message_ids"`
 }
 
 // ResponseParameters describes why a request was unsuccessful.
@@ -2295,12 +2594,6 @@ type StickerSet struct {
 	// Type of stickers in the set, currently one of “regular”, “mask”, “custom_emoji”
 	StickerType StickerType `json:"sticker_type"`
 
-	// True, if the sticker set contains animated stickers
-	IsAnimated bool `json:"is_animated"`
-
-	// True, if the sticker set contains video stickers
-	IsVideo bool `json:"is_video"`
-
 	// List of all set stickers
 	Stickers []Sticker `json:"stickers"`
 
@@ -2327,6 +2620,9 @@ type MaskPosition struct {
 type InputSticker struct {
 	// The added sticker. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, upload a new one using multipart/form-data, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. Animated and video stickers can't be uploaded via HTTP URL. More information on Sending Files »
 	Sticker FileArg `json:"sticker"`
+
+	// Format of the added sticker, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, “video” for a WEBM video
+	Format string `json:"format"`
 
 	// List of 1-20 emoji associated with the sticker
 	EmojiList []string `json:"emoji_list"`
@@ -3403,7 +3699,12 @@ type PassportFile struct {
 	FileSize int `json:"file_size"`
 
 	// Unix time when the file was uploaded
-	FileDate int `json:"file_date"`
+	FileDate int64 `json:"file_date"`
+}
+
+// FileDateTime returns time.Time representation of FileDate field.
+func (s *PassportFile) FileDateTime() time.Time {
+	return time.Unix(s.FileDate, 0)
 }
 
 // EncryptedPassportElement describes documents or other Telegram Passport elements shared with the bot by the user.
@@ -3411,28 +3712,28 @@ type EncryptedPassportElement struct {
 	// Element type. One of “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport”, “address”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”, “temporary_registration”, “phone_number”, “email”.
 	Type string `json:"type"`
 
-	// Optional. Base64-encoded encrypted Telegram Passport element data provided by the user, available for “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport” and “address” types. Can be decrypted and verified using the accompanying EncryptedCredentials.
+	// Optional. Base64-encoded encrypted Telegram Passport element data provided by the user; available only for “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport” and “address” types. Can be decrypted and verified using the accompanying EncryptedCredentials.
 	Data string `json:"data,omitempty"`
 
-	// Optional. User's verified phone number, available only for “phone_number” type
+	// Optional. User's verified phone number; available only for “phone_number” type
 	PhoneNumber string `json:"phone_number,omitempty"`
 
-	// Optional. User's verified email address, available only for “email” type
+	// Optional. User's verified email address; available only for “email” type
 	Email string `json:"email,omitempty"`
 
-	// Optional. Array of encrypted files with documents provided by the user, available for “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration” and “temporary_registration” types. Files can be decrypted and verified using the accompanying EncryptedCredentials.
+	// Optional. Array of encrypted files with documents provided by the user; available only for “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration” and “temporary_registration” types. Files can be decrypted and verified using the accompanying EncryptedCredentials.
 	Files []PassportFile `json:"files,omitempty"`
 
-	// Optional. Encrypted file with the front side of the document, provided by the user. Available for “passport”, “driver_license”, “identity_card” and “internal_passport”. The file can be decrypted and verified using the accompanying EncryptedCredentials.
+	// Optional. Encrypted file with the front side of the document, provided by the user; available only for “passport”, “driver_license”, “identity_card” and “internal_passport”. The file can be decrypted and verified using the accompanying EncryptedCredentials.
 	FrontSide *PassportFile `json:"front_side,omitempty"`
 
-	// Optional. Encrypted file with the reverse side of the document, provided by the user. Available for “driver_license” and “identity_card”. The file can be decrypted and verified using the accompanying EncryptedCredentials.
+	// Optional. Encrypted file with the reverse side of the document, provided by the user; available only for “driver_license” and “identity_card”. The file can be decrypted and verified using the accompanying EncryptedCredentials.
 	ReverseSide *PassportFile `json:"reverse_side,omitempty"`
 
-	// Optional. Encrypted file with the selfie of the user holding a document, provided by the user; available for “passport”, “driver_license”, “identity_card” and “internal_passport”. The file can be decrypted and verified using the accompanying EncryptedCredentials.
+	// Optional. Encrypted file with the selfie of the user holding a document, provided by the user; available if requested for “passport”, “driver_license”, “identity_card” and “internal_passport”. The file can be decrypted and verified using the accompanying EncryptedCredentials.
 	Selfie *PassportFile `json:"selfie,omitempty"`
 
-	// Optional. Array of encrypted files with translated versions of documents provided by the user. Available if requested for “passport”, “driver_license”, “identity_card”, “internal_passport”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration” and “temporary_registration” types. Files can be decrypted and verified using the accompanying EncryptedCredentials.
+	// Optional. Array of encrypted files with translated versions of documents provided by the user; available if requested for “passport”, “driver_license”, “identity_card”, “internal_passport”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration” and “temporary_registration” types. Files can be decrypted and verified using the accompanying EncryptedCredentials.
 	Translation []PassportFile `json:"translation,omitempty"`
 
 	// Base64-encoded element hash for using in PassportElementErrorUnspecified
@@ -3673,6 +3974,11 @@ type WebAppInitData struct {
 	Hash string `json:"hash"`
 
 	raw url.Values
+}
+
+// AuthDateTime returns time.Time representation of AuthDate field.
+func (s *WebAppInitData) AuthDateTime() time.Time {
+	return time.Unix(s.AuthDate, 0)
 }
 
 // WebAppUser this object contains the data of the Mini App user.

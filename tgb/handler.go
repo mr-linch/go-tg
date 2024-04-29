@@ -27,6 +27,8 @@ func (handler MessageHandler) Handle(ctx context.Context, update *Update) error 
 		update.EditedMessage,
 		update.ChannelPost,
 		update.EditedChannelPost,
+		update.BusinessMessage,
+		update.EditedBusinessMessage,
 	); msg != nil {
 		return handler(ctx, &MessageUpdate{
 			Message: msg,
@@ -197,5 +199,27 @@ func (handler RemovedChatBoostHandler) Handle(ctx context.Context, update *Updat
 		ChatBoostRemoved: update.RemovedChatBoost,
 		Update:           update,
 		Client:           update.Client,
+	})
+}
+
+// BusinessConnection it's typed handler for [BusinessConnectionUpdate].
+type BusinessConnectionHandler func(context.Context, *BusinessConnectionUpdate) error
+
+func (handler BusinessConnectionHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &BusinessConnectionUpdate{
+		BusinessConnection: update.BusinessConnection,
+		Update:             update,
+		Client:             update.Client,
+	})
+}
+
+// DeletedBusinessMessageHandler it's typed handler for [DeletedBusinessMessage]
+type DeletedBusinessMessageHandler func(context.Context, *DeletedBusinessMessagesUpdate) error
+
+func (handler DeletedBusinessMessageHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &DeletedBusinessMessagesUpdate{
+		BusinessMessagesDeleted: update.DeletedBusinessMessages,
+		Update:                  update,
+		Client:                  update.Client,
 	})
 }

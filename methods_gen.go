@@ -282,6 +282,12 @@ func (client *Client) SendMessage(chatID PeerID, text string) *SendMessageCall {
 	)
 }
 
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendMessageCall) BusinessConnectionID(businessConnectionID string) *SendMessageCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
+}
+
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendMessageCall) ChatID(chatID PeerID) *SendMessageCall {
 	call.request.PeerID("chat_id", chatID)
@@ -336,7 +342,7 @@ func (call *SendMessageCall) ReplyParameters(replyParameters ReplyParameters) *S
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendMessageCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -422,7 +428,7 @@ type ForwardMessagesCall struct {
 // NewForwardMessagesCall constructs a new ForwardMessagesCall with required parameters.
 // chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // fromChatID - Unique identifier for the chat where the original messages were sent (or channel username in the format @channelusername)
-// messageIds - Identifiers of 1-100 messages in the chat from_chat_id to forward. The identifiers must be specified in a strictly increasing order.
+// messageIds - A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to forward. The identifiers must be specified in a strictly increasing order.
 func NewForwardMessagesCall(chatID PeerID, fromChatID PeerID, messageIds []int) *ForwardMessagesCall {
 	return &ForwardMessagesCall{
 		Call[MessageID]{
@@ -460,7 +466,7 @@ func (call *ForwardMessagesCall) FromChatID(fromChatID PeerID) *ForwardMessagesC
 	return call
 }
 
-// MessageIds Identifiers of 1-100 messages in the chat from_chat_id to forward. The identifiers must be specified in a strictly increasing order.
+// MessageIds A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to forward. The identifiers must be specified in a strictly increasing order.
 func (call *ForwardMessagesCall) MessageIds(messageIds []int) *ForwardMessagesCall {
 	call.request.JSON("message_ids", messageIds)
 	return call
@@ -592,7 +598,7 @@ type CopyMessagesCall struct {
 // NewCopyMessagesCall constructs a new CopyMessagesCall with required parameters.
 // chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // fromChatID - Unique identifier for the chat where the original messages were sent (or channel username in the format @channelusername)
-// messageIds - Identifiers of 1-100 messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly increasing order.
+// messageIds - A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly increasing order.
 func NewCopyMessagesCall(chatID PeerID, fromChatID PeerID, messageIds []int) *CopyMessagesCall {
 	return &CopyMessagesCall{
 		Call[MessageID]{
@@ -630,7 +636,7 @@ func (call *CopyMessagesCall) FromChatID(fromChatID PeerID) *CopyMessagesCall {
 	return call
 }
 
-// MessageIds Identifiers of 1-100 messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly increasing order.
+// MessageIds A JSON-serialized list of 1-100 identifiers of messages in the chat from_chat_id to copy. The identifiers must be specified in a strictly increasing order.
 func (call *CopyMessagesCall) MessageIds(messageIds []int) *CopyMessagesCall {
 	call.request.JSON("message_ids", messageIds)
 	return call
@@ -680,6 +686,12 @@ func (client *Client) SendPhoto(chatID PeerID, photo FileArg) *SendPhotoCall {
 		NewSendPhotoCall(chatID, photo),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendPhotoCall) BusinessConnectionID(businessConnectionID string) *SendPhotoCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -742,7 +754,7 @@ func (call *SendPhotoCall) ReplyParameters(replyParameters ReplyParameters) *Sen
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendPhotoCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPhotoCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -777,6 +789,12 @@ func (client *Client) SendAudio(chatID PeerID, audio FileArg) *SendAudioCall {
 		NewSendAudioCall(chatID, audio),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendAudioCall) BusinessConnectionID(businessConnectionID string) *SendAudioCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -857,7 +875,7 @@ func (call *SendAudioCall) ReplyParameters(replyParameters ReplyParameters) *Sen
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendAudioCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAudioCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -890,6 +908,12 @@ func (client *Client) SendDocument(chatID PeerID, document FileArg) *SendDocumen
 		NewSendDocumentCall(chatID, document),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendDocumentCall) BusinessConnectionID(businessConnectionID string) *SendDocumentCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -958,7 +982,7 @@ func (call *SendDocumentCall) ReplyParameters(replyParameters ReplyParameters) *
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendDocumentCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendDocumentCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -991,6 +1015,12 @@ func (client *Client) SendVideo(chatID PeerID, video FileArg) *SendVideoCall {
 		NewSendVideoCall(chatID, video),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendVideoCall) BusinessConnectionID(businessConnectionID string) *SendVideoCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1083,7 +1113,7 @@ func (call *SendVideoCall) ReplyParameters(replyParameters ReplyParameters) *Sen
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendVideoCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVideoCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1116,6 +1146,12 @@ func (client *Client) SendAnimation(chatID PeerID, animation FileArg) *SendAnima
 		NewSendAnimationCall(chatID, animation),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendAnimationCall) BusinessConnectionID(businessConnectionID string) *SendAnimationCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1202,7 +1238,7 @@ func (call *SendAnimationCall) ReplyParameters(replyParameters ReplyParameters) 
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendAnimationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAnimationCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1236,6 +1272,12 @@ func (client *Client) SendVoice(chatID PeerID, voice FileArg) *SendVoiceCall {
 		NewSendVoiceCall(chatID, voice),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendVoiceCall) BusinessConnectionID(businessConnectionID string) *SendVoiceCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1298,7 +1340,7 @@ func (call *SendVoiceCall) ReplyParameters(replyParameters ReplyParameters) *Sen
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendVoiceCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVoiceCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1331,6 +1373,12 @@ func (client *Client) SendVideoNote(chatID PeerID, videoNote FileArg) *SendVideo
 		NewSendVideoNoteCall(chatID, videoNote),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendVideoNoteCall) BusinessConnectionID(businessConnectionID string) *SendVideoNoteCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1387,7 +1435,7 @@ func (call *SendVideoNoteCall) ReplyParameters(replyParameters ReplyParameters) 
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendVideoNoteCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVideoNoteCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1420,6 +1468,12 @@ func (client *Client) SendMediaGroup(chatID PeerID, media []InputMedia) *SendMed
 		NewSendMediaGroupCall(chatID, media),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendMediaGroupCall) BusinessConnectionID(businessConnectionID string) *SendMediaGroupCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1488,6 +1542,12 @@ func (client *Client) SendLocation(chatID PeerID, latitude float64, longitude fl
 	)
 }
 
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendLocationCall) BusinessConnectionID(businessConnectionID string) *SendLocationCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
+}
+
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendLocationCall) ChatID(chatID PeerID) *SendLocationCall {
 	call.request.PeerID("chat_id", chatID)
@@ -1554,7 +1614,7 @@ func (call *SendLocationCall) ReplyParameters(replyParameters ReplyParameters) *
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendLocationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendLocationCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1592,6 +1652,12 @@ func (client *Client) SendVenue(chatID PeerID, latitude float64, longitude float
 		NewSendVenueCall(chatID, latitude, longitude, title, address),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendVenueCall) BusinessConnectionID(businessConnectionID string) *SendVenueCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1672,7 +1738,7 @@ func (call *SendVenueCall) ReplyParameters(replyParameters ReplyParameters) *Sen
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendVenueCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVenueCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1706,6 +1772,12 @@ func (client *Client) SendContact(chatID PeerID, phoneNumber string, firstName s
 		NewSendContactCall(chatID, phoneNumber, firstName),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendContactCall) BusinessConnectionID(businessConnectionID string) *SendContactCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1762,7 +1834,7 @@ func (call *SendContactCall) ReplyParameters(replyParameters ReplyParameters) *S
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendContactCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendContactCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1796,6 +1868,12 @@ func (client *Client) SendPoll(chatID PeerID, question string, options []string)
 		NewSendPollCall(chatID, question, options),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendPollCall) BusinessConnectionID(businessConnectionID string) *SendPollCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1853,8 +1931,8 @@ func (call *SendPollCall) Explanation(explanation string) *SendPollCall {
 }
 
 // ExplanationParseMode Mode for parsing entities in the explanation. See formatting options for more details.
-func (call *SendPollCall) ExplanationParseMode(explanationParseMode string) *SendPollCall {
-	call.request.String("explanation_parse_mode", explanationParseMode)
+func (call *SendPollCall) ExplanationParseMode(explanationParseMode ParseMode) *SendPollCall {
+	call.request.Stringer("explanation_parse_mode", explanationParseMode)
 	return call
 }
 
@@ -1900,7 +1978,7 @@ func (call *SendPollCall) ReplyParameters(replyParameters ReplyParameters) *Send
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendPollCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPollCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1930,6 +2008,12 @@ func (client *Client) SendDice(chatID PeerID) *SendDiceCall {
 		NewSendDiceCall(chatID),
 		client,
 	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendDiceCall) BusinessConnectionID(businessConnectionID string) *SendDiceCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
 }
 
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1968,7 +2052,7 @@ func (call *SendDiceCall) ReplyParameters(replyParameters ReplyParameters) *Send
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
 func (call *SendDiceCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendDiceCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -2006,13 +2090,19 @@ func (client *Client) SendChatAction(chatID PeerID, action ChatAction) *SendChat
 	)
 }
 
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the action will be sent
+func (call *SendChatActionCall) BusinessConnectionID(businessConnectionID string) *SendChatActionCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
+}
+
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendChatActionCall) ChatID(chatID PeerID) *SendChatActionCall {
 	call.request.PeerID("chat_id", chatID)
 	return call
 }
 
-// MessageThreadID Unique identifier for the target message thread; supergroups only
+// MessageThreadID Unique identifier for the target message thread; for supergroups only
 func (call *SendChatActionCall) MessageThreadID(messageThreadID int) *SendChatActionCall {
 	call.request.Int("message_thread_id", messageThreadID)
 	return call
@@ -2065,7 +2155,7 @@ func (call *SetMessageReactionCall) MessageID(messageID int) *SetMessageReaction
 	return call
 }
 
-// Reaction New list of reaction types to set on the message. Currently, as non-premium users, bots can set up to one reaction per message. A custom emoji reaction can be used if it is either already present on the message or explicitly allowed by chat administrators.
+// Reaction A JSON-serialized list of reaction types to set on the message. Currently, as non-premium users, bots can set up to one reaction per message. A custom emoji reaction can be used if it is either already present on the message or explicitly allowed by chat administrators.
 func (call *SetMessageReactionCall) Reaction(reaction []ReactionType) *SetMessageReactionCall {
 	call.request.JSON("reaction", reaction)
 	return call
@@ -2428,25 +2518,25 @@ func (call *PromoteChatMemberCall) CanDeleteStories(canDeleteStories bool) *Prom
 	return call
 }
 
-// CanPostMessages Pass True if the administrator can post messages in the channel, or access channel statistics; channels only
+// CanPostMessages Pass True if the administrator can post messages in the channel, or access channel statistics; for channels only
 func (call *PromoteChatMemberCall) CanPostMessages(canPostMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_post_messages", canPostMessages)
 	return call
 }
 
-// CanEditMessages Pass True if the administrator can edit messages of other users and can pin messages; channels only
+// CanEditMessages Pass True if the administrator can edit messages of other users and can pin messages; for channels only
 func (call *PromoteChatMemberCall) CanEditMessages(canEditMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_edit_messages", canEditMessages)
 	return call
 }
 
-// CanPinMessages Pass True if the administrator can pin messages, supergroups only
+// CanPinMessages Pass True if the administrator can pin messages; for supergroups only
 func (call *PromoteChatMemberCall) CanPinMessages(canPinMessages bool) *PromoteChatMemberCall {
 	call.request.Bool("can_pin_messages", canPinMessages)
 	return call
 }
 
-// CanManageTopics Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only
+// CanManageTopics Pass True if the user is allowed to create, rename, close, and reopen forum topics; for supergroups only
 func (call *PromoteChatMemberCall) CanManageTopics(canManageTopics bool) *PromoteChatMemberCall {
 	call.request.Bool("can_manage_topics", canManageTopics)
 	return call
@@ -4008,6 +4098,38 @@ func (call *GetUserChatBoostsCall) UserID(userID UserID) *GetUserChatBoostsCall 
 	return call
 }
 
+// GetBusinessConnectionCall reprenesents a call to the getBusinessConnection method.
+// Use this method to get information about the connection of the bot with a business account
+// Returns a BusinessConnection object on success.
+type GetBusinessConnectionCall struct {
+	Call[BusinessConnection]
+}
+
+// NewGetBusinessConnectionCall constructs a new GetBusinessConnectionCall with required parameters.
+// businessConnectionID - Unique identifier of the business connection
+func NewGetBusinessConnectionCall(businessConnectionID string) *GetBusinessConnectionCall {
+	return &GetBusinessConnectionCall{
+		Call[BusinessConnection]{
+			request: NewRequest("getBusinessConnection").
+				String("business_connection_id", businessConnectionID),
+		},
+	}
+}
+
+// GetBusinessConnectionCall constructs a new GetBusinessConnectionCall with required parameters.
+func (client *Client) GetBusinessConnection(businessConnectionID string) *GetBusinessConnectionCall {
+	return BindClient(
+		NewGetBusinessConnectionCall(businessConnectionID),
+		client,
+	)
+}
+
+// BusinessConnectionID Unique identifier of the business connection
+func (call *GetBusinessConnectionCall) BusinessConnectionID(businessConnectionID string) *GetBusinessConnectionCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
+}
+
 // SetMyCommandsCall reprenesents a call to the setMyCommands method.
 // Use this method to change the list of the bot's commands
 // See this manual for more details about bot commands
@@ -5038,7 +5160,7 @@ type DeleteMessagesCall struct {
 
 // NewDeleteMessagesCall constructs a new DeleteMessagesCall with required parameters.
 // chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// messageIds - Identifiers of 1-100 messages to delete. See deleteMessage for limitations on which messages can be deleted
+// messageIds - A JSON-serialized list of 1-100 identifiers of messages to delete. See deleteMessage for limitations on which messages can be deleted
 func NewDeleteMessagesCall(chatID PeerID, messageIds []int) *DeleteMessagesCall {
 	return &DeleteMessagesCall{
 		CallNoResult{
@@ -5063,7 +5185,7 @@ func (call *DeleteMessagesCall) ChatID(chatID PeerID) *DeleteMessagesCall {
 	return call
 }
 
-// MessageIds Identifiers of 1-100 messages to delete. See deleteMessage for limitations on which messages can be deleted
+// MessageIds A JSON-serialized list of 1-100 identifiers of messages to delete. See deleteMessage for limitations on which messages can be deleted
 func (call *DeleteMessagesCall) MessageIds(messageIds []int) *DeleteMessagesCall {
 	call.request.JSON("message_ids", messageIds)
 	return call
@@ -5078,7 +5200,7 @@ type SendStickerCall struct {
 
 // NewSendStickerCall constructs a new SendStickerCall with required parameters.
 // chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-// sticker - Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP or .TGS sticker using multipart/form-data. More information on Sending Files ». Video stickers can only be sent by a file_id. Animated stickers can't be sent via an HTTP URL.
+// sticker - Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or .WEBM sticker using multipart/form-data. More information on Sending Files ». Video and animated stickers can't be sent via an HTTP URL.
 func NewSendStickerCall(chatID PeerID, sticker FileArg) *SendStickerCall {
 	return &SendStickerCall{
 		Call[Message]{
@@ -5097,6 +5219,12 @@ func (client *Client) SendSticker(chatID PeerID, sticker FileArg) *SendStickerCa
 	)
 }
 
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendStickerCall) BusinessConnectionID(businessConnectionID string) *SendStickerCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
+}
+
 // ChatID Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 func (call *SendStickerCall) ChatID(chatID PeerID) *SendStickerCall {
 	call.request.PeerID("chat_id", chatID)
@@ -5109,7 +5237,7 @@ func (call *SendStickerCall) MessageThreadID(messageThreadID int) *SendStickerCa
 	return call
 }
 
-// Sticker Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP or .TGS sticker using multipart/form-data. More information on Sending Files ». Video stickers can only be sent by a file_id. Animated stickers can't be sent via an HTTP URL.
+// Sticker Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or .WEBM sticker using multipart/form-data. More information on Sending Files ». Video and animated stickers can't be sent via an HTTP URL.
 func (call *SendStickerCall) Sticker(sticker FileArg) *SendStickerCall {
 	call.request.File("sticker", sticker)
 	return call
@@ -5139,7 +5267,7 @@ func (call *SendStickerCall) ReplyParameters(replyParameters ReplyParameters) *S
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account.
 func (call *SendStickerCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendStickerCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -5185,7 +5313,7 @@ type GetCustomEmojiStickersCall struct {
 }
 
 // NewGetCustomEmojiStickersCall constructs a new GetCustomEmojiStickersCall with required parameters.
-// customEmojiIds - List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
+// customEmojiIds - A JSON-serialized list of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
 func NewGetCustomEmojiStickersCall(customEmojiIds []string) *GetCustomEmojiStickersCall {
 	return &GetCustomEmojiStickersCall{
 		Call[[]Sticker]{
@@ -5203,14 +5331,14 @@ func (client *Client) GetCustomEmojiStickers(customEmojiIds []string) *GetCustom
 	)
 }
 
-// CustomEmojiIds List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
+// CustomEmojiIds A JSON-serialized list of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
 func (call *GetCustomEmojiStickersCall) CustomEmojiIds(customEmojiIds []string) *GetCustomEmojiStickersCall {
 	call.request.JSON("custom_emoji_ids", customEmojiIds)
 	return call
 }
 
 // UploadStickerFileCall reprenesents a call to the uploadStickerFile method.
-// Use this method to upload a file with a sticker for later use in the createNewStickerSet and addStickerToSet methods (the file can be used multiple times)
+// Use this method to upload a file with a sticker for later use in the createNewStickerSet, addStickerToSet, or replaceStickerInSet methods (the file can be used multiple times)
 // Returns the uploaded File on success.
 type UploadStickerFileCall struct {
 	Call[File]
@@ -5269,24 +5397,22 @@ type CreateNewStickerSetCall struct {
 // name - Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in "_by_<bot_username>". <bot_username> is case insensitive. 1-64 characters.
 // title - Sticker set title, 1-64 characters
 // stickers - A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
-// stickerFormat - Format of stickers in the set, must be one of “static”, “animated”, “video”
-func NewCreateNewStickerSetCall(userID UserID, name string, title string, stickers []InputSticker, stickerFormat string) *CreateNewStickerSetCall {
+func NewCreateNewStickerSetCall(userID UserID, name string, title string, stickers []InputSticker) *CreateNewStickerSetCall {
 	return &CreateNewStickerSetCall{
 		CallNoResult{
 			request: NewRequest("createNewStickerSet").
 				UserID("user_id", userID).
 				String("name", name).
 				String("title", title).
-				JSON("stickers", stickers).
-				String("sticker_format", stickerFormat),
+				JSON("stickers", stickers),
 		},
 	}
 }
 
 // CreateNewStickerSetCall constructs a new CreateNewStickerSetCall with required parameters.
-func (client *Client) CreateNewStickerSet(userID UserID, name string, title string, stickers []InputSticker, stickerFormat string) *CreateNewStickerSetCall {
+func (client *Client) CreateNewStickerSet(userID UserID, name string, title string, stickers []InputSticker) *CreateNewStickerSetCall {
 	return BindClient(
-		NewCreateNewStickerSetCall(userID, name, title, stickers, stickerFormat),
+		NewCreateNewStickerSetCall(userID, name, title, stickers),
 		client,
 	)
 }
@@ -5315,12 +5441,6 @@ func (call *CreateNewStickerSetCall) Stickers(stickers []InputSticker) *CreateNe
 	return call
 }
 
-// StickerFormat Format of stickers in the set, must be one of “static”, “animated”, “video”
-func (call *CreateNewStickerSetCall) StickerFormat(stickerFormat string) *CreateNewStickerSetCall {
-	call.request.String("sticker_format", stickerFormat)
-	return call
-}
-
 // StickerType Type of stickers in the set, pass “regular”, “mask”, or “custom_emoji”. By default, a regular sticker set is created.
 func (call *CreateNewStickerSetCall) StickerType(stickerType StickerType) *CreateNewStickerSetCall {
 	call.request.Stringer("sticker_type", stickerType)
@@ -5335,10 +5455,8 @@ func (call *CreateNewStickerSetCall) NeedsRepainting(needsRepainting bool) *Crea
 
 // AddStickerToSetCall reprenesents a call to the addStickerToSet method.
 // Use this method to add a new sticker to a set created by the bot
-// The format of the added sticker must match the format of the other stickers in the set
 // Emoji sticker sets can have up to 200 stickers
-// Animated and video sticker sets can have up to 50 stickers
-// Static sticker sets can have up to 120 stickers
+// Other sticker sets can have up to 120 stickers
 type AddStickerToSetCall struct {
 	CallNoResult
 }
@@ -5451,6 +5569,62 @@ func (client *Client) DeleteStickerFromSet(sticker string) *DeleteStickerFromSet
 // Sticker File identifier of the sticker
 func (call *DeleteStickerFromSetCall) Sticker(sticker string) *DeleteStickerFromSetCall {
 	call.request.String("sticker", sticker)
+	return call
+}
+
+// ReplaceStickerInSetCall reprenesents a call to the replaceStickerInSet method.
+// Use this method to replace an existing sticker in a sticker set with a new one
+// The method is equivalent to calling deleteStickerFromSet, then addStickerToSet, then setStickerPositionInSet
+type ReplaceStickerInSetCall struct {
+	CallNoResult
+}
+
+// NewReplaceStickerInSetCall constructs a new ReplaceStickerInSetCall with required parameters.
+// userID - User identifier of the sticker set owner
+// name - Sticker set name
+// oldSticker - File identifier of the replaced sticker
+// sticker - A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set remains unchanged.
+func NewReplaceStickerInSetCall(userID UserID, name string, oldSticker string, sticker InputSticker) *ReplaceStickerInSetCall {
+	return &ReplaceStickerInSetCall{
+		CallNoResult{
+			request: NewRequest("replaceStickerInSet").
+				UserID("user_id", userID).
+				String("name", name).
+				String("old_sticker", oldSticker).
+				JSON("sticker", sticker),
+		},
+	}
+}
+
+// ReplaceStickerInSetCall constructs a new ReplaceStickerInSetCall with required parameters.
+func (client *Client) ReplaceStickerInSet(userID UserID, name string, oldSticker string, sticker InputSticker) *ReplaceStickerInSetCall {
+	return BindClient(
+		NewReplaceStickerInSetCall(userID, name, oldSticker, sticker),
+		client,
+	)
+}
+
+// UserID User identifier of the sticker set owner
+func (call *ReplaceStickerInSetCall) UserID(userID UserID) *ReplaceStickerInSetCall {
+	call.request.UserID("user_id", userID)
+	return call
+}
+
+// Name Sticker set name
+func (call *ReplaceStickerInSetCall) Name(name string) *ReplaceStickerInSetCall {
+	call.request.String("name", name)
+	return call
+}
+
+// OldSticker File identifier of the replaced sticker
+func (call *ReplaceStickerInSetCall) OldSticker(oldSticker string) *ReplaceStickerInSetCall {
+	call.request.String("old_sticker", oldSticker)
+	return call
+}
+
+// Sticker A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set remains unchanged.
+func (call *ReplaceStickerInSetCall) Sticker(sticker InputSticker) *ReplaceStickerInSetCall {
+	call.request.JSON("sticker", sticker)
 	return call
 }
 
@@ -5619,20 +5793,22 @@ type SetStickerSetThumbnailCall struct {
 // NewSetStickerSetThumbnailCall constructs a new SetStickerSetThumbnailCall with required parameters.
 // name - Sticker set name
 // userID - User identifier of the sticker set owner
-func NewSetStickerSetThumbnailCall(name string, userID UserID) *SetStickerSetThumbnailCall {
+// format - Format of the thumbnail, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, or “video” for a WEBM video
+func NewSetStickerSetThumbnailCall(name string, userID UserID, format string) *SetStickerSetThumbnailCall {
 	return &SetStickerSetThumbnailCall{
 		CallNoResult{
 			request: NewRequest("setStickerSetThumbnail").
 				String("name", name).
-				UserID("user_id", userID),
+				UserID("user_id", userID).
+				String("format", format),
 		},
 	}
 }
 
 // SetStickerSetThumbnailCall constructs a new SetStickerSetThumbnailCall with required parameters.
-func (client *Client) SetStickerSetThumbnail(name string, userID UserID) *SetStickerSetThumbnailCall {
+func (client *Client) SetStickerSetThumbnail(name string, userID UserID, format string) *SetStickerSetThumbnailCall {
 	return BindClient(
-		NewSetStickerSetThumbnailCall(name, userID),
+		NewSetStickerSetThumbnailCall(name, userID, format),
 		client,
 	)
 }
@@ -5652,6 +5828,12 @@ func (call *SetStickerSetThumbnailCall) UserID(userID UserID) *SetStickerSetThum
 // Thumbnail A .WEBP or .PNG image with the thumbnail, must be up to 128 kilobytes in size and have a width and height of exactly 100px, or a .TGS animation with a thumbnail up to 32 kilobytes in size (see https://core.telegram.org/stickers#animated-sticker-requirements for animated sticker technical requirements), or a WEBM video with the thumbnail up to 32 kilobytes in size; see https://core.telegram.org/stickers#video-sticker-requirements for video sticker technical requirements. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files ». Animated and video sticker set thumbnails can't be uploaded via HTTP URL. If omitted, then the thumbnail is dropped and the first sticker is used as the thumbnail.
 func (call *SetStickerSetThumbnailCall) Thumbnail(thumbnail FileArg) *SetStickerSetThumbnailCall {
 	call.request.File("thumbnail", thumbnail)
+	return call
+}
+
+// Format Format of the thumbnail, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, or “video” for a WEBM video
+func (call *SetStickerSetThumbnailCall) Format(format string) *SetStickerSetThumbnailCall {
+	call.request.String("format", format)
 	return call
 }
 
@@ -6355,6 +6537,12 @@ func (client *Client) SendGame(chatID ChatID, gameShortName string) *SendGameCal
 	)
 }
 
+// BusinessConnectionID Unique identifier of the business connection on behalf of which the message will be sent
+func (call *SendGameCall) BusinessConnectionID(businessConnectionID string) *SendGameCall {
+	call.request.String("business_connection_id", businessConnectionID)
+	return call
+}
+
 // ChatID Unique identifier for the target chat
 func (call *SendGameCall) ChatID(chatID ChatID) *SendGameCall {
 	call.request.ChatID("chat_id", chatID)
@@ -6391,7 +6579,7 @@ func (call *SendGameCall) ReplyParameters(replyParameters ReplyParameters) *Send
 	return call
 }
 
-// ReplyMarkup A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not empty, the first button must launch the game.
+// ReplyMarkup A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not empty, the first button must launch the game. Not supported for messages sent on behalf of a business account.
 func (call *SendGameCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *SendGameCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
