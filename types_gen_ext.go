@@ -1250,6 +1250,10 @@ func (update *Update) Msg() *Message {
 		return update.EditedChannelPost
 	case update.CallbackQuery != nil && update.CallbackQuery.Message != nil && update.CallbackQuery.Message.Message != nil:
 		return update.CallbackQuery.Message.Message
+	case update.BusinessMessage != nil:
+		return update.BusinessMessage
+	case update.EditedBusinessMessage != nil:
+		return update.EditedBusinessMessage
 	default:
 		return nil
 	}

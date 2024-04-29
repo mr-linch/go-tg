@@ -1124,6 +1124,8 @@ func TestUpdate_Msg(t *testing.T) {
 			Message: msg,
 		}}}, msg},
 		{&Update{CallbackQuery: &CallbackQuery{}}, nil},
+		{&Update{BusinessMessage: msg}, msg},
+		{&Update{EditedBusinessMessage: msg}, msg},
 	} {
 		assert.Equal(t, test.Message, test.Update.Msg())
 	}
