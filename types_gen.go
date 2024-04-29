@@ -5,6 +5,7 @@ package tg
 
 import (
 	"net/url"
+	"time"
 )
 
 // Update this object represents an incoming update.At most one of the optional parameters can be present in any given update.
@@ -107,6 +108,16 @@ type WebhookInfo struct {
 
 	// Optional. A list of update types the bot is subscribed to. Defaults to all update types except chat_member
 	AllowedUpdates []UpdateType `json:"allowed_updates,omitempty"`
+}
+
+// LastErrorDateTime returns time.Time representation of LastErrorDate field.
+func (s *WebhookInfo) LastErrorDateTime() time.Time {
+	return time.Unix(s.LastErrorDate, 0)
+}
+
+// LastSynchronizationErrorDateTime returns time.Time representation of LastSynchronizationErrorDate field.
+func (s *WebhookInfo) LastSynchronizationErrorDateTime() time.Time {
+	return time.Unix(s.LastSynchronizationErrorDate, 0)
 }
 
 // User this object represents a Telegram user or bot.
@@ -275,6 +286,16 @@ type Chat struct {
 
 	// Optional. For supergroups, the location to which the supergroup is connected. Returned only in getChat.
 	Location *ChatLocation `json:"location,omitempty"`
+}
+
+// BirthdateTime returns time.Time representation of Birthdate field.
+func (s *Chat) BirthdateTime() time.Time {
+	return time.Unix(s.Birthdate, 0)
+}
+
+// EmojiStatusExpirationDateTime returns time.Time representation of EmojiStatusExpirationDate field.
+func (s *Chat) EmojiStatusExpirationDateTime() time.Time {
+	return time.Unix(s.EmojiStatusExpirationDate, 0)
 }
 
 // Message this object represents a message.
@@ -520,6 +541,16 @@ type Message struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 }
 
+// DateTime returns time.Time representation of Date field.
+func (s *Message) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
+}
+
+// EditDateTime returns time.Time representation of EditDate field.
+func (s *Message) EditDateTime() time.Time {
+	return time.Unix(s.EditDate, 0)
+}
+
 // MessageID this object represents a unique message identifier.
 type MessageID struct {
 	// Unique message identifier
@@ -536,6 +567,11 @@ type InaccessibleMessage struct {
 
 	// Always 0. The field can be used to differentiate regular and inaccessible messages.
 	Date int64 `json:"date"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *InaccessibleMessage) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // MessageEntity this object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
@@ -685,6 +721,11 @@ type MessageOriginUser struct {
 	SenderUser User `json:"sender_user"`
 }
 
+// DateTime returns time.Time representation of Date field.
+func (s *MessageOriginUser) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
+}
+
 // MessageOriginHiddenUser the message was originally sent by an unknown user.
 type MessageOriginHiddenUser struct {
 	// Type of the message origin, always “hidden_user”
@@ -695,6 +736,11 @@ type MessageOriginHiddenUser struct {
 
 	// Name of the user that sent the message originally
 	SenderUserName string `json:"sender_user_name"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageOriginHiddenUser) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // MessageOriginChat the message was originally sent on behalf of a chat to a group chat.
@@ -710,6 +756,11 @@ type MessageOriginChat struct {
 
 	// Optional. For messages originally sent by an anonymous chat administrator, original message author signature
 	AuthorSignature string `json:"author_signature,omitempty"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageOriginChat) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // MessageOriginChannel the message was originally sent to a channel chat.
@@ -728,6 +779,11 @@ type MessageOriginChannel struct {
 
 	// Optional. Signature of the original post author
 	AuthorSignature string `json:"author_signature,omitempty"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageOriginChannel) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // PhotoSize this object represents one size of a photo or a file / sticker thumbnail.
@@ -1000,6 +1056,11 @@ type Poll struct {
 	CloseDate int64 `json:"close_date,omitempty"`
 }
 
+// CloseDateTime returns time.Time representation of CloseDate field.
+func (s *Poll) CloseDateTime() time.Time {
+	return time.Unix(s.CloseDate, 0)
+}
+
 // Location this object represents a point on the map.
 type Location struct {
 	// Latitude as defined by sender
@@ -1162,6 +1223,11 @@ type VideoChatScheduled struct {
 	StartDate int64 `json:"start_date"`
 }
 
+// StartDateTime returns time.Time representation of StartDate field.
+func (s *VideoChatScheduled) StartDateTime() time.Time {
+	return time.Unix(s.StartDate, 0)
+}
+
 // VideoChatEnded this object represents a service message about a video chat ended in the chat.
 type VideoChatEnded struct {
 	// Video chat duration in seconds
@@ -1201,6 +1267,11 @@ type Giveaway struct {
 	PremiumSubscriptionMonthCount int `json:"premium_subscription_month_count,omitempty"`
 }
 
+// WinnersSelectionDateTime returns time.Time representation of WinnersSelectionDate field.
+func (s *Giveaway) WinnersSelectionDateTime() time.Time {
+	return time.Unix(s.WinnersSelectionDate, 0)
+}
+
 // GiveawayWinners this object represents a message about the completion of a giveaway with public winners.
 type GiveawayWinners struct {
 	// The chat that created the giveaway
@@ -1235,6 +1306,11 @@ type GiveawayWinners struct {
 
 	// Optional. Description of additional giveaway prize
 	PrizeDescription string `json:"prize_description,omitempty"`
+}
+
+// WinnersSelectionDateTime returns time.Time representation of WinnersSelectionDate field.
+func (s *GiveawayWinners) WinnersSelectionDateTime() time.Time {
+	return time.Unix(s.WinnersSelectionDate, 0)
 }
 
 // GiveawayCompleted this object represents a service message about the completion of a giveaway without public winners.
@@ -1570,6 +1646,11 @@ type ChatInviteLink struct {
 	PendingJoinRequestCount int `json:"pending_join_request_count,omitempty"`
 }
 
+// ExpireDateTime returns time.Time representation of ExpireDate field.
+func (s *ChatInviteLink) ExpireDateTime() time.Time {
+	return time.Unix(s.ExpireDate, 0)
+}
+
 // ChatAdministratorRights represents the rights of an administrator in a chat.
 type ChatAdministratorRights struct {
 	// True, if the user's presence in the chat is hidden
@@ -1640,6 +1721,11 @@ type ChatMemberUpdated struct {
 
 	// Optional. True, if the user joined the chat via a chat folder invite link
 	ViaChatFolderInviteLink bool `json:"via_chat_folder_invite_link,omitempty"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *ChatMemberUpdated) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // ChatMember this object contains information about one member of a chat. Currently, the following 6 types of chat members are supported:
@@ -1798,6 +1884,11 @@ type ChatMemberRestricted struct {
 	UntilDate int64 `json:"until_date"`
 }
 
+// UntilDateTime returns time.Time representation of UntilDate field.
+func (s *ChatMemberRestricted) UntilDateTime() time.Time {
+	return time.Unix(s.UntilDate, 0)
+}
+
 // ChatMemberLeft represents a chat member that isn't currently a member of the chat, but may join it themselves.
 type ChatMemberLeft struct {
 	// The member's status in the chat, always “left”
@@ -1819,6 +1910,11 @@ type ChatMemberBanned struct {
 	UntilDate int64 `json:"until_date"`
 }
 
+// UntilDateTime returns time.Time representation of UntilDate field.
+func (s *ChatMemberBanned) UntilDateTime() time.Time {
+	return time.Unix(s.UntilDate, 0)
+}
+
 // ChatJoinRequest represents a join request sent to a chat.
 type ChatJoinRequest struct {
 	// Chat to which the request was sent
@@ -1838,6 +1934,11 @@ type ChatJoinRequest struct {
 
 	// Optional. Chat invite link that was used by the user to send the join request
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *ChatJoinRequest) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
@@ -1996,6 +2097,11 @@ type MessageReactionUpdated struct {
 	NewReaction []ReactionType `json:"new_reaction"`
 }
 
+// DateTime returns time.Time representation of Date field.
+func (s *MessageReactionUpdated) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
+}
+
 // MessageReactionCountUpdated this object represents reaction changes on a message with anonymous reactions.
 type MessageReactionCountUpdated struct {
 	// The chat containing the message
@@ -2009,6 +2115,11 @@ type MessageReactionCountUpdated struct {
 
 	// List of reactions that are present on the message
 	Reactions []ReactionCount `json:"reactions"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *MessageReactionCountUpdated) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // ForumTopic this object represents a forum topic.
@@ -2188,6 +2299,16 @@ type ChatBoost struct {
 	Source ChatBoostSource `json:"source"`
 }
 
+// AddDateTime returns time.Time representation of AddDate field.
+func (s *ChatBoost) AddDateTime() time.Time {
+	return time.Unix(s.AddDate, 0)
+}
+
+// ExpirationDateTime returns time.Time representation of ExpirationDate field.
+func (s *ChatBoost) ExpirationDateTime() time.Time {
+	return time.Unix(s.ExpirationDate, 0)
+}
+
 // ChatBoostUpdated this object represents a boost added to a chat or changed.
 type ChatBoostUpdated struct {
 	// Chat which was boosted
@@ -2210,6 +2331,11 @@ type ChatBoostRemoved struct {
 
 	// Source of the removed boost
 	Source ChatBoostSource `json:"source"`
+}
+
+// RemoveDateTime returns time.Time representation of RemoveDate field.
+func (s *ChatBoostRemoved) RemoveDateTime() time.Time {
+	return time.Unix(s.RemoveDate, 0)
 }
 
 // UserChatBoosts this object represents a list of boosts added to a chat by a user.
@@ -2237,6 +2363,11 @@ type BusinessConnection struct {
 
 	// True, if the connection is active
 	IsEnabled bool `json:"is_enabled"`
+}
+
+// DateTime returns time.Time representation of Date field.
+func (s *BusinessConnection) DateTime() time.Time {
+	return time.Unix(s.Date, 0)
 }
 
 // BusinessMessagesDeleted this object is received when messages are deleted from a connected business account.
@@ -3571,6 +3702,11 @@ type PassportFile struct {
 	FileDate int64 `json:"file_date"`
 }
 
+// FileDateTime returns time.Time representation of FileDate field.
+func (s *PassportFile) FileDateTime() time.Time {
+	return time.Unix(s.FileDate, 0)
+}
+
 // EncryptedPassportElement describes documents or other Telegram Passport elements shared with the bot by the user.
 type EncryptedPassportElement struct {
 	// Element type. One of “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport”, “address”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”, “temporary_registration”, “phone_number”, “email”.
@@ -3838,6 +3974,11 @@ type WebAppInitData struct {
 	Hash string `json:"hash"`
 
 	raw url.Values
+}
+
+// AuthDateTime returns time.Time representation of AuthDate field.
+func (s *WebAppInitData) AuthDateTime() time.Time {
+	return time.Unix(s.AuthDate, 0)
 }
 
 // WebAppUser this object contains the data of the Mini App user.
