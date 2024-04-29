@@ -1,3 +1,4 @@
 ignore:
   - methods_gen.go
+  - types_gen.go
   - examples
