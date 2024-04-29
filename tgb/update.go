@@ -304,3 +304,16 @@ type RemovedChatBoostUpdate struct {
 	Update *Update
 	Client *tg.Client
 }
+
+// BusinessConnectionUpdate it's extend wrapper around [tg.BusinessConnectionUpdate]
+type BusinessConnectionUpdate struct {
+	*tg.BusinessConnection
+	Update *Update
+	Client *tg.Client
+}
+
+type DeletedBusinessMessagesUpdate struct {
+	*tg.BusinessMessagesDeleted
+	Update *Update
+	Client *tg.Client
+}

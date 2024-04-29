@@ -1082,6 +1082,10 @@ const (
 	UpdateTypeMessageReactionCount
 	UpdateTypeChatBoost
 	UpdateTypeRemovedChatBoost
+	UpdateTypeBusinessConnection
+	UpdateTypeBusinessMessage
+	UpdateTypeEditedBusinessMessage
+	UpdateTypeDeletedBusinessMessages
 )
 
 // MarshalText implements encoding.TextMarshaler.
@@ -1132,6 +1136,14 @@ func (typ *UpdateType) UnmarshalText(v []byte) error {
 		*typ = UpdateTypeChatBoost
 	case "removed_chat_boost":
 		*typ = UpdateTypeRemovedChatBoost
+	case "business_connection":
+		*typ = UpdateTypeBusinessConnection
+	case "business_message":
+		*typ = UpdateTypeBusinessMessage
+	case "edited_business_message":
+		*typ = UpdateTypeEditedBusinessMessage
+	case "deleted_business_messages":
+		*typ = UpdateTypeDeletedBusinessMessages
 	default:
 		return fmt.Errorf("unknown update type")
 	}
@@ -1161,6 +1173,10 @@ func (typ UpdateType) String() string {
 			"message_reaction_count",
 			"chat_boost",
 			"removed_chat_boost",
+			"business_connection",
+			"business_message",
+			"edited_business_message",
+			"deleted_business_messages",
 		}[typ-1]
 	}
 
@@ -1205,6 +1221,14 @@ func (update *Update) Type() UpdateType {
 		return UpdateTypeChatBoost
 	case update.RemovedChatBoost != nil:
 		return UpdateTypeRemovedChatBoost
+	case update.BusinessConnection != nil:
+		return UpdateTypeBusinessConnection
+	case update.BusinessMessage != nil:
+		return UpdateTypeBusinessMessage
+	case update.EditedBusinessMessage != nil:
+		return UpdateTypeEditedBusinessMessage
+	case update.DeletedBusinessMessages != nil:
+		return UpdateTypeDeletedBusinessMessages
 	default:
 		return UpdateTypeUnknown
 	}

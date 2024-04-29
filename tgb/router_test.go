@@ -443,6 +443,74 @@ func TestRouter(t *testing.T) {
 			assert.NoError(t, err)
 			assert.True(t, isRemovedChatBoostHandlerCalled, "removed chat boosted handler should be called")
 		}
+
+		{
+			isBusinessConnectionHandlerCalled := false
+
+			router.BusinessConnection(func(ctx context.Context, msg *BusinessConnectionUpdate) error {
+				assert.NotNil(t, msg.BusinessConnection)
+				isBusinessConnectionHandlerCalled = true
+				return nil
+			})
+
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
+				BusinessConnection: &tg.BusinessConnection{},
+			}})
+
+			assert.NoError(t, err)
+			assert.True(t, isBusinessConnectionHandlerCalled, "business connection handler should be called")
+		}
+
+		{
+			isBusinessMessageHandlerCalled := false
+
+			router.BusinessMessage(func(ctx context.Context, msg *MessageUpdate) error {
+				assert.NotNil(t, msg.Message)
+				isBusinessMessageHandlerCalled = true
+				return nil
+			})
+
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
+				BusinessMessage: &tg.Message{},
+			}})
+
+			assert.NoError(t, err)
+			assert.True(t, isBusinessMessageHandlerCalled, "business message handler should be called")
+		}
+
+		{
+			isEditedBusinessMessageHandlerCalled := false
+
+			router.EditedBusinessMessage(func(ctx context.Context, msg *MessageUpdate) error {
+				assert.NotNil(t, msg.Message)
+				isEditedBusinessMessageHandlerCalled = true
+				return nil
+			})
+
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
+				EditedBusinessMessage: &tg.Message{},
+			}})
+
+			assert.NoError(t, err)
+			assert.True(t, isEditedBusinessMessageHandlerCalled, "edited business message handler should be called")
+		}
+
+		{
+			isDeletedBusinessMessagesHandlerCalled := false
+
+			router.DeletedBusinessMessages(func(ctx context.Context, msg *DeletedBusinessMessagesUpdate) error {
+				assert.NotNil(t, msg.BusinessMessagesDeleted)
+				isDeletedBusinessMessagesHandlerCalled = true
+				return nil
+			})
+
+			err := router.Handle(ctx, &Update{Update: &tg.Update{
+				DeletedBusinessMessages: &tg.BusinessMessagesDeleted{},
+			}})
+
+			assert.NoError(t, err)
+			assert.True(t, isDeletedBusinessMessagesHandlerCalled, "deleted business messages handler should be called")
+		}
 	})
 
 	t.Run("FilterNotAllow", func(t *testing.T) {

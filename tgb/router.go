@@ -177,6 +177,26 @@ func (bot *Router) RemovedChatBoost(handler RemovedChatBoostHandler, filters ...
 	return bot.register(tg.UpdateTypeRemovedChatBoost, handler, filters...)
 }
 
+// BusinessConnection register handlers for Update with not empty BusinessConnection field.
+func (bot *Router) BusinessConnection(handler BusinessConnectionHandler, filters ...Filter) *Router {
+	return bot.register(tg.UpdateTypeBusinessConnection, handler, filters...)
+}
+
+// BusinessMessage register handlers for Update with not empty BusinessMessage field.
+func (bot *Router) BusinessMessage(handler MessageHandler, filters ...Filter) *Router {
+	return bot.register(tg.UpdateTypeBusinessMessage, handler, filters...)
+}
+
+// EditedBusinessMessage register handlers for Update with not empty EditedBusinessMessage field.
+func (bot *Router) EditedBusinessMessage(handler MessageHandler, filters ...Filter) *Router {
+	return bot.register(tg.UpdateTypeEditedBusinessMessage, handler, filters...)
+}
+
+// DeletedBusinessMessages register handlers for Update with not empty DeletedBusinessMessages field.
+func (bot *Router) DeletedBusinessMessages(handler DeletedBusinessMessageHandler, filters ...Filter) *Router {
+	return bot.register(tg.UpdateTypeDeletedBusinessMessages, handler, filters...)
+}
+
 // Error registers a handler for errors.
 // If any error occurs in the chain, it will be passed to that handler.
 // By default, errors are returned back by handler method.
