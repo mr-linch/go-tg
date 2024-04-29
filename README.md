@@ -40,14 +40,16 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
 
 ## Features
 
-- Code for Bot API types and methods is generated with embedded official documentation.
-- Support [context.Context](https://pkg.go.dev/context).
-- API Client and bot framework are strictly separated, you can use them independently.
-- No runtime reflection overhead.
-- Supports Webhook and Polling natively;
-- [Webhook reply](https://core.telegram.org/bots/faq#how-can-i-make-requests-in-response-to-updates) for high load bots;
-- Handlers, filters, and middleware are supported.
-- [WebApps](https://core.telegram.org/bots/webapps) and [Login Widget](https://core.telegram.org/widgets/login) helpers.
+- :rocket: Code for Bot API types and methods is generated with embedded official documentation.
+- :white_check_mark: Support [context.Context](https://pkg.go.dev/context).
+- :link: API Client and bot framework are strictly separated, you can use them independently.
+- :zap: No runtime reflection overhead.
+- :arrows_counterclockwise: Supports Webhook and Polling natively;
+- :mailbox_with_mail: [Webhook reply](https://core.telegram.org/bots/faq#how-can-i-make-requests-in-response-to-updates) for high load bots;
+- :raised_hands: Handlers, filters, and middleware are supported.
+- :globe_with_meridians: [WebApps](https://core.telegram.org/bots/webapps) and [Login Widget](https://core.telegram.org/widgets/login) helpers.
+- :handshake: Business connections support
+
 
 ## Install
 
