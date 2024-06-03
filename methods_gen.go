@@ -336,13 +336,19 @@ func (call *SendMessageCall) ProtectContent(protectContent bool) *SendMessageCal
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendMessageCall) MessageEffectID(messageEffectID string) *SendMessageCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendMessageCall) ReplyParameters(replyParameters ReplyParameters) *SendMessageCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendMessageCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -559,6 +565,12 @@ func (call *CopyMessageCall) CaptionEntities(captionEntities []MessageEntity) *C
 	return call
 }
 
+// ShowCaptionAboveMedia Pass True, if the caption must be shown above the message media. Ignored if a new caption isn't specified.
+func (call *CopyMessageCall) ShowCaptionAboveMedia(showCaptionAboveMedia bool) *CopyMessageCall {
+	call.request.Bool("show_caption_above_media", showCaptionAboveMedia)
+	return call
+}
+
 // DisableNotification Sends the message silently. Users will receive a notification with no sound.
 func (call *CopyMessageCall) DisableNotification(disableNotification bool) *CopyMessageCall {
 	call.request.Bool("disable_notification", disableNotification)
@@ -577,7 +589,7 @@ func (call *CopyMessageCall) ReplyParameters(replyParameters ReplyParameters) *C
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *CopyMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *CopyMessageCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -730,6 +742,12 @@ func (call *SendPhotoCall) CaptionEntities(captionEntities []MessageEntity) *Sen
 	return call
 }
 
+// ShowCaptionAboveMedia Pass True, if the caption must be shown above the message media
+func (call *SendPhotoCall) ShowCaptionAboveMedia(showCaptionAboveMedia bool) *SendPhotoCall {
+	call.request.Bool("show_caption_above_media", showCaptionAboveMedia)
+	return call
+}
+
 // HasSpoiler Pass True if the photo needs to be covered with a spoiler animation
 func (call *SendPhotoCall) HasSpoiler(hasSpoiler bool) *SendPhotoCall {
 	call.request.Bool("has_spoiler", hasSpoiler)
@@ -748,13 +766,19 @@ func (call *SendPhotoCall) ProtectContent(protectContent bool) *SendPhotoCall {
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendPhotoCall) MessageEffectID(messageEffectID string) *SendPhotoCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendPhotoCall) ReplyParameters(replyParameters ReplyParameters) *SendPhotoCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendPhotoCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPhotoCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -869,13 +893,19 @@ func (call *SendAudioCall) ProtectContent(protectContent bool) *SendAudioCall {
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendAudioCall) MessageEffectID(messageEffectID string) *SendAudioCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendAudioCall) ReplyParameters(replyParameters ReplyParameters) *SendAudioCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendAudioCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAudioCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -976,13 +1006,19 @@ func (call *SendDocumentCall) ProtectContent(protectContent bool) *SendDocumentC
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendDocumentCall) MessageEffectID(messageEffectID string) *SendDocumentCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendDocumentCall) ReplyParameters(replyParameters ReplyParameters) *SendDocumentCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendDocumentCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendDocumentCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1083,6 +1119,12 @@ func (call *SendVideoCall) CaptionEntities(captionEntities []MessageEntity) *Sen
 	return call
 }
 
+// ShowCaptionAboveMedia Pass True, if the caption must be shown above the message media
+func (call *SendVideoCall) ShowCaptionAboveMedia(showCaptionAboveMedia bool) *SendVideoCall {
+	call.request.Bool("show_caption_above_media", showCaptionAboveMedia)
+	return call
+}
+
 // HasSpoiler Pass True if the video needs to be covered with a spoiler animation
 func (call *SendVideoCall) HasSpoiler(hasSpoiler bool) *SendVideoCall {
 	call.request.Bool("has_spoiler", hasSpoiler)
@@ -1107,13 +1149,19 @@ func (call *SendVideoCall) ProtectContent(protectContent bool) *SendVideoCall {
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendVideoCall) MessageEffectID(messageEffectID string) *SendVideoCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendVideoCall) ReplyParameters(replyParameters ReplyParameters) *SendVideoCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendVideoCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVideoCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1214,6 +1262,12 @@ func (call *SendAnimationCall) CaptionEntities(captionEntities []MessageEntity) 
 	return call
 }
 
+// ShowCaptionAboveMedia Pass True, if the caption must be shown above the message media
+func (call *SendAnimationCall) ShowCaptionAboveMedia(showCaptionAboveMedia bool) *SendAnimationCall {
+	call.request.Bool("show_caption_above_media", showCaptionAboveMedia)
+	return call
+}
+
 // HasSpoiler Pass True if the animation needs to be covered with a spoiler animation
 func (call *SendAnimationCall) HasSpoiler(hasSpoiler bool) *SendAnimationCall {
 	call.request.Bool("has_spoiler", hasSpoiler)
@@ -1232,13 +1286,19 @@ func (call *SendAnimationCall) ProtectContent(protectContent bool) *SendAnimatio
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendAnimationCall) MessageEffectID(messageEffectID string) *SendAnimationCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendAnimationCall) ReplyParameters(replyParameters ReplyParameters) *SendAnimationCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendAnimationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAnimationCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1246,7 +1306,7 @@ func (call *SendAnimationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAnimati
 
 // SendVoiceCall reprenesents a call to the sendVoice method.
 // Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message
-// For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document)
+// For this to work, your audio must be in an .OGG file encoded with OPUS, or in .MP3 format, or in .M4A format (other formats may be sent as Audio or Document)
 // On success, the sent Message is returned
 // Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.
 type SendVoiceCall struct {
@@ -1334,13 +1394,19 @@ func (call *SendVoiceCall) ProtectContent(protectContent bool) *SendVoiceCall {
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendVoiceCall) MessageEffectID(messageEffectID string) *SendVoiceCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendVoiceCall) ReplyParameters(replyParameters ReplyParameters) *SendVoiceCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendVoiceCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVoiceCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1429,13 +1495,19 @@ func (call *SendVideoNoteCall) ProtectContent(protectContent bool) *SendVideoNot
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendVideoNoteCall) MessageEffectID(messageEffectID string) *SendVideoNoteCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendVideoNoteCall) ReplyParameters(replyParameters ReplyParameters) *SendVideoNoteCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendVideoNoteCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVideoNoteCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1503,6 +1575,12 @@ func (call *SendMediaGroupCall) DisableNotification(disableNotification bool) *S
 // ProtectContent Protects the contents of the sent messages from forwarding and saving
 func (call *SendMediaGroupCall) ProtectContent(protectContent bool) *SendMediaGroupCall {
 	call.request.Bool("protect_content", protectContent)
+	return call
+}
+
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendMediaGroupCall) MessageEffectID(messageEffectID string) *SendMediaGroupCall {
+	call.request.String("message_effect_id", messageEffectID)
 	return call
 }
 
@@ -1578,7 +1656,7 @@ func (call *SendLocationCall) HorizontalAccuracy(horizontalAccuracy float64) *Se
 	return call
 }
 
-// LivePeriod Period in seconds for which the location will be updated (see Live Locations, should be between 60 and 86400.
+// LivePeriod Period in seconds during which the location will be updated (see Live Locations, should be between 60 and 86400, or 0x7FFFFFFF for live locations that can be edited indefinitely.
 func (call *SendLocationCall) LivePeriod(livePeriod int) *SendLocationCall {
 	call.request.Int("live_period", livePeriod)
 	return call
@@ -1608,13 +1686,19 @@ func (call *SendLocationCall) ProtectContent(protectContent bool) *SendLocationC
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendLocationCall) MessageEffectID(messageEffectID string) *SendLocationCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendLocationCall) ReplyParameters(replyParameters ReplyParameters) *SendLocationCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendLocationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendLocationCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1732,13 +1816,19 @@ func (call *SendVenueCall) ProtectContent(protectContent bool) *SendVenueCall {
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendVenueCall) MessageEffectID(messageEffectID string) *SendVenueCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendVenueCall) ReplyParameters(replyParameters ReplyParameters) *SendVenueCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendVenueCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVenueCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1828,13 +1918,19 @@ func (call *SendContactCall) ProtectContent(protectContent bool) *SendContactCal
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendContactCall) MessageEffectID(messageEffectID string) *SendContactCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendContactCall) ReplyParameters(replyParameters ReplyParameters) *SendContactCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendContactCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendContactCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -1850,8 +1946,8 @@ type SendPollCall struct {
 // NewSendPollCall constructs a new SendPollCall with required parameters.
 // chatID - Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 // question - Poll question, 1-300 characters
-// options - A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
-func NewSendPollCall(chatID PeerID, question string, options []string) *SendPollCall {
+// options - A JSON-serialized list of 2-10 answer options
+func NewSendPollCall(chatID PeerID, question string, options []InputPollOption) *SendPollCall {
 	return &SendPollCall{
 		Call[Message]{
 			request: NewRequest("sendPoll").
@@ -1863,7 +1959,7 @@ func NewSendPollCall(chatID PeerID, question string, options []string) *SendPoll
 }
 
 // SendPollCall constructs a new SendPollCall with required parameters.
-func (client *Client) SendPoll(chatID PeerID, question string, options []string) *SendPollCall {
+func (client *Client) SendPoll(chatID PeerID, question string, options []InputPollOption) *SendPollCall {
 	return BindClient(
 		NewSendPollCall(chatID, question, options),
 		client,
@@ -1894,8 +1990,20 @@ func (call *SendPollCall) Question(question string) *SendPollCall {
 	return call
 }
 
-// Options A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
-func (call *SendPollCall) Options(options []string) *SendPollCall {
+// QuestionParseMode Mode for parsing entities in the question. See formatting options for more details. Currently, only custom emoji entities are allowed
+func (call *SendPollCall) QuestionParseMode(questionParseMode ParseMode) *SendPollCall {
+	call.request.Stringer("question_parse_mode", questionParseMode)
+	return call
+}
+
+// QuestionEntities A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of question_parse_mode
+func (call *SendPollCall) QuestionEntities(questionEntities []MessageEntity) *SendPollCall {
+	call.request.JSON("question_entities", questionEntities)
+	return call
+}
+
+// Options A JSON-serialized list of 2-10 answer options
+func (call *SendPollCall) Options(options []InputPollOption) *SendPollCall {
 	call.request.JSON("options", options)
 	return call
 }
@@ -1936,7 +2044,7 @@ func (call *SendPollCall) ExplanationParseMode(explanationParseMode ParseMode) *
 	return call
 }
 
-// ExplanationEntities A JSON-serialized list of special entities that appear in the poll explanation, which can be specified instead of parse_mode
+// ExplanationEntities A JSON-serialized list of special entities that appear in the poll explanation. It can be specified instead of explanation_parse_mode
 func (call *SendPollCall) ExplanationEntities(explanationEntities []MessageEntity) *SendPollCall {
 	call.request.JSON("explanation_entities", explanationEntities)
 	return call
@@ -1972,13 +2080,19 @@ func (call *SendPollCall) ProtectContent(protectContent bool) *SendPollCall {
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendPollCall) MessageEffectID(messageEffectID string) *SendPollCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendPollCall) ReplyParameters(replyParameters ReplyParameters) *SendPollCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendPollCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPollCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -2046,13 +2160,19 @@ func (call *SendDiceCall) ProtectContent(protectContent bool) *SendDiceCall {
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendDiceCall) MessageEffectID(messageEffectID string) *SendDiceCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendDiceCall) ReplyParameters(replyParameters ReplyParameters) *SendDiceCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendDiceCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendDiceCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -2506,7 +2626,7 @@ func (call *PromoteChatMemberCall) CanPostStories(canPostStories bool) *PromoteC
 	return call
 }
 
-// CanEditStories Pass True if the administrator can edit stories posted by other users
+// CanEditStories Pass True if the administrator can edit stories posted by other users, post stories to the chat page, pin chat stories, and access the chat's story archive
 func (call *PromoteChatMemberCall) CanEditStories(canEditStories bool) *PromoteChatMemberCall {
 	call.request.Bool("can_edit_stories", canEditStories)
 	return call
@@ -3295,17 +3415,17 @@ func (call *LeaveChatCall) ChatID(chatID PeerID) *LeaveChatCall {
 }
 
 // GetChatCall reprenesents a call to the getChat method.
-// Use this method to get up to date information about the chat
-// Returns a Chat object on success.
+// Use this method to get up-to-date information about the chat
+// Returns a ChatFullInfo object on success.
 type GetChatCall struct {
-	Call[Chat]
+	Call[ChatFullInfo]
 }
 
 // NewGetChatCall constructs a new GetChatCall with required parameters.
 // chatID - Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 func NewGetChatCall(chatID PeerID) *GetChatCall {
 	return &GetChatCall{
-		Call[Chat]{
+		Call[ChatFullInfo]{
 			request: NewRequest("getChat").
 				PeerID("chat_id", chatID),
 		},
@@ -4759,6 +4879,12 @@ func (call *EditMessageCaptionCall) CaptionEntities(captionEntities []MessageEnt
 	return call
 }
 
+// ShowCaptionAboveMedia Pass True, if the caption must be shown above the message media. Supported only for animation, photo and video messages.
+func (call *EditMessageCaptionCall) ShowCaptionAboveMedia(showCaptionAboveMedia bool) *EditMessageCaptionCall {
+	call.request.Bool("show_caption_above_media", showCaptionAboveMedia)
+	return call
+}
+
 // ReplyMarkup A JSON-serialized object for an inline keyboard.
 func (call *EditMessageCaptionCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *EditMessageCaptionCall {
 	call.request.JSON("reply_markup", replyMarkup)
@@ -4898,6 +5024,12 @@ func (call *EditMessageLiveLocationCall) Latitude(latitude float64) *EditMessage
 // Longitude Longitude of new location
 func (call *EditMessageLiveLocationCall) Longitude(longitude float64) *EditMessageLiveLocationCall {
 	call.request.Float64("longitude", longitude)
+	return call
+}
+
+// LivePeriod New period in seconds during which the location can be updated, starting from the message send date. If 0x7FFFFFFF is specified, then the location can be updated forever. Otherwise, the new value must not exceed the current live_period by more than a day, and the live location expiration date must remain within the next 90 days. If not specified, then live_period remains unchanged
+func (call *EditMessageLiveLocationCall) LivePeriod(livePeriod int) *EditMessageLiveLocationCall {
+	call.request.Int("live_period", livePeriod)
 	return call
 }
 
@@ -5261,13 +5393,19 @@ func (call *SendStickerCall) ProtectContent(protectContent bool) *SendStickerCal
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendStickerCall) MessageEffectID(messageEffectID string) *SendStickerCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendStickerCall) ReplyParameters(replyParameters ReplyParameters) *SendStickerCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user. Not supported for messages sent on behalf of a business account.
+// ReplyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user
 func (call *SendStickerCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendStickerCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call
@@ -6021,10 +6159,9 @@ type SendInvoiceCall struct {
 // title - Product name, 1-32 characters
 // description - Product description, 1-255 characters
 // payload - Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
-// providerToken - Payment provider token, obtained via @BotFather
-// currency - Three-letter ISO 4217 currency code, see more on currencies
-// prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
-func NewSendInvoiceCall(chatID PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
+// currency - Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
+// prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
+func NewSendInvoiceCall(chatID PeerID, title string, description string, payload string, currency string, prices []LabeledPrice) *SendInvoiceCall {
 	return &SendInvoiceCall{
 		Call[Message]{
 			request: NewRequest("sendInvoice").
@@ -6032,7 +6169,6 @@ func NewSendInvoiceCall(chatID PeerID, title string, description string, payload
 				String("title", title).
 				String("description", description).
 				String("payload", payload).
-				String("provider_token", providerToken).
 				String("currency", currency).
 				JSON("prices", prices),
 		},
@@ -6040,9 +6176,9 @@ func NewSendInvoiceCall(chatID PeerID, title string, description string, payload
 }
 
 // SendInvoiceCall constructs a new SendInvoiceCall with required parameters.
-func (client *Client) SendInvoice(chatID PeerID, title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *SendInvoiceCall {
+func (client *Client) SendInvoice(chatID PeerID, title string, description string, payload string, currency string, prices []LabeledPrice) *SendInvoiceCall {
 	return BindClient(
-		NewSendInvoiceCall(chatID, title, description, payload, providerToken, currency, prices),
+		NewSendInvoiceCall(chatID, title, description, payload, currency, prices),
 		client,
 	)
 }
@@ -6077,25 +6213,25 @@ func (call *SendInvoiceCall) Payload(payload string) *SendInvoiceCall {
 	return call
 }
 
-// ProviderToken Payment provider token, obtained via @BotFather
+// ProviderToken Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
 func (call *SendInvoiceCall) ProviderToken(providerToken string) *SendInvoiceCall {
 	call.request.String("provider_token", providerToken)
 	return call
 }
 
-// Currency Three-letter ISO 4217 currency code, see more on currencies
+// Currency Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
 func (call *SendInvoiceCall) Currency(currency string) *SendInvoiceCall {
 	call.request.String("currency", currency)
 	return call
 }
 
-// Prices Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
+// Prices Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
 func (call *SendInvoiceCall) Prices(prices []LabeledPrice) *SendInvoiceCall {
 	call.request.JSON("prices", prices)
 	return call
 }
 
-// MaxTipAmount The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
+// MaxTipAmount The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for payments in Telegram Stars.
 func (call *SendInvoiceCall) MaxTipAmount(maxTipAmount int) *SendInvoiceCall {
 	call.request.Int("max_tip_amount", maxTipAmount)
 	return call
@@ -6143,43 +6279,43 @@ func (call *SendInvoiceCall) PhotoHeight(photoHeight int) *SendInvoiceCall {
 	return call
 }
 
-// NeedName Pass True if you require the user's full name to complete the order
+// NeedName Pass True if you require the user's full name to complete the order. Ignored for payments in Telegram Stars.
 func (call *SendInvoiceCall) NeedName(needName bool) *SendInvoiceCall {
 	call.request.Bool("need_name", needName)
 	return call
 }
 
-// NeedPhoneNumber Pass True if you require the user's phone number to complete the order
+// NeedPhoneNumber Pass True if you require the user's phone number to complete the order. Ignored for payments in Telegram Stars.
 func (call *SendInvoiceCall) NeedPhoneNumber(needPhoneNumber bool) *SendInvoiceCall {
 	call.request.Bool("need_phone_number", needPhoneNumber)
 	return call
 }
 
-// NeedEmail Pass True if you require the user's email address to complete the order
+// NeedEmail Pass True if you require the user's email address to complete the order. Ignored for payments in Telegram Stars.
 func (call *SendInvoiceCall) NeedEmail(needEmail bool) *SendInvoiceCall {
 	call.request.Bool("need_email", needEmail)
 	return call
 }
 
-// NeedShippingAddress Pass True if you require the user's shipping address to complete the order
+// NeedShippingAddress Pass True if you require the user's shipping address to complete the order. Ignored for payments in Telegram Stars.
 func (call *SendInvoiceCall) NeedShippingAddress(needShippingAddress bool) *SendInvoiceCall {
 	call.request.Bool("need_shipping_address", needShippingAddress)
 	return call
 }
 
-// SendPhoneNumberToProvider Pass True if the user's phone number should be sent to provider
+// SendPhoneNumberToProvider Pass True if the user's phone number should be sent to the provider. Ignored for payments in Telegram Stars.
 func (call *SendInvoiceCall) SendPhoneNumberToProvider(sendPhoneNumberToProvider bool) *SendInvoiceCall {
 	call.request.Bool("send_phone_number_to_provider", sendPhoneNumberToProvider)
 	return call
 }
 
-// SendEmailToProvider Pass True if the user's email address should be sent to provider
+// SendEmailToProvider Pass True if the user's email address should be sent to the provider. Ignored for payments in Telegram Stars.
 func (call *SendInvoiceCall) SendEmailToProvider(sendEmailToProvider bool) *SendInvoiceCall {
 	call.request.Bool("send_email_to_provider", sendEmailToProvider)
 	return call
 }
 
-// IsFlexible Pass True if the final price depends on the shipping method
+// IsFlexible Pass True if the final price depends on the shipping method. Ignored for payments in Telegram Stars.
 func (call *SendInvoiceCall) IsFlexible(isFlexible bool) *SendInvoiceCall {
 	call.request.Bool("is_flexible", isFlexible)
 	return call
@@ -6194,6 +6330,12 @@ func (call *SendInvoiceCall) DisableNotification(disableNotification bool) *Send
 // ProtectContent Protects the contents of the sent message from forwarding and saving
 func (call *SendInvoiceCall) ProtectContent(protectContent bool) *SendInvoiceCall {
 	call.request.Bool("protect_content", protectContent)
+	return call
+}
+
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendInvoiceCall) MessageEffectID(messageEffectID string) *SendInvoiceCall {
+	call.request.String("message_effect_id", messageEffectID)
 	return call
 }
 
@@ -6220,17 +6362,15 @@ type CreateInvoiceLinkCall struct {
 // title - Product name, 1-32 characters
 // description - Product description, 1-255 characters
 // payload - Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
-// providerToken - Payment provider token, obtained via BotFather
-// currency - Three-letter ISO 4217 currency code, see more on currencies
-// prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
-func NewCreateInvoiceLinkCall(title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
+// currency - Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
+// prices - Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
+func NewCreateInvoiceLinkCall(title string, description string, payload string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
 	return &CreateInvoiceLinkCall{
 		Call[string]{
 			request: NewRequest("createInvoiceLink").
 				String("title", title).
 				String("description", description).
 				String("payload", payload).
-				String("provider_token", providerToken).
 				String("currency", currency).
 				JSON("prices", prices),
 		},
@@ -6238,9 +6378,9 @@ func NewCreateInvoiceLinkCall(title string, description string, payload string, 
 }
 
 // CreateInvoiceLinkCall constructs a new CreateInvoiceLinkCall with required parameters.
-func (client *Client) CreateInvoiceLink(title string, description string, payload string, providerToken string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
+func (client *Client) CreateInvoiceLink(title string, description string, payload string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
 	return BindClient(
-		NewCreateInvoiceLinkCall(title, description, payload, providerToken, currency, prices),
+		NewCreateInvoiceLinkCall(title, description, payload, currency, prices),
 		client,
 	)
 }
@@ -6263,25 +6403,25 @@ func (call *CreateInvoiceLinkCall) Payload(payload string) *CreateInvoiceLinkCal
 	return call
 }
 
-// ProviderToken Payment provider token, obtained via BotFather
+// ProviderToken Payment provider token, obtained via @BotFather. Pass an empty string for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) ProviderToken(providerToken string) *CreateInvoiceLinkCall {
 	call.request.String("provider_token", providerToken)
 	return call
 }
 
-// Currency Three-letter ISO 4217 currency code, see more on currencies
+// Currency Three-letter ISO 4217 currency code, see more on currencies. Pass “XTR” for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) Currency(currency string) *CreateInvoiceLinkCall {
 	call.request.String("currency", currency)
 	return call
 }
 
-// Prices Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
+// Prices Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) Prices(prices []LabeledPrice) *CreateInvoiceLinkCall {
 	call.request.JSON("prices", prices)
 	return call
 }
 
-// MaxTipAmount The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
+// MaxTipAmount The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) MaxTipAmount(maxTipAmount int) *CreateInvoiceLinkCall {
 	call.request.Int("max_tip_amount", maxTipAmount)
 	return call
@@ -6323,43 +6463,43 @@ func (call *CreateInvoiceLinkCall) PhotoHeight(photoHeight int) *CreateInvoiceLi
 	return call
 }
 
-// NeedName Pass True if you require the user's full name to complete the order
+// NeedName Pass True if you require the user's full name to complete the order. Ignored for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) NeedName(needName bool) *CreateInvoiceLinkCall {
 	call.request.Bool("need_name", needName)
 	return call
 }
 
-// NeedPhoneNumber Pass True if you require the user's phone number to complete the order
+// NeedPhoneNumber Pass True if you require the user's phone number to complete the order. Ignored for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) NeedPhoneNumber(needPhoneNumber bool) *CreateInvoiceLinkCall {
 	call.request.Bool("need_phone_number", needPhoneNumber)
 	return call
 }
 
-// NeedEmail Pass True if you require the user's email address to complete the order
+// NeedEmail Pass True if you require the user's email address to complete the order. Ignored for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) NeedEmail(needEmail bool) *CreateInvoiceLinkCall {
 	call.request.Bool("need_email", needEmail)
 	return call
 }
 
-// NeedShippingAddress Pass True if you require the user's shipping address to complete the order
+// NeedShippingAddress Pass True if you require the user's shipping address to complete the order. Ignored for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) NeedShippingAddress(needShippingAddress bool) *CreateInvoiceLinkCall {
 	call.request.Bool("need_shipping_address", needShippingAddress)
 	return call
 }
 
-// SendPhoneNumberToProvider Pass True if the user's phone number should be sent to the provider
+// SendPhoneNumberToProvider Pass True if the user's phone number should be sent to the provider. Ignored for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) SendPhoneNumberToProvider(sendPhoneNumberToProvider bool) *CreateInvoiceLinkCall {
 	call.request.Bool("send_phone_number_to_provider", sendPhoneNumberToProvider)
 	return call
 }
 
-// SendEmailToProvider Pass True if the user's email address should be sent to the provider
+// SendEmailToProvider Pass True if the user's email address should be sent to the provider. Ignored for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) SendEmailToProvider(sendEmailToProvider bool) *CreateInvoiceLinkCall {
 	call.request.Bool("send_email_to_provider", sendEmailToProvider)
 	return call
 }
 
-// IsFlexible Pass True if the final price depends on the shipping method
+// IsFlexible Pass True if the final price depends on the shipping method. Ignored for payments in Telegram Stars.
 func (call *CreateInvoiceLinkCall) IsFlexible(isFlexible bool) *CreateInvoiceLinkCall {
 	call.request.Bool("is_flexible", isFlexible)
 	return call
@@ -6463,6 +6603,45 @@ func (call *AnswerPreCheckoutQueryCall) Ok(ok bool) *AnswerPreCheckoutQueryCall 
 // ErrorMessage Required if ok is False. Error message in human readable form that explains the reason for failure to proceed with the checkout (e.g. "Sorry, somebody just bought the last of our amazing black T-shirts while you were busy filling out your payment details. Please choose a different color or garment!"). Telegram will display this message to the user.
 func (call *AnswerPreCheckoutQueryCall) ErrorMessage(errorMessage string) *AnswerPreCheckoutQueryCall {
 	call.request.String("error_message", errorMessage)
+	return call
+}
+
+// RefundStarPaymentCall reprenesents a call to the refundStarPayment method.
+// Refunds a successful payment in Telegram Stars
+type RefundStarPaymentCall struct {
+	CallNoResult
+}
+
+// NewRefundStarPaymentCall constructs a new RefundStarPaymentCall with required parameters.
+// userID - Identifier of the user whose payment will be refunded
+// telegramPaymentChargeID - Telegram payment identifier
+func NewRefundStarPaymentCall(userID UserID, telegramPaymentChargeID string) *RefundStarPaymentCall {
+	return &RefundStarPaymentCall{
+		CallNoResult{
+			request: NewRequest("refundStarPayment").
+				UserID("user_id", userID).
+				String("telegram_payment_charge_id", telegramPaymentChargeID),
+		},
+	}
+}
+
+// RefundStarPaymentCall constructs a new RefundStarPaymentCall with required parameters.
+func (client *Client) RefundStarPayment(userID UserID, telegramPaymentChargeID string) *RefundStarPaymentCall {
+	return BindClient(
+		NewRefundStarPaymentCall(userID, telegramPaymentChargeID),
+		client,
+	)
+}
+
+// UserID Identifier of the user whose payment will be refunded
+func (call *RefundStarPaymentCall) UserID(userID UserID) *RefundStarPaymentCall {
+	call.request.UserID("user_id", userID)
+	return call
+}
+
+// TelegramPaymentChargeID Telegram payment identifier
+func (call *RefundStarPaymentCall) TelegramPaymentChargeID(telegramPaymentChargeID string) *RefundStarPaymentCall {
+	call.request.String("telegram_payment_charge_id", telegramPaymentChargeID)
 	return call
 }
 
@@ -6573,13 +6752,19 @@ func (call *SendGameCall) ProtectContent(protectContent bool) *SendGameCall {
 	return call
 }
 
+// MessageEffectID Unique identifier of the message effect to be added to the message; for private chats only
+func (call *SendGameCall) MessageEffectID(messageEffectID string) *SendGameCall {
+	call.request.String("message_effect_id", messageEffectID)
+	return call
+}
+
 // ReplyParameters Description of the message to reply to
 func (call *SendGameCall) ReplyParameters(replyParameters ReplyParameters) *SendGameCall {
 	call.request.JSON("reply_parameters", replyParameters)
 	return call
 }
 
-// ReplyMarkup A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not empty, the first button must launch the game. Not supported for messages sent on behalf of a business account.
+// ReplyMarkup A JSON-serialized object for an inline keyboard. If empty, one 'Play game_title' button will be shown. If not empty, the first button must launch the game.
 func (call *SendGameCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *SendGameCall {
 	call.request.JSON("reply_markup", replyMarkup)
 	return call

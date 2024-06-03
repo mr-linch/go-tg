@@ -252,13 +252,15 @@ func TestMessageUpdateHelpers(t *testing.T) {
 			},
 		},
 		{
-			Name:           "AnswerPoll",
-			Request:        msg.AnswerPoll("question", []string{"1"}).Request(),
+			Name: "AnswerPoll",
+			Request: msg.AnswerPoll("question", []tg.InputPollOption{{
+				Text: "1",
+			}}).Request(),
 			ExceptedMethod: "sendPoll",
 			ExpectedArgs: map[string]string{
 				"chat_id":  "123",
 				"question": "question",
-				"options":  "[\"1\"]",
+				"options":  "[{\"text\":\"1\"}]",
 			},
 		},
 		{
