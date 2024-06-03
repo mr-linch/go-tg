@@ -133,7 +133,7 @@ func (msg *MessageUpdate) AnswerSticker(sticker tg.FileArg) *tg.SendStickerCall 
 }
 
 // AnswerPoll calls sendPoll with pre-defined chatID to incoming message chat.
-func (msg *MessageUpdate) AnswerPoll(question string, options []string) *tg.SendPollCall {
+func (msg *MessageUpdate) AnswerPoll(question string, options []tg.InputPollOption) *tg.SendPollCall {
 	return msg.Client.SendPoll(msg.Chat, question, options)
 }
 
