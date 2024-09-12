@@ -2064,6 +2064,12 @@ type ReactionTypeCustomEmoji struct {
 	CustomEmojiID string `json:"custom_emoji_id"`
 }
 
+// ReactionTypePaid
+type ReactionTypePaid struct {
+	// Type of the reaction, always “paid”
+	Type string `json:"type"`
+}
+
 // ReactionCount represents a reaction added to a message along with the number of times it was added.
 type ReactionCount struct {
 	// Type of the reaction

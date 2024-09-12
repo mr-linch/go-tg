@@ -12,6 +12,7 @@ import (
 type ReactionType struct {
 	Emoji       *ReactionTypeEmoji
 	CustomEmoji *ReactionTypeCustomEmoji
+	Paid        *ReactionTypePaid
 }
 
 // NewReactionTypeEmoji returns ReactionType with emoji subtype.
@@ -32,6 +33,9 @@ func (reaction ReactionType) MarshalJSON() ([]byte, error) {
 	case reaction.CustomEmoji != nil:
 		reaction.CustomEmoji.Type = "custom_emoji"
 		return json.Marshal(reaction.CustomEmoji)
+	case reaction.Paid != nil:
+		reaction.Paid.Type = "paid"
+		return json.Marshal(reaction.Paid)
 	default:
 		return nil, fmt.Errorf("unknown ReactionType type")
 	}
@@ -53,7 +57,11 @@ func (reaction *ReactionType) UnmarshalJSON(v []byte) error {
 	case "custom_emoji":
 		reaction.CustomEmoji = &ReactionTypeCustomEmoji{}
 		return json.Unmarshal(v, reaction.CustomEmoji)
+	case "paid":
+		reaction.Paid = &ReactionTypePaid{}
+		return json.Unmarshal(v, reaction.Paid)
 	default:
+		fmt.Println(reaction)
 		return fmt.Errorf("unknown ReactionType type: %s", partial.Type)
 	}
 }
