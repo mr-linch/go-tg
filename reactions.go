@@ -61,7 +61,6 @@ func (reaction *ReactionType) UnmarshalJSON(v []byte) error {
 		reaction.Paid = &ReactionTypePaid{}
 		return json.Unmarshal(v, reaction.Paid)
 	default:
-		fmt.Println(reaction)
 		return fmt.Errorf("unknown ReactionType type: %s", partial.Type)
 	}
 }
