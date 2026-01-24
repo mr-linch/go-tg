@@ -16,6 +16,100 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+// WebAppInitData contains data transferred to the Mini App when it is opened.
+// See https://core.telegram.org/bots/webapps#webappinitdata for more information.
+type WebAppInitData struct {
+	// Optional. A unique identifier for the Mini App session, required for sending messages via the answerWebAppQuery method.
+	QueryID string `json:"query_id,omitempty"`
+
+	// Optional. An object containing data about the current user.
+	User *WebAppUser `json:"user,omitempty"`
+
+	// Optional. An object containing data about the chat partner of the current user in the chat where the bot was launched via the attachment menu.
+	Receiver *WebAppUser `json:"receiver,omitempty"`
+
+	// Optional. An object containing data about the chat where the bot was launched via the attachment menu.
+	Chat *WebAppChat `json:"chat,omitempty"`
+
+	// Optional. Type of the chat from which the Mini App was opened.
+	ChatType string `json:"chat_type,omitempty"`
+
+	// Optional. Global identifier, uniquely corresponding to the chat from which the Mini App was opened.
+	ChatInstance string `json:"chat_instance,omitempty"`
+
+	// Optional. The value of the startattach parameter, passed via link.
+	StartParam string `json:"start_param,omitempty"`
+
+	// Optional. Time in seconds, after which a message can be sent via the answerWebAppQuery method.
+	CanSendAfter int `json:"can_send_after,omitempty"`
+
+	// Unix time when the form was opened.
+	AuthDate int64 `json:"auth_date"`
+
+	// A hash of all passed parameters, which the bot server can use to check their validity.
+	Hash string `json:"hash"`
+
+	raw url.Values
+}
+
+// AuthDateTime returns time.Time representation of AuthDate field.
+func (s *WebAppInitData) AuthDateTime() time.Time {
+	return time.Unix(s.AuthDate, 0)
+}
+
+// WebAppUser contains the data of the Mini App user.
+// See https://core.telegram.org/bots/webapps#webappuser for more information.
+type WebAppUser struct {
+	// Unique identifier for this user or bot.
+	ID UserID `json:"id"`
+
+	// Optional. True, if this user is a bot.
+	IsBot bool `json:"is_bot,omitempty"`
+
+	// First name of the user or bot.
+	FirstName string `json:"first_name"`
+
+	// Optional. Last name of the user or bot.
+	LastName string `json:"last_name,omitempty"`
+
+	// Optional. Username of the user or bot.
+	Username string `json:"username,omitempty"`
+
+	// Optional. IETF language tag of the user's language.
+	LanguageCode string `json:"language_code,omitempty"`
+
+	// Optional. True, if this user is a Telegram Premium user.
+	IsPremium bool `json:"is_premium,omitempty"`
+
+	// Optional. True, if this user added the bot to the attachment menu.
+	AddedToAttachmentMenu bool `json:"added_to_attachment_menu,omitempty"`
+
+	// Optional. True, if this user allowed the bot to message them.
+	AllowsWriteToPm bool `json:"allows_write_to_pm,omitempty"`
+
+	// Optional. URL of the user's profile photo.
+	PhotoURL string `json:"photo_url,omitempty"`
+}
+
+// WebAppChat represents a chat in the Mini App context.
+// See https://core.telegram.org/bots/webapps#webappchat for more information.
+type WebAppChat struct {
+	// Unique identifier for this chat.
+	ID ChatID `json:"id"`
+
+	// Type of chat.
+	Type ChatType `json:"type"`
+
+	// Title of the chat.
+	Title string `json:"title"`
+
+	// Optional. Username of the chat.
+	Username string `json:"username,omitempty"`
+
+	// Optional. URL of the chat's photo.
+	PhotoURL string `json:"photo_url,omitempty"`
+}
+
 func getDataCheckString(vs url.Values) string {
 	keys := maps.Keys(vs)
 	slices.Sort(keys)

@@ -1,17 +1,15 @@
 package config
 
 import (
-	_ "embed"
 	"fmt"
+	"os"
+	"slices"
 	"strings"
 
 	"github.com/expr-lang/expr"
 	"github.com/mr-linch/go-tg/gen/ir"
 	"gopkg.in/yaml.v3"
 )
-
-//go:embed enums.yaml
-var enumsYAML []byte
 
 // EnumDef defines an enum via field references or an expr expression.
 type EnumDef struct {
@@ -20,16 +18,46 @@ type EnumDef struct {
 	Expr   string   `yaml:"expr,omitempty"`   // expr expression
 }
 
-// Config holds enum definitions.
-type Config struct {
+// Parser holds parser-related configuration.
+type Parser struct {
 	Enums []EnumDef `yaml:"enums"`
 }
 
-// Load parses the embedded enums.yaml config.
-func Load() (*Config, error) {
+// FieldTypeRule defines an expr-based predicate for field type mapping.
+type FieldTypeRule struct {
+	Expr   string `yaml:"expr"`             // boolean expr predicate
+	Type   string `yaml:"type"`             // Go type to use when matched
+	Scalar bool   `yaml:"scalar,omitempty"` // if true, no pointer wrapping for optional fields
+}
+
+// TypeGen holds type generation configuration.
+type TypeGen struct {
+	Exclude        []string          `yaml:"exclude"`
+	NameOverrides  map[string]string `yaml:"name_overrides"`
+	TypeOverrides  map[string]string `yaml:"type_overrides"`
+	FieldTypeRules []FieldTypeRule   `yaml:"field_type_rules"`
+}
+
+// IsExcluded reports whether typeName should be skipped.
+func (tg *TypeGen) IsExcluded(typeName string) bool {
+	return slices.Contains(tg.Exclude, typeName)
+}
+
+// Config holds the unified go-tg-gen configuration.
+type Config struct {
+	Parser  Parser  `yaml:"parser"`
+	TypeGen TypeGen `yaml:"typegen"`
+}
+
+// LoadFile loads configuration from the given YAML file path.
+func LoadFile(path string) (*Config, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read config: %w", err)
+	}
 	var cfg Config
-	if err := yaml.Unmarshal(enumsYAML, &cfg); err != nil {
-		return nil, fmt.Errorf("parse enums.yaml: %w", err)
+	if err := yaml.Unmarshal(data, &cfg); err != nil {
+		return nil, fmt.Errorf("parse config: %w", err)
 	}
 	return &cfg, nil
 }
@@ -39,7 +67,7 @@ func Load() (*Config, error) {
 func (c *Config) ApplyEnums(api *ir.API) error {
 	env := &exprEnv{api: api}
 
-	for _, def := range c.Enums {
+	for _, def := range c.Parser.Enums {
 		e := ir.Enum{
 			Name:   def.Name,
 			Fields: def.Fields,
@@ -54,11 +82,18 @@ func (c *Config) ApplyEnums(api *ir.API) error {
 			e.Values = values
 
 		case len(def.Fields) > 0:
-			values := resolveFieldEnum(api, def.Fields[0])
+			values, err := resolveFieldEnum(api, def.Fields[0])
+			if err != nil {
+				return fmt.Errorf("enum %q: %w", def.Name, err)
+			}
 			e.Values = values
 
 		default:
 			return fmt.Errorf("enum %q: must have either expr or fields", def.Name)
+		}
+
+		if len(e.Values) == 0 {
+			return fmt.Errorf("enum %q: produced no values", def.Name)
 		}
 
 		api.Enums = append(api.Enums, e)
@@ -68,10 +103,10 @@ func (c *Config) ApplyEnums(api *ir.API) error {
 }
 
 // resolveFieldEnum finds the Enum values on the specified "TypeName.field_name" field.
-func resolveFieldEnum(api *ir.API, ref string) []string {
+func resolveFieldEnum(api *ir.API, ref string) ([]string, error) {
 	parts := strings.SplitN(ref, ".", 2)
 	if len(parts) != 2 {
-		return nil
+		return nil, fmt.Errorf("invalid field reference %q: expected TypeName.field_name", ref)
 	}
 	typeName, fieldName := parts[0], parts[1]
 
@@ -79,12 +114,13 @@ func resolveFieldEnum(api *ir.API, ref string) []string {
 		if t.Name == typeName {
 			for _, f := range t.Fields {
 				if f.Name == fieldName {
-					return f.Enum
+					return f.Enum, nil
 				}
 			}
+			return nil, fmt.Errorf("field %q not found in type %q", fieldName, typeName)
 		}
 	}
-	return nil
+	return nil, fmt.Errorf("type %q not found in API", typeName)
 }
 
 // evalExpr evaluates an expr expression and returns the result as []string.

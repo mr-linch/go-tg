@@ -24,7 +24,7 @@ func TestDumpYAML(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cfg, err := config.Load()
+	cfg, err := config.LoadFile("../config.yaml")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -23,8 +23,10 @@ func TestApplyEnums_FieldMapped(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Enums: []EnumDef{
-			{Name: "ChatType", Fields: []string{"Chat.type"}},
+		Parser: Parser{
+			Enums: []EnumDef{
+				{Name: "ChatType", Fields: []string{"Chat.type"}},
+			},
 		},
 	}
 
@@ -53,8 +55,10 @@ func TestApplyEnums_UpdateType(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Enums: []EnumDef{
-			{Name: "UpdateType", Expr: `filter(Fields("Update"), {.Optional}) | map({.Name})`},
+		Parser: Parser{
+			Enums: []EnumDef{
+				{Name: "UpdateType", Expr: `filter(Fields("Update"), {.Optional}) | map({.Name})`},
+			},
 		},
 	}
 
@@ -89,8 +93,10 @@ func TestApplyEnums_SubtypeConsts(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Enums: []EnumDef{
-			{Name: "MyUnionType", Expr: `SubtypeConsts("MyUnion", "type")`},
+		Parser: Parser{
+			Enums: []EnumDef{
+				{Name: "MyUnionType", Expr: `SubtypeConsts("MyUnion", "type")`},
+			},
 		},
 	}
 
@@ -106,8 +112,10 @@ func TestApplyEnums_InvalidExpr(t *testing.T) {
 	api := &ir.API{}
 
 	cfg := &Config{
-		Enums: []EnumDef{
-			{Name: "Bad", Expr: `invalid syntax !!!`},
+		Parser: Parser{
+			Enums: []EnumDef{
+				{Name: "Bad", Expr: `invalid syntax !!!`},
+			},
 		},
 	}
 
@@ -116,19 +124,59 @@ func TestApplyEnums_InvalidExpr(t *testing.T) {
 	assert.Contains(t, err.Error(), `enum "Bad"`)
 }
 
-func TestApplyEnums_UnknownType(t *testing.T) {
+func TestApplyEnums_ExprEmptyValues(t *testing.T) {
 	api := &ir.API{}
 
 	cfg := &Config{
-		Enums: []EnumDef{
-			{Name: "Missing", Expr: `Fields("NonExistent") | map({.Name})`},
+		Parser: Parser{
+			Enums: []EnumDef{
+				{Name: "Missing", Expr: `Fields("NonExistent") | map({.Name})`},
+			},
 		},
 	}
 
 	err := cfg.ApplyEnums(api)
-	require.NoError(t, err)
-	require.Len(t, api.Enums, 1)
-	assert.Empty(t, api.Enums[0].Values)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), `enum "Missing"`)
+	assert.Contains(t, err.Error(), "produced no values")
+}
+
+func TestApplyEnums_FieldNotFound(t *testing.T) {
+	api := &ir.API{
+		Types: []ir.Type{
+			{Name: "Chat", Fields: []ir.Field{{Name: "id"}}},
+		},
+	}
+
+	cfg := &Config{
+		Parser: Parser{
+			Enums: []EnumDef{
+				{Name: "Bad", Fields: []string{"Chat.nonexistent"}},
+			},
+		},
+	}
+
+	err := cfg.ApplyEnums(api)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), `enum "Bad"`)
+	assert.Contains(t, err.Error(), "not found")
+}
+
+func TestApplyEnums_TypeNotFound(t *testing.T) {
+	api := &ir.API{}
+
+	cfg := &Config{
+		Parser: Parser{
+			Enums: []EnumDef{
+				{Name: "Bad", Fields: []string{"NonExistent.type"}},
+			},
+		},
+	}
+
+	err := cfg.ApplyEnums(api)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), `enum "Bad"`)
+	assert.Contains(t, err.Error(), "not found")
 }
 
 func TestApplyEnums_FullDoc(t *testing.T) {
@@ -139,7 +187,7 @@ func TestApplyEnums_FullDoc(t *testing.T) {
 	api, err := parser.Parse(f)
 	require.NoError(t, err)
 
-	cfg, err := Load()
+	cfg, err := LoadFile("../config.yaml")
 	require.NoError(t, err)
 
 	err = cfg.ApplyEnums(api)
@@ -192,8 +240,18 @@ func TestApplyEnums_FullDoc(t *testing.T) {
 	assert.Contains(t, rtType.Values, "custom_emoji")
 }
 
-func TestLoad(t *testing.T) {
-	cfg, err := Load()
+func TestLoadFile(t *testing.T) {
+	cfg, err := LoadFile("../config.yaml")
 	require.NoError(t, err)
-	assert.Greater(t, len(cfg.Enums), 5)
+	assert.Greater(t, len(cfg.Parser.Enums), 5)
+	assert.Greater(t, len(cfg.TypeGen.Exclude), 10)
+}
+
+func TestTypeGen_IsExcluded(t *testing.T) {
+	tg := &TypeGen{
+		Exclude: []string{"ChatID", "UserID"},
+	}
+	assert.True(t, tg.IsExcluded("ChatID"))
+	assert.True(t, tg.IsExcluded("UserID"))
+	assert.False(t, tg.IsExcluded("Message"))
 }

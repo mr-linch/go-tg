@@ -1,0 +1,87 @@
+# go-tg-gen configuration.
+parser:
+  enums:
+    # Field-mapped: values from first field's auto-detected Enum
+    - name: ChatType
+      fields: [Chat.type, ChatFullInfo.type, InlineQuery.chat_type]
+    - name: StickerType
+      fields: [Sticker.type, StickerSet.sticker_type]
+    - name: MessageEntityType
+      fields: [MessageEntity.type]
+
+    # Expr-computed: structural enums
+    - name: UpdateType
+      expr: 'filter(Fields("Update"), {.Optional}) | map({.Name})'
+
+    # Expr-computed: union discriminator enums
+    - name: MessageOriginType
+      expr: 'SubtypeConsts("MessageOrigin", "type")'
+    - name: ChatMemberStatus
+      expr: 'SubtypeConsts("ChatMember", "status")'
+    - name: BackgroundFillType
+      expr: 'SubtypeConsts("BackgroundFill", "type")'
+    - name: ReactionTypeType
+      expr: 'SubtypeConsts("ReactionType", "type")'
+
+typegen:
+  exclude:
+    # Empty structs (no fields in API, defined in types_gen_ext.go)
+    - CallbackGame
+    - ForumTopicClosed
+    - ForumTopicReopened
+    - GeneralForumTopicHidden
+    - GeneralForumTopicUnhidden
+    - GiveawayCreated
+    - VideoChatStarted
+    # Union types without const discriminator (manual unmarshal logic)
+    - MaybeInaccessibleMessage
+    - InputMessageContent
+    # Union types with extra methods beyond UnmarshalJSON
+    - ReactionType
+    - MessageOrigin
+    # Interface types (used as method params, can't be generated as structs)
+    - InputMedia
+    - InlineQueryResult
+    - BotCommandScope
+    - MenuButton
+
+  field_type_rules:
+    - expr: '(Name == "file_id" || hasSuffix(Name, "_file_id")) && TypeExpr.Types[0].Type == "String"'
+      type: FileID
+      scalar: true
+    - expr: '(Name == "chat_id" || hasSuffix(Name, "_chat_id")) && TypeExpr.Types[0].Type in ["Integer", "Integer64"]'
+      type: ChatID
+      scalar: true
+    - expr: '(Name == "user_id" || hasSuffix(Name, "_user_id")) && TypeExpr.Types[0].Type in ["Integer", "Integer64"]'
+      type: UserID
+      scalar: true
+    - expr: 'hasSuffix(Name, "parse_mode")'
+      type: ParseMode
+      scalar: true
+    - expr: '(Name == "username" || hasSuffix(Name, "_username")) && TypeExpr.Types[0].Type == "String"'
+      type: Username
+      scalar: true
+    - expr: 'TypeExpr.Types[0].Type == "String" && Description contains "file_id" && Description contains "attach://"'
+      type: FileArg
+    - expr: 'TypeExpr.Types[0].Type == "String" && !(Description contains "file_id") && Description contains "attach://"'
+      type: InputFile
+
+  name_overrides:
+    Update.update_id: ID
+    Message.message_id: ID
+    Contact.vcard: VCard
+    InlineQueryResultContact.vcard: VCard
+    InputContactMessageContent.vcard: VCard
+
+  type_overrides:
+    User.id: UserID
+    Chat.id: ChatID
+    Chat.type: ChatType
+    ChatFullInfo.id: ChatID
+    ChatFullInfo.type: ChatType
+    InaccessibleMessage.date: int64
+    MessageEntity.type: MessageEntityType
+    Sticker.type: StickerType
+    StickerSet.sticker_type: StickerType
+    InlineQuery.chat_type: ChatType
+    WebhookInfo.allowed_updates: "[]UpdateType"
