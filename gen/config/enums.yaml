@@ -1,0 +1,22 @@
+enums:
+  # Field-mapped: values from first field's auto-detected Enum
+  - name: ChatType
+    fields: [Chat.type, ChatFullInfo.type, InlineQuery.chat_type]
+  - name: StickerType
+    fields: [Sticker.type, StickerSet.sticker_type]
+  - name: MessageEntityType
+    fields: [MessageEntity.type]
+
+  # Expr-computed: structural enums
+  - name: UpdateType
+    expr: 'filter(Fields("Update"), {.Optional}) | map({.Name})'
+
+  # Expr-computed: union discriminator enums
+  - name: MessageOriginType
+    expr: 'SubtypeConsts("MessageOrigin", "type")'
+  - name: ChatMemberStatus
+    expr: 'SubtypeConsts("ChatMember", "status")'
+  - name: BackgroundFillType
+    expr: 'SubtypeConsts("BackgroundFill", "type")'
+  - name: ReactionTypeType
+    expr: 'SubtypeConsts("ReactionType", "type")'
