@@ -17,7 +17,7 @@ func TestAuthWidget_Query(t *testing.T) {
 			Widget: AuthWidget{
 				ID:        UserID(1),
 				FirstName: "John",
-				AuthDate:  1546300800,
+				AuthDate:  UnixTime(1546300800),
 				Hash:      "hash",
 			},
 
@@ -35,7 +35,7 @@ func TestAuthWidget_Query(t *testing.T) {
 				LastName:  "Doe",
 				Username:  "jdoe",
 				PhotoURL:  "https://example.com/photo.jpg",
-				AuthDate:  1546300800,
+				AuthDate:  UnixTime(1546300800),
 				Hash:      "hash",
 			},
 
@@ -80,7 +80,7 @@ func TestParseAuthWidgetQuery(t *testing.T) {
 				LastName:  "Doe",
 				Username:  "jdoe",
 				PhotoURL:  "https://example.com/photo.jpg",
-				AuthDate:  1546300800,
+				AuthDate:  UnixTime(1546300800),
 				Hash:      "hash",
 			},
 			Error: false,
@@ -134,7 +134,7 @@ func TestAuthWidget_Signature(t *testing.T) {
 		FirstName: "Sasha",
 		Username:  "MrLinch",
 		PhotoURL:  "https://t.me/i/userpic/320/q9a3ePyQ_J58XivHA6pL7UOLZWvphbLgBqh3OLhmtrs.jpg",
-		AuthDate:  1656790495,
+		AuthDate:  UnixTime(1656790495),
 		Hash:      "d64920549aa64c3f69577e217e77b253ca383bf0b9945266ab5e096739250d2d",
 	}
 
@@ -152,7 +152,7 @@ func TestAuthWidget_Valid(t *testing.T) {
 			FirstName: "Sasha",
 			Username:  "MrLinch",
 			PhotoURL:  "https://t.me/i/userpic/320/q9a3ePyQ_J58XivHA6pL7UOLZWvphbLgBqh3OLhmtrs.jpg",
-			AuthDate:  1656790495,
+			AuthDate:  UnixTime(1656790495),
 			Hash:      "d64920549aa64c3f69577e217e77b253ca383bf0b9945266ab5e096739250d2d",
 		}
 
@@ -165,7 +165,7 @@ func TestAuthWidget_Valid(t *testing.T) {
 			FirstName: "Sasha",
 			Username:  "MrLinch",
 			PhotoURL:  "https://t.me/i/userpic/320/q9a3ePyQ_J58XivHA6pL7UOLZWvphbLgBqh3OLhmtrs.jpg",
-			AuthDate:  1656790495,
+			AuthDate:  UnixTime(1656790495),
 			Hash:      "d64920549aa64c3f69577e217e77b253ca383bf0b9945266ab5e096739250d2d",
 		}
 
@@ -174,14 +174,14 @@ func TestAuthWidget_Valid(t *testing.T) {
 
 }
 
-func TestAuthWidget_AuthDateTime(t *testing.T) {
+func TestAuthWidget_Time(t *testing.T) {
 	now := time.Now().Truncate(time.Second)
 
 	w := AuthWidget{
-		AuthDate: now.Unix(),
+		AuthDate: UnixTime(now.Unix()),
 	}
 
-	assert.Equal(t, now, w.AuthDateTime())
+	assert.Equal(t, now, w.AuthDate.Time())
 }
 
 func TestParseWebAppInitData(t *testing.T) {
@@ -210,7 +210,7 @@ func TestParseWebAppInitData(t *testing.T) {
 				Chat:         &WebAppChat{ID: 3},
 				StartParam:   "start_param",
 				CanSendAfter: 10,
-				AuthDate:     1546300800,
+				AuthDate:     UnixTime(1546300800),
 				Hash:         "hash",
 			},
 		},

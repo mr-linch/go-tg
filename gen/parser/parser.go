@@ -260,9 +260,9 @@ func parseFieldTable(table *html.Node) []ir.Field {
 		desc := strings.TrimSpace(extractDescription(tds[2]))
 		optional := strings.Contains(desc, "Optional")
 
-		// Check for Integer64 (52-bit IDs and Unix timestamps)
+		// Check for Integer64 (52-bit IDs)
 		if len(typeExpr.Types) == 1 && typeExpr.Types[0].Type == "Integer" &&
-			(isInt64Description(desc) || isTimestampDescription(desc)) {
+			isInt64Description(desc) {
 			typeExpr.Types[0].Type = string(ir.TypeInteger64)
 		}
 
@@ -333,9 +333,9 @@ func parseParamTable(table *html.Node) []ir.Param {
 		required := strings.TrimSpace(extractText(tds[2])) == "Yes"
 		desc := strings.TrimSpace(extractDescription(tds[3]))
 
-		// Check for Integer64 (52-bit IDs and Unix timestamps)
+		// Check for Integer64 (52-bit IDs)
 		if len(typeExpr.Types) == 1 && typeExpr.Types[0].Type == "Integer" &&
-			(isInt64Description(desc) || isTimestampDescription(desc)) {
+			isInt64Description(desc) {
 			typeExpr.Types[0].Type = string(ir.TypeInteger64)
 		}
 

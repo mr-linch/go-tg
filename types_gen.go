@@ -5,7 +5,6 @@ package tg
 import (
 	"fmt"
 	"encoding/json"
-	"time"
 )
 
 // Update this [object](https://core.telegram.org/bots/api#available-types) represents an incoming update. At most one of the optional parameters can be present in any given update.
@@ -98,29 +97,19 @@ type WebhookInfo struct {
 	IPAddress string `json:"ip_address,omitempty"`
 
 	// Optional. Unix time for the most recent error that happened when trying to deliver an update via webhook
-	LastErrorDate int64 `json:"last_error_date,omitempty"`
+	LastErrorDate UnixTime `json:"last_error_date,omitempty"`
 
 	// Optional. Error message in human-readable format for the most recent error that happened when trying to deliver an update via webhook
 	LastErrorMessage string `json:"last_error_message,omitempty"`
 
 	// Optional. Unix time of the most recent error that happened when trying to synchronize available updates with Telegram datacenters
-	LastSynchronizationErrorDate int64 `json:"last_synchronization_error_date,omitempty"`
+	LastSynchronizationErrorDate UnixTime `json:"last_synchronization_error_date,omitempty"`
 
 	// Optional. The maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
 	MaxConnections int `json:"max_connections,omitempty"`
 
 	// Optional. A list of update types the bot is subscribed to. Defaults to all update types except chat_member
 	AllowedUpdates []UpdateType `json:"allowed_updates,omitempty"`
-}
-
-// LastErrorDateTime returns time.Time representation of LastErrorDate field.
-func (s *WebhookInfo) LastErrorDateTime() time.Time {
-	return time.Unix(s.LastErrorDate, 0)
-}
-
-// LastSynchronizationErrorDateTime returns time.Time representation of LastSynchronizationErrorDate field.
-func (s *WebhookInfo) LastSynchronizationErrorDateTime() time.Time {
-	return time.Unix(s.LastSynchronizationErrorDate, 0)
 }
 
 // User this object represents a Telegram user or bot.
@@ -267,7 +256,7 @@ type ChatFullInfo struct {
 	EmojiStatusCustomEmojiID string `json:"emoji_status_custom_emoji_id,omitempty"`
 
 	// Optional. Expiration date of the emoji status of the chat or the other party in a private chat, in Unix time, if any
-	EmojiStatusExpirationDate int64 `json:"emoji_status_expiration_date,omitempty"`
+	EmojiStatusExpirationDate UnixTime `json:"emoji_status_expiration_date,omitempty"`
 
 	// Optional. Bio of the other party in a private chat
 	Bio string `json:"bio,omitempty"`
@@ -348,11 +337,6 @@ type ChatFullInfo struct {
 	PaidMessageStarCount int `json:"paid_message_star_count,omitempty"`
 }
 
-// EmojiStatusExpirationDateTime returns time.Time representation of EmojiStatusExpirationDate field.
-func (s *ChatFullInfo) EmojiStatusExpirationDateTime() time.Time {
-	return time.Unix(s.EmojiStatusExpirationDate, 0)
-}
-
 // Message this object represents a message.
 type Message struct {
 	// Unique message identifier inside this chat. In specific instances (e.g., message containing a video sent to a big chat), the server might automatically schedule a message instead of sending it immediately. In such cases, this field will be 0 and the relevant message will be unusable until it is actually sent
@@ -377,7 +361,7 @@ type Message struct {
 	SenderBusinessBot *User `json:"sender_business_bot,omitempty"`
 
 	// Date the message was sent in Unix time. It is always a positive number, representing a valid date.
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Optional. Unique identifier of the business connection from which the message was received. If non-empty, the message belongs to a chat of the corresponding business account that is independent from any potential bot chat which might share the same identifier.
 	BusinessConnectionID string `json:"business_connection_id,omitempty"`
@@ -413,7 +397,7 @@ type Message struct {
 	ViaBot *User `json:"via_bot,omitempty"`
 
 	// Optional. Date the message was last edited in Unix time
-	EditDate int64 `json:"edit_date,omitempty"`
+	EditDate UnixTime `json:"edit_date,omitempty"`
 
 	// Optional. True, if the message can't be forwarded
 	HasProtectedContent bool `json:"has_protected_content,omitempty"`
@@ -665,16 +649,6 @@ type Message struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 }
 
-// DateTime returns time.Time representation of Date field.
-func (s *Message) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
-}
-
-// EditDateTime returns time.Time representation of EditDate field.
-func (s *Message) EditDateTime() time.Time {
-	return time.Unix(s.EditDate, 0)
-}
-
 // MessageID this object represents a unique message identifier.
 type MessageID struct {
 	// Unique message identifier. In specific instances (e.g., message containing a video sent to a big chat), the server might automatically schedule a message instead of sending it immediately. In such cases, this field will be 0 and the relevant message will be unusable until it is actually sent
@@ -690,12 +664,7 @@ type InaccessibleMessage struct {
 	MessageID int `json:"message_id"`
 
 	// Always 0. The field can be used to differentiate regular and inaccessible messages.
-	Date int64 `json:"date"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *InaccessibleMessage) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
+	Date UnixTime `json:"date"`
 }
 
 // MessageEntity this object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
@@ -848,15 +817,10 @@ type MessageOriginUser struct {
 	Type string `json:"type"`
 
 	// Date the message was sent originally in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// User that sent the message originally
 	SenderUser User `json:"sender_user"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *MessageOriginUser) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // MessageOriginHiddenUser the message was originally sent by an unknown user.
@@ -865,15 +829,10 @@ type MessageOriginHiddenUser struct {
 	Type string `json:"type"`
 
 	// Date the message was sent originally in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Name of the user that sent the message originally
 	SenderUserName string `json:"sender_user_name"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *MessageOriginHiddenUser) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // MessageOriginChat the message was originally sent on behalf of a chat to a group chat.
@@ -882,7 +841,7 @@ type MessageOriginChat struct {
 	Type string `json:"type"`
 
 	// Date the message was sent originally in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Chat that sent the message originally
 	SenderChat Chat `json:"sender_chat"`
@@ -891,18 +850,13 @@ type MessageOriginChat struct {
 	AuthorSignature string `json:"author_signature,omitempty"`
 }
 
-// DateTime returns time.Time representation of Date field.
-func (s *MessageOriginChat) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
-}
-
 // MessageOriginChannel the message was originally sent to a channel chat.
 type MessageOriginChannel struct {
 	// Type of the message origin, always “channel”
 	Type string `json:"type"`
 
 	// Date the message was sent originally in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Channel chat to which the message was originally sent
 	Chat Chat `json:"chat"`
@@ -912,11 +866,6 @@ type MessageOriginChannel struct {
 
 	// Optional. Signature of the original post author
 	AuthorSignature string `json:"author_signature,omitempty"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *MessageOriginChannel) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // PhotoSize this object represents one size of a photo or a [file](https://core.telegram.org/bots/api#document) / [sticker](https://core.telegram.org/bots/api#sticker) thumbnail.
@@ -1252,12 +1201,7 @@ type Poll struct {
 	OpenPeriod int `json:"open_period,omitempty"`
 
 	// Optional. Point in time (Unix timestamp) when the poll will be automatically closed
-	CloseDate int64 `json:"close_date,omitempty"`
-}
-
-// CloseDateTime returns time.Time representation of CloseDate field.
-func (s *Poll) CloseDateTime() time.Time {
-	return time.Unix(s.CloseDate, 0)
+	CloseDate UnixTime `json:"close_date,omitempty"`
 }
 
 // ChecklistTask describes a task in a checklist.
@@ -1278,12 +1222,7 @@ type ChecklistTask struct {
 	CompletedByChat *Chat `json:"completed_by_chat,omitempty"`
 
 	// Optional. Point in time (Unix timestamp) when the task was completed; 0 if the task wasn't completed
-	CompletionDate int64 `json:"completion_date,omitempty"`
-}
-
-// CompletionDateTime returns time.Time representation of CompletionDate field.
-func (s *ChecklistTask) CompletionDateTime() time.Time {
-	return time.Unix(s.CompletionDate, 0)
+	CompletionDate UnixTime `json:"completion_date,omitempty"`
 }
 
 // Checklist describes a checklist.
@@ -1622,12 +1561,7 @@ type WriteAccessAllowed struct {
 // VideoChatScheduled this object represents a service message about a video chat scheduled in the chat.
 type VideoChatScheduled struct {
 	// Point in time (Unix timestamp) when the video chat is supposed to be started by a chat administrator
-	StartDate int64 `json:"start_date"`
-}
-
-// StartDateTime returns time.Time representation of StartDate field.
-func (s *VideoChatScheduled) StartDateTime() time.Time {
-	return time.Unix(s.StartDate, 0)
+	StartDate UnixTime `json:"start_date"`
 }
 
 // VideoChatEnded this object represents a service message about a video chat ended in the chat.
@@ -1717,7 +1651,7 @@ type Giveaway struct {
 	Chats []Chat `json:"chats"`
 
 	// Point in time (Unix timestamp) when winners of the giveaway will be selected
-	WinnersSelectionDate int64 `json:"winners_selection_date"`
+	WinnersSelectionDate UnixTime `json:"winners_selection_date"`
 
 	// The number of users which are supposed to be selected as winners of the giveaway
 	WinnerCount int `json:"winner_count"`
@@ -1741,11 +1675,6 @@ type Giveaway struct {
 	PremiumSubscriptionMonthCount int `json:"premium_subscription_month_count,omitempty"`
 }
 
-// WinnersSelectionDateTime returns time.Time representation of WinnersSelectionDate field.
-func (s *Giveaway) WinnersSelectionDateTime() time.Time {
-	return time.Unix(s.WinnersSelectionDate, 0)
-}
-
 // GiveawayWinners this object represents a message about the completion of a giveaway with public winners.
 type GiveawayWinners struct {
 	// The chat that created the giveaway
@@ -1755,7 +1684,7 @@ type GiveawayWinners struct {
 	GiveawayMessageID int `json:"giveaway_message_id"`
 
 	// Point in time (Unix timestamp) when winners of the giveaway were selected
-	WinnersSelectionDate int64 `json:"winners_selection_date"`
+	WinnersSelectionDate UnixTime `json:"winners_selection_date"`
 
 	// Total number of winners in the giveaway
 	WinnerCount int `json:"winner_count"`
@@ -1783,11 +1712,6 @@ type GiveawayWinners struct {
 
 	// Optional. Description of additional giveaway prize
 	PrizeDescription string `json:"prize_description,omitempty"`
-}
-
-// WinnersSelectionDateTime returns time.Time representation of WinnersSelectionDate field.
-func (s *GiveawayWinners) WinnersSelectionDateTime() time.Time {
-	return time.Unix(s.WinnersSelectionDate, 0)
 }
 
 // GiveawayCompleted this object represents a service message about the completion of a giveaway without public winners.
@@ -2167,7 +2091,7 @@ type ChatInviteLink struct {
 	Name string `json:"name,omitempty"`
 
 	// Optional. Point in time (Unix timestamp) when the link will expire or has been expired
-	ExpireDate int64 `json:"expire_date,omitempty"`
+	ExpireDate UnixTime `json:"expire_date,omitempty"`
 
 	// Optional. The maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
 	MemberLimit int `json:"member_limit,omitempty"`
@@ -2180,11 +2104,6 @@ type ChatInviteLink struct {
 
 	// Optional. The amount of Telegram Stars a user must pay initially and after each subsequent subscription period to be a member of the chat using the link
 	SubscriptionPrice int `json:"subscription_price,omitempty"`
-}
-
-// ExpireDateTime returns time.Time representation of ExpireDate field.
-func (s *ChatInviteLink) ExpireDateTime() time.Time {
-	return time.Unix(s.ExpireDate, 0)
 }
 
 // ChatAdministratorRights represents the rights of an administrator in a chat.
@@ -2247,7 +2166,7 @@ type ChatMemberUpdated struct {
 	From User `json:"from"`
 
 	// Date the change was done in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Previous information about the chat member
 	OldChatMember ChatMember `json:"old_chat_member"`
@@ -2263,11 +2182,6 @@ type ChatMemberUpdated struct {
 
 	// Optional. True, if the user joined the chat via a chat folder invite link
 	ViaChatFolderInviteLink bool `json:"via_chat_folder_invite_link,omitempty"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *ChatMemberUpdated) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // ChatMemberOwner represents a [chat member](https://core.telegram.org/bots/api#chatmember) that owns the chat and has all administrator privileges.
@@ -2357,12 +2271,7 @@ type ChatMemberMember struct {
 	User User `json:"user"`
 
 	// Optional. Date when the user's subscription will expire; Unix time
-	UntilDate int64 `json:"until_date,omitempty"`
-}
-
-// UntilDateTime returns time.Time representation of UntilDate field.
-func (s *ChatMemberMember) UntilDateTime() time.Time {
-	return time.Unix(s.UntilDate, 0)
+	UntilDate UnixTime `json:"until_date,omitempty"`
 }
 
 // ChatMemberRestricted represents a [chat member](https://core.telegram.org/bots/api#chatmember) that is under certain restrictions in the chat. Supergroups only.
@@ -2419,12 +2328,7 @@ type ChatMemberRestricted struct {
 	CanManageTopics bool `json:"can_manage_topics"`
 
 	// Date when restrictions will be lifted for this user; Unix time. If 0, then the user is restricted forever
-	UntilDate int64 `json:"until_date"`
-}
-
-// UntilDateTime returns time.Time representation of UntilDate field.
-func (s *ChatMemberRestricted) UntilDateTime() time.Time {
-	return time.Unix(s.UntilDate, 0)
+	UntilDate UnixTime `json:"until_date"`
 }
 
 // ChatMemberLeft represents a [chat member](https://core.telegram.org/bots/api#chatmember) that isn't currently a member of the chat, but may join it themselves.
@@ -2445,12 +2349,7 @@ type ChatMemberBanned struct {
 	User User `json:"user"`
 
 	// Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever
-	UntilDate int64 `json:"until_date"`
-}
-
-// UntilDateTime returns time.Time representation of UntilDate field.
-func (s *ChatMemberBanned) UntilDateTime() time.Time {
-	return time.Unix(s.UntilDate, 0)
+	UntilDate UnixTime `json:"until_date"`
 }
 
 // ChatJoinRequest represents a join request sent to a chat.
@@ -2465,18 +2364,13 @@ type ChatJoinRequest struct {
 	UserChatID ChatID `json:"user_chat_id"`
 
 	// Date the request was sent in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Optional. Bio of the user.
 	Bio string `json:"bio,omitempty"`
 
 	// Optional. Chat invite link that was used by the user to send the join request
 	InviteLink *ChatInviteLink `json:"invite_link,omitempty"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *ChatJoinRequest) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // ChatPermissions describes actions that a non-administrator user is allowed to take in a chat.
@@ -2755,18 +2649,13 @@ type MessageReactionUpdated struct {
 	ActorChat *Chat `json:"actor_chat,omitempty"`
 
 	// Date of the change in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Previous list of reaction types that were set by the user
 	OldReaction []ReactionType `json:"old_reaction"`
 
 	// New list of reaction types that have been set by the user
 	NewReaction []ReactionType `json:"new_reaction"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *MessageReactionUpdated) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // MessageReactionCountUpdated this object represents reaction changes on a message with anonymous reactions.
@@ -2778,15 +2667,10 @@ type MessageReactionCountUpdated struct {
 	MessageID int `json:"message_id"`
 
 	// Date of the change in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// List of reactions that are present on the message
 	Reactions []ReactionCount `json:"reactions"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *MessageReactionCountUpdated) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // ForumTopic this object represents a forum topic.
@@ -3029,12 +2913,7 @@ type UniqueGiftInfo struct {
 	TransferStarCount int `json:"transfer_star_count,omitempty"`
 
 	// Optional. Point in time (Unix timestamp) when the gift can be transferred. If it is in the past, then the gift can be transferred now
-	NextTransferDate int64 `json:"next_transfer_date,omitempty"`
-}
-
-// NextTransferDateTime returns time.Time representation of NextTransferDate field.
-func (s *UniqueGiftInfo) NextTransferDateTime() time.Time {
-	return time.Unix(s.NextTransferDate, 0)
+	NextTransferDate UnixTime `json:"next_transfer_date,omitempty"`
 }
 
 // OwnedGiftRegular describes a regular gift owned by a user or a chat.
@@ -3052,7 +2931,7 @@ type OwnedGiftRegular struct {
 	SenderUser *User `json:"sender_user,omitempty"`
 
 	// Date the gift was sent in Unix time
-	SendDate int64 `json:"send_date"`
+	SendDate UnixTime `json:"send_date"`
 
 	// Optional. Text of the message that was added to the gift
 	Text string `json:"text,omitempty"`
@@ -3085,11 +2964,6 @@ type OwnedGiftRegular struct {
 	UniqueGiftNumber int `json:"unique_gift_number,omitempty"`
 }
 
-// SendDateTime returns time.Time representation of SendDate field.
-func (s *OwnedGiftRegular) SendDateTime() time.Time {
-	return time.Unix(s.SendDate, 0)
-}
-
 // OwnedGiftUnique describes a unique gift received and owned by a user or a chat.
 type OwnedGiftUnique struct {
 	// Type of the gift, always “unique”
@@ -3105,7 +2979,7 @@ type OwnedGiftUnique struct {
 	SenderUser *User `json:"sender_user,omitempty"`
 
 	// Date the gift was sent in Unix time
-	SendDate int64 `json:"send_date"`
+	SendDate UnixTime `json:"send_date"`
 
 	// Optional. True, if the gift is displayed on the account's profile page; for gifts received on behalf of business accounts only
 	IsSaved bool `json:"is_saved,omitempty"`
@@ -3117,17 +2991,7 @@ type OwnedGiftUnique struct {
 	TransferStarCount int `json:"transfer_star_count,omitempty"`
 
 	// Optional. Point in time (Unix timestamp) when the gift can be transferred. If it is in the past, then the gift can be transferred now
-	NextTransferDate int64 `json:"next_transfer_date,omitempty"`
-}
-
-// SendDateTime returns time.Time representation of SendDate field.
-func (s *OwnedGiftUnique) SendDateTime() time.Time {
-	return time.Unix(s.SendDate, 0)
-}
-
-// NextTransferDateTime returns time.Time representation of NextTransferDate field.
-func (s *OwnedGiftUnique) NextTransferDateTime() time.Time {
-	return time.Unix(s.NextTransferDate, 0)
+	NextTransferDate UnixTime `json:"next_transfer_date,omitempty"`
 }
 
 // OwnedGifts contains the list of gifts received and owned by a user or a chat.
@@ -3316,23 +3180,13 @@ type ChatBoost struct {
 	BoostID string `json:"boost_id"`
 
 	// Point in time (Unix timestamp) when the chat was boosted
-	AddDate int64 `json:"add_date"`
+	AddDate UnixTime `json:"add_date"`
 
 	// Point in time (Unix timestamp) when the boost will automatically expire, unless the booster's Telegram Premium subscription is prolonged
-	ExpirationDate int64 `json:"expiration_date"`
+	ExpirationDate UnixTime `json:"expiration_date"`
 
 	// Source of the added boost
 	Source ChatBoostSource `json:"source"`
-}
-
-// AddDateTime returns time.Time representation of AddDate field.
-func (s *ChatBoost) AddDateTime() time.Time {
-	return time.Unix(s.AddDate, 0)
-}
-
-// ExpirationDateTime returns time.Time representation of ExpirationDate field.
-func (s *ChatBoost) ExpirationDateTime() time.Time {
-	return time.Unix(s.ExpirationDate, 0)
 }
 
 // ChatBoostUpdated this object represents a boost added to a chat or changed.
@@ -3353,15 +3207,10 @@ type ChatBoostRemoved struct {
 	BoostID string `json:"boost_id"`
 
 	// Point in time (Unix timestamp) when the boost was removed
-	RemoveDate int64 `json:"remove_date"`
+	RemoveDate UnixTime `json:"remove_date"`
 
 	// Source of the removed boost
 	Source ChatBoostSource `json:"source"`
-}
-
-// RemoveDateTime returns time.Time representation of RemoveDate field.
-func (s *ChatBoostRemoved) RemoveDateTime() time.Time {
-	return time.Unix(s.RemoveDate, 0)
 }
 
 // UserChatBoosts this object represents a list of boosts added to a chat by a user.
@@ -3427,18 +3276,13 @@ type BusinessConnection struct {
 	UserChatID ChatID `json:"user_chat_id"`
 
 	// Date the connection was established in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Optional. Rights of the business bot
 	Rights *BusinessBotRights `json:"rights,omitempty"`
 
 	// True, if the connection is active
 	IsEnabled bool `json:"is_enabled"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *BusinessConnection) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // BusinessMessagesDeleted this object is received when messages are deleted from a connected business account.
@@ -4741,12 +4585,7 @@ type PreparedInlineMessage struct {
 	ID string `json:"id"`
 
 	// Expiration date of the prepared message, in Unix time. Expired prepared messages can no longer be used
-	ExpirationDate int64 `json:"expiration_date"`
-}
-
-// ExpirationDateTime returns time.Time representation of ExpirationDate field.
-func (s *PreparedInlineMessage) ExpirationDateTime() time.Time {
-	return time.Unix(s.ExpirationDate, 0)
+	ExpirationDate UnixTime `json:"expiration_date"`
 }
 
 // LabeledPrice this object represents a portion of the price for goods or services.
@@ -4836,7 +4675,7 @@ type SuccessfulPayment struct {
 	InvoicePayload string `json:"invoice_payload"`
 
 	// Optional. Expiration date of the subscription, in Unix time; for recurring payments only
-	SubscriptionExpirationDate int64 `json:"subscription_expiration_date,omitempty"`
+	SubscriptionExpirationDate UnixTime `json:"subscription_expiration_date,omitempty"`
 
 	// Optional. True, if the payment is a recurring payment for a subscription
 	IsRecurring bool `json:"is_recurring,omitempty"`
@@ -4855,11 +4694,6 @@ type SuccessfulPayment struct {
 
 	// Provider payment identifier
 	ProviderPaymentChargeID string `json:"provider_payment_charge_id"`
-}
-
-// SubscriptionExpirationDateTime returns time.Time representation of SubscriptionExpirationDate field.
-func (s *SuccessfulPayment) SubscriptionExpirationDateTime() time.Time {
-	return time.Unix(s.SubscriptionExpirationDate, 0)
 }
 
 // RefundedPayment this object contains basic information about a refunded payment.
@@ -4940,15 +4774,10 @@ type RevenueWithdrawalStateSucceeded struct {
 	Type string `json:"type"`
 
 	// Date the withdrawal was completed in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// An HTTPS URL that can be used to see transaction details
 	URL string `json:"url"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *RevenueWithdrawalStateSucceeded) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // RevenueWithdrawalStateFailed the withdrawal failed and the transaction was refunded.
@@ -5074,18 +4903,13 @@ type StarTransaction struct {
 	NanostarAmount int `json:"nanostar_amount,omitempty"`
 
 	// Date the transaction was created in Unix time
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Optional. Source of an incoming transaction (e.g., a user purchasing goods or services, Fragment refunding a failed withdrawal). Only for incoming transactions
 	Source *TransactionPartner `json:"source,omitempty"`
 
 	// Optional. Receiver of an outgoing transaction (e.g., a user for a purchase refund, Fragment for a withdrawal). Only for outgoing transactions
 	Receiver *TransactionPartner `json:"receiver,omitempty"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *StarTransaction) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // StarTransactions contains a list of Telegram Star transactions.
@@ -5115,12 +4939,7 @@ type PassportFile struct {
 	FileSize int `json:"file_size"`
 
 	// Unix time when the file was uploaded
-	FileDate int64 `json:"file_date"`
-}
-
-// FileDateTime returns time.Time representation of FileDate field.
-func (s *PassportFile) FileDateTime() time.Time {
-	return time.Unix(s.FileDate, 0)
+	FileDate UnixTime `json:"file_date"`
 }
 
 // EncryptedPassportElement describes documents or other Telegram Passport elements shared with the bot by the user.

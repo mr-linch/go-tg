@@ -10,6 +10,44 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestUnixTime(t *testing.T) {
+	t.Run("Time", func(t *testing.T) {
+		assert.Equal(t, time.Time{}, UnixTime(0).Time())
+		assert.Equal(t, time.Unix(1234567890, 0), UnixTime(1234567890).Time())
+		assert.Equal(t, time.Unix(-1, 0), UnixTime(-1).Time())
+	})
+
+	t.Run("IsZero", func(t *testing.T) {
+		assert.True(t, UnixTime(0).IsZero())
+		assert.False(t, UnixTime(1).IsZero())
+		assert.False(t, UnixTime(-1).IsZero())
+	})
+
+	t.Run("JSON", func(t *testing.T) {
+		type s struct {
+			Date     UnixTime `json:"date"`
+			Optional UnixTime `json:"optional,omitempty"`
+		}
+
+		// Unmarshal
+		var v s
+		err := json.Unmarshal([]byte(`{"date":1234567890}`), &v)
+		require.NoError(t, err)
+		assert.Equal(t, UnixTime(1234567890), v.Date)
+		assert.True(t, v.Optional.IsZero())
+
+		// Marshal
+		data, err := json.Marshal(s{Date: UnixTime(1234567890)})
+		require.NoError(t, err)
+		assert.Equal(t, `{"date":1234567890}`, string(data))
+
+		// Marshal with omitempty: zero value is omitted
+		data, err = json.Marshal(s{Date: UnixTime(42)})
+		require.NoError(t, err)
+		assert.Equal(t, `{"date":42}`, string(data))
+	})
+}
+
 func TestPeerIDImpl(t *testing.T) {
 	for _, test := range []struct {
 		PeerID PeerID
@@ -804,7 +842,7 @@ func TestUpdateType_String(t *testing.T) {
 
 func TestMessage_IsInaccessible(t *testing.T) {
 	accessible := &Message{
-		Date: time.Now().Unix(),
+		Date: UnixTime(time.Now().Unix()),
 	}
 
 	inaccessible := &Message{

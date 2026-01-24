@@ -46,6 +46,9 @@ typegen:
     - MenuButton
 
   field_type_rules:
+    - expr: 'TypeExpr.Types[0].Type in ["Integer", "Integer64"] && (Description contains "Unix time" || Description contains "Unix timestamp")'
+      type: UnixTime
+      scalar: true
     - expr: '(Name == "file_id" || hasSuffix(Name, "_file_id")) && TypeExpr.Types[0].Type == "String"'
       type: FileID
       scalar: true
@@ -79,7 +82,7 @@ typegen:
     Chat.type: ChatType
     ChatFullInfo.id: ChatID
     ChatFullInfo.type: ChatType
-    InaccessibleMessage.date: int64
+    InaccessibleMessage.date: UnixTime
     MessageEntity.type: MessageEntityType
     Sticker.type: StickerType
     StickerSet.sticker_type: StickerType

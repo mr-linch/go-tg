@@ -56,7 +56,7 @@ var testAPI = &ir.API{
 				},
 				{
 					Name:        "last_error_date",
-					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer64"}}},
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}}},
 					Optional:    true,
 					Description: "Optional. Unix time for the most recent error.",
 				},
@@ -101,7 +101,7 @@ var testAPI = &ir.API{
 				},
 				{
 					Name:        "date",
-					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer64"}}},
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}}},
 					Description: "Date the message was sent in Unix time.",
 				},
 				{
@@ -346,7 +346,7 @@ func TestGenerate_UnionTypes(t *testing.T) {
 	assert.Contains(t, got, `case "gradient":`)
 }
 
-func TestGenerate_DateTimeHelpers(t *testing.T) {
+func TestGenerate_UnixTimeFields(t *testing.T) {
 	cfg := loadTestConfig(t)
 
 	var buf bytes.Buffer
@@ -354,8 +354,10 @@ func TestGenerate_DateTimeHelpers(t *testing.T) {
 	require.NoError(t, err)
 
 	got := buf.String()
-	assert.Contains(t, got, "func (s *WebhookInfo) LastErrorDateTime()")
-	assert.Contains(t, got, "func (s *Message) DateTime()")
+	assert.Contains(t, got, "LastErrorDate UnixTime")
+	assert.Contains(t, got, "Date UnixTime")
+	// No DateTime helper methods should be generated
+	assert.NotContains(t, got, "DateTime()")
 }
 
 func TestGenerate_NameOverrides(t *testing.T) {

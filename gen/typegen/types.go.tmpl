@@ -9,9 +9,6 @@ import (
 {{- if .NeedJSON}}
 	"encoding/json"
 {{- end}}
-{{- if .NeedTime}}
-	"time"
-{{- end}}
 )
 {{range .Types}}
 // {{.Comment}}
@@ -21,13 +18,7 @@ type {{.Name}} struct {
 	{{.Name}} {{.Type}} {{.JSONTag}}
 {{end -}}
 }
-{{range .DateHelpers}}
-// {{.MethodName}} returns time.Time representation of {{.FieldName}} field.
-func (s *{{.TypeName}}) {{.MethodName}}() time.Time {
-	return time.Unix(s.{{.FieldName}}, 0)
-}
 {{end}}
-{{- end}}
 {{- range .UnionTypes}}
 // {{.Comment}}
 type {{.Name}} struct {

@@ -25,10 +25,9 @@ type GoField struct {
 
 // GoType represents a resolved struct type for template rendering.
 type GoType struct {
-	Comment     string
-	Name        string
-	Fields      []GoField
-	DateHelpers []DateHelper
+	Comment string
+	Name    string
+	Fields  []GoField
 }
 
 // GoUnionType represents a union type (has Subtypes, no Fields).
@@ -46,19 +45,11 @@ type GoUnionVariant struct {
 	ConstVal  string
 }
 
-// DateHelper represents a generated DateTime helper method.
-type DateHelper struct {
-	TypeName   string
-	FieldName  string
-	MethodName string
-}
-
 // TemplateData is the data passed to the template.
 type TemplateData struct {
 	Package    string
 	Types      []GoType
 	UnionTypes []GoUnionType
-	NeedTime   bool
 	NeedJSON   bool
 	NeedFmt    bool
 }
@@ -125,10 +116,6 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 		log.Debug("generating type", "name", t.Name)
 		goType := resolveType(t, cfg, rules, usedNameOverrides, usedTypeOverrides)
 		data.Types = append(data.Types, goType)
-
-		if len(goType.DateHelpers) > 0 {
-			data.NeedTime = true
-		}
 	}
 
 	// Warn about unused config entries.
@@ -164,18 +151,6 @@ func resolveType(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, 
 	for _, f := range t.Fields {
 		gf := resolveField(t.Name, f, cfg, rules, usedNames, usedTypes)
 		gt.Fields = append(gt.Fields, gf)
-
-		if isDateTimeField(gf) {
-			methodName := gf.Name + "Time"
-			if gf.Name == "Date" {
-				methodName = "DateTime"
-			}
-			gt.DateHelpers = append(gt.DateHelpers, DateHelper{
-				TypeName:   name,
-				FieldName:  gf.Name,
-				MethodName: methodName,
-			})
-		}
 	}
 
 	return gt
@@ -209,10 +184,6 @@ func buildJSONTag(fieldName string, optional bool) string {
 		return fmt.Sprintf("`json:\"%s,omitempty\"`", fieldName)
 	}
 	return fmt.Sprintf("`json:\"%s\"`", fieldName)
-}
-
-func isDateTimeField(gf GoField) bool {
-	return gf.Type == "int64" && strings.HasSuffix(gf.Name, "Date")
 }
 
 func formatTypeComment(name, desc string) string {

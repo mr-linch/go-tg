@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
@@ -44,17 +43,12 @@ type WebAppInitData struct {
 	CanSendAfter int `json:"can_send_after,omitempty"`
 
 	// Unix time when the form was opened.
-	AuthDate int64 `json:"auth_date"`
+	AuthDate UnixTime `json:"auth_date"`
 
 	// A hash of all passed parameters, which the bot server can use to check their validity.
 	Hash string `json:"hash"`
 
 	raw url.Values
-}
-
-// AuthDateTime returns time.Time representation of AuthDate field.
-func (s *WebAppInitData) AuthDateTime() time.Time {
-	return time.Unix(s.AuthDate, 0)
 }
 
 // WebAppUser contains the data of the Mini App user.
@@ -131,7 +125,7 @@ type AuthWidget struct {
 	LastName  string `json:"last_name,omitempty"`
 	Username  string `json:"username,omitempty"`
 	PhotoURL  string `json:"photo_url,omitempty"`
-	AuthDate  int64  `json:"auth_date"`
+	AuthDate  UnixTime `json:"auth_date"`
 	Hash      string `json:"hash"`
 }
 
@@ -151,7 +145,7 @@ func ParseAuthWidgetQuery(vs url.Values) (*AuthWidget, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse auth_date %s: %w", vs.Get("auth_date"), err)
 	}
-	result.AuthDate = authDate
+	result.AuthDate = UnixTime(authDate)
 
 	result.Hash = vs.Get("hash")
 
@@ -167,7 +161,7 @@ func (w AuthWidget) Query() url.Values {
 	q := url.Values{}
 	q.Set("id", strconv.FormatInt(int64(w.ID), 10))
 	q.Set("first_name", w.FirstName)
-	q.Set("auth_date", strconv.FormatInt(w.AuthDate, 10))
+	q.Set("auth_date", strconv.FormatInt(int64(w.AuthDate), 10))
 	q.Set("hash", w.Hash)
 
 	if w.LastName != "" {
@@ -210,11 +204,6 @@ func getHMAC(data string, key []byte) []byte {
 	mac := hmac.New(sha256.New, key)
 	mac.Write([]byte(data))
 	return mac.Sum(nil)
-}
-
-// AuthDateTime returns the AuthDate as a time.Time.
-func (w AuthWidget) AuthDateTime() time.Time {
-	return time.Unix(w.AuthDate, 0)
 }
 
 // ParseWebAppInitData parses a WebAppInitData from query string.
@@ -265,7 +254,7 @@ func ParseWebAppInitData(vs url.Values) (*WebAppInitData, error) {
 		return nil, fmt.Errorf("parse auth_date %s: %w", vs.Get("auth_date"), err)
 	}
 
-	result.AuthDate = authDate
+	result.AuthDate = UnixTime(authDate)
 
 	result.Hash = vs.Get("hash")
 	if result.Hash == "" {

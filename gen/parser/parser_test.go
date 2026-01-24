@@ -845,10 +845,10 @@ func TestParse_TimestampField(t *testing.T) {
 	require.Len(t, api.Types, 1)
 
 	dateField := findField(t, api.Types[0], "date")
-	assert.Equal(t, ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer64"}}}, dateField.TypeExpr)
+	assert.Equal(t, ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}}}, dateField.TypeExpr)
 
 	editDate := findField(t, api.Types[0], "edit_date")
-	assert.Equal(t, ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer64"}}}, editDate.TypeExpr)
+	assert.Equal(t, ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}}}, editDate.TypeExpr)
 
 	msgID := findField(t, api.Types[0], "message_id")
 	assert.Equal(t, ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}}}, msgID.TypeExpr)
@@ -1067,11 +1067,11 @@ func TestParse_FullDoc(t *testing.T) {
 	stickerType := findField(t, sticker, "type")
 	assert.Equal(t, []string{"regular", "mask", "custom_emoji"}, stickerType.Enum)
 
-	// Spot-check: Timestamp fields promoted to Integer64
+	// Spot-check: Timestamp fields stay as Integer (handled by typegen rules)
 	dateField := findField(t, message, "date")
-	assert.Equal(t, "Integer64", dateField.TypeExpr.Types[0].Type)
+	assert.Equal(t, "Integer", dateField.TypeExpr.Types[0].Type)
 	editDate := findField(t, message, "edit_date")
-	assert.Equal(t, "Integer64", editDate.TypeExpr.Types[0].Type)
+	assert.Equal(t, "Integer", editDate.TypeExpr.Types[0].Type)
 
 	// Spot-check: Param defaults
 	limitParam := findParam(t, getUpdates, "limit")

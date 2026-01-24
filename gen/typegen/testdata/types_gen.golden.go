@@ -5,7 +5,6 @@ package tg
 import (
 	"fmt"
 	"encoding/json"
-	"time"
 )
 
 // Update this object represents an incoming update.
@@ -23,15 +22,10 @@ type WebhookInfo struct {
 	URL string `json:"url"`
 
 	// Optional. Unix time for the most recent error.
-	LastErrorDate int64 `json:"last_error_date,omitempty"`
+	LastErrorDate UnixTime `json:"last_error_date,omitempty"`
 
 	// Optional. A list of update types the bot is subscribed to.
 	AllowedUpdates []UpdateType `json:"allowed_updates,omitempty"`
-}
-
-// LastErrorDateTime returns time.Time representation of LastErrorDate field.
-func (s *WebhookInfo) LastErrorDateTime() time.Time {
-	return time.Unix(s.LastErrorDate, 0)
 }
 
 // User this object represents a Telegram user or bot.
@@ -52,18 +46,13 @@ type Message struct {
 	ID int `json:"message_id"`
 
 	// Date the message was sent in Unix time.
-	Date int64 `json:"date"`
+	Date UnixTime `json:"date"`
 
 	// Optional. Available sizes of the photo.
 	Photo []PhotoSize `json:"photo,omitempty"`
 
 	// Optional. The group has been migrated to a supergroup.
 	MigrateToChatID ChatID `json:"migrate_to_chat_id,omitempty"`
-}
-
-// DateTime returns time.Time representation of Date field.
-func (s *Message) DateTime() time.Time {
-	return time.Unix(s.Date, 0)
 }
 
 // ChatPhoto this object represents a chat photo.

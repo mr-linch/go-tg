@@ -7,6 +7,24 @@ import (
 	"time"
 )
 
+// UnixTime represents a Unix timestamp (seconds since epoch).
+// It is stored as int64 and serializes to/from JSON as an integer.
+type UnixTime int64
+
+// Time converts the Unix timestamp to time.Time.
+// Returns the zero time.Time for UnixTime(0).
+func (t UnixTime) Time() time.Time {
+	if t == 0 {
+		return time.Time{}
+	}
+	return time.Unix(int64(t), 0)
+}
+
+// IsZero reports whether the timestamp is zero (unset).
+func (t UnixTime) IsZero() bool {
+	return t == 0
+}
+
 type ChatID int64
 
 var _ PeerID = (ChatID)(0)
@@ -1056,7 +1074,7 @@ func (msg *Message) Type() MessageType {
 
 // IsInaccessible returns true if message is inaccessible.
 func (msg *Message) IsInaccessible() bool {
-	return msg.Date == 0
+	return msg.Date.IsZero()
 }
 
 // UpdateType it's type for describe content of Update.
@@ -1582,14 +1600,14 @@ func (mim *MaybeInaccessibleMessage) MessageID() int {
 
 func (mim *MaybeInaccessibleMessage) UnmarshalJSON(v []byte) error {
 	var partial struct {
-		Date int64 `json:"date"`
+		Date UnixTime `json:"date"`
 	}
 
 	if err := json.Unmarshal(v, &partial); err != nil {
 		return fmt.Errorf("unmarshal MaybeInaccessibleMessage partial: %w", err)
 	}
 
-	if partial.Date == 0 {
+	if partial.Date.IsZero() {
 		mim.InaccessibleMessage = &InaccessibleMessage{}
 		return json.Unmarshal(v, mim.InaccessibleMessage)
 	} else {

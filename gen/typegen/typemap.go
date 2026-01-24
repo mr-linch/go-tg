@@ -21,11 +21,12 @@ var primitiveGoType = map[ir.PrimitiveType]string{
 
 // scalarTypes are Go types that don't need a pointer for optional fields.
 var scalarTypes = map[string]bool{
-	"int":     true,
-	"int64":   true,
-	"float64": true,
-	"string":  true,
-	"bool":    true,
+	"int":      true,
+	"int64":    true,
+	"float64":  true,
+	"string":   true,
+	"bool":     true,
+	"UnixTime": true,
 }
 
 // fieldRuleEnv is the environment exposed to field type rule expressions.
