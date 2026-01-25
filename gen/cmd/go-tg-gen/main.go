@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 
 	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/methodgen"
 	"github.com/mr-linch/go-tg/gen/parser"
+	"github.com/mr-linch/go-tg/gen/routergen"
 	"github.com/mr-linch/go-tg/gen/typegen"
 	"gopkg.in/yaml.v3"
 )
@@ -19,6 +21,7 @@ func main() {
 		pkg           = flag.String("pkg", "tg", "Go package name for generated code")
 		typesOutput   = flag.String("types-output", "types_gen.go", "output file for generated types")
 		methodsOutput = flag.String("methods-output", "", "output file for generated methods")
+		tgbOutput     = flag.String("tgb-output", "", "output directory for generated tgb files (router_gen.go, handler_gen.go, update_gen.go)")
 		specOutput    = flag.String("spec-output", "", "output path for parsed API spec (YAML)")
 		input         = flag.String("input", "", "path to Telegram API HTML (required)")
 		verbose       = flag.Bool("v", false, "verbose logging (debug level)")
@@ -108,5 +111,40 @@ func main() {
 		}
 
 		log.Info("methods generated", "output", *methodsOutput)
+	}
+
+	// Generate tgb infrastructure if output path specified.
+	if *tgbOutput != "" {
+		routerPath := filepath.Join(*tgbOutput, "router_gen.go")
+		handlerPath := filepath.Join(*tgbOutput, "handler_gen.go")
+		updatePath := filepath.Join(*tgbOutput, "update_gen.go")
+
+		routerOut, err := os.Create(routerPath)
+		if err != nil {
+			log.Error("create router output", "error", err, "path", routerPath)
+			os.Exit(1)
+		}
+		defer routerOut.Close()
+
+		handlerOut, err := os.Create(handlerPath)
+		if err != nil {
+			log.Error("create handler output", "error", err, "path", handlerPath)
+			os.Exit(1)
+		}
+		defer handlerOut.Close()
+
+		updateOut, err := os.Create(updatePath)
+		if err != nil {
+			log.Error("create update output", "error", err, "path", updatePath)
+			os.Exit(1)
+		}
+		defer updateOut.Close()
+
+		if err := routergen.Generate(api, routerOut, handlerOut, updateOut, log, routergen.Options{Package: "tgb"}); err != nil {
+			log.Error("generate tgb", "error", err)
+			os.Exit(1)
+		}
+
+		log.Info("tgb generated", "output", *tgbOutput)
 	}
 }
