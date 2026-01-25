@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/mr-linch/go-tg/gen/config"
+	"github.com/mr-linch/go-tg/gen/methodgen"
 	"github.com/mr-linch/go-tg/gen/parser"
 	"github.com/mr-linch/go-tg/gen/typegen"
 	"gopkg.in/yaml.v3"
@@ -14,12 +15,13 @@ import (
 
 func main() {
 	var (
-		configPath  = flag.String("config", "config.yaml", "path to config file")
-		pkg         = flag.String("pkg", "tg", "Go package name for generated code")
-		typesOutput = flag.String("types-output", "types_gen.go", "output file for generated types")
-		specOutput  = flag.String("spec-output", "", "output path for parsed API spec (YAML)")
-		input       = flag.String("input", "", "path to Telegram API HTML (required)")
-		verbose     = flag.Bool("v", false, "verbose logging (debug level)")
+		configPath    = flag.String("config", "config.yaml", "path to config file")
+		pkg           = flag.String("pkg", "tg", "Go package name for generated code")
+		typesOutput   = flag.String("types-output", "types_gen.go", "output file for generated types")
+		methodsOutput = flag.String("methods-output", "", "output file for generated methods")
+		specOutput    = flag.String("spec-output", "", "output path for parsed API spec (YAML)")
+		input         = flag.String("input", "", "path to Telegram API HTML (required)")
+		verbose       = flag.Bool("v", false, "verbose logging (debug level)")
 	)
 	flag.Parse()
 
@@ -90,4 +92,21 @@ func main() {
 	}
 
 	log.Info("types generated", "output", *typesOutput)
+
+	// Generate methods if output path specified.
+	if *methodsOutput != "" {
+		methodsOut, err := os.Create(*methodsOutput)
+		if err != nil {
+			log.Error("create methods output", "error", err, "path", *methodsOutput)
+			os.Exit(1)
+		}
+		defer methodsOut.Close()
+
+		if err := methodgen.Generate(api, methodsOut, &cfg.MethodGen, log, methodgen.Options{Package: *pkg}); err != nil {
+			log.Error("generate methods", "error", err)
+			os.Exit(1)
+		}
+
+		log.Info("methods generated", "output", *methodsOutput)
+	}
 }

@@ -95,3 +95,85 @@ typegen:
     StickerSet.sticker_type: StickerType
     InlineQuery.chat_type: ChatType
     WebhookInfo.allowed_updates: "[]UpdateType"
+
+methodgen:
+  stringer_types:
+    - ParseMode
+    - ChatAction
+
+  param_type_rules:
+    # PeerID: chat_id or *_chat_id with Integer or String union (accepts both int and username)
+    - expr: '(Name == "chat_id" || hasSuffix(Name, "_chat_id")) && len(TypeExpr.Types) > 1'
+      type: PeerID
+    # UserID: user_id or *_user_id with Integer type
+    - expr: '(Name == "user_id" || hasSuffix(Name, "_user_id")) && TypeExpr.Types[0].Type in ["Integer", "Integer64"]'
+      type: UserID
+    # FileID: file_id or *_file_id with String type
+    - expr: '(Name == "file_id" || hasSuffix(Name, "_file_id")) && TypeExpr.Types[0].Type == "String"'
+      type: FileID
+    # FileArg: InputFile type with description mentioning "file_id" (can pass file_id, URL, or upload)
+    - expr: 'TypeExpr.Types[0].Type == "InputFile" && Description contains "file_id"'
+      type: FileArg
+    # InputFile: InputFile type without "file_id" mention (upload only)
+    - expr: 'TypeExpr.Types[0].Type == "InputFile" && !(Description contains "file_id")'
+      type: InputFile
+    # ParseMode
+    - expr: 'Name == "parse_mode"'
+      type: ParseMode
+    # Reply markup union -> ReplyMarkup interface
+    - expr: 'Name == "reply_markup" && len(TypeExpr.Types) > 1'
+      type: ReplyMarkup
+
+  param_type_overrides:
+    sendChatAction.action: ChatAction
+    getUpdates.allowed_updates: "[]UpdateType"
+    setWebhook.allowed_updates: "[]UpdateType"
+
+  return_type_overrides:
+    stopPoll: Poll
+
+  # Methods with mutually exclusive required params need multiple constructors
+  # Each variant can specify its own return_type
+  constructor_variants:
+    editMessageText:
+      - suffix: ""
+        required_params: [chat_id, message_id, text]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id, text]
+        return_type: True
+    editMessageCaption:
+      - suffix: ""
+        required_params: [chat_id, message_id, caption]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id, caption]
+        return_type: True
+    editMessageMedia:
+      - suffix: ""
+        required_params: [chat_id, message_id, media]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id, media]
+        return_type: True
+    editMessageLiveLocation:
+      - suffix: ""
+        required_params: [chat_id, message_id, latitude, longitude]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id, latitude, longitude]
+        return_type: True
+    editMessageReplyMarkup:
+      - suffix: ""
+        required_params: [chat_id, message_id]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id]
+        return_type: True
+    stopMessageLiveLocation:
+      - suffix: ""
+        required_params: [chat_id, message_id]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id]
+        return_type: True

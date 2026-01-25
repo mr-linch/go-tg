@@ -52,10 +52,33 @@ func (tg *TypeGen) IsExcluded(typeName string) bool {
 	return slices.Contains(tg.Exclude, typeName)
 }
 
+// ParamTypeRule defines an expr-based predicate for method parameter type mapping.
+type ParamTypeRule struct {
+	Expr string `yaml:"expr"` // boolean expr predicate
+	Type string `yaml:"type"` // Go type to use when matched
+}
+
+// MethodGen holds method generation configuration.
+// ConstructorVariant defines an alternative constructor for a method.
+type ConstructorVariant struct {
+	Suffix         string   `yaml:"suffix"`          // e.g., "Inline" -> NewEditMessageTextInlineCall
+	RequiredParams []string `yaml:"required_params"` // param names to use as required
+	ReturnType     string   `yaml:"return_type"`     // override return type for this variant (empty = use method default)
+}
+
+type MethodGen struct {
+	ParamTypeRules      []ParamTypeRule               `yaml:"param_type_rules"`
+	ParamTypeOverrides  map[string]string             `yaml:"param_type_overrides"`  // "methodName.param_name" -> "GoType"
+	ReturnTypeOverrides map[string]string             `yaml:"return_type_overrides"` // "methodName" -> "GoType"
+	StringerTypes       []string                      `yaml:"stringer_types"`        // types that use request.Stringer()
+	ConstructorVariants map[string][]ConstructorVariant `yaml:"constructor_variants"`  // method -> variants
+}
+
 // Config holds the unified go-tg-gen configuration.
 type Config struct {
-	Parser  Parser  `yaml:"parser"`
-	TypeGen TypeGen `yaml:"typegen"`
+	Parser    Parser    `yaml:"parser"`
+	TypeGen   TypeGen   `yaml:"typegen"`
+	MethodGen MethodGen `yaml:"methodgen"`
 }
 
 // LoadFile loads configuration from the given YAML file path.
