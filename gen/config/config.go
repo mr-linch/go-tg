@@ -38,6 +38,13 @@ type EnumGenDef struct {
 	Unknown    bool   `yaml:"unknown,omitempty"`    // If true, include Unknown sentinel at 0
 }
 
+// TypeMethodDef defines a method to generate on a type that returns an enum value.
+type TypeMethodDef struct {
+	Type   string `yaml:"type"`   // Type name (e.g., "Message")
+	Method string `yaml:"method"` // Method name (e.g., "Type")
+	Return string `yaml:"return"` // Return enum type name (e.g., "MessageType")
+}
+
 // TypeGen holds type generation configuration.
 type TypeGen struct {
 	Exclude        []string          `yaml:"exclude"`
@@ -45,6 +52,7 @@ type TypeGen struct {
 	TypeOverrides  map[string]string `yaml:"type_overrides"`
 	FieldTypeRules []FieldTypeRule   `yaml:"field_type_rules"`
 	Enums          []EnumGenDef      `yaml:"enums,omitempty"`
+	TypeMethods    []TypeMethodDef   `yaml:"type_methods,omitempty"`
 }
 
 // IsExcluded reports whether typeName should be skipped.
@@ -257,4 +265,18 @@ func (e *exprEnv) SubtypeConsts(unionName, fieldName string) []string {
 		}
 	}
 	return values
+}
+
+// ParamEnumValues returns enum values from a method parameter's <em> tags.
+func (e *exprEnv) ParamEnumValues(methodName, paramName string) []string {
+	for _, m := range e.api.Methods {
+		if m.Name == methodName {
+			for _, p := range m.Params {
+				if p.Name == paramName {
+					return p.Enum
+				}
+			}
+		}
+	}
+	return nil
 }

@@ -66,14 +66,30 @@ type GoEnumValue struct {
 	StringVal string // e.g. "private"
 }
 
+// GoTypeMethod represents a method on a type that returns an enum based on optional fields.
+type GoTypeMethod struct {
+	TypeName   string             // e.g. "Message"
+	MethodName string             // e.g. "Type"
+	ReturnType string             // e.g. "MessageType"
+	Cases      []GoTypeMethodCase // switch cases
+}
+
+// GoTypeMethodCase represents a single case in a Type() method switch.
+type GoTypeMethodCase struct {
+	FieldName string // Go field name, e.g. "Text"
+	EnumConst string // Enum constant, e.g. "MessageTypeText"
+	Condition string // condition expression, e.g. "v.Text != \"\""
+}
+
 // TemplateData is the data passed to the template.
 type TemplateData struct {
-	Package    string
-	Types      []GoType
-	UnionTypes []GoUnionType
-	Enums      []GoEnum
-	NeedJSON   bool
-	NeedFmt    bool
+	Package     string
+	Types       []GoType
+	UnionTypes  []GoUnionType
+	Enums       []GoEnum
+	TypeMethods []GoTypeMethod
+	NeedJSON    bool
+	NeedFmt     bool
 }
 
 // Options controls generation behavior.
@@ -157,6 +173,23 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 			data.NeedJSON = true
 		}
 		log.Debug("generating enum", "name", enumCfg.Name, "values", len(goEnum.Values))
+	}
+
+	// Resolve type methods (e.g., Message.Type() -> MessageType).
+	for _, methodCfg := range cfg.TypeMethods {
+		irType := findType(api.Types, methodCfg.Type)
+		if irType == nil {
+			log.Warn("type not found for type_method", "type", methodCfg.Type)
+			continue
+		}
+		irEnum := findEnum(api.Enums, methodCfg.Return)
+		if irEnum == nil {
+			log.Warn("enum not found for type_method", "enum", methodCfg.Return)
+			continue
+		}
+		goMethod := resolveTypeMethod(irType, irEnum, &methodCfg)
+		data.TypeMethods = append(data.TypeMethods, goMethod)
+		log.Debug("generating type method", "type", methodCfg.Type, "method", methodCfg.Method, "cases", len(goMethod.Cases))
 	}
 
 	// Warn about unused config entries.
@@ -430,4 +463,71 @@ func collectInputTypes(api *ir.API) map[string]bool {
 	}
 
 	return inputTypes
+}
+
+// resolveTypeMethod builds a GoTypeMethod from a type and its corresponding enum.
+func resolveTypeMethod(t *ir.Type, enum *ir.Enum, cfg *config.TypeMethodDef) GoTypeMethod {
+	method := GoTypeMethod{
+		TypeName:   normalizeTypeName(t.Name),
+		MethodName: cfg.Method,
+		ReturnType: cfg.Return,
+	}
+
+	// Build a map of field name -> field for quick lookup.
+	fieldMap := make(map[string]*ir.Field)
+	for i := range t.Fields {
+		fieldMap[t.Fields[i].Name] = &t.Fields[i]
+	}
+
+	// For each enum value, find the corresponding field and generate a case.
+	for _, val := range enum.Values {
+		f, ok := fieldMap[val]
+		if !ok {
+			continue // enum value doesn't correspond to a field
+		}
+		if !f.Optional {
+			continue // only optional fields are checked
+		}
+
+		goFieldName := snakeToPascal(val)
+		enumConst := cfg.Return + goFieldName
+		condition := buildFieldCondition(goFieldName, f)
+
+		method.Cases = append(method.Cases, GoTypeMethodCase{
+			FieldName: goFieldName,
+			EnumConst: enumConst,
+			Condition: condition,
+		})
+	}
+
+	return method
+}
+
+// buildFieldCondition generates the condition expression for a field check.
+func buildFieldCondition(goFieldName string, f *ir.Field) string {
+	if len(f.TypeExpr.Types) == 0 {
+		return "v." + goFieldName + " != nil"
+	}
+
+	// Handle array types
+	if f.TypeExpr.Array > 0 {
+		return "len(v." + goFieldName + ") > 0"
+	}
+
+	// Get the primary type
+	primaryType := f.TypeExpr.Types[0].Type
+
+	switch primaryType {
+	case "String":
+		return "v." + goFieldName + ` != ""`
+	case "Integer", "Integer64", "Float":
+		return "v." + goFieldName + " != 0"
+	case "Boolean":
+		return "v." + goFieldName
+	case "True":
+		return "v." + goFieldName
+	default:
+		// Complex type (pointer)
+		return "v." + goFieldName + " != nil"
+	}
 }

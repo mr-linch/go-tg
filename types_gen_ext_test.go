@@ -873,7 +873,7 @@ func TestUpdateType_UnmarshalText(t *testing.T) {
 		{"business_message", UpdateTypeBusinessMessage, false},
 		{"edited_business_message", UpdateTypeEditedBusinessMessage, false},
 		{"deleted_business_messages", UpdateTypeDeletedBusinessMessages, false},
-		{"test", UpdateTypeUnknown, true},
+		{"test", UpdateTypeUnknown, false}, // unknown values set to Unknown
 	} {
 		t.Run(test.Text, func(t *testing.T) {
 			var typ UpdateType

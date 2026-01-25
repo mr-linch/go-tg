@@ -12,6 +12,12 @@ parser:
     # Expr-computed: structural enums
     - name: UpdateType
       expr: 'filter(Fields("Update"), {.Optional}) | map({.Name})'
+    - name: MessageType
+      expr: 'filter(Fields("Message"), {.Optional}) | map({.Name})'
+
+    # Method parameter enums
+    - name: ChatAction
+      expr: 'ParamEnumValues("sendChatAction", "action")'
 
     # Expr-computed: union discriminator enums
     - name: MessageOriginType
@@ -37,13 +43,32 @@ typegen:
       underlying: int8
       marshal: json
     - name: StickerType
-      underlying: int
+      underlying: int8
       marshal: text
       unknown: true
     - name: MessageEntityType
-      underlying: int
+      underlying: int8
       marshal: text
       unknown: true
+    - name: UpdateType
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: ChatAction
+      underlying: int8
+      marshal: stringer
+    - name: MessageType
+      underlying: int8
+      marshal: none
+      unknown: true
+
+  type_methods:
+    - type: Update
+      method: Type
+      return: UpdateType
+    - type: Message
+      method: Type
+      return: MessageType
 
   exclude:
     # Description-only types with custom implementations

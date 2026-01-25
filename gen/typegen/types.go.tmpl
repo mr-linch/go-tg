@@ -206,3 +206,16 @@ func (v *{{$e.Name}}) UnmarshalText(b []byte) error {
 }
 {{- end}}
 {{end}}
+{{- range $m := .TypeMethods}}
+// {{$m.MethodName}} returns the {{$m.ReturnType}} of this {{$m.TypeName}}.
+func (v *{{$m.TypeName}}) {{$m.MethodName}}() {{$m.ReturnType}} {
+	switch {
+{{- range $m.Cases}}
+	case {{.Condition}}:
+		return {{.EnumConst}}
+{{- end}}
+	default:
+		return {{$m.ReturnType}}Unknown
+	}
+}
+{{end}}

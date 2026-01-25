@@ -7709,7 +7709,7 @@ func (v *ChatType) UnmarshalJSON(b []byte) error {
 }
 
 // StickerType represents an enum type.
-type StickerType int
+type StickerType int8
 
 const (
 	StickerTypeUnknown StickerType = iota
@@ -7751,7 +7751,7 @@ func (v *StickerType) UnmarshalText(b []byte) error {
 }
 
 // MessageEntityType represents an enum type.
-type MessageEntityType int
+type MessageEntityType int8
 
 const (
 	MessageEntityTypeUnknown MessageEntityType = iota
@@ -7854,5 +7854,642 @@ func (v *MessageEntityType) UnmarshalText(b []byte) error {
 		*v = MessageEntityTypeUnknown
 	}
 	return nil
+}
+
+// UpdateType represents an enum type.
+type UpdateType int8
+
+const (
+	UpdateTypeUnknown UpdateType = iota
+	UpdateTypeMessage
+	UpdateTypeEditedMessage
+	UpdateTypeChannelPost
+	UpdateTypeEditedChannelPost
+	UpdateTypeBusinessConnection
+	UpdateTypeBusinessMessage
+	UpdateTypeEditedBusinessMessage
+	UpdateTypeDeletedBusinessMessages
+	UpdateTypeMessageReaction
+	UpdateTypeMessageReactionCount
+	UpdateTypeInlineQuery
+	UpdateTypeChosenInlineResult
+	UpdateTypeCallbackQuery
+	UpdateTypeShippingQuery
+	UpdateTypePreCheckoutQuery
+	UpdateTypePurchasedPaidMedia
+	UpdateTypePoll
+	UpdateTypePollAnswer
+	UpdateTypeMyChatMember
+	UpdateTypeChatMember
+	UpdateTypeChatJoinRequest
+	UpdateTypeChatBoost
+	UpdateTypeRemovedChatBoost
+)
+
+func (v UpdateType) String() string {
+	if v > UpdateTypeUnknown && v <= UpdateTypeRemovedChatBoost {
+		return [...]string{
+			"message",
+			"edited_message",
+			"channel_post",
+			"edited_channel_post",
+			"business_connection",
+			"business_message",
+			"edited_business_message",
+			"deleted_business_messages",
+			"message_reaction",
+			"message_reaction_count",
+			"inline_query",
+			"chosen_inline_result",
+			"callback_query",
+			"shipping_query",
+			"pre_checkout_query",
+			"purchased_paid_media",
+			"poll",
+			"poll_answer",
+			"my_chat_member",
+			"chat_member",
+			"chat_join_request",
+			"chat_boost",
+			"removed_chat_boost",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+func (v UpdateType) MarshalText() ([]byte, error) {
+	if v != UpdateTypeUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown UpdateType")
+}
+
+func (v *UpdateType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "message":
+		*v = UpdateTypeMessage
+	case "edited_message":
+		*v = UpdateTypeEditedMessage
+	case "channel_post":
+		*v = UpdateTypeChannelPost
+	case "edited_channel_post":
+		*v = UpdateTypeEditedChannelPost
+	case "business_connection":
+		*v = UpdateTypeBusinessConnection
+	case "business_message":
+		*v = UpdateTypeBusinessMessage
+	case "edited_business_message":
+		*v = UpdateTypeEditedBusinessMessage
+	case "deleted_business_messages":
+		*v = UpdateTypeDeletedBusinessMessages
+	case "message_reaction":
+		*v = UpdateTypeMessageReaction
+	case "message_reaction_count":
+		*v = UpdateTypeMessageReactionCount
+	case "inline_query":
+		*v = UpdateTypeInlineQuery
+	case "chosen_inline_result":
+		*v = UpdateTypeChosenInlineResult
+	case "callback_query":
+		*v = UpdateTypeCallbackQuery
+	case "shipping_query":
+		*v = UpdateTypeShippingQuery
+	case "pre_checkout_query":
+		*v = UpdateTypePreCheckoutQuery
+	case "purchased_paid_media":
+		*v = UpdateTypePurchasedPaidMedia
+	case "poll":
+		*v = UpdateTypePoll
+	case "poll_answer":
+		*v = UpdateTypePollAnswer
+	case "my_chat_member":
+		*v = UpdateTypeMyChatMember
+	case "chat_member":
+		*v = UpdateTypeChatMember
+	case "chat_join_request":
+		*v = UpdateTypeChatJoinRequest
+	case "chat_boost":
+		*v = UpdateTypeChatBoost
+	case "removed_chat_boost":
+		*v = UpdateTypeRemovedChatBoost
+	default:
+		*v = UpdateTypeUnknown
+	}
+	return nil
+}
+
+// ChatAction represents an enum type.
+type ChatAction int8
+
+const (
+	ChatActionTyping ChatAction = iota + 1
+	ChatActionUploadPhoto
+	ChatActionRecordVideo
+	ChatActionUploadVideo
+	ChatActionRecordVoice
+	ChatActionUploadVoice
+	ChatActionUploadDocument
+	ChatActionChooseSticker
+	ChatActionFindLocation
+	ChatActionRecordVideoNote
+	ChatActionUploadVideoNote
+)
+
+func (v ChatAction) String() string {
+	if v < ChatActionTyping || v > ChatActionUploadVideoNote {
+		return "unknown"
+	}
+	return [...]string{
+		"typing",
+		"upload_photo",
+		"record_video",
+		"upload_video",
+		"record_voice",
+		"upload_voice",
+		"upload_document",
+		"choose_sticker",
+		"find_location",
+		"record_video_note",
+		"upload_video_note",
+	}[v-1]
+}
+
+
+// MessageType represents an enum type.
+type MessageType int8
+
+const (
+	MessageTypeUnknown MessageType = iota
+	MessageTypeMessageThreadID
+	MessageTypeDirectMessagesTopic
+	MessageTypeFrom
+	MessageTypeSenderChat
+	MessageTypeSenderBoostCount
+	MessageTypeSenderBusinessBot
+	MessageTypeBusinessConnectionID
+	MessageTypeForwardOrigin
+	MessageTypeIsTopicMessage
+	MessageTypeIsAutomaticForward
+	MessageTypeReplyToMessage
+	MessageTypeExternalReply
+	MessageTypeQuote
+	MessageTypeReplyToStory
+	MessageTypeReplyToChecklistTaskID
+	MessageTypeViaBot
+	MessageTypeEditDate
+	MessageTypeHasProtectedContent
+	MessageTypeIsFromOffline
+	MessageTypeIsPaidPost
+	MessageTypeMediaGroupID
+	MessageTypeAuthorSignature
+	MessageTypePaidStarCount
+	MessageTypeText
+	MessageTypeEntities
+	MessageTypeLinkPreviewOptions
+	MessageTypeSuggestedPostInfo
+	MessageTypeEffectID
+	MessageTypeAnimation
+	MessageTypeAudio
+	MessageTypeDocument
+	MessageTypePaidMedia
+	MessageTypePhoto
+	MessageTypeSticker
+	MessageTypeStory
+	MessageTypeVideo
+	MessageTypeVideoNote
+	MessageTypeVoice
+	MessageTypeCaption
+	MessageTypeCaptionEntities
+	MessageTypeShowCaptionAboveMedia
+	MessageTypeHasMediaSpoiler
+	MessageTypeChecklist
+	MessageTypeContact
+	MessageTypeDice
+	MessageTypeGame
+	MessageTypePoll
+	MessageTypeVenue
+	MessageTypeLocation
+	MessageTypeNewChatMembers
+	MessageTypeLeftChatMember
+	MessageTypeNewChatTitle
+	MessageTypeNewChatPhoto
+	MessageTypeDeleteChatPhoto
+	MessageTypeGroupChatCreated
+	MessageTypeSupergroupChatCreated
+	MessageTypeChannelChatCreated
+	MessageTypeMessageAutoDeleteTimerChanged
+	MessageTypeMigrateToChatID
+	MessageTypeMigrateFromChatID
+	MessageTypePinnedMessage
+	MessageTypeInvoice
+	MessageTypeSuccessfulPayment
+	MessageTypeRefundedPayment
+	MessageTypeUsersShared
+	MessageTypeChatShared
+	MessageTypeGift
+	MessageTypeUniqueGift
+	MessageTypeGiftUpgradeSent
+	MessageTypeConnectedWebsite
+	MessageTypeWriteAccessAllowed
+	MessageTypePassportData
+	MessageTypeProximityAlertTriggered
+	MessageTypeBoostAdded
+	MessageTypeChatBackgroundSet
+	MessageTypeChecklistTasksDone
+	MessageTypeChecklistTasksAdded
+	MessageTypeDirectMessagePriceChanged
+	MessageTypeForumTopicCreated
+	MessageTypeForumTopicEdited
+	MessageTypeForumTopicClosed
+	MessageTypeForumTopicReopened
+	MessageTypeGeneralForumTopicHidden
+	MessageTypeGeneralForumTopicUnhidden
+	MessageTypeGiveawayCreated
+	MessageTypeGiveaway
+	MessageTypeGiveawayWinners
+	MessageTypeGiveawayCompleted
+	MessageTypePaidMessagePriceChanged
+	MessageTypeSuggestedPostApproved
+	MessageTypeSuggestedPostApprovalFailed
+	MessageTypeSuggestedPostDeclined
+	MessageTypeSuggestedPostPaid
+	MessageTypeSuggestedPostRefunded
+	MessageTypeVideoChatScheduled
+	MessageTypeVideoChatStarted
+	MessageTypeVideoChatEnded
+	MessageTypeVideoChatParticipantsInvited
+	MessageTypeWebAppData
+	MessageTypeReplyMarkup
+)
+
+func (v MessageType) String() string {
+	if v > MessageTypeUnknown && v <= MessageTypeReplyMarkup {
+		return [...]string{
+			"message_thread_id",
+			"direct_messages_topic",
+			"from",
+			"sender_chat",
+			"sender_boost_count",
+			"sender_business_bot",
+			"business_connection_id",
+			"forward_origin",
+			"is_topic_message",
+			"is_automatic_forward",
+			"reply_to_message",
+			"external_reply",
+			"quote",
+			"reply_to_story",
+			"reply_to_checklist_task_id",
+			"via_bot",
+			"edit_date",
+			"has_protected_content",
+			"is_from_offline",
+			"is_paid_post",
+			"media_group_id",
+			"author_signature",
+			"paid_star_count",
+			"text",
+			"entities",
+			"link_preview_options",
+			"suggested_post_info",
+			"effect_id",
+			"animation",
+			"audio",
+			"document",
+			"paid_media",
+			"photo",
+			"sticker",
+			"story",
+			"video",
+			"video_note",
+			"voice",
+			"caption",
+			"caption_entities",
+			"show_caption_above_media",
+			"has_media_spoiler",
+			"checklist",
+			"contact",
+			"dice",
+			"game",
+			"poll",
+			"venue",
+			"location",
+			"new_chat_members",
+			"left_chat_member",
+			"new_chat_title",
+			"new_chat_photo",
+			"delete_chat_photo",
+			"group_chat_created",
+			"supergroup_chat_created",
+			"channel_chat_created",
+			"message_auto_delete_timer_changed",
+			"migrate_to_chat_id",
+			"migrate_from_chat_id",
+			"pinned_message",
+			"invoice",
+			"successful_payment",
+			"refunded_payment",
+			"users_shared",
+			"chat_shared",
+			"gift",
+			"unique_gift",
+			"gift_upgrade_sent",
+			"connected_website",
+			"write_access_allowed",
+			"passport_data",
+			"proximity_alert_triggered",
+			"boost_added",
+			"chat_background_set",
+			"checklist_tasks_done",
+			"checklist_tasks_added",
+			"direct_message_price_changed",
+			"forum_topic_created",
+			"forum_topic_edited",
+			"forum_topic_closed",
+			"forum_topic_reopened",
+			"general_forum_topic_hidden",
+			"general_forum_topic_unhidden",
+			"giveaway_created",
+			"giveaway",
+			"giveaway_winners",
+			"giveaway_completed",
+			"paid_message_price_changed",
+			"suggested_post_approved",
+			"suggested_post_approval_failed",
+			"suggested_post_declined",
+			"suggested_post_paid",
+			"suggested_post_refunded",
+			"video_chat_scheduled",
+			"video_chat_started",
+			"video_chat_ended",
+			"video_chat_participants_invited",
+			"web_app_data",
+			"reply_markup",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+
+// Type returns the UpdateType of this Update.
+func (v *Update) Type() UpdateType {
+	switch {
+	case v.Message != nil:
+		return UpdateTypeMessage
+	case v.EditedMessage != nil:
+		return UpdateTypeEditedMessage
+	case v.ChannelPost != nil:
+		return UpdateTypeChannelPost
+	case v.EditedChannelPost != nil:
+		return UpdateTypeEditedChannelPost
+	case v.BusinessConnection != nil:
+		return UpdateTypeBusinessConnection
+	case v.BusinessMessage != nil:
+		return UpdateTypeBusinessMessage
+	case v.EditedBusinessMessage != nil:
+		return UpdateTypeEditedBusinessMessage
+	case v.DeletedBusinessMessages != nil:
+		return UpdateTypeDeletedBusinessMessages
+	case v.MessageReaction != nil:
+		return UpdateTypeMessageReaction
+	case v.MessageReactionCount != nil:
+		return UpdateTypeMessageReactionCount
+	case v.InlineQuery != nil:
+		return UpdateTypeInlineQuery
+	case v.ChosenInlineResult != nil:
+		return UpdateTypeChosenInlineResult
+	case v.CallbackQuery != nil:
+		return UpdateTypeCallbackQuery
+	case v.ShippingQuery != nil:
+		return UpdateTypeShippingQuery
+	case v.PreCheckoutQuery != nil:
+		return UpdateTypePreCheckoutQuery
+	case v.PurchasedPaidMedia != nil:
+		return UpdateTypePurchasedPaidMedia
+	case v.Poll != nil:
+		return UpdateTypePoll
+	case v.PollAnswer != nil:
+		return UpdateTypePollAnswer
+	case v.MyChatMember != nil:
+		return UpdateTypeMyChatMember
+	case v.ChatMember != nil:
+		return UpdateTypeChatMember
+	case v.ChatJoinRequest != nil:
+		return UpdateTypeChatJoinRequest
+	case v.ChatBoost != nil:
+		return UpdateTypeChatBoost
+	case v.RemovedChatBoost != nil:
+		return UpdateTypeRemovedChatBoost
+	default:
+		return UpdateTypeUnknown
+	}
+}
+
+// Type returns the MessageType of this Message.
+func (v *Message) Type() MessageType {
+	switch {
+	case v.MessageThreadID != 0:
+		return MessageTypeMessageThreadID
+	case v.DirectMessagesTopic != nil:
+		return MessageTypeDirectMessagesTopic
+	case v.From != nil:
+		return MessageTypeFrom
+	case v.SenderChat != nil:
+		return MessageTypeSenderChat
+	case v.SenderBoostCount != 0:
+		return MessageTypeSenderBoostCount
+	case v.SenderBusinessBot != nil:
+		return MessageTypeSenderBusinessBot
+	case v.BusinessConnectionID != "":
+		return MessageTypeBusinessConnectionID
+	case v.ForwardOrigin != nil:
+		return MessageTypeForwardOrigin
+	case v.IsTopicMessage:
+		return MessageTypeIsTopicMessage
+	case v.IsAutomaticForward:
+		return MessageTypeIsAutomaticForward
+	case v.ReplyToMessage != nil:
+		return MessageTypeReplyToMessage
+	case v.ExternalReply != nil:
+		return MessageTypeExternalReply
+	case v.Quote != nil:
+		return MessageTypeQuote
+	case v.ReplyToStory != nil:
+		return MessageTypeReplyToStory
+	case v.ReplyToChecklistTaskID != 0:
+		return MessageTypeReplyToChecklistTaskID
+	case v.ViaBot != nil:
+		return MessageTypeViaBot
+	case v.EditDate != 0:
+		return MessageTypeEditDate
+	case v.HasProtectedContent:
+		return MessageTypeHasProtectedContent
+	case v.IsFromOffline:
+		return MessageTypeIsFromOffline
+	case v.IsPaidPost:
+		return MessageTypeIsPaidPost
+	case v.MediaGroupID != "":
+		return MessageTypeMediaGroupID
+	case v.AuthorSignature != "":
+		return MessageTypeAuthorSignature
+	case v.PaidStarCount != 0:
+		return MessageTypePaidStarCount
+	case v.Text != "":
+		return MessageTypeText
+	case len(v.Entities) > 0:
+		return MessageTypeEntities
+	case v.LinkPreviewOptions != nil:
+		return MessageTypeLinkPreviewOptions
+	case v.SuggestedPostInfo != nil:
+		return MessageTypeSuggestedPostInfo
+	case v.EffectID != "":
+		return MessageTypeEffectID
+	case v.Animation != nil:
+		return MessageTypeAnimation
+	case v.Audio != nil:
+		return MessageTypeAudio
+	case v.Document != nil:
+		return MessageTypeDocument
+	case v.PaidMedia != nil:
+		return MessageTypePaidMedia
+	case len(v.Photo) > 0:
+		return MessageTypePhoto
+	case v.Sticker != nil:
+		return MessageTypeSticker
+	case v.Story != nil:
+		return MessageTypeStory
+	case v.Video != nil:
+		return MessageTypeVideo
+	case v.VideoNote != nil:
+		return MessageTypeVideoNote
+	case v.Voice != nil:
+		return MessageTypeVoice
+	case v.Caption != "":
+		return MessageTypeCaption
+	case len(v.CaptionEntities) > 0:
+		return MessageTypeCaptionEntities
+	case v.ShowCaptionAboveMedia:
+		return MessageTypeShowCaptionAboveMedia
+	case v.HasMediaSpoiler:
+		return MessageTypeHasMediaSpoiler
+	case v.Checklist != nil:
+		return MessageTypeChecklist
+	case v.Contact != nil:
+		return MessageTypeContact
+	case v.Dice != nil:
+		return MessageTypeDice
+	case v.Game != nil:
+		return MessageTypeGame
+	case v.Poll != nil:
+		return MessageTypePoll
+	case v.Venue != nil:
+		return MessageTypeVenue
+	case v.Location != nil:
+		return MessageTypeLocation
+	case len(v.NewChatMembers) > 0:
+		return MessageTypeNewChatMembers
+	case v.LeftChatMember != nil:
+		return MessageTypeLeftChatMember
+	case v.NewChatTitle != "":
+		return MessageTypeNewChatTitle
+	case len(v.NewChatPhoto) > 0:
+		return MessageTypeNewChatPhoto
+	case v.DeleteChatPhoto:
+		return MessageTypeDeleteChatPhoto
+	case v.GroupChatCreated:
+		return MessageTypeGroupChatCreated
+	case v.SupergroupChatCreated:
+		return MessageTypeSupergroupChatCreated
+	case v.ChannelChatCreated:
+		return MessageTypeChannelChatCreated
+	case v.MessageAutoDeleteTimerChanged != nil:
+		return MessageTypeMessageAutoDeleteTimerChanged
+	case v.MigrateToChatID != 0:
+		return MessageTypeMigrateToChatID
+	case v.MigrateFromChatID != 0:
+		return MessageTypeMigrateFromChatID
+	case v.PinnedMessage != nil:
+		return MessageTypePinnedMessage
+	case v.Invoice != nil:
+		return MessageTypeInvoice
+	case v.SuccessfulPayment != nil:
+		return MessageTypeSuccessfulPayment
+	case v.RefundedPayment != nil:
+		return MessageTypeRefundedPayment
+	case v.UsersShared != nil:
+		return MessageTypeUsersShared
+	case v.ChatShared != nil:
+		return MessageTypeChatShared
+	case v.Gift != nil:
+		return MessageTypeGift
+	case v.UniqueGift != nil:
+		return MessageTypeUniqueGift
+	case v.GiftUpgradeSent != nil:
+		return MessageTypeGiftUpgradeSent
+	case v.ConnectedWebsite != "":
+		return MessageTypeConnectedWebsite
+	case v.WriteAccessAllowed != nil:
+		return MessageTypeWriteAccessAllowed
+	case v.PassportData != nil:
+		return MessageTypePassportData
+	case v.ProximityAlertTriggered != nil:
+		return MessageTypeProximityAlertTriggered
+	case v.BoostAdded != nil:
+		return MessageTypeBoostAdded
+	case v.ChatBackgroundSet != nil:
+		return MessageTypeChatBackgroundSet
+	case v.ChecklistTasksDone != nil:
+		return MessageTypeChecklistTasksDone
+	case v.ChecklistTasksAdded != nil:
+		return MessageTypeChecklistTasksAdded
+	case v.DirectMessagePriceChanged != nil:
+		return MessageTypeDirectMessagePriceChanged
+	case v.ForumTopicCreated != nil:
+		return MessageTypeForumTopicCreated
+	case v.ForumTopicEdited != nil:
+		return MessageTypeForumTopicEdited
+	case v.ForumTopicClosed != nil:
+		return MessageTypeForumTopicClosed
+	case v.ForumTopicReopened != nil:
+		return MessageTypeForumTopicReopened
+	case v.GeneralForumTopicHidden != nil:
+		return MessageTypeGeneralForumTopicHidden
+	case v.GeneralForumTopicUnhidden != nil:
+		return MessageTypeGeneralForumTopicUnhidden
+	case v.GiveawayCreated != nil:
+		return MessageTypeGiveawayCreated
+	case v.Giveaway != nil:
+		return MessageTypeGiveaway
+	case v.GiveawayWinners != nil:
+		return MessageTypeGiveawayWinners
+	case v.GiveawayCompleted != nil:
+		return MessageTypeGiveawayCompleted
+	case v.PaidMessagePriceChanged != nil:
+		return MessageTypePaidMessagePriceChanged
+	case v.SuggestedPostApproved != nil:
+		return MessageTypeSuggestedPostApproved
+	case v.SuggestedPostApprovalFailed != nil:
+		return MessageTypeSuggestedPostApprovalFailed
+	case v.SuggestedPostDeclined != nil:
+		return MessageTypeSuggestedPostDeclined
+	case v.SuggestedPostPaid != nil:
+		return MessageTypeSuggestedPostPaid
+	case v.SuggestedPostRefunded != nil:
+		return MessageTypeSuggestedPostRefunded
+	case v.VideoChatScheduled != nil:
+		return MessageTypeVideoChatScheduled
+	case v.VideoChatStarted != nil:
+		return MessageTypeVideoChatStarted
+	case v.VideoChatEnded != nil:
+		return MessageTypeVideoChatEnded
+	case v.VideoChatParticipantsInvited != nil:
+		return MessageTypeVideoChatParticipantsInvited
+	case v.WebAppData != nil:
+		return MessageTypeWebAppData
+	case v.ReplyMarkup != nil:
+		return MessageTypeReplyMarkup
+	default:
+		return MessageTypeUnknown
+	}
 }
 

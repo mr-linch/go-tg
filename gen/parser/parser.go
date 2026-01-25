@@ -345,6 +345,7 @@ func parseParamTable(table *html.Node) []ir.Param {
 			Required:    required,
 			Description: desc,
 			Default:     extractDefault(desc),
+			Enum:        extractEmValues(tds[3]),
 		})
 	}
 
@@ -630,6 +631,29 @@ func extractEnum(desc string) []string {
 		values[i] = m[1]
 	}
 	return values
+}
+
+// extractEmValues collects text from <em> elements in a node.
+// Used to extract enum-like values from method parameter descriptions.
+func extractEmValues(n *html.Node) []string {
+	var values []string
+	collectEmValues(n, &values)
+	return values
+}
+
+// collectEmValues recursively collects text from <em> elements.
+func collectEmValues(n *html.Node, result *[]string) {
+	if n.Type == html.ElementNode && n.DataAtom == atom.Em {
+		text := strings.TrimSpace(extractText(n))
+		// Skip type names (PascalCase) and common words
+		if text != "" && !isTypeName(text) && text != "Optional" {
+			*result = append(*result, text)
+		}
+		return
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		collectEmValues(c, result)
+	}
 }
 
 // collectLinks recursively collects <a> elements with internal refs from a node.

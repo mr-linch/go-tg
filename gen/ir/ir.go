@@ -80,4 +80,5 @@ type Param struct {
 	Required    bool     `yaml:"required,omitempty"`
 	Description string   `yaml:"description,omitempty"`
 	Default     string   `yaml:"default,omitempty"`
+	Enum        []string `yaml:"enum,omitempty"` // allowed values set (from <em> tags)
 }
