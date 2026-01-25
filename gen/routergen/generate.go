@@ -39,7 +39,8 @@ type GoHandlerType struct {
 
 // TemplateData passed to templates.
 type TemplateData struct {
-	Package       string
+	Package string
+	ir.Metadata
 	RouterMethods []GoRouterMethod // One per Update field
 	HandlerTypes  []GoHandlerType  // One per unique underlying type
 }
@@ -83,7 +84,11 @@ func Generate(api *ir.API, routerW, handlerW, updateW io.Writer, log *slog.Logge
 }
 
 func executeTemplate(name, tmplStr string, w io.Writer, data *TemplateData) error {
-	tmpl, err := template.New(name).Parse(tmplStr)
+	tmpl, err := template.New(name).Parse(ir.HeaderTemplate)
+	if err != nil {
+		return fmt.Errorf("parse header template: %w", err)
+	}
+	tmpl, err = tmpl.Parse(tmplStr)
 	if err != nil {
 		return fmt.Errorf("parse template: %w", err)
 	}
@@ -100,7 +105,7 @@ func buildTemplateData(api *ir.API, pkg string, log *slog.Logger) (*TemplateData
 		}
 	}
 	if updateType == nil {
-		return nil, fmt.Errorf("Update type not found in API")
+		return nil, fmt.Errorf("update type not found in API")
 	}
 
 	// Group fields by underlying type.
@@ -173,6 +178,7 @@ func buildTemplateData(api *ir.API, pkg string, log *slog.Logger) (*TemplateData
 
 	return &TemplateData{
 		Package:       pkg,
+		Metadata:      api.Metadata,
 		RouterMethods: routerMethods,
 		HandlerTypes:  handlerTypes,
 	}, nil

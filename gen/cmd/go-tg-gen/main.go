@@ -10,6 +10,7 @@ import (
 	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/methodgen"
 	"github.com/mr-linch/go-tg/gen/parser"
+	"github.com/mr-linch/go-tg/gen/readmegen"
 	"github.com/mr-linch/go-tg/gen/routergen"
 	"github.com/mr-linch/go-tg/gen/typegen"
 	"gopkg.in/yaml.v3"
@@ -23,6 +24,7 @@ func main() {
 		methodsOutput = flag.String("methods-output", "", "output file for generated methods")
 		tgbOutput     = flag.String("tgb-output", "", "output directory for generated tgb files (router_gen.go, handler_gen.go, update_gen.go)")
 		specOutput    = flag.String("spec-output", "", "output path for parsed API spec (YAML)")
+		readmeOutput  = flag.String("readme", "", "path to README.md to update version badge")
 		input         = flag.String("input", "", "path to Telegram API HTML (required)")
 		verbose       = flag.Bool("v", false, "verbose logging (debug level)")
 	)
@@ -146,5 +148,14 @@ func main() {
 		}
 
 		log.Info("tgb generated", "output", *tgbOutput)
+	}
+
+	// Update README.md version badge if path specified.
+	if *readmeOutput != "" {
+		if err := readmegen.UpdateVersion(*readmeOutput, api); err != nil {
+			log.Error("update readme", "error", err, "path", *readmeOutput)
+			os.Exit(1)
+		}
+		log.Info("readme updated", "output", *readmeOutput, "version", api.Version)
 	}
 }

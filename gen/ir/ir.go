@@ -40,11 +40,19 @@ type Enum struct {
 	Fields []string `yaml:"fields,omitempty"` // "TypeName.field_name" references
 }
 
+// Metadata contains API version information used in generated file headers.
+type Metadata struct {
+	Version     string `yaml:"version,omitempty"`
+	ReleaseDate string `yaml:"release_date,omitempty"`
+	Hash        string `yaml:"hash,omitempty"`
+}
+
 // API is the top-level intermediate representation of the Telegram Bot API.
 type API struct {
-	Types   []Type   `yaml:"types,omitempty"`
-	Methods []Method `yaml:"methods,omitempty"`
-	Enums   []Enum   `yaml:"enums,omitempty"`
+	Metadata `yaml:",inline"`
+	Types    []Type   `yaml:"types,omitempty"`
+	Methods  []Method `yaml:"methods,omitempty"`
+	Enums    []Enum   `yaml:"enums,omitempty"`
 }
 
 // Type represents a Telegram Bot API type (struct or union).

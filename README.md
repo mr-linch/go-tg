@@ -3,7 +3,9 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/mr-linch/go-tg.svg)](https://pkg.go.dev/github.com/mr-linch/go-tg)
 [![go.mod](https://img.shields.io/github/go-mod/go-version/mr-linch/go-tg)](go.mod)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/mr-linch/go-tg?label=latest%20release)](https://github.com/mr-linch/go-tg/releases/latest)
-![Telegram Bot API](https://img.shields.io/badge/Telegram%20Bot%20API-7.2-blue?logo=telegram)
+<!-- auto-generated: Telegram Bot API badge -->
+[![Telegram Bot API](https://img.shields.io/badge/Telegram%20Bot%20API-9.3%20%28from%20December%2031%2C%202025%29-blue?logo=telegram)](https://core.telegram.org/bots/api#december-31-2025)
+<!-- end: auto-generated -->
 [![CI](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml/badge.svg)](https://github.com/mr-linch/go-tg/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/mr-linch/go-tg/branch/main/graph/badge.svg?token=9EI5CEIYXL)](https://codecov.io/gh/mr-linch/go-tg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mr-linch/go-tg)](https://goreportcard.com/report/github.com/mr-linch/go-tg)

@@ -14,6 +14,7 @@ import (
 var reQuotedValue = regexp.MustCompile(`["\x{201c}]([^"\x{201d}]+)["\x{201d}]`)
 var reAlwaysConst = regexp.MustCompile(`always ["\x{201c}]([^"\x{201d}]+)["\x{201d}]`)
 var reDefault = regexp.MustCompile(`(?i)\bDefaults to (\w+)`)
+var reBotAPIVersion = regexp.MustCompile(`Bot API (\d+\.\d+)`)
 
 // Parse reads Telegram Bot API HTML from r and returns the parsed IR.
 func Parse(r io.Reader) (*ir.API, error) {
@@ -22,9 +23,15 @@ func Parse(r io.Reader) (*ir.API, error) {
 		return nil, err
 	}
 
+	version, releaseDate := extractAPIMetadata(doc)
 	sections := extractSections(doc)
 
-	api := &ir.API{}
+	api := &ir.API{
+		Metadata: ir.Metadata{
+			Version:     version,
+			ReleaseDate: releaseDate,
+		},
+	}
 	for _, sec := range sections {
 		switch {
 		case isTypeName(sec.name):
@@ -36,7 +43,77 @@ func Parse(r io.Reader) (*ir.API, error) {
 		}
 	}
 
+	api.Hash = api.ComputeHash()
+
 	return api, nil
+}
+
+// extractAPIMetadata extracts the API version and release date from the HTML document.
+// It looks for the "Recent changes" section and extracts:
+// - Release date from the first <h4> (e.g., "December 31, 2025")
+// - Version from the first <p><strong>Bot API X.Y</strong></p>
+func extractAPIMetadata(doc *html.Node) (version, releaseDate string) {
+	// Find the "Recent changes" h3 section
+	var h3s []*html.Node
+	findH3s(doc, &h3s)
+
+	var recentChangesH3 *html.Node
+	for _, h3 := range h3s {
+		text := extractText(h3)
+		if strings.Contains(strings.ToLower(text), "recent changes") {
+			recentChangesH3 = h3
+			break
+		}
+	}
+
+	if recentChangesH3 == nil {
+		return "", ""
+	}
+
+	// Find the first <h4> and <p><strong>Bot API X.Y</strong></p> after "Recent changes"
+	for sib := recentChangesH3.NextSibling; sib != nil; sib = sib.NextSibling {
+		if sib.Type != html.ElementNode {
+			continue
+		}
+
+		// Stop if we hit another <h3>
+		if sib.DataAtom == atom.H3 {
+			break
+		}
+
+		// Extract release date from first <h4>
+		if sib.DataAtom == atom.H4 && releaseDate == "" {
+			releaseDate = strings.TrimSpace(extractText(sib))
+		}
+
+		// Extract version from <p><strong>Bot API X.Y</strong></p>
+		if sib.DataAtom == atom.P && version == "" {
+			strong := findChild(sib, atom.Strong)
+			if strong != nil {
+				text := extractText(strong)
+				if m := reBotAPIVersion.FindStringSubmatch(text); m != nil {
+					version = m[1]
+				}
+			}
+		}
+
+		// Stop once we have both
+		if version != "" && releaseDate != "" {
+			break
+		}
+	}
+
+	return version, releaseDate
+}
+
+// findH3s recursively finds all <h3> elements.
+func findH3s(n *html.Node, result *[]*html.Node) {
+	if n.Type == html.ElementNode && n.DataAtom == atom.H3 {
+		*result = append(*result, n)
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		findH3s(c, result)
+	}
 }
 
 // section represents a parsed section delimited by <h4>.

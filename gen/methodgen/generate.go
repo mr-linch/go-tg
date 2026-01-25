@@ -63,6 +63,7 @@ func (m GoMethod) RequiredParams() []GoParam {
 // TemplateData is the data passed to the template.
 type TemplateData struct {
 	Package string
+	ir.Metadata
 	Methods []GoMethod
 }
 
@@ -114,6 +115,7 @@ func Generate(api *ir.API, w io.Writer, cfg *config.MethodGen, log *slog.Logger,
 
 	data := buildTemplateData(api, cfg, rules, stringerTypes, log)
 	data.Package = opts.Package
+	data.Metadata = api.Metadata
 
 	log.Info("generating methods", "count", len(data.Methods))
 
@@ -123,7 +125,11 @@ func Generate(api *ir.API, w io.Writer, cfg *config.MethodGen, log *slog.Logger,
 		},
 	}
 
-	tmpl, err := template.New("methods").Funcs(funcMap).Parse(methodsTmpl)
+	tmpl, err := template.New("methods").Funcs(funcMap).Parse(ir.HeaderTemplate)
+	if err != nil {
+		return fmt.Errorf("parse header template: %w", err)
+	}
+	tmpl, err = tmpl.Parse(methodsTmpl)
 	if err != nil {
 		return fmt.Errorf("parse template: %w", err)
 	}

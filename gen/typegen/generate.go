@@ -83,7 +83,8 @@ type GoTypeMethodCase struct {
 
 // TemplateData is the data passed to the template.
 type TemplateData struct {
-	Package     string
+	Package string
+	ir.Metadata
 	Types       []GoType
 	UnionTypes  []GoUnionType
 	Enums       []GoEnum
@@ -111,13 +112,18 @@ func Generate(api *ir.API, w io.Writer, cfg *config.TypeGen, log *slog.Logger, o
 
 	data := buildTemplateData(api, cfg, rules, log)
 	data.Package = opts.Package
+	data.Metadata = api.Metadata
 
 	log.Info("generating types", "structs", len(data.Types), "unions", len(data.UnionTypes))
 
 	funcMap := template.FuncMap{
 		"sub": func(a, b int) int { return a - b },
 	}
-	tmpl, err := template.New("types").Funcs(funcMap).Parse(typesTmpl)
+	tmpl, err := template.New("types").Funcs(funcMap).Parse(ir.HeaderTemplate)
+	if err != nil {
+		return fmt.Errorf("parse header template: %w", err)
+	}
+	tmpl, err = tmpl.Parse(typesTmpl)
 	if err != nil {
 		return fmt.Errorf("parse template: %w", err)
 	}
