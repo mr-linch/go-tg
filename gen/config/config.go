@@ -30,12 +30,21 @@ type FieldTypeRule struct {
 	Scalar bool   `yaml:"scalar,omitempty"` // if true, no pointer wrapping for optional fields
 }
 
+// EnumGenDef defines how to generate a standalone enum type.
+type EnumGenDef struct {
+	Name       string `yaml:"name"`                 // Enum name from parser.enums (e.g., "ChatType")
+	Underlying string `yaml:"underlying,omitempty"` // Go underlying type (default: "int")
+	Marshal    string `yaml:"marshal,omitempty"`    // "json", "text", "stringer", or "" (default: "text")
+	Unknown    bool   `yaml:"unknown,omitempty"`    // If true, include Unknown sentinel at 0
+}
+
 // TypeGen holds type generation configuration.
 type TypeGen struct {
 	Exclude        []string          `yaml:"exclude"`
 	NameOverrides  map[string]string `yaml:"name_overrides"`
 	TypeOverrides  map[string]string `yaml:"type_overrides"`
 	FieldTypeRules []FieldTypeRule   `yaml:"field_type_rules"`
+	Enums          []EnumGenDef      `yaml:"enums,omitempty"`
 }
 
 // IsExcluded reports whether typeName should be skipped.
@@ -82,7 +91,7 @@ func (c *Config) ApplyEnums(api *ir.API) error {
 			e.Values = values
 
 		case len(def.Fields) > 0:
-			values, err := resolveFieldEnum(api, def.Fields[0])
+			values, err := resolveFieldEnums(api, def.Fields)
 			if err != nil {
 				return fmt.Errorf("enum %q: %w", def.Name, err)
 			}
@@ -100,6 +109,27 @@ func (c *Config) ApplyEnums(api *ir.API) error {
 	}
 
 	return nil
+}
+
+// resolveFieldEnums merges Enum values from all specified field references.
+// It collects unique values while preserving order from each field.
+func resolveFieldEnums(api *ir.API, refs []string) ([]string, error) {
+	seen := make(map[string]bool)
+	var result []string
+
+	for _, ref := range refs {
+		values, err := resolveFieldEnum(api, ref)
+		if err != nil {
+			return nil, err
+		}
+		for _, v := range values {
+			if !seen[v] {
+				seen[v] = true
+				result = append(result, v)
+			}
+		}
+	}
+	return result, nil
 }
 
 // resolveFieldEnum finds the Enum values on the specified "TypeName.field_name" field.

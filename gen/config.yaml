@@ -22,28 +22,35 @@ parser:
       expr: 'SubtypeConsts("BackgroundFill", "type")'
     - name: ReactionTypeType
       expr: 'SubtypeConsts("ReactionType", "type")'
+    - name: BotCommandScopeType
+      expr: 'SubtypeConsts("BotCommandScope", "type")'
+    - name: MenuButtonType
+      expr: 'SubtypeConsts("MenuButton", "type")'
+    - name: InlineQueryResultType
+      expr: 'SubtypeConsts("InlineQueryResult", "type")'
+    - name: InputMediaType
+      expr: 'SubtypeConsts("InputMedia", "type")'
 
 typegen:
+  enums:
+    - name: ChatType
+      underlying: int8
+      marshal: json
+    - name: StickerType
+      underlying: int
+      marshal: text
+      unknown: true
+    - name: MessageEntityType
+      underlying: int
+      marshal: text
+      unknown: true
+
   exclude:
-    # Empty structs (no fields in API, defined in types_gen_ext.go)
-    - CallbackGame
-    - ForumTopicClosed
-    - ForumTopicReopened
-    - GeneralForumTopicHidden
-    - GeneralForumTopicUnhidden
-    - GiveawayCreated
-    - VideoChatStarted
+    # Description-only types with custom implementations
+    - InputFile
     # Union types without const discriminator (manual unmarshal logic)
     - MaybeInaccessibleMessage
     - InputMessageContent
-    # Union types with extra methods beyond UnmarshalJSON
-    - ReactionType
-    - MessageOrigin
-    # Interface types (used as method params, can't be generated as structs)
-    - InputMedia
-    - InlineQueryResult
-    - BotCommandScope
-    - MenuButton
 
   field_type_rules:
     - expr: 'TypeExpr.Types[0].Type in ["Integer", "Integer64"] && (Description contains "Unix time" || Description contains "Unix timestamp")'

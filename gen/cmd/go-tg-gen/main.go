@@ -53,7 +53,14 @@ func main() {
 		log.Error("parse API", "error", err)
 		os.Exit(1)
 	}
-	log.Info("parsed API", "types", len(api.Types), "methods", len(api.Methods))
+
+	// Apply enum definitions from config.
+	if err := cfg.ApplyEnums(api); err != nil {
+		log.Error("apply enums", "error", err)
+		os.Exit(1)
+	}
+
+	log.Info("parsed API", "types", len(api.Types), "methods", len(api.Methods), "enums", len(api.Enums))
 
 	// Write parsed spec to YAML if requested.
 	if *specOutput != "" {

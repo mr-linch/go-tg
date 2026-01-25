@@ -44,11 +44,11 @@ func main() {
 			media := make([]tg.InputMedia, count)
 
 			for i := 0; i < count; i++ {
-				media[i] = &tg.InputMediaPhoto{
+				media[i] = tg.NewInputMediaPhoto(tg.InputMediaPhoto{
 					Media: tg.NewFileArgUpload(
 						tg.NewInputFileBytes("gopher.png", gopherPNG),
 					),
-				}
+				})
 			}
 
 			return msg.AnswerMediaGroup(

@@ -205,7 +205,7 @@ func TestApplyEnums_FullDoc(t *testing.T) {
 	// Field-mapped: ChatType
 	chatType := enumByName("ChatType")
 	require.NotNil(t, chatType, "ChatType enum not found")
-	assert.Equal(t, []string{"private", "group", "supergroup", "channel"}, chatType.Values)
+	assert.Equal(t, []string{"private", "group", "supergroup", "channel", "sender"}, chatType.Values)
 
 	// Field-mapped: StickerType
 	stickerType := enumByName("StickerType")
@@ -244,7 +244,7 @@ func TestLoadFile(t *testing.T) {
 	cfg, err := LoadFile("../config.yaml")
 	require.NoError(t, err)
 	assert.Greater(t, len(cfg.Parser.Enums), 5)
-	assert.Greater(t, len(cfg.TypeGen.Exclude), 10)
+	assert.Greater(t, len(cfg.TypeGen.Exclude), 0)
 }
 
 func TestTypeGen_IsExcluded(t *testing.T) {

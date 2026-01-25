@@ -43,13 +43,13 @@ func TestRequest_Setters(t *testing.T) {
 	r.FileID("file_id", FileID("file_id"))
 
 	r.InputMediaSlice("media", []InputMedia{
-		&InputMediaDocument{
+		NewInputMediaDocument(InputMediaDocument{
 			Media: FileArg{
 				Upload: NewInputFileBytes("file_name", []byte("file_content")),
 			},
 
 			Thumbnail: NewInputFileBytes("thumb.jpg", []byte("")).Ptr(),
-		},
+		}),
 	})
 
 	encoder := &testEncoder{}

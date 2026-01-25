@@ -19,29 +19,190 @@ type {{.Name}} struct {
 {{end -}}
 }
 {{end}}
-{{- range .UnionTypes}}
-// {{.Comment}}
-type {{.Name}} struct {
-{{- range .Variants}}
+{{- range $u := .UnionTypes}}
+// {{$u.DiscriminatorTypeName}} represents the type of {{$u.Name}}.
+type {{$u.DiscriminatorTypeName}} int
+
+const (
+{{- range $i, $v := $u.Variants}}
+{{- if eq $i 0}}
+	{{$v.EnumConst}} {{$u.DiscriminatorTypeName}} = iota + 1
+{{- else}}
+	{{$v.EnumConst}}
+{{- end}}
+{{- end}}
+)
+
+func (v {{$u.DiscriminatorTypeName}}) String() string {
+	if v < {{(index $u.Variants 0).EnumConst}} || v > {{(index $u.Variants (sub (len $u.Variants) 1)).EnumConst}} {
+		return "unknown"
+	}
+	return [...]string{
+{{- range $u.Variants}}
+		"{{.ConstVal}}",
+{{- end}}
+	}[v-1]
+}
+
+func (v {{$u.DiscriminatorTypeName}}) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+{{if $u.CanUnmarshal}}
+func (v *{{$u.DiscriminatorTypeName}}) UnmarshalText(b []byte) error {
+	switch string(b) {
+{{- range $u.Variants}}
+	case "{{.ConstVal}}":
+		*v = {{.EnumConst}}
+{{- end}}
+	default:
+		return fmt.Errorf("unknown {{$u.DiscriminatorTypeName}}: %s", string(b))
+	}
+	return nil
+}
+{{- end}}
+
+// {{$u.Comment}}
+type {{$u.Name}} struct {
+{{- range $u.Variants}}
 	{{.FieldName}} *{{.TypeName}}
 {{- end}}
 }
-
-func (u *{{.Name}}) UnmarshalJSON(data []byte) error {
+{{if $u.CanUnmarshal}}
+func (u *{{$u.Name}}) UnmarshalJSON(data []byte) error {
 	var partial struct {
-		D string `json:"{{.Discriminator}}"`
+		D string `json:"{{$u.Discriminator}}"`
 	}
 	if err := json.Unmarshal(data, &partial); err != nil {
-		return fmt.Errorf("unmarshal {{.Name}}: %w", err)
+		return fmt.Errorf("unmarshal {{$u.Name}}: %w", err)
 	}
 	switch partial.D {
-{{- range .Variants}}
+{{- range $u.Variants}}
 	case "{{.ConstVal}}":
 		u.{{.FieldName}} = &{{.TypeName}}{}
 		return json.Unmarshal(data, u.{{.FieldName}})
 {{- end}}
 	default:
-		return fmt.Errorf("unknown {{.Name}} {{.Discriminator}}: %s", partial.D)
+		return fmt.Errorf("unknown {{$u.Name}} {{$u.Discriminator}}: %s", partial.D)
 	}
 }
+{{- end}}
+
+func (u {{$u.Name}}) MarshalJSON() ([]byte, error) {
+	switch {
+{{- range $u.Variants}}
+	case u.{{.FieldName}} != nil:
+		u.{{.FieldName}}.{{$u.DiscriminatorGoField}} = "{{.ConstVal}}"
+		return json.Marshal(u.{{.FieldName}})
+{{- end}}
+	default:
+		return nil, fmt.Errorf("unknown {{$u.Name}} variant")
+	}
+}
+
+// {{$u.DiscriminatorMethodName}} returns the discriminator value for this union.
+func (u *{{$u.Name}}) {{$u.DiscriminatorMethodName}}() {{$u.DiscriminatorTypeName}} {
+	switch {
+{{- range $u.Variants}}
+	case u.{{.FieldName}} != nil:
+		return {{.EnumConst}}
+{{- end}}
+	default:
+		return 0
+	}
+}
+{{- if $u.HasConstructors}}
+{{range $u.Variants}}
+// New{{.TypeName}} creates a {{$u.Name}} containing a {{.TypeName}}.
+func New{{.TypeName}}(v {{.TypeName}}) {{$u.Name}} {
+	return {{$u.Name}}{{"{"}}{{.FieldName}}: &v{{"}"}}
+}
+{{end}}
+{{- end}}
+{{- end}}
+{{- range $e := .Enums}}
+// {{$e.Name}} represents an enum type.
+type {{$e.Name}} {{$e.Underlying}}
+
+const (
+{{- if $e.HasUnknown}}
+	{{$e.Name}}Unknown {{$e.Name}} = iota
+{{- end}}
+{{- range $i, $v := $e.Values}}
+{{- if and (eq $i 0) (not $e.HasUnknown)}}
+	{{$v.ConstName}} {{$e.Name}} = iota + 1
+{{- else}}
+	{{$v.ConstName}}
+{{- end}}
+{{- end}}
+)
+
+func (v {{$e.Name}}) String() string {
+{{- if $e.HasUnknown}}
+	if v > {{$e.Name}}Unknown && v <= {{(index $e.Values (sub (len $e.Values) 1)).ConstName}} {
+		return [...]string{
+{{- range $e.Values}}
+			"{{.StringVal}}",
+{{- end}}
+		}[v-1]
+	}
+	return "unknown"
+{{- else}}
+	if v < {{(index $e.Values 0).ConstName}} || v > {{(index $e.Values (sub (len $e.Values) 1)).ConstName}} {
+		return "unknown"
+	}
+	return [...]string{
+{{- range $e.Values}}
+		"{{.StringVal}}",
+{{- end}}
+	}[v-1]
+{{- end}}
+}
+{{if eq $e.Marshal "json"}}
+func (v {{$e.Name}}) MarshalJSON() ([]byte, error) {
+	return json.Marshal(v.String())
+}
+
+func (v *{{$e.Name}}) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	switch s {
+{{- range $e.Values}}
+	case "{{.StringVal}}":
+		*v = {{.ConstName}}
+{{- end}}
+	default:
+		return fmt.Errorf("unknown {{$e.Name}}: %s", s)
+	}
+	return nil
+}
+{{- else if eq $e.Marshal "text"}}
+func (v {{$e.Name}}) MarshalText() ([]byte, error) {
+{{- if $e.HasUnknown}}
+	if v != {{$e.Name}}Unknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown {{$e.Name}}")
+{{- else}}
+	return []byte(v.String()), nil
+{{- end}}
+}
+
+func (v *{{$e.Name}}) UnmarshalText(b []byte) error {
+	switch string(b) {
+{{- range $e.Values}}
+	case "{{.StringVal}}":
+		*v = {{.ConstName}}
+{{- end}}
+	default:
+{{- if $e.HasUnknown}}
+		*v = {{$e.Name}}Unknown
+{{- else}}
+		return fmt.Errorf("unknown {{$e.Name}}: %s", string(b))
+{{- end}}
+	}
+	return nil
+}
+{{- end}}
 {{end}}

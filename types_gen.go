@@ -1492,6 +1492,9 @@ type ForumTopicCreated struct {
 	IsNameImplicit bool `json:"is_name_implicit,omitempty"`
 }
 
+// ForumTopicClosed this object represents a service message about a forum topic closed in the chat. Currently holds no information.
+type ForumTopicClosed struct {}
+
 // ForumTopicEdited this object represents a service message about an edited forum topic.
 type ForumTopicEdited struct {
 	// Optional. New name of the topic, if it was edited
@@ -1500,6 +1503,15 @@ type ForumTopicEdited struct {
 	// Optional. New identifier of the custom emoji shown as the topic icon, if it was edited; an empty string if the icon was removed
 	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
 }
+
+// ForumTopicReopened this object represents a service message about a forum topic reopened in the chat. Currently holds no information.
+type ForumTopicReopened struct {}
+
+// GeneralForumTopicHidden this object represents a service message about General forum topic hidden in the chat. Currently holds no information.
+type GeneralForumTopicHidden struct {}
+
+// GeneralForumTopicUnhidden this object represents a service message about General forum topic unhidden in the chat. Currently holds no information.
+type GeneralForumTopicUnhidden struct {}
 
 // SharedUser this object contains information about a user that was shared with the bot using a [KeyboardButtonRequestUsers](https://core.telegram.org/bots/api#keyboardbuttonrequestusers) button.
 type SharedUser struct {
@@ -1563,6 +1575,9 @@ type VideoChatScheduled struct {
 	// Point in time (Unix timestamp) when the video chat is supposed to be started by a chat administrator
 	StartDate UnixTime `json:"start_date"`
 }
+
+// VideoChatStarted this object represents a service message about a video chat started in the chat. Currently holds no information.
+type VideoChatStarted struct {}
 
 // VideoChatEnded this object represents a service message about a video chat ended in the chat.
 type VideoChatEnded struct {
@@ -1643,6 +1658,12 @@ type SuggestedPostRefunded struct {
 
 	// Reason for the refund. Currently, one of “post_deleted” if the post was deleted within 24 hours of being posted or removed from scheduled messages without being posted, or “payment_refunded” if the payer refunded their payment.
 	Reason string `json:"reason"`
+}
+
+// GiveawayCreated this object represents a service message about the creation of a scheduled giveaway.
+type GiveawayCreated struct {
+	// Optional. The number of Telegram Stars to be split between giveaway winners; for Telegram Star giveaways only
+	PrizeStarCount int `json:"prize_star_count,omitempty"`
 }
 
 // Giveaway this object represents a message about a scheduled giveaway.
@@ -5146,6 +5167,9 @@ type Game struct {
 	Animation *Animation `json:"animation,omitempty"`
 }
 
+// CallbackGame a placeholder, currently holds no information. Use [BotFather](https://t.me/botfather) to set up your game.
+type CallbackGame struct {}
+
 // GameHighScore this object represents one row of the high scores table for a game.
 // And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »](/bots/faq)
 type GameHighScore struct {
@@ -5157,6 +5181,153 @@ type GameHighScore struct {
 
 	// Score
 	Score int `json:"score"`
+}
+
+// MessageOriginType represents the type of MessageOrigin.
+type MessageOriginType int
+
+const (
+	MessageOriginTypeUser MessageOriginType = iota + 1
+	MessageOriginTypeHiddenUser
+	MessageOriginTypeChat
+	MessageOriginTypeChannel
+)
+
+func (v MessageOriginType) String() string {
+	if v < MessageOriginTypeUser || v > MessageOriginTypeChannel {
+		return "unknown"
+	}
+	return [...]string{
+		"user",
+		"hidden_user",
+		"chat",
+		"channel",
+	}[v-1]
+}
+
+func (v MessageOriginType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *MessageOriginType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "user":
+		*v = MessageOriginTypeUser
+	case "hidden_user":
+		*v = MessageOriginTypeHiddenUser
+	case "chat":
+		*v = MessageOriginTypeChat
+	case "channel":
+		*v = MessageOriginTypeChannel
+	default:
+		return fmt.Errorf("unknown MessageOriginType: %s", string(b))
+	}
+	return nil
+}
+
+// MessageOrigin this object describes the origin of a message. It can be one of
+type MessageOrigin struct {
+	User *MessageOriginUser
+	HiddenUser *MessageOriginHiddenUser
+	Chat *MessageOriginChat
+	Channel *MessageOriginChannel
+}
+
+func (u *MessageOrigin) UnmarshalJSON(data []byte) error {
+	var partial struct {
+		D string `json:"type"`
+	}
+	if err := json.Unmarshal(data, &partial); err != nil {
+		return fmt.Errorf("unmarshal MessageOrigin: %w", err)
+	}
+	switch partial.D {
+	case "user":
+		u.User = &MessageOriginUser{}
+		return json.Unmarshal(data, u.User)
+	case "hidden_user":
+		u.HiddenUser = &MessageOriginHiddenUser{}
+		return json.Unmarshal(data, u.HiddenUser)
+	case "chat":
+		u.Chat = &MessageOriginChat{}
+		return json.Unmarshal(data, u.Chat)
+	case "channel":
+		u.Channel = &MessageOriginChannel{}
+		return json.Unmarshal(data, u.Channel)
+	default:
+		return fmt.Errorf("unknown MessageOrigin type: %s", partial.D)
+	}
+}
+
+func (u MessageOrigin) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.User != nil:
+		u.User.Type = "user"
+		return json.Marshal(u.User)
+	case u.HiddenUser != nil:
+		u.HiddenUser.Type = "hidden_user"
+		return json.Marshal(u.HiddenUser)
+	case u.Chat != nil:
+		u.Chat.Type = "chat"
+		return json.Marshal(u.Chat)
+	case u.Channel != nil:
+		u.Channel.Type = "channel"
+		return json.Marshal(u.Channel)
+	default:
+		return nil, fmt.Errorf("unknown MessageOrigin variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *MessageOrigin) Type() MessageOriginType {
+	switch {
+	case u.User != nil:
+		return MessageOriginTypeUser
+	case u.HiddenUser != nil:
+		return MessageOriginTypeHiddenUser
+	case u.Chat != nil:
+		return MessageOriginTypeChat
+	case u.Channel != nil:
+		return MessageOriginTypeChannel
+	default:
+		return 0
+	}
+}
+// PaidMediaType represents the type of PaidMedia.
+type PaidMediaType int
+
+const (
+	PaidMediaTypePreview PaidMediaType = iota + 1
+	PaidMediaTypePhoto
+	PaidMediaTypeVideo
+)
+
+func (v PaidMediaType) String() string {
+	if v < PaidMediaTypePreview || v > PaidMediaTypeVideo {
+		return "unknown"
+	}
+	return [...]string{
+		"preview",
+		"photo",
+		"video",
+	}[v-1]
+}
+
+func (v PaidMediaType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *PaidMediaType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "preview":
+		*v = PaidMediaTypePreview
+	case "photo":
+		*v = PaidMediaTypePhoto
+	case "video":
+		*v = PaidMediaTypeVideo
+	default:
+		return fmt.Errorf("unknown PaidMediaType: %s", string(b))
+	}
+	return nil
 }
 
 // PaidMedia this object describes paid media. Currently, it can be one of
@@ -5188,6 +5359,73 @@ func (u *PaidMedia) UnmarshalJSON(data []byte) error {
 	}
 }
 
+func (u PaidMedia) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Preview != nil:
+		u.Preview.Type = "preview"
+		return json.Marshal(u.Preview)
+	case u.Photo != nil:
+		u.Photo.Type = "photo"
+		return json.Marshal(u.Photo)
+	case u.Video != nil:
+		u.Video.Type = "video"
+		return json.Marshal(u.Video)
+	default:
+		return nil, fmt.Errorf("unknown PaidMedia variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *PaidMedia) Type() PaidMediaType {
+	switch {
+	case u.Preview != nil:
+		return PaidMediaTypePreview
+	case u.Photo != nil:
+		return PaidMediaTypePhoto
+	case u.Video != nil:
+		return PaidMediaTypeVideo
+	default:
+		return 0
+	}
+}
+// BackgroundFillType represents the type of BackgroundFill.
+type BackgroundFillType int
+
+const (
+	BackgroundFillTypeSolid BackgroundFillType = iota + 1
+	BackgroundFillTypeGradient
+	BackgroundFillTypeFreeformGradient
+)
+
+func (v BackgroundFillType) String() string {
+	if v < BackgroundFillTypeSolid || v > BackgroundFillTypeFreeformGradient {
+		return "unknown"
+	}
+	return [...]string{
+		"solid",
+		"gradient",
+		"freeform_gradient",
+	}[v-1]
+}
+
+func (v BackgroundFillType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *BackgroundFillType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "solid":
+		*v = BackgroundFillTypeSolid
+	case "gradient":
+		*v = BackgroundFillTypeGradient
+	case "freeform_gradient":
+		*v = BackgroundFillTypeFreeformGradient
+	default:
+		return fmt.Errorf("unknown BackgroundFillType: %s", string(b))
+	}
+	return nil
+}
+
 // BackgroundFill this object describes the way a background is filled based on the selected colors. Currently, it can be one of
 type BackgroundFill struct {
 	Solid *BackgroundFillSolid
@@ -5215,6 +5453,77 @@ func (u *BackgroundFill) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown BackgroundFill type: %s", partial.D)
 	}
+}
+
+func (u BackgroundFill) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Solid != nil:
+		u.Solid.Type = "solid"
+		return json.Marshal(u.Solid)
+	case u.Gradient != nil:
+		u.Gradient.Type = "gradient"
+		return json.Marshal(u.Gradient)
+	case u.FreeformGradient != nil:
+		u.FreeformGradient.Type = "freeform_gradient"
+		return json.Marshal(u.FreeformGradient)
+	default:
+		return nil, fmt.Errorf("unknown BackgroundFill variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *BackgroundFill) Type() BackgroundFillType {
+	switch {
+	case u.Solid != nil:
+		return BackgroundFillTypeSolid
+	case u.Gradient != nil:
+		return BackgroundFillTypeGradient
+	case u.FreeformGradient != nil:
+		return BackgroundFillTypeFreeformGradient
+	default:
+		return 0
+	}
+}
+// BackgroundTypeType represents the type of BackgroundType.
+type BackgroundTypeType int
+
+const (
+	BackgroundTypeTypeFill BackgroundTypeType = iota + 1
+	BackgroundTypeTypeWallpaper
+	BackgroundTypeTypePattern
+	BackgroundTypeTypeChatTheme
+)
+
+func (v BackgroundTypeType) String() string {
+	if v < BackgroundTypeTypeFill || v > BackgroundTypeTypeChatTheme {
+		return "unknown"
+	}
+	return [...]string{
+		"fill",
+		"wallpaper",
+		"pattern",
+		"chat_theme",
+	}[v-1]
+}
+
+func (v BackgroundTypeType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *BackgroundTypeType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "fill":
+		*v = BackgroundTypeTypeFill
+	case "wallpaper":
+		*v = BackgroundTypeTypeWallpaper
+	case "pattern":
+		*v = BackgroundTypeTypePattern
+	case "chat_theme":
+		*v = BackgroundTypeTypeChatTheme
+	default:
+		return fmt.Errorf("unknown BackgroundTypeType: %s", string(b))
+	}
+	return nil
 }
 
 // BackgroundType this object describes the type of a background. Currently, it can be one of
@@ -5248,6 +5557,90 @@ func (u *BackgroundType) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown BackgroundType type: %s", partial.D)
 	}
+}
+
+func (u BackgroundType) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Fill != nil:
+		u.Fill.Type = "fill"
+		return json.Marshal(u.Fill)
+	case u.Wallpaper != nil:
+		u.Wallpaper.Type = "wallpaper"
+		return json.Marshal(u.Wallpaper)
+	case u.Pattern != nil:
+		u.Pattern.Type = "pattern"
+		return json.Marshal(u.Pattern)
+	case u.ChatTheme != nil:
+		u.ChatTheme.Type = "chat_theme"
+		return json.Marshal(u.ChatTheme)
+	default:
+		return nil, fmt.Errorf("unknown BackgroundType variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *BackgroundType) Type() BackgroundTypeType {
+	switch {
+	case u.Fill != nil:
+		return BackgroundTypeTypeFill
+	case u.Wallpaper != nil:
+		return BackgroundTypeTypeWallpaper
+	case u.Pattern != nil:
+		return BackgroundTypeTypePattern
+	case u.ChatTheme != nil:
+		return BackgroundTypeTypeChatTheme
+	default:
+		return 0
+	}
+}
+// ChatMemberStatus represents the type of ChatMember.
+type ChatMemberStatus int
+
+const (
+	ChatMemberStatusOwner ChatMemberStatus = iota + 1
+	ChatMemberStatusAdministrator
+	ChatMemberStatusMember
+	ChatMemberStatusRestricted
+	ChatMemberStatusLeft
+	ChatMemberStatusBanned
+)
+
+func (v ChatMemberStatus) String() string {
+	if v < ChatMemberStatusOwner || v > ChatMemberStatusBanned {
+		return "unknown"
+	}
+	return [...]string{
+		"creator",
+		"administrator",
+		"member",
+		"restricted",
+		"left",
+		"kicked",
+	}[v-1]
+}
+
+func (v ChatMemberStatus) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *ChatMemberStatus) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "creator":
+		*v = ChatMemberStatusOwner
+	case "administrator":
+		*v = ChatMemberStatusAdministrator
+	case "member":
+		*v = ChatMemberStatusMember
+	case "restricted":
+		*v = ChatMemberStatusRestricted
+	case "left":
+		*v = ChatMemberStatusLeft
+	case "kicked":
+		*v = ChatMemberStatusBanned
+	default:
+		return fmt.Errorf("unknown ChatMemberStatus: %s", string(b))
+	}
+	return nil
 }
 
 // ChatMember this object contains information about one member of a chat. Currently, the following 6 types of chat members are supported:
@@ -5291,6 +5684,96 @@ func (u *ChatMember) UnmarshalJSON(data []byte) error {
 	}
 }
 
+func (u ChatMember) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Owner != nil:
+		u.Owner.Status = "creator"
+		return json.Marshal(u.Owner)
+	case u.Administrator != nil:
+		u.Administrator.Status = "administrator"
+		return json.Marshal(u.Administrator)
+	case u.Member != nil:
+		u.Member.Status = "member"
+		return json.Marshal(u.Member)
+	case u.Restricted != nil:
+		u.Restricted.Status = "restricted"
+		return json.Marshal(u.Restricted)
+	case u.Left != nil:
+		u.Left.Status = "left"
+		return json.Marshal(u.Left)
+	case u.Banned != nil:
+		u.Banned.Status = "kicked"
+		return json.Marshal(u.Banned)
+	default:
+		return nil, fmt.Errorf("unknown ChatMember variant")
+	}
+}
+
+// Status returns the discriminator value for this union.
+func (u *ChatMember) Status() ChatMemberStatus {
+	switch {
+	case u.Owner != nil:
+		return ChatMemberStatusOwner
+	case u.Administrator != nil:
+		return ChatMemberStatusAdministrator
+	case u.Member != nil:
+		return ChatMemberStatusMember
+	case u.Restricted != nil:
+		return ChatMemberStatusRestricted
+	case u.Left != nil:
+		return ChatMemberStatusLeft
+	case u.Banned != nil:
+		return ChatMemberStatusBanned
+	default:
+		return 0
+	}
+}
+// StoryAreaTypeType represents the type of StoryAreaType.
+type StoryAreaTypeType int
+
+const (
+	StoryAreaTypeTypeLocation StoryAreaTypeType = iota + 1
+	StoryAreaTypeTypeSuggestedReaction
+	StoryAreaTypeTypeLink
+	StoryAreaTypeTypeWeather
+	StoryAreaTypeTypeUniqueGift
+)
+
+func (v StoryAreaTypeType) String() string {
+	if v < StoryAreaTypeTypeLocation || v > StoryAreaTypeTypeUniqueGift {
+		return "unknown"
+	}
+	return [...]string{
+		"location",
+		"suggested_reaction",
+		"link",
+		"weather",
+		"unique_gift",
+	}[v-1]
+}
+
+func (v StoryAreaTypeType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *StoryAreaTypeType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "location":
+		*v = StoryAreaTypeTypeLocation
+	case "suggested_reaction":
+		*v = StoryAreaTypeTypeSuggestedReaction
+	case "link":
+		*v = StoryAreaTypeTypeLink
+	case "weather":
+		*v = StoryAreaTypeTypeWeather
+	case "unique_gift":
+		*v = StoryAreaTypeTypeUniqueGift
+	default:
+		return fmt.Errorf("unknown StoryAreaTypeType: %s", string(b))
+	}
+	return nil
+}
+
 // StoryAreaType describes the type of a clickable area on a story. Currently, it can be one of
 type StoryAreaType struct {
 	Location *StoryAreaTypeLocation
@@ -5328,6 +5811,217 @@ func (u *StoryAreaType) UnmarshalJSON(data []byte) error {
 	}
 }
 
+func (u StoryAreaType) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Location != nil:
+		u.Location.Type = "location"
+		return json.Marshal(u.Location)
+	case u.SuggestedReaction != nil:
+		u.SuggestedReaction.Type = "suggested_reaction"
+		return json.Marshal(u.SuggestedReaction)
+	case u.Link != nil:
+		u.Link.Type = "link"
+		return json.Marshal(u.Link)
+	case u.Weather != nil:
+		u.Weather.Type = "weather"
+		return json.Marshal(u.Weather)
+	case u.UniqueGift != nil:
+		u.UniqueGift.Type = "unique_gift"
+		return json.Marshal(u.UniqueGift)
+	default:
+		return nil, fmt.Errorf("unknown StoryAreaType variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *StoryAreaType) Type() StoryAreaTypeType {
+	switch {
+	case u.Location != nil:
+		return StoryAreaTypeTypeLocation
+	case u.SuggestedReaction != nil:
+		return StoryAreaTypeTypeSuggestedReaction
+	case u.Link != nil:
+		return StoryAreaTypeTypeLink
+	case u.Weather != nil:
+		return StoryAreaTypeTypeWeather
+	case u.UniqueGift != nil:
+		return StoryAreaTypeTypeUniqueGift
+	default:
+		return 0
+	}
+}
+
+// NewStoryAreaTypeLocation creates a StoryAreaType containing a StoryAreaTypeLocation.
+func NewStoryAreaTypeLocation(v StoryAreaTypeLocation) StoryAreaType {
+	return StoryAreaType{Location: &v}
+}
+
+// NewStoryAreaTypeSuggestedReaction creates a StoryAreaType containing a StoryAreaTypeSuggestedReaction.
+func NewStoryAreaTypeSuggestedReaction(v StoryAreaTypeSuggestedReaction) StoryAreaType {
+	return StoryAreaType{SuggestedReaction: &v}
+}
+
+// NewStoryAreaTypeLink creates a StoryAreaType containing a StoryAreaTypeLink.
+func NewStoryAreaTypeLink(v StoryAreaTypeLink) StoryAreaType {
+	return StoryAreaType{Link: &v}
+}
+
+// NewStoryAreaTypeWeather creates a StoryAreaType containing a StoryAreaTypeWeather.
+func NewStoryAreaTypeWeather(v StoryAreaTypeWeather) StoryAreaType {
+	return StoryAreaType{Weather: &v}
+}
+
+// NewStoryAreaTypeUniqueGift creates a StoryAreaType containing a StoryAreaTypeUniqueGift.
+func NewStoryAreaTypeUniqueGift(v StoryAreaTypeUniqueGift) StoryAreaType {
+	return StoryAreaType{UniqueGift: &v}
+}
+
+// ReactionTypeType represents the type of ReactionType.
+type ReactionTypeType int
+
+const (
+	ReactionTypeTypeEmoji ReactionTypeType = iota + 1
+	ReactionTypeTypeCustomEmoji
+	ReactionTypeTypePaid
+)
+
+func (v ReactionTypeType) String() string {
+	if v < ReactionTypeTypeEmoji || v > ReactionTypeTypePaid {
+		return "unknown"
+	}
+	return [...]string{
+		"emoji",
+		"custom_emoji",
+		"paid",
+	}[v-1]
+}
+
+func (v ReactionTypeType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *ReactionTypeType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "emoji":
+		*v = ReactionTypeTypeEmoji
+	case "custom_emoji":
+		*v = ReactionTypeTypeCustomEmoji
+	case "paid":
+		*v = ReactionTypeTypePaid
+	default:
+		return fmt.Errorf("unknown ReactionTypeType: %s", string(b))
+	}
+	return nil
+}
+
+// ReactionType this object describes the type of a reaction. Currently, it can be one of
+type ReactionType struct {
+	Emoji *ReactionTypeEmoji
+	CustomEmoji *ReactionTypeCustomEmoji
+	Paid *ReactionTypePaid
+}
+
+func (u *ReactionType) UnmarshalJSON(data []byte) error {
+	var partial struct {
+		D string `json:"type"`
+	}
+	if err := json.Unmarshal(data, &partial); err != nil {
+		return fmt.Errorf("unmarshal ReactionType: %w", err)
+	}
+	switch partial.D {
+	case "emoji":
+		u.Emoji = &ReactionTypeEmoji{}
+		return json.Unmarshal(data, u.Emoji)
+	case "custom_emoji":
+		u.CustomEmoji = &ReactionTypeCustomEmoji{}
+		return json.Unmarshal(data, u.CustomEmoji)
+	case "paid":
+		u.Paid = &ReactionTypePaid{}
+		return json.Unmarshal(data, u.Paid)
+	default:
+		return fmt.Errorf("unknown ReactionType type: %s", partial.D)
+	}
+}
+
+func (u ReactionType) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Emoji != nil:
+		u.Emoji.Type = "emoji"
+		return json.Marshal(u.Emoji)
+	case u.CustomEmoji != nil:
+		u.CustomEmoji.Type = "custom_emoji"
+		return json.Marshal(u.CustomEmoji)
+	case u.Paid != nil:
+		u.Paid.Type = "paid"
+		return json.Marshal(u.Paid)
+	default:
+		return nil, fmt.Errorf("unknown ReactionType variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *ReactionType) Type() ReactionTypeType {
+	switch {
+	case u.Emoji != nil:
+		return ReactionTypeTypeEmoji
+	case u.CustomEmoji != nil:
+		return ReactionTypeTypeCustomEmoji
+	case u.Paid != nil:
+		return ReactionTypeTypePaid
+	default:
+		return 0
+	}
+}
+
+// NewReactionTypeEmoji creates a ReactionType containing a ReactionTypeEmoji.
+func NewReactionTypeEmoji(v ReactionTypeEmoji) ReactionType {
+	return ReactionType{Emoji: &v}
+}
+
+// NewReactionTypeCustomEmoji creates a ReactionType containing a ReactionTypeCustomEmoji.
+func NewReactionTypeCustomEmoji(v ReactionTypeCustomEmoji) ReactionType {
+	return ReactionType{CustomEmoji: &v}
+}
+
+// NewReactionTypePaid creates a ReactionType containing a ReactionTypePaid.
+func NewReactionTypePaid(v ReactionTypePaid) ReactionType {
+	return ReactionType{Paid: &v}
+}
+
+// OwnedGiftType represents the type of OwnedGift.
+type OwnedGiftType int
+
+const (
+	OwnedGiftTypeRegular OwnedGiftType = iota + 1
+	OwnedGiftTypeUnique
+)
+
+func (v OwnedGiftType) String() string {
+	if v < OwnedGiftTypeRegular || v > OwnedGiftTypeUnique {
+		return "unknown"
+	}
+	return [...]string{
+		"regular",
+		"unique",
+	}[v-1]
+}
+
+func (v OwnedGiftType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *OwnedGiftType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "regular":
+		*v = OwnedGiftTypeRegular
+	case "unique":
+		*v = OwnedGiftTypeUnique
+	default:
+		return fmt.Errorf("unknown OwnedGiftType: %s", string(b))
+	}
+	return nil
+}
+
 // OwnedGift this object describes a gift received and owned by a user or a chat. Currently, it can be one of
 type OwnedGift struct {
 	Regular *OwnedGiftRegular
@@ -5351,6 +6045,365 @@ func (u *OwnedGift) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown OwnedGift type: %s", partial.D)
 	}
+}
+
+func (u OwnedGift) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Regular != nil:
+		u.Regular.Type = "regular"
+		return json.Marshal(u.Regular)
+	case u.Unique != nil:
+		u.Unique.Type = "unique"
+		return json.Marshal(u.Unique)
+	default:
+		return nil, fmt.Errorf("unknown OwnedGift variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *OwnedGift) Type() OwnedGiftType {
+	switch {
+	case u.Regular != nil:
+		return OwnedGiftTypeRegular
+	case u.Unique != nil:
+		return OwnedGiftTypeUnique
+	default:
+		return 0
+	}
+}
+// BotCommandScopeType represents the type of BotCommandScope.
+type BotCommandScopeType int
+
+const (
+	BotCommandScopeTypeDefault BotCommandScopeType = iota + 1
+	BotCommandScopeTypeAllPrivateChats
+	BotCommandScopeTypeAllGroupChats
+	BotCommandScopeTypeAllChatAdministrators
+	BotCommandScopeTypeChat
+	BotCommandScopeTypeChatAdministrators
+	BotCommandScopeTypeChatMember
+)
+
+func (v BotCommandScopeType) String() string {
+	if v < BotCommandScopeTypeDefault || v > BotCommandScopeTypeChatMember {
+		return "unknown"
+	}
+	return [...]string{
+		"default",
+		"all_private_chats",
+		"all_group_chats",
+		"all_chat_administrators",
+		"chat",
+		"chat_administrators",
+		"chat_member",
+	}[v-1]
+}
+
+func (v BotCommandScopeType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *BotCommandScopeType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "default":
+		*v = BotCommandScopeTypeDefault
+	case "all_private_chats":
+		*v = BotCommandScopeTypeAllPrivateChats
+	case "all_group_chats":
+		*v = BotCommandScopeTypeAllGroupChats
+	case "all_chat_administrators":
+		*v = BotCommandScopeTypeAllChatAdministrators
+	case "chat":
+		*v = BotCommandScopeTypeChat
+	case "chat_administrators":
+		*v = BotCommandScopeTypeChatAdministrators
+	case "chat_member":
+		*v = BotCommandScopeTypeChatMember
+	default:
+		return fmt.Errorf("unknown BotCommandScopeType: %s", string(b))
+	}
+	return nil
+}
+
+// BotCommandScope this object represents the scope to which bot commands are applied. Currently, the following 7 scopes are supported:
+type BotCommandScope struct {
+	Default *BotCommandScopeDefault
+	AllPrivateChats *BotCommandScopeAllPrivateChats
+	AllGroupChats *BotCommandScopeAllGroupChats
+	AllChatAdministrators *BotCommandScopeAllChatAdministrators
+	Chat *BotCommandScopeChat
+	ChatAdministrators *BotCommandScopeChatAdministrators
+	ChatMember *BotCommandScopeChatMember
+}
+
+func (u *BotCommandScope) UnmarshalJSON(data []byte) error {
+	var partial struct {
+		D string `json:"type"`
+	}
+	if err := json.Unmarshal(data, &partial); err != nil {
+		return fmt.Errorf("unmarshal BotCommandScope: %w", err)
+	}
+	switch partial.D {
+	case "default":
+		u.Default = &BotCommandScopeDefault{}
+		return json.Unmarshal(data, u.Default)
+	case "all_private_chats":
+		u.AllPrivateChats = &BotCommandScopeAllPrivateChats{}
+		return json.Unmarshal(data, u.AllPrivateChats)
+	case "all_group_chats":
+		u.AllGroupChats = &BotCommandScopeAllGroupChats{}
+		return json.Unmarshal(data, u.AllGroupChats)
+	case "all_chat_administrators":
+		u.AllChatAdministrators = &BotCommandScopeAllChatAdministrators{}
+		return json.Unmarshal(data, u.AllChatAdministrators)
+	case "chat":
+		u.Chat = &BotCommandScopeChat{}
+		return json.Unmarshal(data, u.Chat)
+	case "chat_administrators":
+		u.ChatAdministrators = &BotCommandScopeChatAdministrators{}
+		return json.Unmarshal(data, u.ChatAdministrators)
+	case "chat_member":
+		u.ChatMember = &BotCommandScopeChatMember{}
+		return json.Unmarshal(data, u.ChatMember)
+	default:
+		return fmt.Errorf("unknown BotCommandScope type: %s", partial.D)
+	}
+}
+
+func (u BotCommandScope) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Default != nil:
+		u.Default.Type = "default"
+		return json.Marshal(u.Default)
+	case u.AllPrivateChats != nil:
+		u.AllPrivateChats.Type = "all_private_chats"
+		return json.Marshal(u.AllPrivateChats)
+	case u.AllGroupChats != nil:
+		u.AllGroupChats.Type = "all_group_chats"
+		return json.Marshal(u.AllGroupChats)
+	case u.AllChatAdministrators != nil:
+		u.AllChatAdministrators.Type = "all_chat_administrators"
+		return json.Marshal(u.AllChatAdministrators)
+	case u.Chat != nil:
+		u.Chat.Type = "chat"
+		return json.Marshal(u.Chat)
+	case u.ChatAdministrators != nil:
+		u.ChatAdministrators.Type = "chat_administrators"
+		return json.Marshal(u.ChatAdministrators)
+	case u.ChatMember != nil:
+		u.ChatMember.Type = "chat_member"
+		return json.Marshal(u.ChatMember)
+	default:
+		return nil, fmt.Errorf("unknown BotCommandScope variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *BotCommandScope) Type() BotCommandScopeType {
+	switch {
+	case u.Default != nil:
+		return BotCommandScopeTypeDefault
+	case u.AllPrivateChats != nil:
+		return BotCommandScopeTypeAllPrivateChats
+	case u.AllGroupChats != nil:
+		return BotCommandScopeTypeAllGroupChats
+	case u.AllChatAdministrators != nil:
+		return BotCommandScopeTypeAllChatAdministrators
+	case u.Chat != nil:
+		return BotCommandScopeTypeChat
+	case u.ChatAdministrators != nil:
+		return BotCommandScopeTypeChatAdministrators
+	case u.ChatMember != nil:
+		return BotCommandScopeTypeChatMember
+	default:
+		return 0
+	}
+}
+
+// NewBotCommandScopeDefault creates a BotCommandScope containing a BotCommandScopeDefault.
+func NewBotCommandScopeDefault(v BotCommandScopeDefault) BotCommandScope {
+	return BotCommandScope{Default: &v}
+}
+
+// NewBotCommandScopeAllPrivateChats creates a BotCommandScope containing a BotCommandScopeAllPrivateChats.
+func NewBotCommandScopeAllPrivateChats(v BotCommandScopeAllPrivateChats) BotCommandScope {
+	return BotCommandScope{AllPrivateChats: &v}
+}
+
+// NewBotCommandScopeAllGroupChats creates a BotCommandScope containing a BotCommandScopeAllGroupChats.
+func NewBotCommandScopeAllGroupChats(v BotCommandScopeAllGroupChats) BotCommandScope {
+	return BotCommandScope{AllGroupChats: &v}
+}
+
+// NewBotCommandScopeAllChatAdministrators creates a BotCommandScope containing a BotCommandScopeAllChatAdministrators.
+func NewBotCommandScopeAllChatAdministrators(v BotCommandScopeAllChatAdministrators) BotCommandScope {
+	return BotCommandScope{AllChatAdministrators: &v}
+}
+
+// NewBotCommandScopeChat creates a BotCommandScope containing a BotCommandScopeChat.
+func NewBotCommandScopeChat(v BotCommandScopeChat) BotCommandScope {
+	return BotCommandScope{Chat: &v}
+}
+
+// NewBotCommandScopeChatAdministrators creates a BotCommandScope containing a BotCommandScopeChatAdministrators.
+func NewBotCommandScopeChatAdministrators(v BotCommandScopeChatAdministrators) BotCommandScope {
+	return BotCommandScope{ChatAdministrators: &v}
+}
+
+// NewBotCommandScopeChatMember creates a BotCommandScope containing a BotCommandScopeChatMember.
+func NewBotCommandScopeChatMember(v BotCommandScopeChatMember) BotCommandScope {
+	return BotCommandScope{ChatMember: &v}
+}
+
+// MenuButtonType represents the type of MenuButton.
+type MenuButtonType int
+
+const (
+	MenuButtonTypeCommands MenuButtonType = iota + 1
+	MenuButtonTypeWebApp
+	MenuButtonTypeDefault
+)
+
+func (v MenuButtonType) String() string {
+	if v < MenuButtonTypeCommands || v > MenuButtonTypeDefault {
+		return "unknown"
+	}
+	return [...]string{
+		"commands",
+		"web_app",
+		"default",
+	}[v-1]
+}
+
+func (v MenuButtonType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *MenuButtonType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "commands":
+		*v = MenuButtonTypeCommands
+	case "web_app":
+		*v = MenuButtonTypeWebApp
+	case "default":
+		*v = MenuButtonTypeDefault
+	default:
+		return fmt.Errorf("unknown MenuButtonType: %s", string(b))
+	}
+	return nil
+}
+
+// MenuButton this object describes the bot's menu button in a private chat. It should be one of
+// If a menu button other than [MenuButtonDefault](https://core.telegram.org/bots/api#menubuttondefault) is set for a private chat, then it is applied in the chat. Otherwise the default menu button is applied. By default, the menu button opens the list of bot commands.
+type MenuButton struct {
+	Commands *MenuButtonCommands
+	WebApp *MenuButtonWebApp
+	Default *MenuButtonDefault
+}
+
+func (u *MenuButton) UnmarshalJSON(data []byte) error {
+	var partial struct {
+		D string `json:"type"`
+	}
+	if err := json.Unmarshal(data, &partial); err != nil {
+		return fmt.Errorf("unmarshal MenuButton: %w", err)
+	}
+	switch partial.D {
+	case "commands":
+		u.Commands = &MenuButtonCommands{}
+		return json.Unmarshal(data, u.Commands)
+	case "web_app":
+		u.WebApp = &MenuButtonWebApp{}
+		return json.Unmarshal(data, u.WebApp)
+	case "default":
+		u.Default = &MenuButtonDefault{}
+		return json.Unmarshal(data, u.Default)
+	default:
+		return fmt.Errorf("unknown MenuButton type: %s", partial.D)
+	}
+}
+
+func (u MenuButton) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Commands != nil:
+		u.Commands.Type = "commands"
+		return json.Marshal(u.Commands)
+	case u.WebApp != nil:
+		u.WebApp.Type = "web_app"
+		return json.Marshal(u.WebApp)
+	case u.Default != nil:
+		u.Default.Type = "default"
+		return json.Marshal(u.Default)
+	default:
+		return nil, fmt.Errorf("unknown MenuButton variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *MenuButton) Type() MenuButtonType {
+	switch {
+	case u.Commands != nil:
+		return MenuButtonTypeCommands
+	case u.WebApp != nil:
+		return MenuButtonTypeWebApp
+	case u.Default != nil:
+		return MenuButtonTypeDefault
+	default:
+		return 0
+	}
+}
+
+// NewMenuButtonCommands creates a MenuButton containing a MenuButtonCommands.
+func NewMenuButtonCommands(v MenuButtonCommands) MenuButton {
+	return MenuButton{Commands: &v}
+}
+
+// NewMenuButtonWebApp creates a MenuButton containing a MenuButtonWebApp.
+func NewMenuButtonWebApp(v MenuButtonWebApp) MenuButton {
+	return MenuButton{WebApp: &v}
+}
+
+// NewMenuButtonDefault creates a MenuButton containing a MenuButtonDefault.
+func NewMenuButtonDefault(v MenuButtonDefault) MenuButton {
+	return MenuButton{Default: &v}
+}
+
+// ChatBoostSourceSource represents the type of ChatBoostSource.
+type ChatBoostSourceSource int
+
+const (
+	ChatBoostSourceSourcePremium ChatBoostSourceSource = iota + 1
+	ChatBoostSourceSourceGiftCode
+	ChatBoostSourceSourceGiveaway
+)
+
+func (v ChatBoostSourceSource) String() string {
+	if v < ChatBoostSourceSourcePremium || v > ChatBoostSourceSourceGiveaway {
+		return "unknown"
+	}
+	return [...]string{
+		"premium",
+		"gift_code",
+		"giveaway",
+	}[v-1]
+}
+
+func (v ChatBoostSourceSource) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *ChatBoostSourceSource) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "premium":
+		*v = ChatBoostSourceSourcePremium
+	case "gift_code":
+		*v = ChatBoostSourceSourceGiftCode
+	case "giveaway":
+		*v = ChatBoostSourceSourceGiveaway
+	default:
+		return fmt.Errorf("unknown ChatBoostSourceSource: %s", string(b))
+	}
+	return nil
 }
 
 // ChatBoostSource this object describes the source of a chat boost. It can be one of
@@ -5382,6 +6435,217 @@ func (u *ChatBoostSource) UnmarshalJSON(data []byte) error {
 	}
 }
 
+func (u ChatBoostSource) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Premium != nil:
+		u.Premium.Source = "premium"
+		return json.Marshal(u.Premium)
+	case u.GiftCode != nil:
+		u.GiftCode.Source = "gift_code"
+		return json.Marshal(u.GiftCode)
+	case u.Giveaway != nil:
+		u.Giveaway.Source = "giveaway"
+		return json.Marshal(u.Giveaway)
+	default:
+		return nil, fmt.Errorf("unknown ChatBoostSource variant")
+	}
+}
+
+// Source returns the discriminator value for this union.
+func (u *ChatBoostSource) Source() ChatBoostSourceSource {
+	switch {
+	case u.Premium != nil:
+		return ChatBoostSourceSourcePremium
+	case u.GiftCode != nil:
+		return ChatBoostSourceSourceGiftCode
+	case u.Giveaway != nil:
+		return ChatBoostSourceSourceGiveaway
+	default:
+		return 0
+	}
+}
+// InputMediaType represents the type of InputMedia.
+type InputMediaType int
+
+const (
+	InputMediaTypeAnimation InputMediaType = iota + 1
+	InputMediaTypeDocument
+	InputMediaTypeAudio
+	InputMediaTypePhoto
+	InputMediaTypeVideo
+)
+
+func (v InputMediaType) String() string {
+	if v < InputMediaTypeAnimation || v > InputMediaTypeVideo {
+		return "unknown"
+	}
+	return [...]string{
+		"animation",
+		"document",
+		"audio",
+		"photo",
+		"video",
+	}[v-1]
+}
+
+func (v InputMediaType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *InputMediaType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "animation":
+		*v = InputMediaTypeAnimation
+	case "document":
+		*v = InputMediaTypeDocument
+	case "audio":
+		*v = InputMediaTypeAudio
+	case "photo":
+		*v = InputMediaTypePhoto
+	case "video":
+		*v = InputMediaTypeVideo
+	default:
+		return fmt.Errorf("unknown InputMediaType: %s", string(b))
+	}
+	return nil
+}
+
+// InputMedia this object represents the content of a media message to be sent. It should be one of
+type InputMedia struct {
+	Animation *InputMediaAnimation
+	Document *InputMediaDocument
+	Audio *InputMediaAudio
+	Photo *InputMediaPhoto
+	Video *InputMediaVideo
+}
+
+func (u *InputMedia) UnmarshalJSON(data []byte) error {
+	var partial struct {
+		D string `json:"type"`
+	}
+	if err := json.Unmarshal(data, &partial); err != nil {
+		return fmt.Errorf("unmarshal InputMedia: %w", err)
+	}
+	switch partial.D {
+	case "animation":
+		u.Animation = &InputMediaAnimation{}
+		return json.Unmarshal(data, u.Animation)
+	case "document":
+		u.Document = &InputMediaDocument{}
+		return json.Unmarshal(data, u.Document)
+	case "audio":
+		u.Audio = &InputMediaAudio{}
+		return json.Unmarshal(data, u.Audio)
+	case "photo":
+		u.Photo = &InputMediaPhoto{}
+		return json.Unmarshal(data, u.Photo)
+	case "video":
+		u.Video = &InputMediaVideo{}
+		return json.Unmarshal(data, u.Video)
+	default:
+		return fmt.Errorf("unknown InputMedia type: %s", partial.D)
+	}
+}
+
+func (u InputMedia) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Animation != nil:
+		u.Animation.Type = "animation"
+		return json.Marshal(u.Animation)
+	case u.Document != nil:
+		u.Document.Type = "document"
+		return json.Marshal(u.Document)
+	case u.Audio != nil:
+		u.Audio.Type = "audio"
+		return json.Marshal(u.Audio)
+	case u.Photo != nil:
+		u.Photo.Type = "photo"
+		return json.Marshal(u.Photo)
+	case u.Video != nil:
+		u.Video.Type = "video"
+		return json.Marshal(u.Video)
+	default:
+		return nil, fmt.Errorf("unknown InputMedia variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *InputMedia) Type() InputMediaType {
+	switch {
+	case u.Animation != nil:
+		return InputMediaTypeAnimation
+	case u.Document != nil:
+		return InputMediaTypeDocument
+	case u.Audio != nil:
+		return InputMediaTypeAudio
+	case u.Photo != nil:
+		return InputMediaTypePhoto
+	case u.Video != nil:
+		return InputMediaTypeVideo
+	default:
+		return 0
+	}
+}
+
+// NewInputMediaAnimation creates a InputMedia containing a InputMediaAnimation.
+func NewInputMediaAnimation(v InputMediaAnimation) InputMedia {
+	return InputMedia{Animation: &v}
+}
+
+// NewInputMediaDocument creates a InputMedia containing a InputMediaDocument.
+func NewInputMediaDocument(v InputMediaDocument) InputMedia {
+	return InputMedia{Document: &v}
+}
+
+// NewInputMediaAudio creates a InputMedia containing a InputMediaAudio.
+func NewInputMediaAudio(v InputMediaAudio) InputMedia {
+	return InputMedia{Audio: &v}
+}
+
+// NewInputMediaPhoto creates a InputMedia containing a InputMediaPhoto.
+func NewInputMediaPhoto(v InputMediaPhoto) InputMedia {
+	return InputMedia{Photo: &v}
+}
+
+// NewInputMediaVideo creates a InputMedia containing a InputMediaVideo.
+func NewInputMediaVideo(v InputMediaVideo) InputMedia {
+	return InputMedia{Video: &v}
+}
+
+// InputPaidMediaType represents the type of InputPaidMedia.
+type InputPaidMediaType int
+
+const (
+	InputPaidMediaTypePhoto InputPaidMediaType = iota + 1
+	InputPaidMediaTypeVideo
+)
+
+func (v InputPaidMediaType) String() string {
+	if v < InputPaidMediaTypePhoto || v > InputPaidMediaTypeVideo {
+		return "unknown"
+	}
+	return [...]string{
+		"photo",
+		"video",
+	}[v-1]
+}
+
+func (v InputPaidMediaType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *InputPaidMediaType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "photo":
+		*v = InputPaidMediaTypePhoto
+	case "video":
+		*v = InputPaidMediaTypeVideo
+	default:
+		return fmt.Errorf("unknown InputPaidMediaType: %s", string(b))
+	}
+	return nil
+}
+
 // InputPaidMedia this object describes the paid media to be sent. Currently, it can be one of
 type InputPaidMedia struct {
 	Photo *InputPaidMediaPhoto
@@ -5405,6 +6669,75 @@ func (u *InputPaidMedia) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown InputPaidMedia type: %s", partial.D)
 	}
+}
+
+func (u InputPaidMedia) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Photo != nil:
+		u.Photo.Type = "photo"
+		return json.Marshal(u.Photo)
+	case u.Video != nil:
+		u.Video.Type = "video"
+		return json.Marshal(u.Video)
+	default:
+		return nil, fmt.Errorf("unknown InputPaidMedia variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *InputPaidMedia) Type() InputPaidMediaType {
+	switch {
+	case u.Photo != nil:
+		return InputPaidMediaTypePhoto
+	case u.Video != nil:
+		return InputPaidMediaTypeVideo
+	default:
+		return 0
+	}
+}
+
+// NewInputPaidMediaPhoto creates a InputPaidMedia containing a InputPaidMediaPhoto.
+func NewInputPaidMediaPhoto(v InputPaidMediaPhoto) InputPaidMedia {
+	return InputPaidMedia{Photo: &v}
+}
+
+// NewInputPaidMediaVideo creates a InputPaidMedia containing a InputPaidMediaVideo.
+func NewInputPaidMediaVideo(v InputPaidMediaVideo) InputPaidMedia {
+	return InputPaidMedia{Video: &v}
+}
+
+// InputProfilePhotoType represents the type of InputProfilePhoto.
+type InputProfilePhotoType int
+
+const (
+	InputProfilePhotoTypeStatic InputProfilePhotoType = iota + 1
+	InputProfilePhotoTypeAnimated
+)
+
+func (v InputProfilePhotoType) String() string {
+	if v < InputProfilePhotoTypeStatic || v > InputProfilePhotoTypeAnimated {
+		return "unknown"
+	}
+	return [...]string{
+		"static",
+		"animated",
+	}[v-1]
+}
+
+func (v InputProfilePhotoType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *InputProfilePhotoType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "static":
+		*v = InputProfilePhotoTypeStatic
+	case "animated":
+		*v = InputProfilePhotoTypeAnimated
+	default:
+		return fmt.Errorf("unknown InputProfilePhotoType: %s", string(b))
+	}
+	return nil
 }
 
 // InputProfilePhoto this object describes a profile photo to set. Currently, it can be one of
@@ -5432,6 +6765,75 @@ func (u *InputProfilePhoto) UnmarshalJSON(data []byte) error {
 	}
 }
 
+func (u InputProfilePhoto) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Static != nil:
+		u.Static.Type = "static"
+		return json.Marshal(u.Static)
+	case u.Animated != nil:
+		u.Animated.Type = "animated"
+		return json.Marshal(u.Animated)
+	default:
+		return nil, fmt.Errorf("unknown InputProfilePhoto variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *InputProfilePhoto) Type() InputProfilePhotoType {
+	switch {
+	case u.Static != nil:
+		return InputProfilePhotoTypeStatic
+	case u.Animated != nil:
+		return InputProfilePhotoTypeAnimated
+	default:
+		return 0
+	}
+}
+
+// NewInputProfilePhotoStatic creates a InputProfilePhoto containing a InputProfilePhotoStatic.
+func NewInputProfilePhotoStatic(v InputProfilePhotoStatic) InputProfilePhoto {
+	return InputProfilePhoto{Static: &v}
+}
+
+// NewInputProfilePhotoAnimated creates a InputProfilePhoto containing a InputProfilePhotoAnimated.
+func NewInputProfilePhotoAnimated(v InputProfilePhotoAnimated) InputProfilePhoto {
+	return InputProfilePhoto{Animated: &v}
+}
+
+// InputStoryContentType represents the type of InputStoryContent.
+type InputStoryContentType int
+
+const (
+	InputStoryContentTypePhoto InputStoryContentType = iota + 1
+	InputStoryContentTypeVideo
+)
+
+func (v InputStoryContentType) String() string {
+	if v < InputStoryContentTypePhoto || v > InputStoryContentTypeVideo {
+		return "unknown"
+	}
+	return [...]string{
+		"photo",
+		"video",
+	}[v-1]
+}
+
+func (v InputStoryContentType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *InputStoryContentType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "photo":
+		*v = InputStoryContentTypePhoto
+	case "video":
+		*v = InputStoryContentTypeVideo
+	default:
+		return fmt.Errorf("unknown InputStoryContentType: %s", string(b))
+	}
+	return nil
+}
+
 // InputStoryContent this object describes the content of a story to post. Currently, it can be one of
 type InputStoryContent struct {
 	Photo *InputStoryContentPhoto
@@ -5455,6 +6857,379 @@ func (u *InputStoryContent) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown InputStoryContent type: %s", partial.D)
 	}
+}
+
+func (u InputStoryContent) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Photo != nil:
+		u.Photo.Type = "photo"
+		return json.Marshal(u.Photo)
+	case u.Video != nil:
+		u.Video.Type = "video"
+		return json.Marshal(u.Video)
+	default:
+		return nil, fmt.Errorf("unknown InputStoryContent variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *InputStoryContent) Type() InputStoryContentType {
+	switch {
+	case u.Photo != nil:
+		return InputStoryContentTypePhoto
+	case u.Video != nil:
+		return InputStoryContentTypeVideo
+	default:
+		return 0
+	}
+}
+
+// NewInputStoryContentPhoto creates a InputStoryContent containing a InputStoryContentPhoto.
+func NewInputStoryContentPhoto(v InputStoryContentPhoto) InputStoryContent {
+	return InputStoryContent{Photo: &v}
+}
+
+// NewInputStoryContentVideo creates a InputStoryContent containing a InputStoryContentVideo.
+func NewInputStoryContentVideo(v InputStoryContentVideo) InputStoryContent {
+	return InputStoryContent{Video: &v}
+}
+
+// InlineQueryResultType represents the type of InlineQueryResult.
+type InlineQueryResultType int
+
+const (
+	InlineQueryResultTypeCachedAudio InlineQueryResultType = iota + 1
+	InlineQueryResultTypeCachedDocument
+	InlineQueryResultTypeCachedGIF
+	InlineQueryResultTypeCachedMPEG4GIF
+	InlineQueryResultTypeCachedPhoto
+	InlineQueryResultTypeCachedSticker
+	InlineQueryResultTypeCachedVideo
+	InlineQueryResultTypeCachedVoice
+	InlineQueryResultTypeArticle
+	InlineQueryResultTypeAudio
+	InlineQueryResultTypeContact
+	InlineQueryResultTypeGame
+	InlineQueryResultTypeDocument
+	InlineQueryResultTypeGIF
+	InlineQueryResultTypeLocation
+	InlineQueryResultTypeMPEG4GIF
+	InlineQueryResultTypePhoto
+	InlineQueryResultTypeVenue
+	InlineQueryResultTypeVideo
+	InlineQueryResultTypeVoice
+)
+
+func (v InlineQueryResultType) String() string {
+	if v < InlineQueryResultTypeCachedAudio || v > InlineQueryResultTypeVoice {
+		return "unknown"
+	}
+	return [...]string{
+		"audio",
+		"document",
+		"gif",
+		"mpeg4_gif",
+		"photo",
+		"sticker",
+		"video",
+		"voice",
+		"article",
+		"audio",
+		"contact",
+		"game",
+		"document",
+		"gif",
+		"location",
+		"mpeg4_gif",
+		"photo",
+		"venue",
+		"video",
+		"voice",
+	}[v-1]
+}
+
+func (v InlineQueryResultType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+
+// InlineQueryResult this object represents one result of an inline query. Telegram clients currently support results of the following 20 types:
+// Note: All URLs passed in inline query results will be available to end users and therefore must be assumed to be public.
+type InlineQueryResult struct {
+	CachedAudio *InlineQueryResultCachedAudio
+	CachedDocument *InlineQueryResultCachedDocument
+	CachedGIF *InlineQueryResultCachedGIF
+	CachedMPEG4GIF *InlineQueryResultCachedMPEG4GIF
+	CachedPhoto *InlineQueryResultCachedPhoto
+	CachedSticker *InlineQueryResultCachedSticker
+	CachedVideo *InlineQueryResultCachedVideo
+	CachedVoice *InlineQueryResultCachedVoice
+	Article *InlineQueryResultArticle
+	Audio *InlineQueryResultAudio
+	Contact *InlineQueryResultContact
+	Game *InlineQueryResultGame
+	Document *InlineQueryResultDocument
+	GIF *InlineQueryResultGIF
+	Location *InlineQueryResultLocation
+	MPEG4GIF *InlineQueryResultMPEG4GIF
+	Photo *InlineQueryResultPhoto
+	Venue *InlineQueryResultVenue
+	Video *InlineQueryResultVideo
+	Voice *InlineQueryResultVoice
+}
+
+
+func (u InlineQueryResult) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.CachedAudio != nil:
+		u.CachedAudio.Type = "audio"
+		return json.Marshal(u.CachedAudio)
+	case u.CachedDocument != nil:
+		u.CachedDocument.Type = "document"
+		return json.Marshal(u.CachedDocument)
+	case u.CachedGIF != nil:
+		u.CachedGIF.Type = "gif"
+		return json.Marshal(u.CachedGIF)
+	case u.CachedMPEG4GIF != nil:
+		u.CachedMPEG4GIF.Type = "mpeg4_gif"
+		return json.Marshal(u.CachedMPEG4GIF)
+	case u.CachedPhoto != nil:
+		u.CachedPhoto.Type = "photo"
+		return json.Marshal(u.CachedPhoto)
+	case u.CachedSticker != nil:
+		u.CachedSticker.Type = "sticker"
+		return json.Marshal(u.CachedSticker)
+	case u.CachedVideo != nil:
+		u.CachedVideo.Type = "video"
+		return json.Marshal(u.CachedVideo)
+	case u.CachedVoice != nil:
+		u.CachedVoice.Type = "voice"
+		return json.Marshal(u.CachedVoice)
+	case u.Article != nil:
+		u.Article.Type = "article"
+		return json.Marshal(u.Article)
+	case u.Audio != nil:
+		u.Audio.Type = "audio"
+		return json.Marshal(u.Audio)
+	case u.Contact != nil:
+		u.Contact.Type = "contact"
+		return json.Marshal(u.Contact)
+	case u.Game != nil:
+		u.Game.Type = "game"
+		return json.Marshal(u.Game)
+	case u.Document != nil:
+		u.Document.Type = "document"
+		return json.Marshal(u.Document)
+	case u.GIF != nil:
+		u.GIF.Type = "gif"
+		return json.Marshal(u.GIF)
+	case u.Location != nil:
+		u.Location.Type = "location"
+		return json.Marshal(u.Location)
+	case u.MPEG4GIF != nil:
+		u.MPEG4GIF.Type = "mpeg4_gif"
+		return json.Marshal(u.MPEG4GIF)
+	case u.Photo != nil:
+		u.Photo.Type = "photo"
+		return json.Marshal(u.Photo)
+	case u.Venue != nil:
+		u.Venue.Type = "venue"
+		return json.Marshal(u.Venue)
+	case u.Video != nil:
+		u.Video.Type = "video"
+		return json.Marshal(u.Video)
+	case u.Voice != nil:
+		u.Voice.Type = "voice"
+		return json.Marshal(u.Voice)
+	default:
+		return nil, fmt.Errorf("unknown InlineQueryResult variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *InlineQueryResult) Type() InlineQueryResultType {
+	switch {
+	case u.CachedAudio != nil:
+		return InlineQueryResultTypeCachedAudio
+	case u.CachedDocument != nil:
+		return InlineQueryResultTypeCachedDocument
+	case u.CachedGIF != nil:
+		return InlineQueryResultTypeCachedGIF
+	case u.CachedMPEG4GIF != nil:
+		return InlineQueryResultTypeCachedMPEG4GIF
+	case u.CachedPhoto != nil:
+		return InlineQueryResultTypeCachedPhoto
+	case u.CachedSticker != nil:
+		return InlineQueryResultTypeCachedSticker
+	case u.CachedVideo != nil:
+		return InlineQueryResultTypeCachedVideo
+	case u.CachedVoice != nil:
+		return InlineQueryResultTypeCachedVoice
+	case u.Article != nil:
+		return InlineQueryResultTypeArticle
+	case u.Audio != nil:
+		return InlineQueryResultTypeAudio
+	case u.Contact != nil:
+		return InlineQueryResultTypeContact
+	case u.Game != nil:
+		return InlineQueryResultTypeGame
+	case u.Document != nil:
+		return InlineQueryResultTypeDocument
+	case u.GIF != nil:
+		return InlineQueryResultTypeGIF
+	case u.Location != nil:
+		return InlineQueryResultTypeLocation
+	case u.MPEG4GIF != nil:
+		return InlineQueryResultTypeMPEG4GIF
+	case u.Photo != nil:
+		return InlineQueryResultTypePhoto
+	case u.Venue != nil:
+		return InlineQueryResultTypeVenue
+	case u.Video != nil:
+		return InlineQueryResultTypeVideo
+	case u.Voice != nil:
+		return InlineQueryResultTypeVoice
+	default:
+		return 0
+	}
+}
+
+// NewInlineQueryResultCachedAudio creates a InlineQueryResult containing a InlineQueryResultCachedAudio.
+func NewInlineQueryResultCachedAudio(v InlineQueryResultCachedAudio) InlineQueryResult {
+	return InlineQueryResult{CachedAudio: &v}
+}
+
+// NewInlineQueryResultCachedDocument creates a InlineQueryResult containing a InlineQueryResultCachedDocument.
+func NewInlineQueryResultCachedDocument(v InlineQueryResultCachedDocument) InlineQueryResult {
+	return InlineQueryResult{CachedDocument: &v}
+}
+
+// NewInlineQueryResultCachedGIF creates a InlineQueryResult containing a InlineQueryResultCachedGIF.
+func NewInlineQueryResultCachedGIF(v InlineQueryResultCachedGIF) InlineQueryResult {
+	return InlineQueryResult{CachedGIF: &v}
+}
+
+// NewInlineQueryResultCachedMPEG4GIF creates a InlineQueryResult containing a InlineQueryResultCachedMPEG4GIF.
+func NewInlineQueryResultCachedMPEG4GIF(v InlineQueryResultCachedMPEG4GIF) InlineQueryResult {
+	return InlineQueryResult{CachedMPEG4GIF: &v}
+}
+
+// NewInlineQueryResultCachedPhoto creates a InlineQueryResult containing a InlineQueryResultCachedPhoto.
+func NewInlineQueryResultCachedPhoto(v InlineQueryResultCachedPhoto) InlineQueryResult {
+	return InlineQueryResult{CachedPhoto: &v}
+}
+
+// NewInlineQueryResultCachedSticker creates a InlineQueryResult containing a InlineQueryResultCachedSticker.
+func NewInlineQueryResultCachedSticker(v InlineQueryResultCachedSticker) InlineQueryResult {
+	return InlineQueryResult{CachedSticker: &v}
+}
+
+// NewInlineQueryResultCachedVideo creates a InlineQueryResult containing a InlineQueryResultCachedVideo.
+func NewInlineQueryResultCachedVideo(v InlineQueryResultCachedVideo) InlineQueryResult {
+	return InlineQueryResult{CachedVideo: &v}
+}
+
+// NewInlineQueryResultCachedVoice creates a InlineQueryResult containing a InlineQueryResultCachedVoice.
+func NewInlineQueryResultCachedVoice(v InlineQueryResultCachedVoice) InlineQueryResult {
+	return InlineQueryResult{CachedVoice: &v}
+}
+
+// NewInlineQueryResultArticle creates a InlineQueryResult containing a InlineQueryResultArticle.
+func NewInlineQueryResultArticle(v InlineQueryResultArticle) InlineQueryResult {
+	return InlineQueryResult{Article: &v}
+}
+
+// NewInlineQueryResultAudio creates a InlineQueryResult containing a InlineQueryResultAudio.
+func NewInlineQueryResultAudio(v InlineQueryResultAudio) InlineQueryResult {
+	return InlineQueryResult{Audio: &v}
+}
+
+// NewInlineQueryResultContact creates a InlineQueryResult containing a InlineQueryResultContact.
+func NewInlineQueryResultContact(v InlineQueryResultContact) InlineQueryResult {
+	return InlineQueryResult{Contact: &v}
+}
+
+// NewInlineQueryResultGame creates a InlineQueryResult containing a InlineQueryResultGame.
+func NewInlineQueryResultGame(v InlineQueryResultGame) InlineQueryResult {
+	return InlineQueryResult{Game: &v}
+}
+
+// NewInlineQueryResultDocument creates a InlineQueryResult containing a InlineQueryResultDocument.
+func NewInlineQueryResultDocument(v InlineQueryResultDocument) InlineQueryResult {
+	return InlineQueryResult{Document: &v}
+}
+
+// NewInlineQueryResultGIF creates a InlineQueryResult containing a InlineQueryResultGIF.
+func NewInlineQueryResultGIF(v InlineQueryResultGIF) InlineQueryResult {
+	return InlineQueryResult{GIF: &v}
+}
+
+// NewInlineQueryResultLocation creates a InlineQueryResult containing a InlineQueryResultLocation.
+func NewInlineQueryResultLocation(v InlineQueryResultLocation) InlineQueryResult {
+	return InlineQueryResult{Location: &v}
+}
+
+// NewInlineQueryResultMPEG4GIF creates a InlineQueryResult containing a InlineQueryResultMPEG4GIF.
+func NewInlineQueryResultMPEG4GIF(v InlineQueryResultMPEG4GIF) InlineQueryResult {
+	return InlineQueryResult{MPEG4GIF: &v}
+}
+
+// NewInlineQueryResultPhoto creates a InlineQueryResult containing a InlineQueryResultPhoto.
+func NewInlineQueryResultPhoto(v InlineQueryResultPhoto) InlineQueryResult {
+	return InlineQueryResult{Photo: &v}
+}
+
+// NewInlineQueryResultVenue creates a InlineQueryResult containing a InlineQueryResultVenue.
+func NewInlineQueryResultVenue(v InlineQueryResultVenue) InlineQueryResult {
+	return InlineQueryResult{Venue: &v}
+}
+
+// NewInlineQueryResultVideo creates a InlineQueryResult containing a InlineQueryResultVideo.
+func NewInlineQueryResultVideo(v InlineQueryResultVideo) InlineQueryResult {
+	return InlineQueryResult{Video: &v}
+}
+
+// NewInlineQueryResultVoice creates a InlineQueryResult containing a InlineQueryResultVoice.
+func NewInlineQueryResultVoice(v InlineQueryResultVoice) InlineQueryResult {
+	return InlineQueryResult{Voice: &v}
+}
+
+// RevenueWithdrawalStateType represents the type of RevenueWithdrawalState.
+type RevenueWithdrawalStateType int
+
+const (
+	RevenueWithdrawalStateTypePending RevenueWithdrawalStateType = iota + 1
+	RevenueWithdrawalStateTypeSucceeded
+	RevenueWithdrawalStateTypeFailed
+)
+
+func (v RevenueWithdrawalStateType) String() string {
+	if v < RevenueWithdrawalStateTypePending || v > RevenueWithdrawalStateTypeFailed {
+		return "unknown"
+	}
+	return [...]string{
+		"pending",
+		"succeeded",
+		"failed",
+	}[v-1]
+}
+
+func (v RevenueWithdrawalStateType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *RevenueWithdrawalStateType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "pending":
+		*v = RevenueWithdrawalStateTypePending
+	case "succeeded":
+		*v = RevenueWithdrawalStateTypeSucceeded
+	case "failed":
+		*v = RevenueWithdrawalStateTypeFailed
+	default:
+		return fmt.Errorf("unknown RevenueWithdrawalStateType: %s", string(b))
+	}
+	return nil
 }
 
 // RevenueWithdrawalState this object describes the state of a revenue withdrawal operation. Currently, it can be one of
@@ -5484,6 +7259,89 @@ func (u *RevenueWithdrawalState) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown RevenueWithdrawalState type: %s", partial.D)
 	}
+}
+
+func (u RevenueWithdrawalState) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Pending != nil:
+		u.Pending.Type = "pending"
+		return json.Marshal(u.Pending)
+	case u.Succeeded != nil:
+		u.Succeeded.Type = "succeeded"
+		return json.Marshal(u.Succeeded)
+	case u.Failed != nil:
+		u.Failed.Type = "failed"
+		return json.Marshal(u.Failed)
+	default:
+		return nil, fmt.Errorf("unknown RevenueWithdrawalState variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *RevenueWithdrawalState) Type() RevenueWithdrawalStateType {
+	switch {
+	case u.Pending != nil:
+		return RevenueWithdrawalStateTypePending
+	case u.Succeeded != nil:
+		return RevenueWithdrawalStateTypeSucceeded
+	case u.Failed != nil:
+		return RevenueWithdrawalStateTypeFailed
+	default:
+		return 0
+	}
+}
+// TransactionPartnerType represents the type of TransactionPartner.
+type TransactionPartnerType int
+
+const (
+	TransactionPartnerTypeUser TransactionPartnerType = iota + 1
+	TransactionPartnerTypeChat
+	TransactionPartnerTypeAffiliateProgram
+	TransactionPartnerTypeFragment
+	TransactionPartnerTypeTelegramAds
+	TransactionPartnerTypeTelegramAPI
+	TransactionPartnerTypeOther
+)
+
+func (v TransactionPartnerType) String() string {
+	if v < TransactionPartnerTypeUser || v > TransactionPartnerTypeOther {
+		return "unknown"
+	}
+	return [...]string{
+		"user",
+		"chat",
+		"affiliate_program",
+		"fragment",
+		"telegram_ads",
+		"telegram_api",
+		"other",
+	}[v-1]
+}
+
+func (v TransactionPartnerType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *TransactionPartnerType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "user":
+		*v = TransactionPartnerTypeUser
+	case "chat":
+		*v = TransactionPartnerTypeChat
+	case "affiliate_program":
+		*v = TransactionPartnerTypeAffiliateProgram
+	case "fragment":
+		*v = TransactionPartnerTypeFragment
+	case "telegram_ads":
+		*v = TransactionPartnerTypeTelegramAds
+	case "telegram_api":
+		*v = TransactionPartnerTypeTelegramAPI
+	case "other":
+		*v = TransactionPartnerTypeOther
+	default:
+		return fmt.Errorf("unknown TransactionPartnerType: %s", string(b))
+	}
+	return nil
 }
 
 // TransactionPartner this object describes the source of a transaction, or its recipient for outgoing transactions. Currently, it can be one of
@@ -5529,6 +7387,117 @@ func (u *TransactionPartner) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown TransactionPartner type: %s", partial.D)
 	}
+}
+
+func (u TransactionPartner) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.User != nil:
+		u.User.Type = "user"
+		return json.Marshal(u.User)
+	case u.Chat != nil:
+		u.Chat.Type = "chat"
+		return json.Marshal(u.Chat)
+	case u.AffiliateProgram != nil:
+		u.AffiliateProgram.Type = "affiliate_program"
+		return json.Marshal(u.AffiliateProgram)
+	case u.Fragment != nil:
+		u.Fragment.Type = "fragment"
+		return json.Marshal(u.Fragment)
+	case u.TelegramAds != nil:
+		u.TelegramAds.Type = "telegram_ads"
+		return json.Marshal(u.TelegramAds)
+	case u.TelegramAPI != nil:
+		u.TelegramAPI.Type = "telegram_api"
+		return json.Marshal(u.TelegramAPI)
+	case u.Other != nil:
+		u.Other.Type = "other"
+		return json.Marshal(u.Other)
+	default:
+		return nil, fmt.Errorf("unknown TransactionPartner variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *TransactionPartner) Type() TransactionPartnerType {
+	switch {
+	case u.User != nil:
+		return TransactionPartnerTypeUser
+	case u.Chat != nil:
+		return TransactionPartnerTypeChat
+	case u.AffiliateProgram != nil:
+		return TransactionPartnerTypeAffiliateProgram
+	case u.Fragment != nil:
+		return TransactionPartnerTypeFragment
+	case u.TelegramAds != nil:
+		return TransactionPartnerTypeTelegramAds
+	case u.TelegramAPI != nil:
+		return TransactionPartnerTypeTelegramAPI
+	case u.Other != nil:
+		return TransactionPartnerTypeOther
+	default:
+		return 0
+	}
+}
+// PassportElementErrorSource represents the type of PassportElementError.
+type PassportElementErrorSource int
+
+const (
+	PassportElementErrorSourceDataField PassportElementErrorSource = iota + 1
+	PassportElementErrorSourceFrontSide
+	PassportElementErrorSourceReverseSide
+	PassportElementErrorSourceSelfie
+	PassportElementErrorSourceFile
+	PassportElementErrorSourceFiles
+	PassportElementErrorSourceTranslationFile
+	PassportElementErrorSourceTranslationFiles
+	PassportElementErrorSourceUnspecified
+)
+
+func (v PassportElementErrorSource) String() string {
+	if v < PassportElementErrorSourceDataField || v > PassportElementErrorSourceUnspecified {
+		return "unknown"
+	}
+	return [...]string{
+		"data",
+		"front_side",
+		"reverse_side",
+		"selfie",
+		"file",
+		"files",
+		"translation_file",
+		"translation_files",
+		"unspecified",
+	}[v-1]
+}
+
+func (v PassportElementErrorSource) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *PassportElementErrorSource) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "data":
+		*v = PassportElementErrorSourceDataField
+	case "front_side":
+		*v = PassportElementErrorSourceFrontSide
+	case "reverse_side":
+		*v = PassportElementErrorSourceReverseSide
+	case "selfie":
+		*v = PassportElementErrorSourceSelfie
+	case "file":
+		*v = PassportElementErrorSourceFile
+	case "files":
+		*v = PassportElementErrorSourceFiles
+	case "translation_file":
+		*v = PassportElementErrorSourceTranslationFile
+	case "translation_files":
+		*v = PassportElementErrorSourceTranslationFiles
+	case "unspecified":
+		*v = PassportElementErrorSourceUnspecified
+	default:
+		return fmt.Errorf("unknown PassportElementErrorSource: %s", string(b))
+	}
+	return nil
 }
 
 // PassportElementError this object represents an error in the Telegram Passport element which was submitted that should be resolved by the user. It should be one of:
@@ -5582,5 +7551,308 @@ func (u *PassportElementError) UnmarshalJSON(data []byte) error {
 	default:
 		return fmt.Errorf("unknown PassportElementError source: %s", partial.D)
 	}
+}
+
+func (u PassportElementError) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.DataField != nil:
+		u.DataField.Source = "data"
+		return json.Marshal(u.DataField)
+	case u.FrontSide != nil:
+		u.FrontSide.Source = "front_side"
+		return json.Marshal(u.FrontSide)
+	case u.ReverseSide != nil:
+		u.ReverseSide.Source = "reverse_side"
+		return json.Marshal(u.ReverseSide)
+	case u.Selfie != nil:
+		u.Selfie.Source = "selfie"
+		return json.Marshal(u.Selfie)
+	case u.File != nil:
+		u.File.Source = "file"
+		return json.Marshal(u.File)
+	case u.Files != nil:
+		u.Files.Source = "files"
+		return json.Marshal(u.Files)
+	case u.TranslationFile != nil:
+		u.TranslationFile.Source = "translation_file"
+		return json.Marshal(u.TranslationFile)
+	case u.TranslationFiles != nil:
+		u.TranslationFiles.Source = "translation_files"
+		return json.Marshal(u.TranslationFiles)
+	case u.Unspecified != nil:
+		u.Unspecified.Source = "unspecified"
+		return json.Marshal(u.Unspecified)
+	default:
+		return nil, fmt.Errorf("unknown PassportElementError variant")
+	}
+}
+
+// Source returns the discriminator value for this union.
+func (u *PassportElementError) Source() PassportElementErrorSource {
+	switch {
+	case u.DataField != nil:
+		return PassportElementErrorSourceDataField
+	case u.FrontSide != nil:
+		return PassportElementErrorSourceFrontSide
+	case u.ReverseSide != nil:
+		return PassportElementErrorSourceReverseSide
+	case u.Selfie != nil:
+		return PassportElementErrorSourceSelfie
+	case u.File != nil:
+		return PassportElementErrorSourceFile
+	case u.Files != nil:
+		return PassportElementErrorSourceFiles
+	case u.TranslationFile != nil:
+		return PassportElementErrorSourceTranslationFile
+	case u.TranslationFiles != nil:
+		return PassportElementErrorSourceTranslationFiles
+	case u.Unspecified != nil:
+		return PassportElementErrorSourceUnspecified
+	default:
+		return 0
+	}
+}
+
+// NewPassportElementErrorDataField creates a PassportElementError containing a PassportElementErrorDataField.
+func NewPassportElementErrorDataField(v PassportElementErrorDataField) PassportElementError {
+	return PassportElementError{DataField: &v}
+}
+
+// NewPassportElementErrorFrontSide creates a PassportElementError containing a PassportElementErrorFrontSide.
+func NewPassportElementErrorFrontSide(v PassportElementErrorFrontSide) PassportElementError {
+	return PassportElementError{FrontSide: &v}
+}
+
+// NewPassportElementErrorReverseSide creates a PassportElementError containing a PassportElementErrorReverseSide.
+func NewPassportElementErrorReverseSide(v PassportElementErrorReverseSide) PassportElementError {
+	return PassportElementError{ReverseSide: &v}
+}
+
+// NewPassportElementErrorSelfie creates a PassportElementError containing a PassportElementErrorSelfie.
+func NewPassportElementErrorSelfie(v PassportElementErrorSelfie) PassportElementError {
+	return PassportElementError{Selfie: &v}
+}
+
+// NewPassportElementErrorFile creates a PassportElementError containing a PassportElementErrorFile.
+func NewPassportElementErrorFile(v PassportElementErrorFile) PassportElementError {
+	return PassportElementError{File: &v}
+}
+
+// NewPassportElementErrorFiles creates a PassportElementError containing a PassportElementErrorFiles.
+func NewPassportElementErrorFiles(v PassportElementErrorFiles) PassportElementError {
+	return PassportElementError{Files: &v}
+}
+
+// NewPassportElementErrorTranslationFile creates a PassportElementError containing a PassportElementErrorTranslationFile.
+func NewPassportElementErrorTranslationFile(v PassportElementErrorTranslationFile) PassportElementError {
+	return PassportElementError{TranslationFile: &v}
+}
+
+// NewPassportElementErrorTranslationFiles creates a PassportElementError containing a PassportElementErrorTranslationFiles.
+func NewPassportElementErrorTranslationFiles(v PassportElementErrorTranslationFiles) PassportElementError {
+	return PassportElementError{TranslationFiles: &v}
+}
+
+// NewPassportElementErrorUnspecified creates a PassportElementError containing a PassportElementErrorUnspecified.
+func NewPassportElementErrorUnspecified(v PassportElementErrorUnspecified) PassportElementError {
+	return PassportElementError{Unspecified: &v}
+}
+
+// ChatType represents an enum type.
+type ChatType int8
+
+const (
+	ChatTypePrivate ChatType = iota + 1
+	ChatTypeGroup
+	ChatTypeSupergroup
+	ChatTypeChannel
+	ChatTypeSender
+)
+
+func (v ChatType) String() string {
+	if v < ChatTypePrivate || v > ChatTypeSender {
+		return "unknown"
+	}
+	return [...]string{
+		"private",
+		"group",
+		"supergroup",
+		"channel",
+		"sender",
+	}[v-1]
+}
+
+func (v ChatType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(v.String())
+}
+
+func (v *ChatType) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	switch s {
+	case "private":
+		*v = ChatTypePrivate
+	case "group":
+		*v = ChatTypeGroup
+	case "supergroup":
+		*v = ChatTypeSupergroup
+	case "channel":
+		*v = ChatTypeChannel
+	case "sender":
+		*v = ChatTypeSender
+	default:
+		return fmt.Errorf("unknown ChatType: %s", s)
+	}
+	return nil
+}
+
+// StickerType represents an enum type.
+type StickerType int
+
+const (
+	StickerTypeUnknown StickerType = iota
+	StickerTypeRegular
+	StickerTypeMask
+	StickerTypeCustomEmoji
+)
+
+func (v StickerType) String() string {
+	if v > StickerTypeUnknown && v <= StickerTypeCustomEmoji {
+		return [...]string{
+			"regular",
+			"mask",
+			"custom_emoji",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+func (v StickerType) MarshalText() ([]byte, error) {
+	if v != StickerTypeUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown StickerType")
+}
+
+func (v *StickerType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "regular":
+		*v = StickerTypeRegular
+	case "mask":
+		*v = StickerTypeMask
+	case "custom_emoji":
+		*v = StickerTypeCustomEmoji
+	default:
+		*v = StickerTypeUnknown
+	}
+	return nil
+}
+
+// MessageEntityType represents an enum type.
+type MessageEntityType int
+
+const (
+	MessageEntityTypeUnknown MessageEntityType = iota
+	MessageEntityTypeMention
+	MessageEntityTypeHashtag
+	MessageEntityTypeCashtag
+	MessageEntityTypeBotCommand
+	MessageEntityTypeURL
+	MessageEntityTypeEmail
+	MessageEntityTypePhoneNumber
+	MessageEntityTypeBold
+	MessageEntityTypeItalic
+	MessageEntityTypeUnderline
+	MessageEntityTypeStrikethrough
+	MessageEntityTypeSpoiler
+	MessageEntityTypeBlockquote
+	MessageEntityTypeExpandableBlockquote
+	MessageEntityTypeCode
+	MessageEntityTypePre
+	MessageEntityTypeTextLink
+	MessageEntityTypeTextMention
+	MessageEntityTypeCustomEmoji
+)
+
+func (v MessageEntityType) String() string {
+	if v > MessageEntityTypeUnknown && v <= MessageEntityTypeCustomEmoji {
+		return [...]string{
+			"mention",
+			"hashtag",
+			"cashtag",
+			"bot_command",
+			"url",
+			"email",
+			"phone_number",
+			"bold",
+			"italic",
+			"underline",
+			"strikethrough",
+			"spoiler",
+			"blockquote",
+			"expandable_blockquote",
+			"code",
+			"pre",
+			"text_link",
+			"text_mention",
+			"custom_emoji",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+func (v MessageEntityType) MarshalText() ([]byte, error) {
+	if v != MessageEntityTypeUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown MessageEntityType")
+}
+
+func (v *MessageEntityType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "mention":
+		*v = MessageEntityTypeMention
+	case "hashtag":
+		*v = MessageEntityTypeHashtag
+	case "cashtag":
+		*v = MessageEntityTypeCashtag
+	case "bot_command":
+		*v = MessageEntityTypeBotCommand
+	case "url":
+		*v = MessageEntityTypeURL
+	case "email":
+		*v = MessageEntityTypeEmail
+	case "phone_number":
+		*v = MessageEntityTypePhoneNumber
+	case "bold":
+		*v = MessageEntityTypeBold
+	case "italic":
+		*v = MessageEntityTypeItalic
+	case "underline":
+		*v = MessageEntityTypeUnderline
+	case "strikethrough":
+		*v = MessageEntityTypeStrikethrough
+	case "spoiler":
+		*v = MessageEntityTypeSpoiler
+	case "blockquote":
+		*v = MessageEntityTypeBlockquote
+	case "expandable_blockquote":
+		*v = MessageEntityTypeExpandableBlockquote
+	case "code":
+		*v = MessageEntityTypeCode
+	case "pre":
+		*v = MessageEntityTypePre
+	case "text_link":
+		*v = MessageEntityTypeTextLink
+	case "text_mention":
+		*v = MessageEntityTypeTextMention
+	case "custom_emoji":
+		*v = MessageEntityTypeCustomEmoji
+	default:
+		*v = MessageEntityTypeUnknown
+	}
+	return nil
 }
 

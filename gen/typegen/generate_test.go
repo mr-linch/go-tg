@@ -472,13 +472,15 @@ func TestGenerate_FullAPI(t *testing.T) {
 	assert.Contains(t, got, "type BackgroundFill struct")
 	assert.Contains(t, got, "func (u *BackgroundFill) UnmarshalJSON")
 
-	// Excluded union types are absent
-	assert.NotContains(t, got, "type MessageOrigin struct")
-	assert.NotContains(t, got, "type ReactionType struct")
+	// Previously excluded union types are now generated
+	assert.Contains(t, got, "type MessageOrigin struct")
+	assert.Contains(t, got, "type ReactionType struct")
 
 	// Excluded types are absent
 	assert.NotContains(t, got, "type MaybeInaccessibleMessage struct")
-	assert.NotContains(t, got, "type ForumTopicClosed struct")
+
+	// Empty structs are generated
+	assert.Contains(t, got, "type ForumTopicClosed struct")
 
 	// Field type rules (expr-based): file_id suffix → FileID
 	assert.Contains(t, got, "SmallFileID FileID")

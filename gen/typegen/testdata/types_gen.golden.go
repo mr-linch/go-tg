@@ -136,6 +136,40 @@ type BackgroundFillGradient struct {
 	TopColor int `json:"top_color"`
 }
 
+// BackgroundFillType represents the type of BackgroundFill.
+type BackgroundFillType int
+
+const (
+	BackgroundFillTypeSolid BackgroundFillType = iota + 1
+	BackgroundFillTypeGradient
+)
+
+func (v BackgroundFillType) String() string {
+	if v < BackgroundFillTypeSolid || v > BackgroundFillTypeGradient {
+		return "unknown"
+	}
+	return [...]string{
+		"solid",
+		"gradient",
+	}[v-1]
+}
+
+func (v BackgroundFillType) MarshalText() ([]byte, error) {
+	return []byte(v.String()), nil
+}
+
+func (v *BackgroundFillType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "solid":
+		*v = BackgroundFillTypeSolid
+	case "gradient":
+		*v = BackgroundFillTypeGradient
+	default:
+		return fmt.Errorf("unknown BackgroundFillType: %s", string(b))
+	}
+	return nil
+}
+
 // BackgroundFill this object describes the background fill.
 type BackgroundFill struct {
 	Solid *BackgroundFillSolid
@@ -161,3 +195,27 @@ func (u *BackgroundFill) UnmarshalJSON(data []byte) error {
 	}
 }
 
+func (u BackgroundFill) MarshalJSON() ([]byte, error) {
+	switch {
+	case u.Solid != nil:
+		u.Solid.Type = "solid"
+		return json.Marshal(u.Solid)
+	case u.Gradient != nil:
+		u.Gradient.Type = "gradient"
+		return json.Marshal(u.Gradient)
+	default:
+		return nil, fmt.Errorf("unknown BackgroundFill variant")
+	}
+}
+
+// Type returns the discriminator value for this union.
+func (u *BackgroundFill) Type() BackgroundFillType {
+	switch {
+	case u.Solid != nil:
+		return BackgroundFillTypeSolid
+	case u.Gradient != nil:
+		return BackgroundFillTypeGradient
+	default:
+		return 0
+	}
+}

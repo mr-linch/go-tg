@@ -32,10 +32,15 @@ type GoType struct {
 
 // GoUnionType represents a union type (has Subtypes, no Fields).
 type GoUnionType struct {
-	Comment       string
-	Name          string
-	Variants      []GoUnionVariant
-	Discriminator string
+	Comment                 string
+	Name                    string
+	Variants                []GoUnionVariant
+	Discriminator           string // JSON field name, e.g. "type"
+	DiscriminatorGoField    string // Go field name on subtypes, e.g. "Type"
+	DiscriminatorTypeName   string // Enum type name, e.g. "MessageOriginType"
+	DiscriminatorMethodName string // Method name on union, e.g. "Type"
+	CanUnmarshal            bool   // true if discriminator values are unique (can generate UnmarshalJSON)
+	HasConstructors         bool   // true if this union is used in method params (generate New* functions)
 }
 
 // GoUnionVariant represents one arm of a union type.
@@ -43,6 +48,22 @@ type GoUnionVariant struct {
 	FieldName string
 	TypeName  string
 	ConstVal  string
+	EnumConst string // Enum constant name, e.g. "MessageOriginTypeUser"
+}
+
+// GoEnum represents a standalone enum type for template rendering.
+type GoEnum struct {
+	Name       string
+	Underlying string // e.g. "int8"
+	Values     []GoEnumValue
+	HasUnknown bool   // include Unknown sentinel at 0
+	Marshal    string // "json", "text", "stringer", ""
+}
+
+// GoEnumValue represents a single enum constant.
+type GoEnumValue struct {
+	ConstName string // e.g. "ChatTypePrivate"
+	StringVal string // e.g. "private"
 }
 
 // TemplateData is the data passed to the template.
@@ -50,6 +71,7 @@ type TemplateData struct {
 	Package    string
 	Types      []GoType
 	UnionTypes []GoUnionType
+	Enums      []GoEnum
 	NeedJSON   bool
 	NeedFmt    bool
 }
@@ -76,7 +98,10 @@ func Generate(api *ir.API, w io.Writer, cfg *config.TypeGen, log *slog.Logger, o
 
 	log.Info("generating types", "structs", len(data.Types), "unions", len(data.UnionTypes))
 
-	tmpl, err := template.New("types").Parse(typesTmpl)
+	funcMap := template.FuncMap{
+		"sub": func(a, b int) int { return a - b },
+	}
+	tmpl, err := template.New("types").Funcs(funcMap).Parse(typesTmpl)
 	if err != nil {
 		return fmt.Errorf("parse template: %w", err)
 	}
@@ -92,6 +117,9 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 	usedNameOverrides := make(map[string]bool)
 	usedTypeOverrides := make(map[string]bool)
 
+	// Collect types used in method parameters (need constructors).
+	inputTypes := collectInputTypes(api)
+
 	for _, t := range api.Types {
 		if cfg.IsExcluded(t.Name) {
 			log.Debug("excluding type", "name", t.Name)
@@ -100,8 +128,8 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 		}
 
 		if len(t.Subtypes) > 0 && len(t.Fields) == 0 {
-			if u := resolveUnionType(t, api.Types); u != nil {
-				log.Debug("generating union", "name", t.Name, "variants", len(u.Variants))
+			if u := resolveUnionType(t, api.Types, inputTypes); u != nil {
+				log.Debug("generating union", "name", t.Name, "variants", len(u.Variants), "hasConstructors", u.HasConstructors)
 				data.UnionTypes = append(data.UnionTypes, *u)
 				data.NeedJSON = true
 				data.NeedFmt = true
@@ -109,13 +137,26 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 			continue
 		}
 
-		if len(t.Fields) == 0 {
-			continue
-		}
 
 		log.Debug("generating type", "name", t.Name)
 		goType := resolveType(t, cfg, rules, usedNameOverrides, usedTypeOverrides)
 		data.Types = append(data.Types, goType)
+	}
+
+	// Resolve standalone enums.
+	for _, enumCfg := range cfg.Enums {
+		irEnum := findEnum(api.Enums, enumCfg.Name)
+		if irEnum == nil {
+			log.Warn("enum not found in IR", "name", enumCfg.Name)
+			continue
+		}
+		goEnum := resolveEnum(irEnum, &enumCfg)
+		data.Enums = append(data.Enums, goEnum)
+		data.NeedFmt = true
+		if enumCfg.Marshal == "json" {
+			data.NeedJSON = true
+		}
+		log.Debug("generating enum", "name", enumCfg.Name, "values", len(goEnum.Values))
 	}
 
 	// Warn about unused config entries.
@@ -218,7 +259,7 @@ func formatFieldComment(s string) string {
 	return wrapComment(s)
 }
 
-func resolveUnionType(t ir.Type, allTypes []ir.Type) *GoUnionType {
+func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool) *GoUnionType {
 	firstSubtype := findType(allTypes, t.Subtypes[0])
 	if firstSubtype == nil {
 		return nil
@@ -236,11 +277,20 @@ func resolveUnionType(t ir.Type, allTypes []ir.Type) *GoUnionType {
 	}
 
 	name := normalizeTypeName(t.Name)
+	discGoField := snakeToPascal(discField)
+	discTypeName := name + discGoField
 	union := &GoUnionType{
-		Name:          name,
-		Comment:       formatTypeComment(name, t.Description),
-		Discriminator: discField,
+		Name:                    name,
+		Comment:                 formatTypeComment(name, t.Description),
+		Discriminator:           discField,
+		DiscriminatorGoField:    discGoField,
+		DiscriminatorTypeName:   discTypeName,
+		DiscriminatorMethodName: discGoField,
+		HasConstructors:         inputTypes[t.Name],
 	}
+
+	seenConstVals := make(map[string]bool)
+	hasDuplicates := false
 
 	for _, stName := range t.Subtypes {
 		st := findType(allTypes, stName)
@@ -250,12 +300,24 @@ func resolveUnionType(t ir.Type, allTypes []ir.Type) *GoUnionType {
 		constVal := getConstValue(st, discField)
 		normalizedSt := normalizeTypeName(stName)
 		fieldName := strings.TrimPrefix(normalizedSt, name)
+		// Use fieldName for enum constant to ensure uniqueness (some unions have
+		// variants with duplicate discriminator values, e.g. InlineQueryResult)
+		enumConst := discTypeName + fieldName
 		union.Variants = append(union.Variants, GoUnionVariant{
 			FieldName: fieldName,
 			TypeName:  normalizedSt,
 			ConstVal:  constVal,
+			EnumConst: enumConst,
 		})
+
+		if seenConstVals[constVal] {
+			hasDuplicates = true
+		}
+		seenConstVals[constVal] = true
 	}
+
+	// Can only generate UnmarshalJSON if discriminator values are unique
+	union.CanUnmarshal = !hasDuplicates
 
 	return union
 }
@@ -276,4 +338,96 @@ func getConstValue(t *ir.Type, fieldName string) string {
 		}
 	}
 	return ""
+}
+
+func findEnum(enums []ir.Enum, name string) *ir.Enum {
+	for i := range enums {
+		if enums[i].Name == name {
+			return &enums[i]
+		}
+	}
+	return nil
+}
+
+func resolveEnum(irEnum *ir.Enum, cfg *config.EnumGenDef) GoEnum {
+	underlying := cfg.Underlying
+	if underlying == "" {
+		underlying = "int"
+	}
+	marshal := cfg.Marshal
+	if marshal == "" {
+		marshal = "text"
+	}
+
+	e := GoEnum{
+		Name:       irEnum.Name,
+		Underlying: underlying,
+		HasUnknown: cfg.Unknown,
+		Marshal:    marshal,
+	}
+
+	for _, val := range irEnum.Values {
+		constName := irEnum.Name + snakeToPascal(val)
+		e.Values = append(e.Values, GoEnumValue{
+			ConstName: constName,
+			StringVal: val,
+		})
+	}
+
+	return e
+}
+
+// collectInputTypes returns a set of type names that are used in method parameters.
+// This recursively includes types referenced in fields of parameter types.
+// Union types in this set should have constructor functions generated.
+func collectInputTypes(api *ir.API) map[string]bool {
+	inputTypes := make(map[string]bool)
+	typeMap := make(map[string]*ir.Type)
+	for i := range api.Types {
+		typeMap[api.Types[i].Name] = &api.Types[i]
+	}
+
+	// Collect types from method params.
+	var queue []string
+	for _, m := range api.Methods {
+		for _, p := range m.Params {
+			for _, tr := range p.TypeExpr.Types {
+				if !ir.IsPrimitive(tr.Type) && !inputTypes[tr.Type] {
+					inputTypes[tr.Type] = true
+					queue = append(queue, tr.Type)
+				}
+			}
+		}
+	}
+
+	// Recursively expand through fields and subtypes.
+	for len(queue) > 0 {
+		typeName := queue[0]
+		queue = queue[1:]
+
+		t := typeMap[typeName]
+		if t == nil {
+			continue
+		}
+
+		// Add subtypes (union variants).
+		for _, st := range t.Subtypes {
+			if !inputTypes[st] {
+				inputTypes[st] = true
+				queue = append(queue, st)
+			}
+		}
+
+		// Add field types.
+		for _, f := range t.Fields {
+			for _, tr := range f.TypeExpr.Types {
+				if !ir.IsPrimitive(tr.Type) && !inputTypes[tr.Type] {
+					inputTypes[tr.Type] = true
+					queue = append(queue, tr.Type)
+				}
+			}
+		}
+	}
+
+	return inputTypes
 }
