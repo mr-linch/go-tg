@@ -1,0 +1,58 @@
+name: Autogen
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+
+      - name: Fetch latest spec
+        run: task gen:fetch
+
+      - name: Run code generation
+        run: task gen:run
+
+      - name: Get version and hash
+        id: spec
+        run: |
+          echo "version=$(grep '^version:' _spec/api.yaml | cut -d'"' -f2)" >> $GITHUB_OUTPUT
+          echo "hash=$(grep '^hash:' _spec/api.yaml | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GH_PAT }}
+          branch: auto/update-telegram-api
+          delete-branch: true
+          title: "chore: update Telegram Bot API to v${{ steps.spec.outputs.version }} (${{ steps.spec.outputs.hash }})"
+          body: |
+            Automated update of Telegram Bot API specification.
+
+            - Version: ${{ steps.spec.outputs.version }}
+            - Hash: ${{ steps.spec.outputs.hash }}
+
+            This PR was created automatically by the autogen workflow.
+          commit-message: "chore: update Telegram Bot API to v${{ steps.spec.outputs.version }} (${{ steps.spec.outputs.hash }})"

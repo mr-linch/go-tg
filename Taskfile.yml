@@ -102,6 +102,7 @@ tasks:
     cmds:
       - mkdir -p _spec
       - curl -sL https://core.telegram.org/bots/api -o _spec/api.html
+      - sed -i.bak '$d' _spec/api.html && rm _spec/api.html.bak
 
   gen:run:
     desc: Run code generator
