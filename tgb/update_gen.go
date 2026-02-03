@@ -14,21 +14,9 @@ type BaseUpdate struct {
 	Client *tg.Client
 }
 
-// ShippingQueryUpdate it's extend wrapper around [tg.ShippingQuery].
-type ShippingQueryUpdate struct {
-	*tg.ShippingQuery
-	BaseUpdate
-}
-
-// PreCheckoutQueryUpdate it's extend wrapper around [tg.PreCheckoutQuery].
-type PreCheckoutQueryUpdate struct {
-	*tg.PreCheckoutQuery
-	BaseUpdate
-}
-
-// ChatBoostUpdate it's extend wrapper around [tg.ChatBoostUpdated].
-type ChatBoostUpdate struct {
-	*tg.ChatBoostUpdated
+// ChatMemberUpdatedUpdate it's extend wrapper around [tg.ChatMemberUpdated].
+type ChatMemberUpdatedUpdate struct {
+	*tg.ChatMemberUpdated
 	BaseUpdate
 }
 
@@ -38,57 +26,9 @@ type MessageUpdate struct {
 	BaseUpdate
 }
 
-// PollAnswerUpdate it's extend wrapper around [tg.PollAnswer].
-type PollAnswerUpdate struct {
-	*tg.PollAnswer
-	BaseUpdate
-}
-
-// PollUpdate it's extend wrapper around [tg.Poll].
-type PollUpdate struct {
-	*tg.Poll
-	BaseUpdate
-}
-
-// ChatMemberUpdatedUpdate it's extend wrapper around [tg.ChatMemberUpdated].
-type ChatMemberUpdatedUpdate struct {
-	*tg.ChatMemberUpdated
-	BaseUpdate
-}
-
-// BusinessConnectionUpdate it's extend wrapper around [tg.BusinessConnection].
-type BusinessConnectionUpdate struct {
-	*tg.BusinessConnection
-	BaseUpdate
-}
-
 // InlineQueryUpdate it's extend wrapper around [tg.InlineQuery].
 type InlineQueryUpdate struct {
 	*tg.InlineQuery
-	BaseUpdate
-}
-
-// CallbackQueryUpdate it's extend wrapper around [tg.CallbackQuery].
-type CallbackQueryUpdate struct {
-	*tg.CallbackQuery
-	BaseUpdate
-}
-
-// RemovedChatBoostUpdate it's extend wrapper around [tg.ChatBoostRemoved].
-type RemovedChatBoostUpdate struct {
-	*tg.ChatBoostRemoved
-	BaseUpdate
-}
-
-// ChosenInlineResultUpdate it's extend wrapper around [tg.ChosenInlineResult].
-type ChosenInlineResultUpdate struct {
-	*tg.ChosenInlineResult
-	BaseUpdate
-}
-
-// ChatJoinRequestUpdate it's extend wrapper around [tg.ChatJoinRequest].
-type ChatJoinRequestUpdate struct {
-	*tg.ChatJoinRequest
 	BaseUpdate
 }
 
@@ -98,9 +38,45 @@ type PurchasedPaidMediaUpdate struct {
 	BaseUpdate
 }
 
+// ChatJoinRequestUpdate it's extend wrapper around [tg.ChatJoinRequest].
+type ChatJoinRequestUpdate struct {
+	*tg.ChatJoinRequest
+	BaseUpdate
+}
+
+// RemovedChatBoostUpdate it's extend wrapper around [tg.ChatBoostRemoved].
+type RemovedChatBoostUpdate struct {
+	*tg.ChatBoostRemoved
+	BaseUpdate
+}
+
+// ShippingQueryUpdate it's extend wrapper around [tg.ShippingQuery].
+type ShippingQueryUpdate struct {
+	*tg.ShippingQuery
+	BaseUpdate
+}
+
 // DeletedBusinessMessagesUpdate it's extend wrapper around [tg.BusinessMessagesDeleted].
 type DeletedBusinessMessagesUpdate struct {
 	*tg.BusinessMessagesDeleted
+	BaseUpdate
+}
+
+// ChosenInlineResultUpdate it's extend wrapper around [tg.ChosenInlineResult].
+type ChosenInlineResultUpdate struct {
+	*tg.ChosenInlineResult
+	BaseUpdate
+}
+
+// ChatBoostUpdate it's extend wrapper around [tg.ChatBoostUpdated].
+type ChatBoostUpdate struct {
+	*tg.ChatBoostUpdated
+	BaseUpdate
+}
+
+// BusinessConnectionUpdate it's extend wrapper around [tg.BusinessConnection].
+type BusinessConnectionUpdate struct {
+	*tg.BusinessConnection
 	BaseUpdate
 }
 
@@ -113,5 +89,29 @@ type MessageReactionUpdate struct {
 // MessageReactionCountUpdate it's extend wrapper around [tg.MessageReactionCountUpdated].
 type MessageReactionCountUpdate struct {
 	*tg.MessageReactionCountUpdated
+	BaseUpdate
+}
+
+// CallbackQueryUpdate it's extend wrapper around [tg.CallbackQuery].
+type CallbackQueryUpdate struct {
+	*tg.CallbackQuery
+	BaseUpdate
+}
+
+// PreCheckoutQueryUpdate it's extend wrapper around [tg.PreCheckoutQuery].
+type PreCheckoutQueryUpdate struct {
+	*tg.PreCheckoutQuery
+	BaseUpdate
+}
+
+// PollUpdate it's extend wrapper around [tg.Poll].
+type PollUpdate struct {
+	*tg.Poll
+	BaseUpdate
+}
+
+// PollAnswerUpdate it's extend wrapper around [tg.PollAnswer].
+type PollAnswerUpdate struct {
+	*tg.PollAnswer
 	BaseUpdate
 }

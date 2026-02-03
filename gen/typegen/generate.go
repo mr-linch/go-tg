@@ -240,7 +240,7 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 			log.Warn("type not found for variant_constructor", "type", vcCfg.Type)
 			continue
 		}
-		vc := buildVariantConstructors(irType, &vcCfg, cfg, rules, usedNameOverrides, usedTypeOverrides)
+		vc := buildVariantConstructors(irType, &vcCfg, cfg, rules, usedNameOverrides, usedTypeOverrides, log)
 		if vc != nil {
 			data.VariantConstructors = append(data.VariantConstructors, *vc)
 			log.Debug("generating variant constructors", "type", vcCfg.Type, "variants", len(vc.Variants))
@@ -591,7 +591,7 @@ func buildFieldCondition(goFieldName string, f *ir.Field) string {
 }
 
 // buildVariantConstructors creates variant constructor data for a type.
-func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) *GoVariantConstructorType {
+func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, log *slog.Logger) *GoVariantConstructorType {
 	// Find the base field.
 	var baseField *ir.Field
 	for i := range t.Fields {
@@ -601,6 +601,7 @@ func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, c
 		}
 	}
 	if baseField == nil {
+		log.Warn("base_field not found for variant_constructor", "type", vcCfg.Type, "base_field", vcCfg.BaseField)
 		return nil
 	}
 

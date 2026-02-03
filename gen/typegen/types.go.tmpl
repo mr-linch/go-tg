@@ -221,7 +221,7 @@ func (v *{{$m.TypeName}}) {{$m.MethodName}}() {{$m.ReturnType}} {
 {{end}}
 {{- range $vc := .VariantConstructors}}
 {{- range $v := $vc.Variants}}
-// New{{$vc.TypeName}}{{$v.Name}} creates a {{$vc.TypeName}}{{if $v.Comment}} {{$v.Comment}}{{end}}.
+// New{{$vc.TypeName}}{{$v.Name}} creates {{$vc.TypeName}}{{if $v.Comment}} {{$v.Comment}}{{end}}.
 func New{{$vc.TypeName}}{{$v.Name}}({{$vc.BaseParam}}{{if and $v.Param (not $v.HasDefault)}}, {{$v.Param}}{{end}}) {{$vc.TypeName}} {
 	return {{$vc.TypeName}}{
 		{{$vc.BaseGoField}}: {{$vc.BaseArg}},

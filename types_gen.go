@@ -8502,7 +8502,7 @@ func (v *Message) Type() MessageType {
 	}
 }
 
-// NewInlineKeyboardButtonURL creates a InlineKeyboardButton with URL.
+// NewInlineKeyboardButtonURL creates InlineKeyboardButton with URL.
 func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text: text,
@@ -8510,7 +8510,7 @@ func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
 	}
 }
 
-// NewInlineKeyboardButtonCallbackData creates a InlineKeyboardButton with CallbackData.
+// NewInlineKeyboardButtonCallbackData creates InlineKeyboardButton with CallbackData.
 func NewInlineKeyboardButtonCallbackData(text string, callbackData string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:         text,
@@ -8518,7 +8518,7 @@ func NewInlineKeyboardButtonCallbackData(text string, callbackData string) Inlin
 	}
 }
 
-// NewInlineKeyboardButtonWebApp creates a InlineKeyboardButton with WebApp.
+// NewInlineKeyboardButtonWebApp creates InlineKeyboardButton with WebApp.
 func NewInlineKeyboardButtonWebApp(text string, webApp WebAppInfo) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:   text,
@@ -8526,7 +8526,7 @@ func NewInlineKeyboardButtonWebApp(text string, webApp WebAppInfo) InlineKeyboar
 	}
 }
 
-// NewInlineKeyboardButtonLoginURL creates a InlineKeyboardButton with LoginURL.
+// NewInlineKeyboardButtonLoginURL creates InlineKeyboardButton with LoginURL.
 func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginURL) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:     text,
@@ -8534,7 +8534,7 @@ func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginURL) InlineKeybo
 	}
 }
 
-// NewInlineKeyboardButtonSwitchInlineQuery creates a InlineKeyboardButton with SwitchInlineQuery.
+// NewInlineKeyboardButtonSwitchInlineQuery creates InlineKeyboardButton with SwitchInlineQuery.
 func NewInlineKeyboardButtonSwitchInlineQuery(text string, switchInlineQuery string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:              text,
@@ -8542,7 +8542,7 @@ func NewInlineKeyboardButtonSwitchInlineQuery(text string, switchInlineQuery str
 	}
 }
 
-// NewInlineKeyboardButtonSwitchInlineQueryCurrentChat creates a InlineKeyboardButton with SwitchInlineQueryCurrentChat.
+// NewInlineKeyboardButtonSwitchInlineQueryCurrentChat creates InlineKeyboardButton with SwitchInlineQueryCurrentChat.
 func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text string, switchInlineQueryCurrentChat string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:                         text,
@@ -8550,7 +8550,7 @@ func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text string, switchInli
 	}
 }
 
-// NewInlineKeyboardButtonSwitchInlineQueryChosenChat creates a InlineKeyboardButton with SwitchInlineQueryChosenChat.
+// NewInlineKeyboardButtonSwitchInlineQueryChosenChat creates InlineKeyboardButton with SwitchInlineQueryChosenChat.
 func NewInlineKeyboardButtonSwitchInlineQueryChosenChat(text string, switchInlineQueryChosenChat SwitchInlineQueryChosenChat) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:                        text,
@@ -8558,7 +8558,7 @@ func NewInlineKeyboardButtonSwitchInlineQueryChosenChat(text string, switchInlin
 	}
 }
 
-// NewInlineKeyboardButtonCopyText creates a InlineKeyboardButton with CopyText.
+// NewInlineKeyboardButtonCopyText creates InlineKeyboardButton with CopyText.
 func NewInlineKeyboardButtonCopyText(text string, copyText CopyTextButton) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:     text,
@@ -8566,7 +8566,7 @@ func NewInlineKeyboardButtonCopyText(text string, copyText CopyTextButton) Inlin
 	}
 }
 
-// NewInlineKeyboardButtonCallbackGame creates a InlineKeyboardButton with CallbackGame.
+// NewInlineKeyboardButtonCallbackGame creates InlineKeyboardButton with CallbackGame.
 func NewInlineKeyboardButtonCallbackGame(text string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:         text,
@@ -8574,7 +8574,7 @@ func NewInlineKeyboardButtonCallbackGame(text string) InlineKeyboardButton {
 	}
 }
 
-// NewInlineKeyboardButtonPay creates a InlineKeyboardButton with Pay.
+// NewInlineKeyboardButtonPay creates InlineKeyboardButton with Pay.
 func NewInlineKeyboardButtonPay(text string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text: text,
@@ -8582,14 +8582,14 @@ func NewInlineKeyboardButtonPay(text string) InlineKeyboardButton {
 	}
 }
 
-// NewKeyboardButton creates a KeyboardButton.
+// NewKeyboardButton creates KeyboardButton.
 func NewKeyboardButton(text string) KeyboardButton {
 	return KeyboardButton{
 		Text: text,
 	}
 }
 
-// NewKeyboardButtonRequestUsers creates a KeyboardButton with RequestUsers.
+// NewKeyboardButtonRequestUsers creates KeyboardButton with RequestUsers.
 func NewKeyboardButtonRequestUsers(text string, requestUsers KeyboardButtonRequestUsers) KeyboardButton {
 	return KeyboardButton{
 		Text:         text,
@@ -8597,7 +8597,7 @@ func NewKeyboardButtonRequestUsers(text string, requestUsers KeyboardButtonReque
 	}
 }
 
-// NewKeyboardButtonRequestChat creates a KeyboardButton with RequestChat.
+// NewKeyboardButtonRequestChat creates KeyboardButton with RequestChat.
 func NewKeyboardButtonRequestChat(text string, requestChat KeyboardButtonRequestChat) KeyboardButton {
 	return KeyboardButton{
 		Text:        text,
@@ -8605,7 +8605,7 @@ func NewKeyboardButtonRequestChat(text string, requestChat KeyboardButtonRequest
 	}
 }
 
-// NewKeyboardButtonRequestContact creates a KeyboardButton with RequestContact.
+// NewKeyboardButtonRequestContact creates KeyboardButton with RequestContact.
 func NewKeyboardButtonRequestContact(text string) KeyboardButton {
 	return KeyboardButton{
 		Text:           text,
@@ -8613,7 +8613,7 @@ func NewKeyboardButtonRequestContact(text string) KeyboardButton {
 	}
 }
 
-// NewKeyboardButtonRequestLocation creates a KeyboardButton with RequestLocation.
+// NewKeyboardButtonRequestLocation creates KeyboardButton with RequestLocation.
 func NewKeyboardButtonRequestLocation(text string) KeyboardButton {
 	return KeyboardButton{
 		Text:            text,
@@ -8621,7 +8621,7 @@ func NewKeyboardButtonRequestLocation(text string) KeyboardButton {
 	}
 }
 
-// NewKeyboardButtonRequestPoll creates a KeyboardButton with RequestPoll.
+// NewKeyboardButtonRequestPoll creates KeyboardButton with RequestPoll.
 func NewKeyboardButtonRequestPoll(text string, requestPoll KeyboardButtonPollType) KeyboardButton {
 	return KeyboardButton{
 		Text:        text,
@@ -8629,7 +8629,7 @@ func NewKeyboardButtonRequestPoll(text string, requestPoll KeyboardButtonPollTyp
 	}
 }
 
-// NewKeyboardButtonWebApp creates a KeyboardButton with WebApp.
+// NewKeyboardButtonWebApp creates KeyboardButton with WebApp.
 func NewKeyboardButtonWebApp(text string, webApp WebAppInfo) KeyboardButton {
 	return KeyboardButton{
 		Text:   text,
@@ -8637,7 +8637,7 @@ func NewKeyboardButtonWebApp(text string, webApp WebAppInfo) KeyboardButton {
 	}
 }
 
-// NewInlineQueryResultsButtonWebApp creates a InlineQueryResultsButton with WebApp.
+// NewInlineQueryResultsButtonWebApp creates InlineQueryResultsButton with WebApp.
 func NewInlineQueryResultsButtonWebApp(text string, webApp WebAppInfo) InlineQueryResultsButton {
 	return InlineQueryResultsButton{
 		Text:   text,
@@ -8645,7 +8645,7 @@ func NewInlineQueryResultsButtonWebApp(text string, webApp WebAppInfo) InlineQue
 	}
 }
 
-// NewInlineQueryResultsButtonStartParameter creates a InlineQueryResultsButton with StartParameter.
+// NewInlineQueryResultsButtonStartParameter creates InlineQueryResultsButton with StartParameter.
 func NewInlineQueryResultsButtonStartParameter(text string, startParameter string) InlineQueryResultsButton {
 	return InlineQueryResultsButton{
 		Text:           text,
