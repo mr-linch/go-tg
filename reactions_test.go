@@ -34,8 +34,16 @@ func TestReactionType(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
 		var r ReactionType
 
-		err := r.UnmarshalJSON([]byte(`{"type": "unknown"}`))
-		require.Error(t, err)
+		err := r.UnmarshalJSON([]byte(`{"type": "future_type", "some_field": "value"}`))
+		require.NoError(t, err)
+
+		assert.True(t, r.IsUnknown())
+		require.NotNil(t, r.Unknown)
+		assert.Equal(t, "future_type", r.Unknown.Type)
+		assert.Equal(t, ReactionTypeType(0), r.Type())
+		assert.Nil(t, r.Emoji)
+		assert.Nil(t, r.CustomEmoji)
+		assert.Nil(t, r.Paid)
 	})
 
 	t.Run("InvalidFieldType", func(t *testing.T) {
@@ -69,12 +77,26 @@ func TestReactionType_MarshalJSON(t *testing.T) {
 		assert.JSONEq(t, `{"type":"custom_emoji","custom_emoji_id":"12345"}`, string(b))
 	})
 
-	t.Run("Unknown", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		r := ReactionType{}
 
 		assert.Equal(t, ReactionTypeType(0), r.Type())
 
 		_, err := json.Marshal(r)
 		require.Error(t, err)
+	})
+
+	t.Run("Unknown", func(t *testing.T) {
+		input := `{"type":"future_type","some_field":"value"}`
+		var r ReactionType
+		err := r.UnmarshalJSON([]byte(input))
+		require.NoError(t, err)
+
+		assert.True(t, r.IsUnknown())
+
+		// Re-marshal should preserve original JSON
+		output, err := json.Marshal(r)
+		require.NoError(t, err)
+		assert.JSONEq(t, input, string(output))
 	})
 }

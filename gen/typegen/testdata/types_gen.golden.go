@@ -140,6 +140,13 @@ type BackgroundFillGradient struct {
 	TopColor int `json:"top_color"`
 }
 
+// UnknownVariant stores data for unknown union variants.
+// This provides forward compatibility when new variants are added to the API.
+type UnknownVariant struct {
+	Type string
+	Data json.RawMessage
+}
+
 // BackgroundFillType represents the type of BackgroundFill.
 type BackgroundFillType int
 
@@ -169,7 +176,7 @@ func (v *BackgroundFillType) UnmarshalText(b []byte) error {
 	case "gradient":
 		*v = BackgroundFillTypeGradient
 	default:
-		return fmt.Errorf("unknown BackgroundFillType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -178,6 +185,7 @@ func (v *BackgroundFillType) UnmarshalText(b []byte) error {
 type BackgroundFill struct {
 	Solid    *BackgroundFillSolid
 	Gradient *BackgroundFillGradient
+	Unknown  *UnknownVariant
 }
 
 func (u *BackgroundFill) UnmarshalJSON(data []byte) error {
@@ -195,7 +203,11 @@ func (u *BackgroundFill) UnmarshalJSON(data []byte) error {
 		u.Gradient = &BackgroundFillGradient{}
 		return json.Unmarshal(data, u.Gradient)
 	default:
-		return fmt.Errorf("unknown BackgroundFill type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -207,6 +219,8 @@ func (u BackgroundFill) MarshalJSON() ([]byte, error) {
 	case u.Gradient != nil:
 		u.Gradient.Type = "gradient"
 		return json.Marshal(u.Gradient)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown BackgroundFill variant")
 	}
@@ -222,4 +236,10 @@ func (u *BackgroundFill) Type() BackgroundFillType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *BackgroundFill) IsUnknown() bool {
+	return u.Unknown != nil
 }

@@ -5187,6 +5187,13 @@ type GameHighScore struct {
 	Score int `json:"score"`
 }
 
+// UnknownVariant stores data for unknown union variants.
+// This provides forward compatibility when new variants are added to the API.
+type UnknownVariant struct {
+	Type string
+	Data json.RawMessage
+}
+
 // MessageOriginType represents the type of MessageOrigin.
 type MessageOriginType int
 
@@ -5224,7 +5231,7 @@ func (v *MessageOriginType) UnmarshalText(b []byte) error {
 	case "channel":
 		*v = MessageOriginTypeChannel
 	default:
-		return fmt.Errorf("unknown MessageOriginType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -5235,6 +5242,7 @@ type MessageOrigin struct {
 	HiddenUser *MessageOriginHiddenUser
 	Chat       *MessageOriginChat
 	Channel    *MessageOriginChannel
+	Unknown    *UnknownVariant
 }
 
 func (u *MessageOrigin) UnmarshalJSON(data []byte) error {
@@ -5258,7 +5266,11 @@ func (u *MessageOrigin) UnmarshalJSON(data []byte) error {
 		u.Channel = &MessageOriginChannel{}
 		return json.Unmarshal(data, u.Channel)
 	default:
-		return fmt.Errorf("unknown MessageOrigin type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -5276,6 +5288,8 @@ func (u MessageOrigin) MarshalJSON() ([]byte, error) {
 	case u.Channel != nil:
 		u.Channel.Type = "channel"
 		return json.Marshal(u.Channel)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown MessageOrigin variant")
 	}
@@ -5295,6 +5309,12 @@ func (u *MessageOrigin) Type() MessageOriginType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *MessageOrigin) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // PaidMediaType represents the type of PaidMedia.
@@ -5330,7 +5350,7 @@ func (v *PaidMediaType) UnmarshalText(b []byte) error {
 	case "video":
 		*v = PaidMediaTypeVideo
 	default:
-		return fmt.Errorf("unknown PaidMediaType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -5340,6 +5360,7 @@ type PaidMedia struct {
 	Preview *PaidMediaPreview
 	Photo   *PaidMediaPhoto
 	Video   *PaidMediaVideo
+	Unknown *UnknownVariant
 }
 
 func (u *PaidMedia) UnmarshalJSON(data []byte) error {
@@ -5360,7 +5381,11 @@ func (u *PaidMedia) UnmarshalJSON(data []byte) error {
 		u.Video = &PaidMediaVideo{}
 		return json.Unmarshal(data, u.Video)
 	default:
-		return fmt.Errorf("unknown PaidMedia type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -5375,6 +5400,8 @@ func (u PaidMedia) MarshalJSON() ([]byte, error) {
 	case u.Video != nil:
 		u.Video.Type = "video"
 		return json.Marshal(u.Video)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown PaidMedia variant")
 	}
@@ -5392,6 +5419,12 @@ func (u *PaidMedia) Type() PaidMediaType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *PaidMedia) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // BackgroundFillType represents the type of BackgroundFill.
@@ -5427,7 +5460,7 @@ func (v *BackgroundFillType) UnmarshalText(b []byte) error {
 	case "freeform_gradient":
 		*v = BackgroundFillTypeFreeformGradient
 	default:
-		return fmt.Errorf("unknown BackgroundFillType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -5437,6 +5470,7 @@ type BackgroundFill struct {
 	Solid            *BackgroundFillSolid
 	Gradient         *BackgroundFillGradient
 	FreeformGradient *BackgroundFillFreeformGradient
+	Unknown          *UnknownVariant
 }
 
 func (u *BackgroundFill) UnmarshalJSON(data []byte) error {
@@ -5457,7 +5491,11 @@ func (u *BackgroundFill) UnmarshalJSON(data []byte) error {
 		u.FreeformGradient = &BackgroundFillFreeformGradient{}
 		return json.Unmarshal(data, u.FreeformGradient)
 	default:
-		return fmt.Errorf("unknown BackgroundFill type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -5472,6 +5510,8 @@ func (u BackgroundFill) MarshalJSON() ([]byte, error) {
 	case u.FreeformGradient != nil:
 		u.FreeformGradient.Type = "freeform_gradient"
 		return json.Marshal(u.FreeformGradient)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown BackgroundFill variant")
 	}
@@ -5489,6 +5529,12 @@ func (u *BackgroundFill) Type() BackgroundFillType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *BackgroundFill) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // BackgroundTypeType represents the type of BackgroundType.
@@ -5528,7 +5574,7 @@ func (v *BackgroundTypeType) UnmarshalText(b []byte) error {
 	case "chat_theme":
 		*v = BackgroundTypeTypeChatTheme
 	default:
-		return fmt.Errorf("unknown BackgroundTypeType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -5539,6 +5585,7 @@ type BackgroundType struct {
 	Wallpaper *BackgroundTypeWallpaper
 	Pattern   *BackgroundTypePattern
 	ChatTheme *BackgroundTypeChatTheme
+	Unknown   *UnknownVariant
 }
 
 func (u *BackgroundType) UnmarshalJSON(data []byte) error {
@@ -5562,7 +5609,11 @@ func (u *BackgroundType) UnmarshalJSON(data []byte) error {
 		u.ChatTheme = &BackgroundTypeChatTheme{}
 		return json.Unmarshal(data, u.ChatTheme)
 	default:
-		return fmt.Errorf("unknown BackgroundType type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -5580,6 +5631,8 @@ func (u BackgroundType) MarshalJSON() ([]byte, error) {
 	case u.ChatTheme != nil:
 		u.ChatTheme.Type = "chat_theme"
 		return json.Marshal(u.ChatTheme)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown BackgroundType variant")
 	}
@@ -5599,6 +5652,12 @@ func (u *BackgroundType) Type() BackgroundTypeType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *BackgroundType) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // ChatMemberStatus represents the type of ChatMember.
@@ -5646,7 +5705,7 @@ func (v *ChatMemberStatus) UnmarshalText(b []byte) error {
 	case "kicked":
 		*v = ChatMemberStatusBanned
 	default:
-		return fmt.Errorf("unknown ChatMemberStatus: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -5659,6 +5718,7 @@ type ChatMember struct {
 	Restricted    *ChatMemberRestricted
 	Left          *ChatMemberLeft
 	Banned        *ChatMemberBanned
+	Unknown       *UnknownVariant
 }
 
 func (u *ChatMember) UnmarshalJSON(data []byte) error {
@@ -5688,7 +5748,11 @@ func (u *ChatMember) UnmarshalJSON(data []byte) error {
 		u.Banned = &ChatMemberBanned{}
 		return json.Unmarshal(data, u.Banned)
 	default:
-		return fmt.Errorf("unknown ChatMember status: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -5712,6 +5776,8 @@ func (u ChatMember) MarshalJSON() ([]byte, error) {
 	case u.Banned != nil:
 		u.Banned.Status = "kicked"
 		return json.Marshal(u.Banned)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown ChatMember variant")
 	}
@@ -5735,6 +5801,12 @@ func (u *ChatMember) Status() ChatMemberStatus {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *ChatMember) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // StoryAreaTypeType represents the type of StoryAreaType.
@@ -5778,7 +5850,7 @@ func (v *StoryAreaTypeType) UnmarshalText(b []byte) error {
 	case "unique_gift":
 		*v = StoryAreaTypeTypeUniqueGift
 	default:
-		return fmt.Errorf("unknown StoryAreaTypeType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -5790,6 +5862,7 @@ type StoryAreaType struct {
 	Link              *StoryAreaTypeLink
 	Weather           *StoryAreaTypeWeather
 	UniqueGift        *StoryAreaTypeUniqueGift
+	Unknown           *UnknownVariant
 }
 
 func (u *StoryAreaType) UnmarshalJSON(data []byte) error {
@@ -5816,7 +5889,11 @@ func (u *StoryAreaType) UnmarshalJSON(data []byte) error {
 		u.UniqueGift = &StoryAreaTypeUniqueGift{}
 		return json.Unmarshal(data, u.UniqueGift)
 	default:
-		return fmt.Errorf("unknown StoryAreaType type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -5837,6 +5914,8 @@ func (u StoryAreaType) MarshalJSON() ([]byte, error) {
 	case u.UniqueGift != nil:
 		u.UniqueGift.Type = "unique_gift"
 		return json.Marshal(u.UniqueGift)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown StoryAreaType variant")
 	}
@@ -5858,6 +5937,12 @@ func (u *StoryAreaType) Type() StoryAreaTypeType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *StoryAreaType) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewStoryAreaTypeLocation creates a StoryAreaType containing a StoryAreaTypeLocation.
@@ -5918,7 +6003,7 @@ func (v *ReactionTypeType) UnmarshalText(b []byte) error {
 	case "paid":
 		*v = ReactionTypeTypePaid
 	default:
-		return fmt.Errorf("unknown ReactionTypeType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -5928,6 +6013,7 @@ type ReactionType struct {
 	Emoji       *ReactionTypeEmoji
 	CustomEmoji *ReactionTypeCustomEmoji
 	Paid        *ReactionTypePaid
+	Unknown     *UnknownVariant
 }
 
 func (u *ReactionType) UnmarshalJSON(data []byte) error {
@@ -5948,7 +6034,11 @@ func (u *ReactionType) UnmarshalJSON(data []byte) error {
 		u.Paid = &ReactionTypePaid{}
 		return json.Unmarshal(data, u.Paid)
 	default:
-		return fmt.Errorf("unknown ReactionType type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -5963,6 +6053,8 @@ func (u ReactionType) MarshalJSON() ([]byte, error) {
 	case u.Paid != nil:
 		u.Paid.Type = "paid"
 		return json.Marshal(u.Paid)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown ReactionType variant")
 	}
@@ -5980,6 +6072,12 @@ func (u *ReactionType) Type() ReactionTypeType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *ReactionType) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewReactionTypeEmoji creates a ReactionType containing a ReactionTypeEmoji.
@@ -6026,7 +6124,7 @@ func (v *OwnedGiftType) UnmarshalText(b []byte) error {
 	case "unique":
 		*v = OwnedGiftTypeUnique
 	default:
-		return fmt.Errorf("unknown OwnedGiftType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -6035,6 +6133,7 @@ func (v *OwnedGiftType) UnmarshalText(b []byte) error {
 type OwnedGift struct {
 	Regular *OwnedGiftRegular
 	Unique  *OwnedGiftUnique
+	Unknown *UnknownVariant
 }
 
 func (u *OwnedGift) UnmarshalJSON(data []byte) error {
@@ -6052,7 +6151,11 @@ func (u *OwnedGift) UnmarshalJSON(data []byte) error {
 		u.Unique = &OwnedGiftUnique{}
 		return json.Unmarshal(data, u.Unique)
 	default:
-		return fmt.Errorf("unknown OwnedGift type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -6064,6 +6167,8 @@ func (u OwnedGift) MarshalJSON() ([]byte, error) {
 	case u.Unique != nil:
 		u.Unique.Type = "unique"
 		return json.Marshal(u.Unique)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown OwnedGift variant")
 	}
@@ -6079,6 +6184,12 @@ func (u *OwnedGift) Type() OwnedGiftType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *OwnedGift) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // BotCommandScopeType represents the type of BotCommandScope.
@@ -6130,7 +6241,7 @@ func (v *BotCommandScopeType) UnmarshalText(b []byte) error {
 	case "chat_member":
 		*v = BotCommandScopeTypeChatMember
 	default:
-		return fmt.Errorf("unknown BotCommandScopeType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -6144,6 +6255,7 @@ type BotCommandScope struct {
 	Chat                  *BotCommandScopeChat
 	ChatAdministrators    *BotCommandScopeChatAdministrators
 	ChatMember            *BotCommandScopeChatMember
+	Unknown               *UnknownVariant
 }
 
 func (u *BotCommandScope) UnmarshalJSON(data []byte) error {
@@ -6176,7 +6288,11 @@ func (u *BotCommandScope) UnmarshalJSON(data []byte) error {
 		u.ChatMember = &BotCommandScopeChatMember{}
 		return json.Unmarshal(data, u.ChatMember)
 	default:
-		return fmt.Errorf("unknown BotCommandScope type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -6203,6 +6319,8 @@ func (u BotCommandScope) MarshalJSON() ([]byte, error) {
 	case u.ChatMember != nil:
 		u.ChatMember.Type = "chat_member"
 		return json.Marshal(u.ChatMember)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown BotCommandScope variant")
 	}
@@ -6228,6 +6346,12 @@ func (u *BotCommandScope) Type() BotCommandScopeType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *BotCommandScope) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewBotCommandScopeDefault creates a BotCommandScope containing a BotCommandScopeDefault.
@@ -6298,7 +6422,7 @@ func (v *MenuButtonType) UnmarshalText(b []byte) error {
 	case "default":
 		*v = MenuButtonTypeDefault
 	default:
-		return fmt.Errorf("unknown MenuButtonType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -6309,6 +6433,7 @@ type MenuButton struct {
 	Commands *MenuButtonCommands
 	WebApp   *MenuButtonWebApp
 	Default  *MenuButtonDefault
+	Unknown  *UnknownVariant
 }
 
 func (u *MenuButton) UnmarshalJSON(data []byte) error {
@@ -6329,7 +6454,11 @@ func (u *MenuButton) UnmarshalJSON(data []byte) error {
 		u.Default = &MenuButtonDefault{}
 		return json.Unmarshal(data, u.Default)
 	default:
-		return fmt.Errorf("unknown MenuButton type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -6344,6 +6473,8 @@ func (u MenuButton) MarshalJSON() ([]byte, error) {
 	case u.Default != nil:
 		u.Default.Type = "default"
 		return json.Marshal(u.Default)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown MenuButton variant")
 	}
@@ -6361,6 +6492,12 @@ func (u *MenuButton) Type() MenuButtonType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *MenuButton) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewMenuButtonCommands creates a MenuButton containing a MenuButtonCommands.
@@ -6411,7 +6548,7 @@ func (v *ChatBoostSourceSource) UnmarshalText(b []byte) error {
 	case "giveaway":
 		*v = ChatBoostSourceSourceGiveaway
 	default:
-		return fmt.Errorf("unknown ChatBoostSourceSource: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -6421,6 +6558,7 @@ type ChatBoostSource struct {
 	Premium  *ChatBoostSourcePremium
 	GiftCode *ChatBoostSourceGiftCode
 	Giveaway *ChatBoostSourceGiveaway
+	Unknown  *UnknownVariant
 }
 
 func (u *ChatBoostSource) UnmarshalJSON(data []byte) error {
@@ -6441,7 +6579,11 @@ func (u *ChatBoostSource) UnmarshalJSON(data []byte) error {
 		u.Giveaway = &ChatBoostSourceGiveaway{}
 		return json.Unmarshal(data, u.Giveaway)
 	default:
-		return fmt.Errorf("unknown ChatBoostSource source: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -6456,6 +6598,8 @@ func (u ChatBoostSource) MarshalJSON() ([]byte, error) {
 	case u.Giveaway != nil:
 		u.Giveaway.Source = "giveaway"
 		return json.Marshal(u.Giveaway)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown ChatBoostSource variant")
 	}
@@ -6473,6 +6617,12 @@ func (u *ChatBoostSource) Source() ChatBoostSourceSource {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *ChatBoostSource) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // InputMediaType represents the type of InputMedia.
@@ -6516,7 +6666,7 @@ func (v *InputMediaType) UnmarshalText(b []byte) error {
 	case "video":
 		*v = InputMediaTypeVideo
 	default:
-		return fmt.Errorf("unknown InputMediaType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -6528,6 +6678,7 @@ type InputMedia struct {
 	Audio     *InputMediaAudio
 	Photo     *InputMediaPhoto
 	Video     *InputMediaVideo
+	Unknown   *UnknownVariant
 }
 
 func (u *InputMedia) UnmarshalJSON(data []byte) error {
@@ -6554,7 +6705,11 @@ func (u *InputMedia) UnmarshalJSON(data []byte) error {
 		u.Video = &InputMediaVideo{}
 		return json.Unmarshal(data, u.Video)
 	default:
-		return fmt.Errorf("unknown InputMedia type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -6575,6 +6730,8 @@ func (u InputMedia) MarshalJSON() ([]byte, error) {
 	case u.Video != nil:
 		u.Video.Type = "video"
 		return json.Marshal(u.Video)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown InputMedia variant")
 	}
@@ -6596,6 +6753,12 @@ func (u *InputMedia) Type() InputMediaType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *InputMedia) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewInputMediaAnimation creates a InputMedia containing a InputMediaAnimation.
@@ -6652,15 +6815,16 @@ func (v *InputPaidMediaType) UnmarshalText(b []byte) error {
 	case "video":
 		*v = InputPaidMediaTypeVideo
 	default:
-		return fmt.Errorf("unknown InputPaidMediaType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
 
 // InputPaidMedia this object describes the paid media to be sent. Currently, it can be one of
 type InputPaidMedia struct {
-	Photo *InputPaidMediaPhoto
-	Video *InputPaidMediaVideo
+	Photo   *InputPaidMediaPhoto
+	Video   *InputPaidMediaVideo
+	Unknown *UnknownVariant
 }
 
 func (u *InputPaidMedia) UnmarshalJSON(data []byte) error {
@@ -6678,7 +6842,11 @@ func (u *InputPaidMedia) UnmarshalJSON(data []byte) error {
 		u.Video = &InputPaidMediaVideo{}
 		return json.Unmarshal(data, u.Video)
 	default:
-		return fmt.Errorf("unknown InputPaidMedia type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -6690,6 +6858,8 @@ func (u InputPaidMedia) MarshalJSON() ([]byte, error) {
 	case u.Video != nil:
 		u.Video.Type = "video"
 		return json.Marshal(u.Video)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown InputPaidMedia variant")
 	}
@@ -6705,6 +6875,12 @@ func (u *InputPaidMedia) Type() InputPaidMediaType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *InputPaidMedia) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewInputPaidMediaPhoto creates a InputPaidMedia containing a InputPaidMediaPhoto.
@@ -6746,7 +6922,7 @@ func (v *InputProfilePhotoType) UnmarshalText(b []byte) error {
 	case "animated":
 		*v = InputProfilePhotoTypeAnimated
 	default:
-		return fmt.Errorf("unknown InputProfilePhotoType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -6755,6 +6931,7 @@ func (v *InputProfilePhotoType) UnmarshalText(b []byte) error {
 type InputProfilePhoto struct {
 	Static   *InputProfilePhotoStatic
 	Animated *InputProfilePhotoAnimated
+	Unknown  *UnknownVariant
 }
 
 func (u *InputProfilePhoto) UnmarshalJSON(data []byte) error {
@@ -6772,7 +6949,11 @@ func (u *InputProfilePhoto) UnmarshalJSON(data []byte) error {
 		u.Animated = &InputProfilePhotoAnimated{}
 		return json.Unmarshal(data, u.Animated)
 	default:
-		return fmt.Errorf("unknown InputProfilePhoto type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -6784,6 +6965,8 @@ func (u InputProfilePhoto) MarshalJSON() ([]byte, error) {
 	case u.Animated != nil:
 		u.Animated.Type = "animated"
 		return json.Marshal(u.Animated)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown InputProfilePhoto variant")
 	}
@@ -6799,6 +6982,12 @@ func (u *InputProfilePhoto) Type() InputProfilePhotoType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *InputProfilePhoto) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewInputProfilePhotoStatic creates a InputProfilePhoto containing a InputProfilePhotoStatic.
@@ -6840,15 +7029,16 @@ func (v *InputStoryContentType) UnmarshalText(b []byte) error {
 	case "video":
 		*v = InputStoryContentTypeVideo
 	default:
-		return fmt.Errorf("unknown InputStoryContentType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
 
 // InputStoryContent this object describes the content of a story to post. Currently, it can be one of
 type InputStoryContent struct {
-	Photo *InputStoryContentPhoto
-	Video *InputStoryContentVideo
+	Photo   *InputStoryContentPhoto
+	Video   *InputStoryContentVideo
+	Unknown *UnknownVariant
 }
 
 func (u *InputStoryContent) UnmarshalJSON(data []byte) error {
@@ -6866,7 +7056,11 @@ func (u *InputStoryContent) UnmarshalJSON(data []byte) error {
 		u.Video = &InputStoryContentVideo{}
 		return json.Unmarshal(data, u.Video)
 	default:
-		return fmt.Errorf("unknown InputStoryContent type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -6878,6 +7072,8 @@ func (u InputStoryContent) MarshalJSON() ([]byte, error) {
 	case u.Video != nil:
 		u.Video.Type = "video"
 		return json.Marshal(u.Video)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown InputStoryContent variant")
 	}
@@ -6893,6 +7089,12 @@ func (u *InputStoryContent) Type() InputStoryContentType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *InputStoryContent) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewInputStoryContentPhoto creates a InputStoryContent containing a InputStoryContentPhoto.
@@ -6986,6 +7188,7 @@ type InlineQueryResult struct {
 	Venue          *InlineQueryResultVenue
 	Video          *InlineQueryResultVideo
 	Voice          *InlineQueryResultVoice
+	Unknown        *UnknownVariant
 }
 
 func (u InlineQueryResult) MarshalJSON() ([]byte, error) {
@@ -7050,6 +7253,8 @@ func (u InlineQueryResult) MarshalJSON() ([]byte, error) {
 	case u.Voice != nil:
 		u.Voice.Type = "voice"
 		return json.Marshal(u.Voice)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown InlineQueryResult variant")
 	}
@@ -7101,6 +7306,12 @@ func (u *InlineQueryResult) Type() InlineQueryResultType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *InlineQueryResult) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewInlineQueryResultCachedAudio creates a InlineQueryResult containing a InlineQueryResultCachedAudio.
@@ -7236,7 +7447,7 @@ func (v *RevenueWithdrawalStateType) UnmarshalText(b []byte) error {
 	case "failed":
 		*v = RevenueWithdrawalStateTypeFailed
 	default:
-		return fmt.Errorf("unknown RevenueWithdrawalStateType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -7246,6 +7457,7 @@ type RevenueWithdrawalState struct {
 	Pending   *RevenueWithdrawalStatePending
 	Succeeded *RevenueWithdrawalStateSucceeded
 	Failed    *RevenueWithdrawalStateFailed
+	Unknown   *UnknownVariant
 }
 
 func (u *RevenueWithdrawalState) UnmarshalJSON(data []byte) error {
@@ -7266,7 +7478,11 @@ func (u *RevenueWithdrawalState) UnmarshalJSON(data []byte) error {
 		u.Failed = &RevenueWithdrawalStateFailed{}
 		return json.Unmarshal(data, u.Failed)
 	default:
-		return fmt.Errorf("unknown RevenueWithdrawalState type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -7281,6 +7497,8 @@ func (u RevenueWithdrawalState) MarshalJSON() ([]byte, error) {
 	case u.Failed != nil:
 		u.Failed.Type = "failed"
 		return json.Marshal(u.Failed)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown RevenueWithdrawalState variant")
 	}
@@ -7298,6 +7516,12 @@ func (u *RevenueWithdrawalState) Type() RevenueWithdrawalStateType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *RevenueWithdrawalState) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // TransactionPartnerType represents the type of TransactionPartner.
@@ -7349,7 +7573,7 @@ func (v *TransactionPartnerType) UnmarshalText(b []byte) error {
 	case "other":
 		*v = TransactionPartnerTypeOther
 	default:
-		return fmt.Errorf("unknown TransactionPartnerType: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -7363,6 +7587,7 @@ type TransactionPartner struct {
 	TelegramAds      *TransactionPartnerTelegramAds
 	TelegramAPI      *TransactionPartnerTelegramAPI
 	Other            *TransactionPartnerOther
+	Unknown          *UnknownVariant
 }
 
 func (u *TransactionPartner) UnmarshalJSON(data []byte) error {
@@ -7395,7 +7620,11 @@ func (u *TransactionPartner) UnmarshalJSON(data []byte) error {
 		u.Other = &TransactionPartnerOther{}
 		return json.Unmarshal(data, u.Other)
 	default:
-		return fmt.Errorf("unknown TransactionPartner type: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -7422,6 +7651,8 @@ func (u TransactionPartner) MarshalJSON() ([]byte, error) {
 	case u.Other != nil:
 		u.Other.Type = "other"
 		return json.Marshal(u.Other)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown TransactionPartner variant")
 	}
@@ -7447,6 +7678,12 @@ func (u *TransactionPartner) Type() TransactionPartnerType {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *TransactionPartner) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // PassportElementErrorSource represents the type of PassportElementError.
@@ -7506,7 +7743,7 @@ func (v *PassportElementErrorSource) UnmarshalText(b []byte) error {
 	case "unspecified":
 		*v = PassportElementErrorSourceUnspecified
 	default:
-		return fmt.Errorf("unknown PassportElementErrorSource: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -7522,6 +7759,7 @@ type PassportElementError struct {
 	TranslationFile  *PassportElementErrorTranslationFile
 	TranslationFiles *PassportElementErrorTranslationFiles
 	Unspecified      *PassportElementErrorUnspecified
+	Unknown          *UnknownVariant
 }
 
 func (u *PassportElementError) UnmarshalJSON(data []byte) error {
@@ -7560,7 +7798,11 @@ func (u *PassportElementError) UnmarshalJSON(data []byte) error {
 		u.Unspecified = &PassportElementErrorUnspecified{}
 		return json.Unmarshal(data, u.Unspecified)
 	default:
-		return fmt.Errorf("unknown PassportElementError source: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 
@@ -7593,6 +7835,8 @@ func (u PassportElementError) MarshalJSON() ([]byte, error) {
 	case u.Unspecified != nil:
 		u.Unspecified.Source = "unspecified"
 		return json.Marshal(u.Unspecified)
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown PassportElementError variant")
 	}
@@ -7622,6 +7866,12 @@ func (u *PassportElementError) Source() PassportElementErrorSource {
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *PassportElementError) IsUnknown() bool {
+	return u.Unknown != nil
 }
 
 // NewPassportElementErrorDataField creates a PassportElementError containing a PassportElementErrorDataField.
@@ -7673,7 +7923,8 @@ func NewPassportElementErrorUnspecified(v PassportElementErrorUnspecified) Passp
 type ChatType int8
 
 const (
-	ChatTypePrivate ChatType = iota + 1
+	ChatTypeUnknown ChatType = iota
+	ChatTypePrivate
 	ChatTypeGroup
 	ChatTypeSupergroup
 	ChatTypeChannel
@@ -7681,16 +7932,21 @@ const (
 )
 
 func (v ChatType) String() string {
-	if v < ChatTypePrivate || v > ChatTypeSender {
-		return "unknown"
+	if v > ChatTypeUnknown && v <= ChatTypeSender {
+		return [...]string{
+			"private",
+			"group",
+			"supergroup",
+			"channel",
+			"sender",
+		}[v-1]
 	}
-	return [...]string{
-		"private",
-		"group",
-		"supergroup",
-		"channel",
-		"sender",
-	}[v-1]
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v ChatType) IsUnknown() bool {
+	return v == ChatTypeUnknown
 }
 
 func (v ChatType) MarshalJSON() ([]byte, error) {
@@ -7714,7 +7970,7 @@ func (v *ChatType) UnmarshalJSON(b []byte) error {
 	case "sender":
 		*v = ChatTypeSender
 	default:
-		return fmt.Errorf("unknown ChatType: %s", s)
+		*v = ChatTypeUnknown
 	}
 	return nil
 }
@@ -7738,6 +7994,11 @@ func (v StickerType) String() string {
 		}[v-1]
 	}
 	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v StickerType) IsUnknown() bool {
+	return v == StickerTypeUnknown
 }
 
 func (v StickerType) MarshalText() ([]byte, error) {
@@ -7812,6 +8073,11 @@ func (v MessageEntityType) String() string {
 		}[v-1]
 	}
 	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v MessageEntityType) IsUnknown() bool {
+	return v == MessageEntityTypeUnknown
 }
 
 func (v MessageEntityType) MarshalText() ([]byte, error) {
@@ -7928,6 +8194,11 @@ func (v UpdateType) String() string {
 	return "unknown"
 }
 
+// IsUnknown reports whether this value is unknown.
+func (v UpdateType) IsUnknown() bool {
+	return v == UpdateTypeUnknown
+}
+
 func (v UpdateType) MarshalText() ([]byte, error) {
 	if v != UpdateTypeUnknown {
 		return []byte(v.String()), nil
@@ -7993,7 +8264,8 @@ func (v *UpdateType) UnmarshalText(b []byte) error {
 type ChatAction int8
 
 const (
-	ChatActionTyping ChatAction = iota + 1
+	ChatActionUnknown ChatAction = iota
+	ChatActionTyping
 	ChatActionUploadPhoto
 	ChatActionRecordVideo
 	ChatActionUploadVideo
@@ -8007,22 +8279,27 @@ const (
 )
 
 func (v ChatAction) String() string {
-	if v < ChatActionTyping || v > ChatActionUploadVideoNote {
-		return "unknown"
+	if v > ChatActionUnknown && v <= ChatActionUploadVideoNote {
+		return [...]string{
+			"typing",
+			"upload_photo",
+			"record_video",
+			"upload_video",
+			"record_voice",
+			"upload_voice",
+			"upload_document",
+			"choose_sticker",
+			"find_location",
+			"record_video_note",
+			"upload_video_note",
+		}[v-1]
 	}
-	return [...]string{
-		"typing",
-		"upload_photo",
-		"record_video",
-		"upload_video",
-		"record_voice",
-		"upload_voice",
-		"upload_document",
-		"choose_sticker",
-		"find_location",
-		"record_video_note",
-		"upload_video_note",
-	}[v-1]
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v ChatAction) IsUnknown() bool {
+	return v == ChatActionUnknown
 }
 
 // MessageType represents an enum type.
@@ -8238,6 +8515,11 @@ func (v MessageType) String() string {
 		}[v-1]
 	}
 	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v MessageType) IsUnknown() bool {
+	return v == MessageTypeUnknown
 }
 
 // Type returns the UpdateType of this Update.
