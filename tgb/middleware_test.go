@@ -38,5 +38,4 @@ func TestChain_Then(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, []int{2, 1, 3}, calls)
-
 }

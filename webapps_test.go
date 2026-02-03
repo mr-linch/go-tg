@@ -121,7 +121,6 @@ func TestParseAuthWidgetQuery(t *testing.T) {
 			}
 
 			assert.Equal(t, test.Excepted, got)
-
 		})
 	}
 }
@@ -171,7 +170,6 @@ func TestAuthWidget_Valid(t *testing.T) {
 
 		assert.False(t, w.Valid(token))
 	})
-
 }
 
 func TestAuthWidget_Time(t *testing.T) {
@@ -325,7 +323,6 @@ func TestParseWebAppInitData(t *testing.T) {
 			}
 
 			assert.Equal(t, test.Excepted, got)
-
 		})
 	}
 }
@@ -353,5 +350,4 @@ func TestWebAppInitData_Valid(t *testing.T) {
 
 		assert.False(t, got.Valid(token))
 	})
-
 }

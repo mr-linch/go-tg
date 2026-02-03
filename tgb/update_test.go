@@ -85,9 +85,7 @@ func TestUpdate_Reply(t *testing.T) {
 		assert.NoError(t, err)
 
 		updateReply.AssertExpectations(t)
-
 	})
-
 }
 
 type EncoderCollect struct {
@@ -377,7 +375,6 @@ func TestMessageUpdateHelpers(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func TestCallbackQueryUpdateHelpers(t *testing.T) {

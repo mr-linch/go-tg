@@ -44,10 +44,8 @@ func compactFilters(filters ...Filter) Filter {
 	return nil
 }
 
-var (
-	// ErrFilterNoAllow is returned when filter doesn't allow to handle Update.
-	ErrFilterNoAllow = fmt.Errorf("filter no allow")
-)
+// ErrFilterNoAllow is returned when filter doesn't allow to handle Update.
+var ErrFilterNoAllow = fmt.Errorf("filter no allow")
 
 func filterMiddleware(filter Filter) Middleware {
 	return MiddlewareFunc(func(next Handler) Handler {

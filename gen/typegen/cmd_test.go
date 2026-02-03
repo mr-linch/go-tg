@@ -6,9 +6,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/parser"
-	"github.com/stretchr/testify/require"
 )
 
 func TestGenerateToFile(t *testing.T) {

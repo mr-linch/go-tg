@@ -37,5 +37,4 @@ func TestError_Contains(t *testing.T) {
 	}
 
 	assert.False(t, err.Contains("Test"))
-
 }

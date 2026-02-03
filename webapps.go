@@ -120,13 +120,13 @@ func getDataCheckString(vs url.Values) string {
 //
 // See https://core.telegram.org/widgets/login#receiving-authorization-data for more information.
 type AuthWidget struct {
-	ID        UserID `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name,omitempty"`
-	Username  string `json:"username,omitempty"`
-	PhotoURL  string `json:"photo_url,omitempty"`
+	ID        UserID   `json:"id"`
+	FirstName string   `json:"first_name"`
+	LastName  string   `json:"last_name,omitempty"`
+	Username  string   `json:"username,omitempty"`
+	PhotoURL  string   `json:"photo_url,omitempty"`
 	AuthDate  UnixTime `json:"auth_date"`
-	Hash      string `json:"hash"`
+	Hash      string   `json:"hash"`
 }
 
 // ParseAuthWidgetQuery parses a query string and returns an AuthWidget.

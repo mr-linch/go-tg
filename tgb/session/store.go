@@ -2,7 +2,7 @@ package session
 
 import "context"
 
-// Store define interface for session persistance.
+// Store define interface for session persistence.
 // All stores should have read, write and delete methods.
 // See [StoreMemory] for example.
 type Store interface {

@@ -31,8 +31,7 @@ func TestCallbackDataParserEncode(t *testing.T) {
 	})
 
 	t.Run("Nil", func(t *testing.T) {
-		type test struct {
-		}
+		type test struct{}
 		var nilStruct *test
 		_, err := EncodeCallbackData(nilStruct)
 		assert.ErrorContains(t, err, "src is nil")
@@ -137,8 +136,7 @@ func TestCallbackDataParserDecode(t *testing.T) {
 	})
 
 	t.Run("Nil", func(t *testing.T) {
-		type test struct {
-		}
+		type test struct{}
 		var nilStruct *test
 		err := DecodeCallbackData("", nilStruct)
 		assert.ErrorContains(t, err, "dst should be a pointer to a struct")
@@ -222,7 +220,6 @@ func TestCallbackDataParserDecode(t *testing.T) {
 
 		err = DecodeCallbackData("invalid", &dst3)
 		assert.ErrorContains(t, err, "invalid syntax")
-
 	})
 
 	t.Run("Empty", func(t *testing.T) {

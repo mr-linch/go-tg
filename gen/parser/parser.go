@@ -6,15 +6,18 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/mr-linch/go-tg/gen/ir"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
+
+	"github.com/mr-linch/go-tg/gen/ir"
 )
 
-var reQuotedValue = regexp.MustCompile(`["\x{201c}]([^"\x{201d}]+)["\x{201d}]`)
-var reAlwaysConst = regexp.MustCompile(`always ["\x{201c}]([^"\x{201d}]+)["\x{201d}]`)
-var reDefault = regexp.MustCompile(`(?i)\bDefaults to (\w+)`)
-var reBotAPIVersion = regexp.MustCompile(`Bot API (\d+\.\d+)`)
+var (
+	reQuotedValue   = regexp.MustCompile(`["\x{201c}]([^"\x{201d}]+)["\x{201d}]`)
+	reAlwaysConst   = regexp.MustCompile(`always ["\x{201c}]([^"\x{201d}]+)["\x{201d}]`)
+	reDefault       = regexp.MustCompile(`(?i)\bDefaults to (\w+)`)
+	reBotAPIVersion = regexp.MustCompile(`Bot API (\d+\.\d+)`)
+)
 
 // Parse reads Telegram Bot API HTML from r and returns the parsed IR.
 func Parse(r io.Reader) (*ir.API, error) {

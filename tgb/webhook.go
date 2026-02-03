@@ -194,7 +194,6 @@ func (webhook *Webhook) Setup(ctx context.Context) (err error) {
 	}
 
 	return nil
-
 }
 
 func (webhook *Webhook) isAllowedIP(ip netip.Addr) bool {
@@ -317,7 +316,6 @@ func (webhook *Webhook) ServeRequest(ctx context.Context, r *WebhookRequest) *We
 
 		if reply != nil {
 			body, err := json.Marshal(reply)
-
 			if err != nil {
 				webhook.log("marshal webhook response error: %v", err)
 				return response
@@ -366,7 +364,6 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if response.Body != nil {
 		_, _ = w.Write(response.Body)
 	}
-
 }
 
 // Run starts the webhook server.

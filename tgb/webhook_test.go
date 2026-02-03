@@ -258,7 +258,6 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 	})
 
 	t.Run("HandleOKTwoReplyCall", func(t *testing.T) {
-
 		isHandlerCalled := false
 
 		handlerDone := make(chan struct{})
@@ -311,7 +310,6 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		<-handlerDone
 
 		assert.True(t, isHandlerCalled, "handler is not called")
-
 	})
 }
 
@@ -422,7 +420,6 @@ func TestWebhook_Setup(t *testing.T) {
 		err := webhook.Setup(context.Background())
 		assert.NoError(t, err)
 	})
-
 }
 
 type loggerMock struct {

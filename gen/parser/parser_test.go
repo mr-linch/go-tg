@@ -5,10 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mr-linch/go-tg/gen/ir"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/html"
+
+	"github.com/mr-linch/go-tg/gen/ir"
 )
 
 func TestIsTypeName(t *testing.T) {

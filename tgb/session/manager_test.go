@@ -523,7 +523,6 @@ func TestManager_Wrap(t *testing.T) {
 	})
 
 	t.Run("HandleNoMatched", func(t *testing.T) {
-
 		type Session struct {
 			Counter int
 		}

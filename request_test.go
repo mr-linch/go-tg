@@ -184,7 +184,6 @@ func (m *JSONMarshalerMock) MarshalJSON() ([]byte, error) {
 
 func TestRequest_MarshalJSON(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
-
 		r := NewRequest("sendMessage")
 
 		r.String("chat_id", "1")

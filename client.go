@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"sync"
 )
@@ -176,7 +175,6 @@ func (client *Client) executeSimple(
 		buf,
 		encoder.ContentType(),
 	)
-
 	if err != nil {
 		return nil, fmt.Errorf("build http request: %w", err)
 	}
@@ -202,7 +200,7 @@ func (client *Client) executeHTTPRequest(ctx context.Context, r *http.Request) (
 	// TODO: handle status and content type
 
 	// read content
-	content, err := ioutil.ReadAll(res.Body)
+	content, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, fmt.Errorf("read response body: %w", err)
 	}

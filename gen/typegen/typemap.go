@@ -5,6 +5,7 @@ import (
 
 	"github.com/expr-lang/expr"
 	"github.com/expr-lang/expr/vm"
+
 	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/ir"
 )

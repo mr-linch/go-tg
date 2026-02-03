@@ -20,20 +20,20 @@ func TestStoreFile_New(t *testing.T) {
 		store := NewStoreFile(dir)
 
 		assert.Equal(t, dir, store.dir)
-		assert.Equal(t, os.FileMode(0666), store.perms)
+		assert.Equal(t, os.FileMode(0o666), store.perms)
 		assert.Equal(t, []string{"abc"}, store.transform("abc"))
 	})
 
 	t.Run("Custom", func(t *testing.T) {
 		store := NewStoreFile(dir,
-			WithStoreFilePerm(os.FileMode(0644)),
+			WithStoreFilePerm(os.FileMode(0o644)),
 			WithStoreFileTransform(func(key string) []string {
 				return strings.Split(key, "_")
 			}),
 		)
 
 		assert.Equal(t, dir, store.dir)
-		assert.Equal(t, os.FileMode(0644), store.perms)
+		assert.Equal(t, os.FileMode(0o644), store.perms)
 		assert.Equal(t, []string{"a", "b"}, store.transform("a_b"))
 	})
 }

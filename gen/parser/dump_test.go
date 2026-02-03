@@ -4,8 +4,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mr-linch/go-tg/gen/config"
 	"gopkg.in/yaml.v3"
+
+	"github.com/mr-linch/go-tg/gen/config"
 )
 
 func TestDumpYAML(t *testing.T) {

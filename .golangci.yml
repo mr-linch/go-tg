@@ -1,0 +1,32 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+formatters:
+  enable:
+    - gofumpt
+
+  exclusions:
+    paths:
+      - _examples
+      - ".*_gen\\.go$"
+
+linters:
+  enable:
+    - misspell
+
+  settings:
+    errcheck:
+      exclude-functions:
+        - (io.Closer).Close
+        - (*io.PipeWriter).Close
+        - (*os.File).Close
+        - (net/http.ResponseWriter).Write
+        - io.Copy
+        - os.RemoveAll
+
+  exclusions:
+    paths:
+      - _examples
+      - ".*_gen\\.go$"

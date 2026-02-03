@@ -7,13 +7,14 @@ import (
 	"os"
 	"path/filepath"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/methodgen"
 	"github.com/mr-linch/go-tg/gen/parser"
 	"github.com/mr-linch/go-tg/gen/readmegen"
 	"github.com/mr-linch/go-tg/gen/routergen"
 	"github.com/mr-linch/go-tg/gen/typegen"
-	"gopkg.in/yaml.v3"
 )
 
 func main() {

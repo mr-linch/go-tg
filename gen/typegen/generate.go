@@ -159,7 +159,6 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 			continue
 		}
 
-
 		log.Debug("generating type", "name", t.Name)
 		goType := resolveType(t, cfg, rules, usedNameOverrides, usedTypeOverrides)
 		data.Types = append(data.Types, goType)

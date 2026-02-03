@@ -69,7 +69,6 @@ func TestRouter(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("AllowError", func(t *testing.T) {
-
 		err := NewRouter().
 			Message(func(ctx context.Context, msg *MessageUpdate) error {
 				return nil
@@ -80,7 +79,6 @@ func TestRouter(t *testing.T) {
 		}})
 
 		assert.EqualError(t, err, "filter error: failure")
-
 	})
 	t.Run("Error", func(t *testing.T) {
 		handlerErr := fmt.Errorf("handler error")
@@ -416,7 +414,6 @@ func TestRouter(t *testing.T) {
 				assert.NotNil(t, msg.ChatBoostUpdated)
 				isChatBoostedHandlerCalled = true
 				return nil
-
 			})
 
 			err := router.Handle(ctx, &Update{Update: &tg.Update{
@@ -566,5 +563,4 @@ func TestRouter(t *testing.T) {
 		assert.True(t, isGroupChatHandlerCalled, "group chat handler should be called")
 		assert.False(t, isGroupAndPrivateChatHandlerCalled, "group and private chat handler should not be called")
 	})
-
 }

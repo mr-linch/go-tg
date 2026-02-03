@@ -244,11 +244,12 @@ func (p *CallbackDataCodec) Decode(data string, dst any) error {
 
 		switch field.Kind() {
 		case reflect.Bool:
-			if values[i] == "1" {
+			switch values[i] {
+			case "1":
 				field.SetBool(true)
-			} else if values[i] == "0" {
+			case "0":
 				field.SetBool(false)
-			} else {
+			default:
 				return fmt.Errorf("invalid bool value: %v", values[i])
 			}
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
@@ -422,7 +423,7 @@ type CallbackDataFilterHandler[T any] func(ctx context.Context, cbq *CallbackQue
 // If an error occurs while decoding, it will be returned and passed handler will not be called.
 func (p *CallbackDataFilter[T]) Handler(handler CallbackDataFilterHandler[T]) CallbackQueryHandler {
 	return func(ctx context.Context, cqu *CallbackQueryUpdate) error {
-		cbd, err := p.Decode(cqu.CallbackQuery.Data)
+		cbd, err := p.Decode(cqu.Data)
 		if err != nil {
 			return fmt.Errorf("decode: %w", err)
 		}

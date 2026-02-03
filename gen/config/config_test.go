@@ -4,10 +4,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mr-linch/go-tg/gen/ir"
-	"github.com/mr-linch/go-tg/gen/parser"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/mr-linch/go-tg/gen/ir"
+	"github.com/mr-linch/go-tg/gen/parser"
 )
 
 func TestApplyEnums_FieldMapped(t *testing.T) {

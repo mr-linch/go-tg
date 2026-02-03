@@ -3,7 +3,7 @@ package tgb
 import tg "github.com/mr-linch/go-tg"
 
 // TextMessageCallBuilder contains all common fields for methods sendText, editMessageText, editMessageReplyMarkup.
-// It's useful for building diffrent calls with the same params.
+// It's useful for building different calls with the same params.
 //
 // Example:
 //
@@ -175,7 +175,6 @@ func (b *TextMessageCallBuilder) AsEditReplyMarkup(peer tg.PeerID, id int) *tg.E
 	}
 
 	return call
-
 }
 
 // AsEditReplyMarkupFromCBQ wraps AsEditReplyMarkup with callback as argument.

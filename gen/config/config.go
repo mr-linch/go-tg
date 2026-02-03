@@ -7,8 +7,9 @@ import (
 	"strings"
 
 	"github.com/expr-lang/expr"
-	"github.com/mr-linch/go-tg/gen/ir"
 	"gopkg.in/yaml.v3"
+
+	"github.com/mr-linch/go-tg/gen/ir"
 )
 
 // EnumDef defines an enum via field references or an expr expression.
@@ -75,10 +76,10 @@ type ConstructorVariant struct {
 }
 
 type MethodGen struct {
-	ParamTypeRules      []ParamTypeRule               `yaml:"param_type_rules"`
-	ParamTypeOverrides  map[string]string             `yaml:"param_type_overrides"`  // "methodName.param_name" -> "GoType"
-	ReturnTypeOverrides map[string]string             `yaml:"return_type_overrides"` // "methodName" -> "GoType"
-	StringerTypes       []string                      `yaml:"stringer_types"`        // types that use request.Stringer()
+	ParamTypeRules      []ParamTypeRule                 `yaml:"param_type_rules"`
+	ParamTypeOverrides  map[string]string               `yaml:"param_type_overrides"`  // "methodName.param_name" -> "GoType"
+	ReturnTypeOverrides map[string]string               `yaml:"return_type_overrides"` // "methodName" -> "GoType"
+	StringerTypes       []string                        `yaml:"stringer_types"`        // types that use request.Stringer()
 	ConstructorVariants map[string][]ConstructorVariant `yaml:"constructor_variants"`  // method -> variants
 }
 

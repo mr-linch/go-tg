@@ -1,0 +1,91 @@
+version: '3'
+
+vars:
+  COVERAGE_FILE: coverage.out
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list-all
+
+  # Testing
+  test:
+    desc: Run all tests (root + gen)
+    cmds:
+      - task: test:main
+      - task: test:gen
+
+  test:main:
+    desc: Run root module tests
+    cmds:
+      - go test -v -race ./...
+
+  test:gen:
+    desc: Run gen module tests
+    dir: gen
+    cmds:
+      - go test -v -race ./...
+
+  # Linting (always with --fix)
+  lint:
+    desc: Lint all modules
+    cmds:
+      - task: lint:main
+      - task: lint:gen
+
+  lint:main:
+    desc: Lint root module
+    cmds:
+      - golangci-lint run --fix ./...
+
+  lint:gen:
+    desc: Lint gen module
+    dir: gen
+    cmds:
+      - golangci-lint run --fix ./...
+
+  # Tidy
+  tidy:
+    desc: Run go mod tidy on all modules
+    cmds:
+      - task: tidy:main
+      - task: tidy:gen
+
+  tidy:main:
+    desc: Run go mod tidy on root module
+    cmds:
+      - go mod tidy
+
+  tidy:gen:
+    desc: Run go mod tidy on gen module
+    dir: gen
+    cmds:
+      - go mod tidy
+
+  tidy:check:
+    desc: Check if go.mod files are tidy
+    cmds:
+      - task: tidy
+      - git diff --exit-code go.mod go.sum gen/go.mod gen/go.sum
+
+  # Coverage
+  coverage:
+    desc: Run tests with coverage
+    cmds:
+      - go test -v -race -coverprofile={{.COVERAGE_FILE}} -covermode=atomic ./...
+
+  coverage:html:
+    desc: Generate HTML coverage report
+    cmds:
+      - task: coverage
+      - go tool cover -html={{.COVERAGE_FILE}} -o coverage.html
+      - open coverage.html || xdg-open coverage.html || echo "Open coverage.html manually"
+
+  # CI
+  ci:
+    desc: Run all CI checks locally
+    cmds:
+      - task: lint
+      - task: tidy:check
+      - task: test

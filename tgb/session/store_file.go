@@ -38,7 +38,7 @@ func WithStoreFileTransform(transform func(string) []string) StoreFileOption {
 func NewStoreFile(dir string, opts ...StoreFileOption) *StoreFile {
 	store := &StoreFile{
 		dir:   dir,
-		perms: 0666,
+		perms: 0o666,
 		transform: func(key string) []string {
 			return []string{key}
 		},

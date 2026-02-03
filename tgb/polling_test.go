@@ -17,7 +17,6 @@ import (
 func TestPoller(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			var (
 				isGetUpdatesCalled     bool
 				isGetWebhookInfoCalled bool
@@ -53,7 +52,6 @@ func TestPoller(t *testing.T) {
 			}
 
 			assert.True(t, isGetUpdatesCalled || isGetWebhookInfoCalled || isDeleteWebhookCalled, "expected call one of getUpdates, getWebhookInfo or deleteWebhook")
-
 		}))
 
 		defer server.Close()
@@ -74,7 +72,6 @@ func TestPoller(t *testing.T) {
 
 	t.Run("Custom", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			var (
 				isGetUpdatesCalled     bool
 				isGetWebhookInfoCalled bool
@@ -110,7 +107,6 @@ func TestPoller(t *testing.T) {
 			}
 
 			assert.True(t, isGetUpdatesCalled || isGetWebhookInfoCalled || isDeleteWebhookCalled, "expected call one of getUpdates, getWebhookInfo or deleteWebhook")
-
 		}))
 
 		defer server.Close()

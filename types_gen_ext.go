@@ -146,7 +146,6 @@ func (user User) PeerID() string {
 	return user.ID.PeerID()
 }
 
-
 // ReplyMarkup generic for keyboards.
 //
 // Known implementations:
@@ -572,14 +571,10 @@ func (update *Update) Chat() *Chat {
 	return nil
 }
 
-
 // Extract entitie value from plain text.
 func (me MessageEntity) Extract(text string) string {
 	return string([]rune(text)[me.Offset : me.Offset+me.Length])
 }
-
-
-
 
 // This object describes a message that can be inaccessible to the bot.
 // It can be one of:

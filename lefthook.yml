@@ -1,0 +1,13 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      run: task lint
+
+    tidy-check:
+      run: task tidy:check
+
+pre-push:
+  commands:
+    test:
+      run: task test

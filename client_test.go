@@ -124,7 +124,6 @@ func TestClient_Execute(t *testing.T) {
 				json.RawMessage(`{"message_id":4,"from":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot"},"chat":{"id":103980787,"first_name":"Sasha","username":"MrLinch","type":"private"},"date":1655488910,"document":{"file_name":"types.go","file_id":"BQACAgIAAxkDAAMEYqzBjtP0VieRu8CCjHeNxnEetlsAAiIbAALAuWFJgQyZP4JcwDkkBA","file_unique_id":"AgADIhsAAsC5YUk","file_size":30}}`),
 				res.Result,
 			)
-
 		}
 	})
 

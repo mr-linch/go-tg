@@ -270,6 +270,7 @@ func TestNewButtonLayout(t *testing.T) {
 		{{Text: "3", CallbackData: "3"}},
 	}, keyboard)
 }
+
 func TestButtonLayout_Add(t *testing.T) {
 	for _, test := range []struct {
 		Layout *ButtonLayout[KeyboardButton]
@@ -444,7 +445,6 @@ func TestInlineQueryResultMarshalJSON(t *testing.T) {
 
 			assert.Equal(t, test.Type, result.Type)
 		})
-
 	}
 }
 
@@ -547,7 +547,6 @@ func TestFileArg_MarshalJSON(t *testing.T) {
 		},
 	} {
 		t.Run(test.Name, func(t *testing.T) {
-
 			v, err := json.Marshal(test.FileArg)
 
 			if test.Err {
@@ -909,7 +908,6 @@ func TestUpdateType_MarshalText(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, `{"type":["callback_query","channel_post"]}`, string(output))
-
 }
 
 func TestUpdate_Type(t *testing.T) {
