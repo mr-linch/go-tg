@@ -17,6 +17,50 @@ func firstNotNil[T any](fields ...*T) *T {
 	return nil
 }
 
+// BusinessConnectionHandler it's typed handler for BusinessConnection.
+// Implements Handler interface.
+type BusinessConnectionHandler func(context.Context, *BusinessConnectionUpdate) error
+
+func (handler BusinessConnectionHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &BusinessConnectionUpdate{
+		BusinessConnection: update.BusinessConnection,
+		BaseUpdate:         BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// CallbackQueryHandler it's typed handler for CallbackQuery.
+// Implements Handler interface.
+type CallbackQueryHandler func(context.Context, *CallbackQueryUpdate) error
+
+func (handler CallbackQueryHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &CallbackQueryUpdate{
+		CallbackQuery: update.CallbackQuery,
+		BaseUpdate:    BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// ChatBoostHandler it's typed handler for ChatBoostUpdated.
+// Implements Handler interface.
+type ChatBoostHandler func(context.Context, *ChatBoostUpdate) error
+
+func (handler ChatBoostHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &ChatBoostUpdate{
+		ChatBoostUpdated: update.ChatBoost,
+		BaseUpdate:       BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// ChatJoinRequestHandler it's typed handler for ChatJoinRequest.
+// Implements Handler interface.
+type ChatJoinRequestHandler func(context.Context, *ChatJoinRequestUpdate) error
+
+func (handler ChatJoinRequestHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &ChatJoinRequestUpdate{
+		ChatJoinRequest: update.ChatJoinRequest,
+		BaseUpdate:      BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
 // ChatMemberUpdatedHandler it's typed handler for ChatMemberUpdated.
 // Implements Handler interface.
 type ChatMemberUpdatedHandler func(context.Context, *ChatMemberUpdatedUpdate) error
@@ -29,6 +73,39 @@ func (handler ChatMemberUpdatedHandler) Handle(ctx context.Context, update *Upda
 		})
 	}
 	return nil
+}
+
+// ChosenInlineResultHandler it's typed handler for ChosenInlineResult.
+// Implements Handler interface.
+type ChosenInlineResultHandler func(context.Context, *ChosenInlineResultUpdate) error
+
+func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &ChosenInlineResultUpdate{
+		ChosenInlineResult: update.ChosenInlineResult,
+		BaseUpdate:         BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// DeletedBusinessMessagesHandler it's typed handler for BusinessMessagesDeleted.
+// Implements Handler interface.
+type DeletedBusinessMessagesHandler func(context.Context, *DeletedBusinessMessagesUpdate) error
+
+func (handler DeletedBusinessMessagesHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &DeletedBusinessMessagesUpdate{
+		BusinessMessagesDeleted: update.DeletedBusinessMessages,
+		BaseUpdate:              BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// InlineQueryHandler it's typed handler for InlineQuery.
+// Implements Handler interface.
+type InlineQueryHandler func(context.Context, *InlineQueryUpdate) error
+
+func (handler InlineQueryHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &InlineQueryUpdate{
+		InlineQuery: update.InlineQuery,
+		BaseUpdate:  BaseUpdate{Update: update, Client: update.Client},
+	})
 }
 
 // MessageHandler it's typed handler for Message.
@@ -45,14 +122,58 @@ func (handler MessageHandler) Handle(ctx context.Context, update *Update) error 
 	return nil
 }
 
-// InlineQueryHandler it's typed handler for InlineQuery.
+// MessageReactionCountHandler it's typed handler for MessageReactionCountUpdated.
 // Implements Handler interface.
-type InlineQueryHandler func(context.Context, *InlineQueryUpdate) error
+type MessageReactionCountHandler func(context.Context, *MessageReactionCountUpdate) error
 
-func (handler InlineQueryHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &InlineQueryUpdate{
-		InlineQuery: update.InlineQuery,
-		BaseUpdate:  BaseUpdate{Update: update, Client: update.Client},
+func (handler MessageReactionCountHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &MessageReactionCountUpdate{
+		MessageReactionCountUpdated: update.MessageReactionCount,
+		BaseUpdate:                  BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// MessageReactionHandler it's typed handler for MessageReactionUpdated.
+// Implements Handler interface.
+type MessageReactionHandler func(context.Context, *MessageReactionUpdate) error
+
+func (handler MessageReactionHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &MessageReactionUpdate{
+		MessageReactionUpdated: update.MessageReaction,
+		BaseUpdate:             BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// PollAnswerHandler it's typed handler for PollAnswer.
+// Implements Handler interface.
+type PollAnswerHandler func(context.Context, *PollAnswerUpdate) error
+
+func (handler PollAnswerHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &PollAnswerUpdate{
+		PollAnswer: update.PollAnswer,
+		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// PollHandler it's typed handler for Poll.
+// Implements Handler interface.
+type PollHandler func(context.Context, *PollUpdate) error
+
+func (handler PollHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &PollUpdate{
+		Poll:       update.Poll,
+		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+
+// PreCheckoutQueryHandler it's typed handler for PreCheckoutQuery.
+// Implements Handler interface.
+type PreCheckoutQueryHandler func(context.Context, *PreCheckoutQueryUpdate) error
+
+func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &PreCheckoutQueryUpdate{
+		PreCheckoutQuery: update.PreCheckoutQuery,
+		BaseUpdate:       BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -64,17 +185,6 @@ func (handler PurchasedPaidMediaHandler) Handle(ctx context.Context, update *Upd
 	return handler(ctx, &PurchasedPaidMediaUpdate{
 		PaidMediaPurchased: update.PurchasedPaidMedia,
 		BaseUpdate:         BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// ChatJoinRequestHandler it's typed handler for ChatJoinRequest.
-// Implements Handler interface.
-type ChatJoinRequestHandler func(context.Context, *ChatJoinRequestUpdate) error
-
-func (handler ChatJoinRequestHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &ChatJoinRequestUpdate{
-		ChatJoinRequest: update.ChatJoinRequest,
-		BaseUpdate:      BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -97,115 +207,5 @@ func (handler ShippingQueryHandler) Handle(ctx context.Context, update *Update) 
 	return handler(ctx, &ShippingQueryUpdate{
 		ShippingQuery: update.ShippingQuery,
 		BaseUpdate:    BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// DeletedBusinessMessagesHandler it's typed handler for BusinessMessagesDeleted.
-// Implements Handler interface.
-type DeletedBusinessMessagesHandler func(context.Context, *DeletedBusinessMessagesUpdate) error
-
-func (handler DeletedBusinessMessagesHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &DeletedBusinessMessagesUpdate{
-		BusinessMessagesDeleted: update.DeletedBusinessMessages,
-		BaseUpdate:              BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// ChosenInlineResultHandler it's typed handler for ChosenInlineResult.
-// Implements Handler interface.
-type ChosenInlineResultHandler func(context.Context, *ChosenInlineResultUpdate) error
-
-func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &ChosenInlineResultUpdate{
-		ChosenInlineResult: update.ChosenInlineResult,
-		BaseUpdate:         BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// ChatBoostHandler it's typed handler for ChatBoostUpdated.
-// Implements Handler interface.
-type ChatBoostHandler func(context.Context, *ChatBoostUpdate) error
-
-func (handler ChatBoostHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &ChatBoostUpdate{
-		ChatBoostUpdated: update.ChatBoost,
-		BaseUpdate:       BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// BusinessConnectionHandler it's typed handler for BusinessConnection.
-// Implements Handler interface.
-type BusinessConnectionHandler func(context.Context, *BusinessConnectionUpdate) error
-
-func (handler BusinessConnectionHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &BusinessConnectionUpdate{
-		BusinessConnection: update.BusinessConnection,
-		BaseUpdate:         BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// MessageReactionHandler it's typed handler for MessageReactionUpdated.
-// Implements Handler interface.
-type MessageReactionHandler func(context.Context, *MessageReactionUpdate) error
-
-func (handler MessageReactionHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &MessageReactionUpdate{
-		MessageReactionUpdated: update.MessageReaction,
-		BaseUpdate:             BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// MessageReactionCountHandler it's typed handler for MessageReactionCountUpdated.
-// Implements Handler interface.
-type MessageReactionCountHandler func(context.Context, *MessageReactionCountUpdate) error
-
-func (handler MessageReactionCountHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &MessageReactionCountUpdate{
-		MessageReactionCountUpdated: update.MessageReactionCount,
-		BaseUpdate:                  BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// CallbackQueryHandler it's typed handler for CallbackQuery.
-// Implements Handler interface.
-type CallbackQueryHandler func(context.Context, *CallbackQueryUpdate) error
-
-func (handler CallbackQueryHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &CallbackQueryUpdate{
-		CallbackQuery: update.CallbackQuery,
-		BaseUpdate:    BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// PreCheckoutQueryHandler it's typed handler for PreCheckoutQuery.
-// Implements Handler interface.
-type PreCheckoutQueryHandler func(context.Context, *PreCheckoutQueryUpdate) error
-
-func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &PreCheckoutQueryUpdate{
-		PreCheckoutQuery: update.PreCheckoutQuery,
-		BaseUpdate:       BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// PollHandler it's typed handler for Poll.
-// Implements Handler interface.
-type PollHandler func(context.Context, *PollUpdate) error
-
-func (handler PollHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &PollUpdate{
-		Poll:       update.Poll,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
-	})
-}
-
-// PollAnswerHandler it's typed handler for PollAnswer.
-// Implements Handler interface.
-type PollAnswerHandler func(context.Context, *PollAnswerUpdate) error
-
-func (handler PollAnswerHandler) Handle(ctx context.Context, update *Update) error {
-	return handler(ctx, &PollAnswerUpdate{
-		PollAnswer: update.PollAnswer,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
 	})
 }

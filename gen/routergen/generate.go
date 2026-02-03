@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"slices"
 	"text/template"
 
 	"github.com/mr-linch/go-tg/gen/ir"
@@ -169,6 +170,17 @@ func buildTemplateData(api *ir.API, pkg string, _ *slog.Logger) (*TemplateData, 
 			MultiField:  multiField,
 		})
 	}
+
+	// Sort handler types for deterministic output.
+	slices.SortFunc(handlerTypes, func(a, b GoHandlerType) int {
+		if a.HandlerName < b.HandlerName {
+			return -1
+		}
+		if a.HandlerName > b.HandlerName {
+			return 1
+		}
+		return 0
+	})
 
 	// Build router methods (one per Update field).
 	routerMethods := make([]GoRouterMethod, 0, len(updateType.Fields))

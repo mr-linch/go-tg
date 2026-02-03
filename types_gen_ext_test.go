@@ -147,9 +147,9 @@ func TestChatType_UnmarshalJSON(t *testing.T) {
 		{`{"type": "group"}`, ChatTypeGroup, false},
 		{`{"type": "supergroup"}`, ChatTypeSupergroup, false},
 		{`{"type": "channel"}`, ChatTypeChannel, false},
-		{`{"type": "test"}`, ChatType(-1), true},
+		{`{"type": "unknown_future"}`, ChatType(0), false}, // forward compatibility
 		{`{"type": "sender"}`, ChatTypeSender, false},
-		{`{"type": {}}`, ChatType(-1), true},
+		{`{"type": {}}`, ChatType(-1), true}, // invalid JSON type
 	}
 	for _, tt := range tests {
 		var s sample
@@ -1324,14 +1324,23 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 		assert.Equal(t, "john doe", b.Channel.AuthorSignature)
 	})
 
-	t.Run("Error", func(t *testing.T) {
+	t.Run("MalformedJSON", func(t *testing.T) {
 		var b MessageOrigin
 
 		err := b.UnmarshalJSON([]byte(`{"type": "unknown"`))
 		require.Error(t, err)
+	})
 
-		err = b.UnmarshalJSON([]byte(`{"type": "unknown", "date": 12345}`))
-		require.Error(t, err)
+	t.Run("Unknown", func(t *testing.T) {
+		var b MessageOrigin
+
+		err := b.UnmarshalJSON([]byte(`{"type": "future_origin", "date": 12345}`))
+		require.NoError(t, err)
+
+		assert.True(t, b.IsUnknown())
+		require.NotNil(t, b.Unknown)
+		assert.Equal(t, "future_origin", b.Unknown.Type)
+		assert.Equal(t, MessageOriginType(0), b.Type())
 	})
 }
 

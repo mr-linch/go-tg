@@ -19,6 +19,14 @@ type {{.Name}} struct {
 {{end -}}
 }
 {{end}}
+{{- if .UnionTypes}}
+// UnknownVariant stores data for unknown union variants.
+// This provides forward compatibility when new variants are added to the API.
+type UnknownVariant struct {
+	Type string
+	Data json.RawMessage
+}
+{{- end}}
 {{- range $u := .UnionTypes}}
 // {{$u.DiscriminatorTypeName}} represents the type of {{$u.Name}}.
 type {{$u.DiscriminatorTypeName}} int
@@ -55,7 +63,7 @@ func (v *{{$u.DiscriminatorTypeName}}) UnmarshalText(b []byte) error {
 		*v = {{.EnumConst}}
 {{- end}}
 	default:
-		return fmt.Errorf("unknown {{$u.DiscriminatorTypeName}}: %s", string(b))
+		*v = 0
 	}
 	return nil
 }
@@ -66,6 +74,7 @@ type {{$u.Name}} struct {
 {{- range $u.Variants}}
 	{{.FieldName}} *{{.TypeName}}
 {{- end}}
+	Unknown *UnknownVariant
 }
 {{if $u.CanUnmarshal}}
 func (u *{{$u.Name}}) UnmarshalJSON(data []byte) error {
@@ -82,7 +91,11 @@ func (u *{{$u.Name}}) UnmarshalJSON(data []byte) error {
 		return json.Unmarshal(data, u.{{.FieldName}})
 {{- end}}
 	default:
-		return fmt.Errorf("unknown {{$u.Name}} {{$u.Discriminator}}: %s", partial.D)
+		u.Unknown = &UnknownVariant{
+			Type: partial.D,
+			Data: append(json.RawMessage(nil), data...),
+		}
+		return nil
 	}
 }
 {{- end}}
@@ -94,6 +107,8 @@ func (u {{$u.Name}}) MarshalJSON() ([]byte, error) {
 		u.{{.FieldName}}.{{$u.DiscriminatorGoField}} = "{{.ConstVal}}"
 		return json.Marshal(u.{{.FieldName}})
 {{- end}}
+	case u.Unknown != nil:
+		return u.Unknown.Data, nil
 	default:
 		return nil, fmt.Errorf("unknown {{$u.Name}} variant")
 	}
@@ -109,6 +124,12 @@ func (u *{{$u.Name}}) {{$u.DiscriminatorMethodName}}() {{$u.DiscriminatorTypeNam
 	default:
 		return 0
 	}
+}
+
+// IsUnknown reports whether this union contains an unknown variant.
+// This can happen when the API returns a new variant not yet supported by this library.
+func (u *{{$u.Name}}) IsUnknown() bool {
+	return u.Unknown != nil
 }
 {{- if $u.HasConstructors}}
 {{range $u.Variants}}
@@ -173,7 +194,7 @@ func (v *{{$e.Name}}) UnmarshalJSON(b []byte) error {
 		*v = {{.ConstName}}
 {{- end}}
 	default:
-		return fmt.Errorf("unknown {{$e.Name}}: %s", s)
+		*v = 0
 	}
 	return nil
 }
@@ -199,7 +220,7 @@ func (v *{{$e.Name}}) UnmarshalText(b []byte) error {
 {{- if $e.HasUnknown}}
 		*v = {{$e.Name}}Unknown
 {{- else}}
-		return fmt.Errorf("unknown {{$e.Name}}: %s", string(b))
+		*v = 0
 {{- end}}
 	}
 	return nil
