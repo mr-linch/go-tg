@@ -8,14 +8,14 @@ import (
 	"strings"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
 var pm = tg.HTML
 
 func main() {
-	examples.Run(tgb.NewRouter().
+	runner.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 			me, err := mu.Client.GetMe().Do(ctx)
 			if err != nil {

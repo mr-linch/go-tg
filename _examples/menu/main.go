@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
@@ -210,7 +210,7 @@ func main() {
 		return newUserListMessage(tg.HTML, users), nil
 	}
 
-	examples.Run(tgb.NewRouter().
+	runner.Run(tgb.NewRouter().
 		// start message and cbq handlers
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			builder, err := newUserListBuilder(ctx)

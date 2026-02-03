@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
@@ -19,7 +19,7 @@ var menu = struct {
 }
 
 func main() {
-	examples.Run(tgb.NewRouter().
+	runner.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 			kb := tg.NewReplyKeyboardMarkup(
 				tg.NewButtonColumn(

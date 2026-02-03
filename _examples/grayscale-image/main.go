@@ -11,13 +11,13 @@ import (
 	"strings"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 	"golang.org/x/exp/slices"
 )
 
 func main() {
-	examples.Run(tgb.NewRouter().
+	runner.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 			// handle /start command
 			return mu.Answer("Hey, send me a photo for flip it!").DoVoid(ctx)

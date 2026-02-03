@@ -1,4 +1,4 @@
-package examples
+package runner
 
 import (
 	"context"

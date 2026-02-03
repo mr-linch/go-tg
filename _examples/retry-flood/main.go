@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
@@ -45,7 +45,7 @@ func main() {
 		}
 	}
 
-	examples.Run(tgb.NewRouter().
+	runner.Run(tgb.NewRouter().
 		Message(onSpam, tgb.Command("spam")).
 		ChannelPost(onSpam, tgb.Command("spam")).
 		Message(onStart).

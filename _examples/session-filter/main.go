@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 	"github.com/mr-linch/go-tg/tgb/session"
 )
@@ -55,7 +55,7 @@ func main() {
 
 	isDigit := tgb.Regexp(regexp.MustCompile(`^\d+$`))
 
-	examples.Run(tgb.NewRouter().
+	runner.Run(tgb.NewRouter().
 		Use(sessionManager).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle /start command

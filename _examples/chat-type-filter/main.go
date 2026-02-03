@@ -5,12 +5,12 @@ import (
 	"context"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
 func main() {
-	examples.Run(tgb.NewRouter().
+	runner.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer("this is private chat response").DoVoid(ctx)
 		}, tgb.ChatType(tg.ChatTypePrivate)).

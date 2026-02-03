@@ -8,14 +8,14 @@ import (
 	"strconv"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
 func main() {
 	const typingMessage = "use keyboard above for typing..."
 
-	examples.Run(tgb.NewRouter().
+	runner.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer(tg.HTML.Italic(typingMessage)).
 				ParseMode(tg.HTML).

@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
+	"github.com/mr-linch/go-tg/_examples/runner"
 	"github.com/mr-linch/go-tg/tgb"
 )
 
@@ -91,7 +91,7 @@ func main() {
 		return iq.Answer(result).CacheTime(0).DoVoid(ctx)
 	})
 
-	examples.Run(r)
+	runner.Run(r)
 }
 
 func quoteText(v string) string {
