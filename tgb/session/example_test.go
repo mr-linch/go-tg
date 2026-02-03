@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/mr-linch/go-tg"
-	"github.com/mr-linch/go-tg/examples"
 	"github.com/mr-linch/go-tg/tgb"
 	"github.com/mr-linch/go-tg/tgb/session"
 )
@@ -35,7 +34,7 @@ func ExampleNewManager() {
 			}
 		})
 
-	examples.Run(router)
+	_ = router
 }
 
 func ExampleManager_Filter() {
@@ -102,5 +101,5 @@ func ExampleManager_Filter() {
 			)).ParseMode(tg.HTML).DoVoid(ctx)
 		}, isStepEqual(StepPhone))
 
-	examples.Run(router)
+	_ = router
 }
