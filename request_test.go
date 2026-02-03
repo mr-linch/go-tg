@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewRequest(t *testing.T) {
@@ -55,7 +56,7 @@ func TestRequest_Setters(t *testing.T) {
 	encoder := &testEncoder{}
 
 	err := r.Encode(encoder)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	sort.StringSlice(encoder.stringKeys).Sort()
 	sort.StringSlice(encoder.fileKeys).Sort()
@@ -130,7 +131,7 @@ func TestRequest_Encode(t *testing.T) {
 
 		err := r.Encode(encoder)
 
-		assert.Error(t, err)
+		require.Error(t, err)
 
 		encoder.AssertExpectations(t)
 	})
@@ -147,7 +148,7 @@ func TestRequest_Encode(t *testing.T) {
 
 		err := r.Encode(encoder)
 
-		assert.Error(t, err)
+		require.Error(t, err)
 
 		encoder.AssertExpectations(t)
 	})
@@ -194,8 +195,8 @@ func TestRequest_MarshalJSON(t *testing.T) {
 		})
 
 		v, err := json.Marshal(r)
-		assert.NoError(t, err)
-		assert.Equal(t, `{"chat_id":"1","method":"sendMessage","object":"{\"Key\":\"value\"}"}`, string(v))
+		require.NoError(t, err)
+		assert.JSONEq(t, `{"chat_id":"1","method":"sendMessage","object":"{\"Key\":\"value\"}"}`, string(v))
 	})
 
 	t.Run("Error", func(t *testing.T) {

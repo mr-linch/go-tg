@@ -245,7 +245,7 @@ func TestLoadFile(t *testing.T) {
 	cfg, err := LoadFile("../config.yaml")
 	require.NoError(t, err)
 	assert.Greater(t, len(cfg.Parser.Enums), 5)
-	assert.Greater(t, len(cfg.TypeGen.Exclude), 0)
+	assert.NotEmpty(t, cfg.TypeGen.Exclude)
 }
 
 func TestTypeGen_IsExcluded(t *testing.T) {

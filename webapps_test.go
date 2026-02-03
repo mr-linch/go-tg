@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAuthWidget_Query(t *testing.T) {
@@ -115,9 +116,9 @@ func TestParseAuthWidgetQuery(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			got, err := ParseAuthWidgetQuery(test.Values)
 			if test.Error {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			assert.Equal(t, test.Excepted, got)
@@ -317,9 +318,9 @@ func TestParseWebAppInitData(t *testing.T) {
 			got, err := ParseWebAppInitData(test.Values)
 
 			if test.Error {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			assert.Equal(t, test.Excepted, got)
@@ -332,20 +333,20 @@ func TestWebAppInitData_Valid(t *testing.T) {
 
 	t.Run("True", func(t *testing.T) {
 		vs, err := url.ParseQuery("query_id=AAHznjIGAAAAAPOeMgZUHjBo&user=%7B%22id%22%3A103980787%2C%22first_name%22%3A%22Sasha%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22MrLinch%22%2C%22language_code%22%3A%22uk%22%7D&auth_date=1656798871&hash=8c59e353f627a5c67d41f8a2e8f8c12d9e0fbec8ac44680d779ebed3c326a41a")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		got, err := ParseWebAppInitData(vs)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, got)
 
 		assert.True(t, got.Valid(token))
 	})
 	t.Run("False", func(t *testing.T) {
 		vs, err := url.ParseQuery("query_id=AAAHznjIGAAAAAPOeMgZUHjBo&user=%7B%22id%22%3A103980787%2C%22first_name%22%3A%22Sasha%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22MrLinch%22%2C%22language_code%22%3A%22uk%22%7D&auth_date=1656798871&hash=8c59e353f627a5c67d41f8a2e8f8c12d9e0fbec8ac44680d779ebed3c326a41a")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		got, err := ParseWebAppInitData(vs)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, got)
 
 		assert.False(t, got.Valid(token))

@@ -127,10 +127,10 @@ type section struct {
 
 // extractSections walks the DOM, splitting content by <h4> elements.
 func extractSections(doc *html.Node) []section {
-	var sections []section
 	var h4s []*html.Node
 	findH4s(doc, &h4s)
 
+	sections := make([]section, 0, len(h4s))
 	for _, h4 := range h4s {
 		name := extractText(h4)
 		var elements []*html.Node
@@ -187,22 +187,8 @@ func extractDescription(n *html.Node) string {
 		return n.Data
 	}
 	if n.Type == html.ElementNode {
-		if n.DataAtom == atom.I {
-			return ""
-		}
-		if n.DataAtom == atom.Br {
-			return " "
-		}
-		if n.DataAtom == atom.A {
-			href := getAttr(n, "href")
-			text := extractText(n)
-			if href != "" && text != "" {
-				if strings.HasPrefix(href, "#") {
-					href = baseURL + href
-				}
-				return "[" + text + "](" + href + ")"
-			}
-			return text
+		if desc, ok := extractElementDescription(n); ok {
+			return desc
 		}
 	}
 	var sb strings.Builder
@@ -210,6 +196,26 @@ func extractDescription(n *html.Node) string {
 		sb.WriteString(extractDescription(c))
 	}
 	return sb.String()
+}
+
+func extractElementDescription(n *html.Node) (string, bool) {
+	switch n.DataAtom {
+	case atom.I:
+		return "", true
+	case atom.Br:
+		return " ", true
+	case atom.A:
+		href := getHref(n)
+		text := extractText(n)
+		if href != "" && text != "" {
+			if strings.HasPrefix(href, "#") {
+				href = baseURL + href
+			}
+			return "[" + text + "](" + href + ")", true
+		}
+		return text, true
+	}
+	return "", false
 }
 
 // extractDescriptionLines returns description text split at <br> elements.
@@ -448,48 +454,54 @@ func parseTypeCell(td *html.Node) ir.TypeExpr {
 	var links []ir.TypeRef
 	collectLinks(td, &links)
 
-	var types []ir.TypeRef
+	types := parseTypeRefs(text, links)
+	return ir.TypeExpr{Types: types, Array: arrayDepth}
+}
 
-	if len(links) > 0 {
-		if len(links) == 1 {
-			// Single link — check if there's a trailing " or Primitive"
-			remaining := text
-			linkText := links[0].Type
-			if idx := strings.Index(remaining, linkText); idx >= 0 {
-				remaining = remaining[idx+len(linkText):]
-			}
-			if strings.HasPrefix(remaining, " or ") {
-				// e.g. "InputFile or String"
-				types = append(types, links[0])
-				rest := strings.TrimSpace(strings.TrimPrefix(remaining, " or "))
-				types = append(types, ir.TypeRef{Type: normalizeTypeName(rest)})
-			} else {
-				types = append(types, ir.TypeRef{
-					Type: normalizeTypeName(links[0].Type),
-					Ref:  links[0].Ref,
-				})
-			}
-		} else {
-			// Multiple links → one TypeRef per link
-			for _, l := range links {
-				types = append(types, ir.TypeRef{
-					Type: normalizeTypeName(l.Type),
-					Ref:  l.Ref,
-				})
-			}
-		}
-	} else {
-		// No links — split by " or " for primitive unions
-		parts := strings.Split(text, " or ")
-		for _, p := range parts {
-			p = strings.TrimSpace(p)
-			if p != "" {
-				types = append(types, ir.TypeRef{Type: normalizeTypeName(p)})
-			}
+func parseTypeRefs(text string, links []ir.TypeRef) []ir.TypeRef {
+	if len(links) == 0 {
+		return parsePrimitiveUnion(text)
+	}
+	if len(links) == 1 {
+		return parseSingleLink(text, links[0])
+	}
+	return parseMultipleLinks(links)
+}
+
+func parsePrimitiveUnion(text string) []ir.TypeRef {
+	var types []ir.TypeRef
+	parts := strings.Split(text, " or ")
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			types = append(types, ir.TypeRef{Type: normalizeTypeName(p)})
 		}
 	}
+	return types
+}
 
-	return ir.TypeExpr{Types: types, Array: arrayDepth}
+func parseSingleLink(text string, link ir.TypeRef) []ir.TypeRef {
+	remaining := text
+	if idx := strings.Index(remaining, link.Type); idx >= 0 {
+		remaining = remaining[idx+len(link.Type):]
+	}
+	if strings.HasPrefix(remaining, " or ") {
+		// e.g. "InputFile or String"
+		rest := strings.TrimSpace(strings.TrimPrefix(remaining, " or "))
+		return []ir.TypeRef{link, {Type: normalizeTypeName(rest)}}
+	}
+	return []ir.TypeRef{{Type: normalizeTypeName(link.Type), Ref: link.Ref}}
+}
+
+func parseMultipleLinks(links []ir.TypeRef) []ir.TypeRef {
+	types := make([]ir.TypeRef, 0, len(links))
+	for _, l := range links {
+		types = append(types, ir.TypeRef{
+			Type: normalizeTypeName(l.Type),
+			Ref:  l.Ref,
+		})
+	}
+	return types
 }
 
 // parseReturnType extracts the return TypeExpr from method description nodes.
@@ -567,7 +579,7 @@ func countArrayPrefix(text, typeName string) int {
 // collectTypeLinks finds all <a> elements with PascalCase text and internal refs.
 func collectTypeLinks(n *html.Node, result *[]ir.TypeRef) {
 	if n.Type == html.ElementNode && n.DataAtom == atom.A {
-		href := getAttr(n, "href")
+		href := getHref(n)
 		text := extractText(n)
 		if strings.HasPrefix(href, "#") && isTypeName(text) {
 			*result = append(*result, ir.TypeRef{
@@ -614,7 +626,7 @@ func isSubtypesList(ul *html.Node) ([]string, bool) {
 		if !isTypeName(text) {
 			return nil, false
 		}
-		href := getAttr(a, "href")
+		href := getHref(a)
 		if !strings.HasPrefix(href, "#") {
 			return nil, false
 		}
@@ -631,11 +643,12 @@ func findSingleLink(n *html.Node) *html.Node {
 	var links []*html.Node
 	var hasOtherContent bool
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		if c.Type == html.ElementNode && c.DataAtom == atom.A {
+		switch {
+		case c.Type == html.ElementNode && c.DataAtom == atom.A:
 			links = append(links, c)
-		} else if c.Type == html.TextNode && strings.TrimSpace(c.Data) != "" {
+		case c.Type == html.TextNode && strings.TrimSpace(c.Data) != "":
 			hasOtherContent = true
-		} else if c.Type == html.ElementNode {
+		case c.Type == html.ElementNode:
 			hasOtherContent = true
 		}
 	}
@@ -678,15 +691,18 @@ func extractConst(td *html.Node) string {
 	// Pattern B: must be <em>value</em>
 	// Check that <em> is preceded by text ending with "must be "
 	for c := td.FirstChild; c != nil; c = c.NextSibling {
-		if c.Type == html.ElementNode && c.DataAtom == atom.Em {
-			if prev := c.PrevSibling; prev != nil && prev.Type == html.TextNode {
-				if strings.HasSuffix(strings.TrimRight(prev.Data, " "), "must be") {
-					val := strings.TrimSpace(extractText(c))
-					if val != "" {
-						return val
-					}
-				}
-			}
+		if c.Type != html.ElementNode || c.DataAtom != atom.Em {
+			continue
+		}
+		prev := c.PrevSibling
+		if prev == nil || prev.Type != html.TextNode {
+			continue
+		}
+		if !strings.HasSuffix(strings.TrimRight(prev.Data, " "), "must be") {
+			continue
+		}
+		if val := strings.TrimSpace(extractText(c)); val != "" {
+			return val
 		}
 	}
 
@@ -739,7 +755,7 @@ func collectEmValues(n *html.Node, result *[]string) {
 // collectLinks recursively collects <a> elements with internal refs from a node.
 func collectLinks(n *html.Node, result *[]ir.TypeRef) {
 	if n.Type == html.ElementNode && n.DataAtom == atom.A {
-		href := getAttr(n, "href")
+		href := getHref(n)
 		text := strings.TrimSpace(extractText(n))
 		if strings.HasPrefix(href, "#") && text != "" {
 			*result = append(*result, ir.TypeRef{
@@ -793,10 +809,10 @@ func collectChildren(n *html.Node, a atom.Atom) []*html.Node {
 	return result
 }
 
-// getAttr returns the value of the named attribute.
-func getAttr(n *html.Node, name string) string {
+// getHref returns the value of the href attribute.
+func getHref(n *html.Node) string {
 	for _, attr := range n.Attr {
-		if attr.Key == name {
+		if attr.Key == "href" {
 			return attr.Val
 		}
 	}

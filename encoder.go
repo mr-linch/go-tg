@@ -35,7 +35,7 @@ func newURLEncodedEncoder(dst io.Writer) *urlEncodedEncoder {
 	return &urlEncodedEncoder{dst: dst}
 }
 
-func (encoder *urlEncodedEncoder) WriteString(k string, v string) error {
+func (encoder *urlEncodedEncoder) WriteString(k, v string) error {
 	buf := strings.Builder{}
 
 	if encoder.pairs > 0 {
@@ -81,7 +81,7 @@ func newMultipartEncoder(writer io.Writer) *multipartEncoder {
 }
 
 // AddString encodes string value
-func (enc *multipartEncoder) WriteString(k string, v string) error {
+func (enc *multipartEncoder) WriteString(k, v string) error {
 	return enc.w.WriteField(k, v)
 }
 

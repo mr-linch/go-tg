@@ -43,17 +43,17 @@ func (msg *MessageUpdate) AnswerVideoNote(videoNote tg.FileArg) *tg.SendVideoNot
 }
 
 // AnswerLocation calls sendLocation with pre-defined chatID to incoming message chat.
-func (msg *MessageUpdate) AnswerLocation(latitude float64, longitude float64) *tg.SendLocationCall {
+func (msg *MessageUpdate) AnswerLocation(latitude, longitude float64) *tg.SendLocationCall {
 	return msg.Client.SendLocation(msg.Chat, latitude, longitude)
 }
 
 // AnswerVenue calls sendVenue with pre-defined chatID to incoming message chat.
-func (msg *MessageUpdate) AnswerVenue(latitude float64, longitude float64, title string, address string) *tg.SendVenueCall {
+func (msg *MessageUpdate) AnswerVenue(latitude, longitude float64, title, address string) *tg.SendVenueCall {
 	return msg.Client.SendVenue(msg.Chat, latitude, longitude, title, address)
 }
 
 // AnswerContact calls sendContact with pre-defined chatID to incoming message chat.
-func (msg *MessageUpdate) AnswerContact(phoneNumber string, firstName string) *tg.SendContactCall {
+func (msg *MessageUpdate) AnswerContact(phoneNumber, firstName string) *tg.SendContactCall {
 	return msg.Client.SendContact(msg.Chat, phoneNumber, firstName)
 }
 

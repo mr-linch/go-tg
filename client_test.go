@@ -2,7 +2,6 @@ package tg
 
 import (
 	"context"
-	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewClient(t *testing.T) {
@@ -22,7 +22,7 @@ func TestNewClient(t *testing.T) {
 	)
 
 	assert.Equal(t, "http://example.com", client.server)
-	assert.Equal(t, client.callURL, "%s/bot%s/test/%s")
+	assert.Equal(t, "%s/bot%s/test/%s", client.callURL)
 }
 
 func TestClient_Download(t *testing.T) {
@@ -39,11 +39,11 @@ func TestClient_Download(t *testing.T) {
 		ctx := context.Background()
 
 		body, err := client.Download(ctx, "photos/file_1.jpg")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		defer body.Close()
 
 		data, err := io.ReadAll(body)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "test", string(data))
 
 		defer ts.Close()
@@ -62,10 +62,11 @@ func TestClient_Download(t *testing.T) {
 		ctx := context.Background()
 
 		body, err := client.Download(ctx, "photos/file_1.jpg")
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, body)
 
-		assert.IsType(t, &Error{}, err)
+		var tgErr *Error
+		require.ErrorAs(t, err, &tgErr)
 
 		defer ts.Close()
 	})
@@ -88,12 +89,11 @@ func TestClient_Execute(t *testing.T) {
 
 		res, err := client.execute(ctx, NewRequest("getMe"))
 
-		if assert.NoError(t, err) {
-			assert.Equal(t,
-				json.RawMessage(`{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot","can_join_groups":true,"can_read_all_group_messages":false,"supports_inline_queries":false}`),
-				res.Result,
-			)
-		}
+		require.NoError(t, err)
+		assert.JSONEq(t,
+			`{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot","can_join_groups":true,"can_read_all_group_messages":false,"supports_inline_queries":false}`,
+			string(res.Result),
+		)
 	})
 
 	t.Run("Streaming", func(t *testing.T) {
@@ -119,12 +119,11 @@ func TestClient_Execute(t *testing.T) {
 				String("chat_id", "1234567"),
 		)
 
-		if assert.NoError(t, err) {
-			assert.Equal(t,
-				json.RawMessage(`{"message_id":4,"from":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot"},"chat":{"id":103980787,"first_name":"Sasha","username":"MrLinch","type":"private"},"date":1655488910,"document":{"file_name":"types.go","file_id":"BQACAgIAAxkDAAMEYqzBjtP0VieRu8CCjHeNxnEetlsAAiIbAALAuWFJgQyZP4JcwDkkBA","file_unique_id":"AgADIhsAAsC5YUk","file_size":30}}`),
-				res.Result,
-			)
-		}
+		require.NoError(t, err)
+		assert.JSONEq(t,
+			`{"message_id":4,"from":{"id":5556648742,"is_bot":true,"first_name":"go_tg_local_bot","username":"go_tg_local_bot"},"chat":{"id":103980787,"first_name":"Sasha","username":"MrLinch","type":"private"},"date":1655488910,"document":{"file_name":"types.go","file_id":"BQACAgIAAxkDAAMEYqzBjtP0VieRu8CCjHeNxnEetlsAAiIbAALAuWFJgQyZP4JcwDkkBA","file_unique_id":"AgADIhsAAsC5YUk","file_size":30}}`,
+			string(res.Result),
+		)
 	})
 
 	t.Run("StreamingError", func(t *testing.T) {
@@ -150,10 +149,9 @@ func TestClient_Execute(t *testing.T) {
 				String("chat_id", "1234567"),
 		)
 
-		if assert.NoError(t, err) {
-			assert.Equal(t, res.Description, "Bad Request: chat not found")
-			assert.Equal(t, res.StatusCode, http.StatusBadRequest)
-		}
+		require.NoError(t, err)
+		assert.Equal(t, "Bad Request: chat not found", res.Description)
+		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
 	})
 }
 
@@ -184,7 +182,7 @@ func TestClientInterceptors(t *testing.T) {
 
 		err := client.Do(ctx, NewRequest("getMe"), nil)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, 1, calls)
 	})
 }

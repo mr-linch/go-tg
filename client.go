@@ -301,7 +301,7 @@ func (client *Client) Do(ctx context.Context, req *Request, dst interface{}) err
 func (client *Client) Download(ctx context.Context, path string) (io.ReadCloser, error) {
 	url := client.buildDownloadURL(client.token, path)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}

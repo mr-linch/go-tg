@@ -275,7 +275,7 @@ func buildJSONTag(fieldName string, optional bool) string {
 	if optional {
 		return fmt.Sprintf("`json:\"%s,omitempty\"`", fieldName)
 	}
-	return fmt.Sprintf("`json:\"%s\"`", fieldName)
+	return fmt.Sprintf("`json:%q`", fieldName)
 }
 
 func formatTypeComment(name, desc string) string {

@@ -149,18 +149,19 @@ func getUpdateMessage(update *Update) *tg.Message {
 	)
 }
 
-func getMessageEntities(message *tg.Message) (entities []tg.MessageEntity) {
-	if len(message.Entities) > 0 {
-		entities = message.Entities
-	} else if len(message.CaptionEntities) > 0 {
-		entities = message.CaptionEntities
-	} else if message.Poll != nil {
-		entities = message.Poll.ExplanationEntities
-	} else if message.Game != nil {
-		entities = message.Game.TextEntities
+func getMessageEntities(message *tg.Message) []tg.MessageEntity {
+	switch {
+	case len(message.Entities) > 0:
+		return message.Entities
+	case len(message.CaptionEntities) > 0:
+		return message.CaptionEntities
+	case message.Poll != nil:
+		return message.Poll.ExplanationEntities
+	case message.Game != nil:
+		return message.Game.TextEntities
+	default:
+		return nil
 	}
-
-	return
 }
 
 // Allow checks if update is allowed by filter.

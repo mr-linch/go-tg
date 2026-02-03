@@ -116,9 +116,9 @@ func TestGenerate(t *testing.T) {
 
 	golden := "testdata/methods_gen.golden.go"
 	if *updateGolden {
-		err := os.MkdirAll("testdata", 0o755)
+		err := os.MkdirAll("testdata", 0o750)
 		require.NoError(t, err)
-		err = os.WriteFile(golden, buf.Bytes(), 0o644)
+		err = os.WriteFile(golden, buf.Bytes(), 0o600)
 		require.NoError(t, err)
 	}
 

@@ -109,7 +109,7 @@ func executeTemplate(name, tmplStr string, w io.Writer, data *TemplateData) erro
 	return err
 }
 
-func buildTemplateData(api *ir.API, pkg string, log *slog.Logger) (*TemplateData, error) {
+func buildTemplateData(api *ir.API, pkg string, _ *slog.Logger) (*TemplateData, error) {
 	// Find Update type.
 	var updateType *ir.Type
 	for i := range api.Types {
@@ -144,7 +144,7 @@ func buildTemplateData(api *ir.API, pkg string, log *slog.Logger) (*TemplateData
 	// Naming rule:
 	// - Multi-field types: use TYPE name (e.g., MessageHandler for Message type)
 	// - Single-field types: use FIELD name (e.g., ChatBoostHandler for chat_boost field)
-	var handlerTypes []GoHandlerType
+	handlerTypes := make([]GoHandlerType, 0, len(typeToFields))
 	typeToHandler := make(map[string]string) // type name -> handler base name
 
 	for typeName, fields := range typeToFields {
@@ -171,7 +171,7 @@ func buildTemplateData(api *ir.API, pkg string, log *slog.Logger) (*TemplateData
 	}
 
 	// Build router methods (one per Update field).
-	var routerMethods []GoRouterMethod
+	routerMethods := make([]GoRouterMethod, 0, len(updateType.Fields))
 	for _, f := range updateType.Fields {
 		if !f.Optional {
 			continue

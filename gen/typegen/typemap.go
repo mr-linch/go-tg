@@ -60,7 +60,7 @@ func CompileFieldTypeRules(rules []config.FieldTypeRule) (*CompiledFieldTypeRule
 }
 
 // Match evaluates rules in order and returns the first matching type and scalar flag.
-func (c *CompiledFieldTypeRules) Match(typeName string, f ir.Field) (goType string, scalar bool, ok bool) {
+func (c *CompiledFieldTypeRules) Match(typeName string, f ir.Field) (goType string, scalar, ok bool) {
 	if c == nil {
 		return "", false, false
 	}
@@ -130,7 +130,7 @@ func isScalar(goType string) bool {
 }
 
 // applyOptionalAndArray wraps the base type with array brackets and/or pointer.
-func applyOptionalAndArray(base string, arrayDepth int, optional bool, scalar bool) string {
+func applyOptionalAndArray(base string, arrayDepth int, optional, scalar bool) string {
 	if arrayDepth > 0 {
 		result := base
 		for range arrayDepth {

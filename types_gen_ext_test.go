@@ -128,7 +128,7 @@ func TestChatType_MarshalJSON(t *testing.T) {
 		{sample{ChatType(-1)}, `{"type":"unknown"}`},
 	} {
 		actual, err := json.Marshal(test.Sample)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, test.Want, string(actual))
 	}
@@ -138,25 +138,26 @@ func TestChatType_UnmarshalJSON(t *testing.T) {
 	type sample struct {
 		Type ChatType `json:"type"`
 	}
-	for _, test := range []struct {
-		Input  string
-		Sample sample
-		Want   ChatType
-		Err    bool
+	tests := []struct {
+		Input string
+		Want  ChatType
+		Err   bool
 	}{
-		{`{"type": "private"}`, sample{}, ChatTypePrivate, false},
-		{`{"type": "group"}`, sample{}, ChatTypeGroup, false},
-		{`{"type": "supergroup"}`, sample{}, ChatTypeSupergroup, false},
-		{`{"type": "channel"}`, sample{}, ChatTypeChannel, false},
-		{`{"type": "test"}`, sample{}, ChatType(-1), true},
-		{`{"type": "sender"}`, sample{}, ChatTypeSender, false},
-		{`{"type": {}}`, sample{}, ChatType(-1), true},
-	} {
-		if test.Err {
-			assert.Error(t, json.Unmarshal([]byte(test.Input), &test.Sample))
+		{`{"type": "private"}`, ChatTypePrivate, false},
+		{`{"type": "group"}`, ChatTypeGroup, false},
+		{`{"type": "supergroup"}`, ChatTypeSupergroup, false},
+		{`{"type": "channel"}`, ChatTypeChannel, false},
+		{`{"type": "test"}`, ChatType(-1), true},
+		{`{"type": "sender"}`, ChatTypeSender, false},
+		{`{"type": {}}`, ChatType(-1), true},
+	}
+	for _, tt := range tests {
+		var s sample
+		if tt.Err {
+			require.Error(t, json.Unmarshal([]byte(tt.Input), &s))
 		} else {
-			assert.NoError(t, json.Unmarshal([]byte(test.Input), &test.Sample))
-			assert.Equal(t, test.Want, test.Sample.Type)
+			require.NoError(t, json.Unmarshal([]byte(tt.Input), &s))
+			assert.Equal(t, tt.Want, s.Type)
 		}
 	}
 }
@@ -179,7 +180,7 @@ func TestInlineReplyMarkup(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, InlineKeyboardMarkup{
+	assert.Equal(t, InlineKeyboardMarkup{
 		InlineKeyboard: [][]InlineKeyboardButton{
 			{
 				{Text: "text", URL: "https://google.com"},
@@ -215,7 +216,7 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, &ReplyKeyboardMarkup{
+	assert.Equal(t, &ReplyKeyboardMarkup{
 		Keyboard: [][]KeyboardButton{
 			{
 				{Text: "text"},
@@ -239,7 +240,7 @@ func TestReplyKeyboardRemove(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, &ReplyKeyboardRemove{
+	assert.Equal(t, &ReplyKeyboardRemove{
 		RemoveKeyboard: true,
 		Selective:      true,
 	}, actual)
@@ -250,7 +251,7 @@ func TestForceReplay(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, &ForceReply{
+	assert.Equal(t, &ForceReply{
 		ForceReply:            true,
 		Selective:             true,
 		InputFieldPlaceholder: "test",
@@ -309,7 +310,7 @@ func TestButtonLayout_Add(t *testing.T) {
 			},
 		},
 	} {
-		assert.EqualValues(t, test.Want, test.Layout.Keyboard())
+		assert.Equal(t, test.Want, test.Layout.Keyboard())
 	}
 }
 
@@ -388,7 +389,7 @@ func TestButtonLayout_Insert(t *testing.T) {
 			},
 		},
 	} {
-		assert.EqualValues(t, test.Want, test.Layout.Keyboard())
+		assert.Equal(t, test.Want, test.Layout.Keyboard())
 	}
 }
 
@@ -434,14 +435,14 @@ func TestInlineQueryResultMarshalJSON(t *testing.T) {
 	} {
 		t.Run(test.Type, func(t *testing.T) {
 			body, err := json.Marshal(test.Result)
-			assert.NoError(t, err, "marshal json")
+			require.NoError(t, err, "marshal json")
 
 			result := struct {
 				Type string `json:"type"`
 			}{}
 
 			err = json.Unmarshal(body, &result)
-			assert.NoError(t, err, "unmarshal json")
+			require.NoError(t, err, "unmarshal json")
 
 			assert.Equal(t, test.Type, result.Type)
 		})
@@ -511,7 +512,7 @@ func TestInputMedia_MarshalJSON(t *testing.T) {
 		},
 	} {
 		v, err := json.Marshal(test.InputMedia)
-		assert.NoError(t, err, "marshal json")
+		require.NoError(t, err, "marshal json")
 		assert.Equal(t, test.Want, string(v))
 	}
 }
@@ -550,9 +551,9 @@ func TestFileArg_MarshalJSON(t *testing.T) {
 			v, err := json.Marshal(test.FileArg)
 
 			if test.Err {
-				assert.Error(t, err, "marshal json")
+				require.Error(t, err, "marshal json")
 			} else {
-				assert.NoError(t, err, "marshal json")
+				require.NoError(t, err, "marshal json")
 				assert.Equal(t, test.Want, string(v))
 			}
 		})
@@ -610,7 +611,7 @@ func TestBotCommandScope(t *testing.T) {
 		{NewBotCommandScopeChatMember(BotCommandScopeChatMember{}), `{"type":"chat_member","chat_id":0,"user_id":0}`},
 	} {
 		v, err := json.Marshal(test.Scope)
-		assert.NoError(t, err, "marshal json")
+		require.NoError(t, err, "marshal json")
 		assert.Equal(t, test.Want, string(v))
 	}
 }
@@ -625,7 +626,7 @@ func TestMenuButton(t *testing.T) {
 		{NewMenuButtonWebApp(MenuButtonWebApp{}), `{"type":"web_app","text":"","web_app":{"url":""}}`},
 	} {
 		v, err := json.Marshal(test.Button)
-		assert.NoError(t, err, "marshal json")
+		require.NoError(t, err, "marshal json")
 		assert.Equal(t, test.Want, string(v))
 	}
 }
@@ -880,9 +881,9 @@ func TestUpdateType_UnmarshalText(t *testing.T) {
 			err := typ.UnmarshalText([]byte(test.Text))
 
 			if test.Err {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, test.Want, typ)
 			}
 		})
@@ -893,12 +894,12 @@ func TestUpdateType_MarshalText(t *testing.T) {
 	v := UpdateTypeEditedMessage
 
 	b, err := v.MarshalText()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, []byte("edited_message"), b)
 
 	v = UpdateTypeUnknown
 	_, err = v.MarshalText()
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	output, err := json.Marshal(struct {
 		Type []UpdateType `json:"type"`
@@ -906,8 +907,8 @@ func TestUpdateType_MarshalText(t *testing.T) {
 		Type: []UpdateType{UpdateTypeCallbackQuery, UpdateTypeChannelPost},
 	})
 
-	assert.NoError(t, err)
-	assert.Equal(t, `{"type":["callback_query","channel_post"]}`, string(output))
+	require.NoError(t, err)
+	assert.JSONEq(t, `{"type":["callback_query","channel_post"]}`, string(output))
 }
 
 func TestUpdate_Type(t *testing.T) {
@@ -1071,7 +1072,7 @@ func TestMessageEntityType_MarshalText(t *testing.T) {
 		if test.Err {
 			assert.Error(t, err)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, test.Want, b)
 		}
 	}
@@ -1106,7 +1107,7 @@ func TestMessageEntityType_UnmarshalText(t *testing.T) {
 		var e MessageEntityType
 
 		err := e.UnmarshalText([]byte(test.Input))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, test.Want, e)
 	}
 }
@@ -1188,7 +1189,7 @@ func TestStickerType_MarshalText(t *testing.T) {
 		if test.Err {
 			assert.Error(t, err)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, test.Want, string(b))
 		}
 	}
@@ -1207,7 +1208,7 @@ func TestStickerType_UnmarshalText(t *testing.T) {
 		var e StickerType
 
 		err := e.UnmarshalText([]byte(test.Input))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, test.Want, e)
 	}
 }
@@ -1346,7 +1347,7 @@ func TestMaybeInaccessibleMessage(t *testing.T) {
 		assert.Equal(t, 2, m.MessageID())
 		require.NotNil(t, m.InaccessibleMessage)
 		assert.Equal(t, ChatID(1), m.InaccessibleMessage.Chat.ID)
-		assert.EqualValues(t, 2, m.InaccessibleMessage.MessageID)
+		assert.Equal(t, 2, m.InaccessibleMessage.MessageID)
 		assert.EqualValues(t, 0, m.InaccessibleMessage.Date)
 	})
 

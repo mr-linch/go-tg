@@ -94,12 +94,13 @@ func SnakeToPascal(s string) string {
 			continue
 		}
 		upper := strings.ToUpper(part)
-		if Initialisms[upper] {
+		switch {
+		case Initialisms[upper]:
 			sb.WriteString(upper)
-		} else if len(part) > 1 && strings.HasSuffix(part, "s") && Initialisms[strings.ToUpper(part[:len(part)-1])] {
+		case len(part) > 1 && strings.HasSuffix(part, "s") && Initialisms[strings.ToUpper(part[:len(part)-1])]:
 			// Plural of an initialism: "ids" → "IDs", "urls" → "URLs"
 			sb.WriteString(strings.ToUpper(part[:len(part)-1]) + "s")
-		} else {
+		default:
 			runes := []rune(part)
 			runes[0] = unicode.ToUpper(runes[0])
 			sb.WriteString(string(runes))

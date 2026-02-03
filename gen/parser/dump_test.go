@@ -39,7 +39,7 @@ func TestDumpYAML(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := os.WriteFile("testdata/api.yaml", out, 0o644); err != nil {
+	if err := os.WriteFile("testdata/api.yaml", out, 0o600); err != nil {
 		t.Fatal(err)
 	}
 	t.Logf("Wrote %d bytes to testdata/api.yaml", len(out))

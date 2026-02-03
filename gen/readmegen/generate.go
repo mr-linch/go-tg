@@ -50,15 +50,16 @@ func UpdateVersion(path string, api *ir.API) error {
 	)
 
 	var updated []byte
-	if badgeBlockPattern.Match(content) {
+	switch {
+	case badgeBlockPattern.Match(content):
 		// Replace existing badge block.
 		updated = badgeBlockPattern.ReplaceAll(content, []byte(badgeBlock))
-	} else if badgeLinePattern.Match(content) {
+	case badgeLinePattern.Match(content):
 		// Wrap legacy badge line with auto-generated markers.
 		updated = badgeLinePattern.ReplaceAll(content, []byte(badgeBlock))
-	} else {
+	default:
 		updated = content
 	}
 
-	return os.WriteFile(path, updated, 0o644)
+	return os.WriteFile(path, updated, 0o600)
 }

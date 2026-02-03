@@ -55,7 +55,7 @@ func TestReactionType_MarshalJSON(t *testing.T) {
 		b, err := json.Marshal(r)
 		require.NoError(t, err)
 
-		assert.Equal(t, `{"type":"emoji","emoji":"😀"}`, string(b))
+		assert.JSONEq(t, `{"type":"emoji","emoji":"😀"}`, string(b))
 	})
 
 	t.Run("CustomEmoji", func(t *testing.T) {
@@ -66,7 +66,7 @@ func TestReactionType_MarshalJSON(t *testing.T) {
 		b, err := json.Marshal(r)
 		require.NoError(t, err)
 
-		assert.Equal(t, `{"type":"custom_emoji","custom_emoji_id":"12345"}`, string(b))
+		assert.JSONEq(t, `{"type":"custom_emoji","custom_emoji_id":"12345"}`, string(b))
 	})
 
 	t.Run("Unknown", func(t *testing.T) {

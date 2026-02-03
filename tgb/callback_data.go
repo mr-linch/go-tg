@@ -52,9 +52,9 @@ func WithCallbackDataCodecIntBase(base int) CallbackDataCodecOption {
 
 // WithCallbackDataCodecFloatFmt sets a format for float fields in callback data.
 // Default is 'f'.
-func WithCallbackDataCodecFloatFmt(fmt byte) CallbackDataCodecOption {
+func WithCallbackDataCodecFloatFmt(format byte) CallbackDataCodecOption {
 	return func(p *CallbackDataCodec) {
-		p.floatFmt = fmt
+		p.floatFmt = format
 	}
 }
 
@@ -230,7 +230,7 @@ func (p *CallbackDataCodec) Decode(data string, dst any) error {
 	structType := structValue.Type()
 
 	var values []string
-	if len(data) > 0 {
+	if data != "" {
 		values = strings.Split(data, string(p.delimiter))
 	}
 

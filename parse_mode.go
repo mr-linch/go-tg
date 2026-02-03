@@ -188,7 +188,7 @@ func (pm parseMode) Spoiler(v ...string) string {
 }
 
 // Link
-func (pm parseMode) Link(title string, url string) string {
+func (pm parseMode) Link(title, url string) string {
 	return strings.NewReplacer(
 		"{title}", title,
 		"{url}", url,

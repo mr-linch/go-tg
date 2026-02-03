@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewInterceptorRetryFloodError(t *testing.T) {
@@ -22,7 +23,7 @@ func TestNewInterceptorRetryFloodError(t *testing.T) {
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
-		assert.NoError(t, err, "should no return error")
+		require.NoError(t, err, "should no return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 
@@ -38,7 +39,7 @@ func TestNewInterceptorRetryFloodError(t *testing.T) {
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
-		assert.Error(t, err, "should return error")
+		require.Error(t, err, "should return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 
@@ -65,7 +66,7 @@ func TestNewInterceptorRetryFloodError(t *testing.T) {
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
-		assert.Error(t, err, "should return error")
+		require.Error(t, err, "should return error")
 		assert.Equal(t, 3, calls, "should call invoker 3 times")
 		assert.Equal(t, 3, timeAfterCalls, "should call timeAfter 3 times")
 	})
@@ -93,7 +94,7 @@ func TestNewInterceptorRetryFloodError(t *testing.T) {
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
-		assert.Error(t, err, "should return error")
+		require.Error(t, err, "should return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 		assert.Equal(t, 0, timeAfterCalls, "should call timeAfter once")
 	})
@@ -116,7 +117,7 @@ func TestNewInterceptorRetryFloodError(t *testing.T) {
 
 		err := interceptor(ctx, &Request{}, nil, invoker)
 
-		assert.Error(t, err, "should return error")
+		require.Error(t, err, "should return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 }
@@ -134,7 +135,7 @@ func TestNewInterceptorRetryInternalServerError(t *testing.T) {
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
-		assert.NoError(t, err, "should no return error")
+		require.NoError(t, err, "should no return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 
@@ -150,7 +151,7 @@ func TestNewInterceptorRetryInternalServerError(t *testing.T) {
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
-		assert.Error(t, err, "should return error")
+		require.Error(t, err, "should return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 
@@ -178,7 +179,7 @@ func TestNewInterceptorRetryInternalServerError(t *testing.T) {
 
 		err := interceptor(context.Background(), &Request{}, nil, invoker)
 
-		assert.Error(t, err, "should return error")
+		require.Error(t, err, "should return error")
 		assert.Equal(t, 3, calls, "should call invoker 3 times")
 		assert.Equal(t, 3, timeAfterCalls, "should call timeAfter 3 times")
 	})
@@ -201,7 +202,7 @@ func TestNewInterceptorRetryInternalServerError(t *testing.T) {
 
 		err := interceptor(ctx, &Request{}, nil, invoker)
 
-		assert.Error(t, err, "should return error")
+		require.Error(t, err, "should return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 }
@@ -223,7 +224,7 @@ func TestNewInterceptorMethodFilter(t *testing.T) {
 			return nil
 		}))
 
-		assert.NoError(t, err, "should no return error")
+		require.NoError(t, err, "should no return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 
@@ -243,7 +244,7 @@ func TestNewInterceptorMethodFilter(t *testing.T) {
 			return nil
 		}))
 
-		assert.NoError(t, err, "should no return error")
+		require.NoError(t, err, "should no return error")
 		assert.Equal(t, 0, calls, "should call invoker once")
 	})
 }
@@ -265,7 +266,7 @@ func TestNewInterceptorDefaultParseMethod(t *testing.T) {
 
 		err := interceptor(context.Background(), req, dst, invoker)
 
-		assert.NoError(t, err, "should no return error")
+		require.NoError(t, err, "should no return error")
 		assert.Equal(t, 1, calls, "should call invoker once")
 	})
 }

@@ -75,7 +75,7 @@ func (store *StoreFile) Set(ctx context.Context, key string, value []byte) error
 func (store *StoreFile) ensureDirExists(filePath string) error {
 	parent := filepath.Dir(filePath)
 
-	return os.MkdirAll(parent, os.ModePerm)
+	return os.MkdirAll(parent, 0o750)
 }
 
 // Get retrieves the session data.

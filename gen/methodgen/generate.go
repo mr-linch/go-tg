@@ -179,12 +179,12 @@ func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamT
 	return data
 }
 
-func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, usedParamOverrides, usedReturnOverrides map[string]bool) GoMethod {
+func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes, usedParamOverrides, usedReturnOverrides map[string]bool) GoMethod {
 	goName := naming.MethodName(m.Name)
 	callTypeName := goName + "Call"
 
 	// Resolve params.
-	var params []GoParam
+	params := make([]GoParam, 0, len(m.Params))
 	for _, p := range m.Params {
 		goParam := resolveParam(m.Name, p, cfg, rules, stringerTypes, usedParamOverrides)
 		params = append(params, goParam)
@@ -290,7 +290,7 @@ func resolveReturnType(m ir.Method, overrides map[string]string, usedOverrides m
 	return "Call[" + returnType + "]", false
 }
 
-func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, usedOverrides map[string]bool) GoParam {
+func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes, usedOverrides map[string]bool) GoParam {
 	// Resolve names.
 	goName := naming.SnakeToPascal(p.Name)
 	goArgName := naming.EscapeReserved(naming.SnakeToCamel(p.Name))

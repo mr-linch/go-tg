@@ -9,11 +9,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStoreFile_New(t *testing.T) {
 	dir, err := os.MkdirTemp("", "session-store-file-test")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
 	t.Run("Default", func(t *testing.T) {
@@ -40,7 +41,7 @@ func TestStoreFile_New(t *testing.T) {
 
 func TestStoreFile_Set(t *testing.T) {
 	dir, err := os.MkdirTemp("", "session-store-file-test")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
 	store := NewStoreFile(dir, WithStoreFileTransform(func(key string) []string {
@@ -48,20 +49,20 @@ func TestStoreFile_Set(t *testing.T) {
 	}))
 
 	err = store.Set(context.Background(), "k_e_y", []byte("value"))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	f, err := os.Open(filepath.Join(dir, "k", "e", "y.session"))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer f.Close()
 
 	b, err := io.ReadAll(f)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, []byte("value"), b)
 }
 
 func TestFileStore_Generic(t *testing.T) {
 	dir, err := os.MkdirTemp("", "session-store-file-test")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
 	genericStoreTest(t, NewStoreFile(dir))

@@ -307,7 +307,7 @@ func TestGenerate(t *testing.T) {
 	got := buf.String()
 
 	if *updateGolden {
-		err = os.WriteFile("testdata/types_gen.golden.go", buf.Bytes(), 0o644)
+		err = os.WriteFile("testdata/types_gen.golden.go", buf.Bytes(), 0o600)
 		require.NoError(t, err)
 		t.Log("golden file updated")
 		return

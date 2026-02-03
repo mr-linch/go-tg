@@ -24,3 +24,4 @@ gen/go-tg-gen
 coverage.out
 coverage.html
 coverage.txt
+.zed

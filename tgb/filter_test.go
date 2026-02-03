@@ -10,6 +10,7 @@ import (
 
 	tg "github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func testWithClientLocal(
@@ -46,15 +47,15 @@ func TestAny(t *testing.T) {
 	)
 
 	allow, err := Any(filterYes, filterNo).Allow(context.Background(), &Update{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, allow)
 
 	allow, err = Any(filterNo, filterNo).Allow(context.Background(), &Update{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.False(t, allow)
 
 	allow, err = Any(filterErr, filterYes).Allow(context.Background(), &Update{})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.False(t, allow)
 }
 
@@ -72,15 +73,15 @@ func TestAll(t *testing.T) {
 	)
 
 	allow, err := All(filterYes, filterYes).Allow(context.Background(), &Update{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, allow)
 
 	allow, err = All(filterYes, filterNo).Allow(context.Background(), &Update{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.False(t, allow)
 
 	allow, err = All(filterYes, filterErr).Allow(context.Background(), &Update{})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.False(t, allow)
 }
 
@@ -337,7 +338,7 @@ func TestRegexp(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			allow, err := test.Filter.Allow(context.Background(), &Update{Update: test.Update})
 			assert.Equal(t, test.Allow, allow)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		})
 	}
 }
@@ -465,7 +466,7 @@ func TestChatType(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			allow, err := test.Filter.Allow(context.Background(), &Update{Update: test.Update})
 			assert.Equal(t, test.Allow, allow)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		})
 	}
 }
@@ -513,7 +514,7 @@ func TestMessageType(t *testing.T) {
 
 			allow, err := filter.Allow(ctx, test.Update)
 			assert.Equal(t, test.Want, allow)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		})
 	}
 }
@@ -668,7 +669,7 @@ func TestTextFuncFilter(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			allow, err := test.Filter.Allow(context.Background(), test.Update)
 			assert.Equal(t, test.Allow, allow)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		})
 	}
 }
@@ -809,7 +810,7 @@ func TestMessageEntity(t *testing.T) {
 			allow, err := test.Filter.Allow(context.Background(), test.Update)
 
 			assert.Equal(t, test.Allow, allow)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		})
 	}
 }
@@ -825,13 +826,13 @@ func TestNot(t *testing.T) {
 
 	allow, err := Not(trueFilter).Allow(context.Background(), &Update{})
 	assert.False(t, allow)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	falseFilter := constFilter(false, nil)
 
 	allow, err = Not(falseFilter).Allow(context.Background(), &Update{})
 	assert.True(t, allow)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	errFilter := constFilter(true, errors.New("test"))
 	allow, err = Not(errFilter).Allow(context.Background(), &Update{})

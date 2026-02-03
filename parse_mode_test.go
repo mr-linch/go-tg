@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParseModeHTML(t *testing.T) {
 	assert.Equal(t, "HTML", HTML.String())
 	marshaled, err := HTML.MarshalText()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "HTML", string(marshaled))
 
 	assert.Equal(t, "Hello World", HTML.Line("Hello", "World"))

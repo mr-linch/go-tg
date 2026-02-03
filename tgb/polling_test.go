@@ -12,6 +12,7 @@ import (
 	tg "github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPoller(t *testing.T) {
@@ -67,7 +68,7 @@ func TestPoller(t *testing.T) {
 			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 		).Run(ctx)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("Custom", func(t *testing.T) {
@@ -125,7 +126,7 @@ func TestPoller(t *testing.T) {
 			WithPollerLimit(50),
 			WithPollerTimeout(time.Second*2),
 		).Run(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 

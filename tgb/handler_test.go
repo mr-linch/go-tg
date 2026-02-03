@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHandlerFunc_Handle(t *testing.T) {
@@ -15,6 +16,6 @@ func TestHandlerFunc_Handle(t *testing.T) {
 		return nil
 	}).Handle
 
-	assert.NoError(t, handler(context.Background(), &Update{}))
+	require.NoError(t, handler(context.Background(), &Update{}))
 	assert.True(t, called)
 }

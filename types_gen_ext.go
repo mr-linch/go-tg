@@ -27,7 +27,7 @@ func (t UnixTime) IsZero() bool {
 
 type ChatID int64
 
-var _ PeerID = (ChatID)(0)
+var _ PeerID = ChatID(0)
 
 func (id ChatID) PeerID() string {
 	return strconv.FormatInt(int64(id), 10)
@@ -36,7 +36,7 @@ func (id ChatID) PeerID() string {
 // UserID it's unique identifier for Telegram user or bot.
 type UserID int64
 
-var _ PeerID = (UserID)(0)
+var _ PeerID = UserID(0)
 
 func (id UserID) PeerID() string {
 	return strconv.FormatInt(int64(id), 10)
@@ -125,15 +125,16 @@ func (arg *FileArg) isRef() bool {
 
 // getRef returns text representation of reference
 func (arg *FileArg) getRef() string {
-	if arg.FileID != "" {
+	switch {
+	case arg.FileID != "":
 		return string(arg.FileID)
-	} else if arg.URL != "" {
+	case arg.URL != "":
 		return arg.URL
-	} else if arg.addr != "" {
+	case arg.addr != "":
 		return arg.addr
+	default:
+		return ""
 	}
-
-	return ""
 }
 
 //go:generate go run github.com/mr-linch/go-tg-gen@latest -types-output types_gen.go
@@ -172,7 +173,7 @@ func (markup InlineKeyboardMarkup) Ptr() *InlineKeyboardMarkup {
 
 // NewInlineButtonURL create inline button
 // with http(s):// or tg:// URL to be opened when the button is pressed.
-func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
+func NewInlineKeyboardButtonURL(text, url string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text: text,
 		URL:  url,
@@ -181,7 +182,7 @@ func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
 
 // NewInlineKeyboardButtonCallback creates a new InlineKeyboardButton with specified callback data.
 // Query should have length 1-64 bytes.
-func NewInlineKeyboardButtonCallback(text string, query string) InlineKeyboardButton {
+func NewInlineKeyboardButtonCallback(text, query string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:         text,
 		CallbackData: query,
@@ -213,7 +214,7 @@ func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginURL) InlineKeybo
 //	will prompt the user to select one of their chats,
 //
 // open that chat and insert the bot's username and the specified inline query in the input field.
-func NewInlineKeyboardButtonSwitchInlineQuery(text string, query string) InlineKeyboardButton {
+func NewInlineKeyboardButtonSwitchInlineQuery(text, query string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:              text,
 		SwitchInlineQuery: query,
@@ -222,7 +223,7 @@ func NewInlineKeyboardButtonSwitchInlineQuery(text string, query string) InlineK
 
 // NewInlineKeyboardButtonSwitchInlineQueryCurrentChat represents button that
 // will insert the bot's username and the specified inline query in the current chat's input field
-func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text string, query string) InlineKeyboardButton {
+func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text, query string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:                         text,
 		SwitchInlineQueryCurrentChat: query,
@@ -516,6 +517,7 @@ func (u *InputMedia) getMedia() (media *FileArg, thumb *InputFile) {
 }
 
 // MenuButtonOneOf is an alias for MenuButton for backward compatibility.
+//
 // Deprecated: Use MenuButton directly.
 type MenuButtonOneOf = MenuButton
 

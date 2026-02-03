@@ -10,6 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/mr-linch/go-tg/gen/config"
+	"github.com/mr-linch/go-tg/gen/ir"
 	"github.com/mr-linch/go-tg/gen/methodgen"
 	"github.com/mr-linch/go-tg/gen/parser"
 	"github.com/mr-linch/go-tg/gen/readmegen"
@@ -18,6 +19,13 @@ import (
 )
 
 func main() {
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	var (
 		configPath    = flag.String("config", "config.yaml", "path to config file")
 		pkg           = flag.String("pkg", "tg", "Go package name for generated code")
@@ -38,125 +46,139 @@ func main() {
 	log := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: level}))
 
 	if *input == "" {
-		fmt.Fprintln(os.Stderr, "error: -input flag is required")
 		flag.Usage()
-		os.Exit(1)
+		return fmt.Errorf("-input flag is required")
 	}
 
 	cfg, err := config.LoadFile(*configPath)
 	if err != nil {
-		log.Error("load config", "error", err)
-		os.Exit(1)
+		return fmt.Errorf("load config: %w", err)
 	}
 
-	f, err := os.Open(*input)
+	api, err := parseAPI(*input, cfg)
 	if err != nil {
-		log.Error("open input", "error", err, "path", *input)
-		os.Exit(1)
+		return err
+	}
+
+	log.Info("parsed API", "types", len(api.Types), "methods", len(api.Methods), "enums", len(api.Enums))
+
+	if *specOutput != "" {
+		if err := writeSpec(*specOutput, api); err != nil {
+			return err
+		}
+		log.Info("spec written", "output", *specOutput)
+	}
+
+	if err := generateTypes(*typesOutput, api, cfg, log, *pkg); err != nil {
+		return err
+	}
+	log.Info("types generated", "output", *typesOutput)
+
+	if *methodsOutput != "" {
+		if err := generateMethods(*methodsOutput, api, cfg, log, *pkg); err != nil {
+			return err
+		}
+		log.Info("methods generated", "output", *methodsOutput)
+	}
+
+	if *tgbOutput != "" {
+		if err := generateTgb(*tgbOutput, api, log); err != nil {
+			return err
+		}
+		log.Info("tgb generated", "output", *tgbOutput)
+	}
+
+	if *readmeOutput != "" {
+		if err := readmegen.UpdateVersion(*readmeOutput, api); err != nil {
+			return fmt.Errorf("update readme: %w", err)
+		}
+		log.Info("readme updated", "output", *readmeOutput, "version", api.Version)
+	}
+
+	return nil
+}
+
+func parseAPI(input string, cfg *config.Config) (*ir.API, error) {
+	f, err := os.Open(input)
+	if err != nil {
+		return nil, fmt.Errorf("open input %s: %w", input, err)
 	}
 	defer f.Close()
 
 	api, err := parser.Parse(f)
 	if err != nil {
-		log.Error("parse API", "error", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("parse API: %w", err)
 	}
 
-	// Apply enum definitions from config.
 	if err := cfg.ApplyEnums(api); err != nil {
-		log.Error("apply enums", "error", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("apply enums: %w", err)
 	}
 
-	log.Info("parsed API", "types", len(api.Types), "methods", len(api.Methods), "enums", len(api.Enums))
+	return api, nil
+}
 
-	// Write parsed spec to YAML if requested.
-	if *specOutput != "" {
-		data, err := yaml.Marshal(api)
-		if err != nil {
-			log.Error("marshal spec", "error", err)
-			os.Exit(1)
-		}
-		if err := os.WriteFile(*specOutput, data, 0o644); err != nil {
-			log.Error("write spec", "error", err, "path", *specOutput)
-			os.Exit(1)
-		}
-		log.Info("spec written", "output", *specOutput)
-	}
-
-	// Generate types.
-	out, err := os.Create(*typesOutput)
+func writeSpec(path string, api *ir.API) error {
+	data, err := yaml.Marshal(api)
 	if err != nil {
-		log.Error("create output", "error", err, "path", *typesOutput)
-		os.Exit(1)
+		return fmt.Errorf("marshal spec: %w", err)
+	}
+	if err := os.WriteFile(path, data, 0o600); err != nil {
+		return fmt.Errorf("write spec to %s: %w", path, err)
+	}
+	return nil
+}
+
+func generateTypes(output string, api *ir.API, cfg *config.Config, log *slog.Logger, pkg string) error {
+	out, err := os.Create(output)
+	if err != nil {
+		return fmt.Errorf("create types output %s: %w", output, err)
 	}
 	defer out.Close()
 
-	if err := typegen.Generate(api, out, &cfg.TypeGen, log, typegen.Options{Package: *pkg}); err != nil {
-		log.Error("generate types", "error", err)
-		os.Exit(1)
+	if err := typegen.Generate(api, out, &cfg.TypeGen, log, typegen.Options{Package: pkg}); err != nil {
+		return fmt.Errorf("generate types: %w", err)
 	}
+	return nil
+}
 
-	log.Info("types generated", "output", *typesOutput)
-
-	// Generate methods if output path specified.
-	if *methodsOutput != "" {
-		methodsOut, err := os.Create(*methodsOutput)
-		if err != nil {
-			log.Error("create methods output", "error", err, "path", *methodsOutput)
-			os.Exit(1)
-		}
-		defer methodsOut.Close()
-
-		if err := methodgen.Generate(api, methodsOut, &cfg.MethodGen, log, methodgen.Options{Package: *pkg}); err != nil {
-			log.Error("generate methods", "error", err)
-			os.Exit(1)
-		}
-
-		log.Info("methods generated", "output", *methodsOutput)
+func generateMethods(output string, api *ir.API, cfg *config.Config, log *slog.Logger, pkg string) error {
+	out, err := os.Create(output)
+	if err != nil {
+		return fmt.Errorf("create methods output %s: %w", output, err)
 	}
+	defer out.Close()
 
-	// Generate tgb infrastructure if output path specified.
-	if *tgbOutput != "" {
-		routerPath := filepath.Join(*tgbOutput, "router_gen.go")
-		handlerPath := filepath.Join(*tgbOutput, "handler_gen.go")
-		updatePath := filepath.Join(*tgbOutput, "update_gen.go")
-
-		routerOut, err := os.Create(routerPath)
-		if err != nil {
-			log.Error("create router output", "error", err, "path", routerPath)
-			os.Exit(1)
-		}
-		defer routerOut.Close()
-
-		handlerOut, err := os.Create(handlerPath)
-		if err != nil {
-			log.Error("create handler output", "error", err, "path", handlerPath)
-			os.Exit(1)
-		}
-		defer handlerOut.Close()
-
-		updateOut, err := os.Create(updatePath)
-		if err != nil {
-			log.Error("create update output", "error", err, "path", updatePath)
-			os.Exit(1)
-		}
-		defer updateOut.Close()
-
-		if err := routergen.Generate(api, routerOut, handlerOut, updateOut, log, routergen.Options{Package: "tgb"}); err != nil {
-			log.Error("generate tgb", "error", err)
-			os.Exit(1)
-		}
-
-		log.Info("tgb generated", "output", *tgbOutput)
+	if err := methodgen.Generate(api, out, &cfg.MethodGen, log, methodgen.Options{Package: pkg}); err != nil {
+		return fmt.Errorf("generate methods: %w", err)
 	}
+	return nil
+}
 
-	// Update README.md version badge if path specified.
-	if *readmeOutput != "" {
-		if err := readmegen.UpdateVersion(*readmeOutput, api); err != nil {
-			log.Error("update readme", "error", err, "path", *readmeOutput)
-			os.Exit(1)
-		}
-		log.Info("readme updated", "output", *readmeOutput, "version", api.Version)
+func generateTgb(outputDir string, api *ir.API, log *slog.Logger) error {
+	routerPath := filepath.Join(outputDir, "router_gen.go")
+	handlerPath := filepath.Join(outputDir, "handler_gen.go")
+	updatePath := filepath.Join(outputDir, "update_gen.go")
+
+	routerOut, err := os.Create(routerPath)
+	if err != nil {
+		return fmt.Errorf("create router output %s: %w", routerPath, err)
 	}
+	defer routerOut.Close()
+
+	handlerOut, err := os.Create(handlerPath)
+	if err != nil {
+		return fmt.Errorf("create handler output %s: %w", handlerPath, err)
+	}
+	defer handlerOut.Close()
+
+	updateOut, err := os.Create(updatePath)
+	if err != nil {
+		return fmt.Errorf("create update output %s: %w", updatePath, err)
+	}
+	defer updateOut.Close()
+
+	if err := routergen.Generate(api, routerOut, handlerOut, updateOut, log, routergen.Options{Package: "tgb"}); err != nil {
+		return fmt.Errorf("generate tgb: %w", err)
+	}
+	return nil
 }

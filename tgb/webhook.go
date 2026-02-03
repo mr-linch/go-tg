@@ -160,40 +160,54 @@ func (webhook *Webhook) Setup(ctx context.Context) (err error) {
 		return fmt.Errorf("get webhook info: %w", err)
 	}
 
-	if info.URL != webhook.url ||
-		info.MaxConnections != webhook.maxConnections ||
-		(len(info.AllowedUpdates) > 0 && !slices.Equal(info.AllowedUpdates, webhook.allowedUpdates)) ||
-		(webhook.ip != "" && info.IPAddress != webhook.ip) ||
-		(info.PendingUpdateCount > 0 && webhook.dropPendingUpdates) {
-
-		webhook.log("current webhook config is outdated, updating...")
-
-		setWebhookCall := webhook.client.SetWebhook(webhook.url)
-
-		if webhook.maxConnections > 0 {
-			setWebhookCall = setWebhookCall.MaxConnections(webhook.maxConnections)
-		}
-
-		if webhook.ip != "" {
-			setWebhookCall = setWebhookCall.IPAddress(webhook.ip)
-		}
-
-		if webhook.securityToken != "" {
-			setWebhookCall = setWebhookCall.SecretToken(webhook.securityToken)
-		}
-
-		if webhook.dropPendingUpdates {
-			setWebhookCall = setWebhookCall.DropPendingUpdates(true)
-		}
-
-		if webhook.allowedUpdates != nil {
-			setWebhookCall = setWebhookCall.AllowedUpdates(webhook.allowedUpdates)
-		}
-
-		return setWebhookCall.DoVoid(ctx)
+	if !webhook.isNeedsUpdate(info) {
+		return nil
 	}
 
-	return nil
+	webhook.log("current webhook config is outdated, updating...")
+
+	setWebhookCall := webhook.client.SetWebhook(webhook.url)
+
+	if webhook.maxConnections > 0 {
+		setWebhookCall = setWebhookCall.MaxConnections(webhook.maxConnections)
+	}
+
+	if webhook.ip != "" {
+		setWebhookCall = setWebhookCall.IPAddress(webhook.ip)
+	}
+
+	if webhook.securityToken != "" {
+		setWebhookCall = setWebhookCall.SecretToken(webhook.securityToken)
+	}
+
+	if webhook.dropPendingUpdates {
+		setWebhookCall = setWebhookCall.DropPendingUpdates(true)
+	}
+
+	if webhook.allowedUpdates != nil {
+		setWebhookCall = setWebhookCall.AllowedUpdates(webhook.allowedUpdates)
+	}
+
+	return setWebhookCall.DoVoid(ctx)
+}
+
+func (webhook *Webhook) isNeedsUpdate(info tg.WebhookInfo) bool {
+	if info.URL != webhook.url {
+		return true
+	}
+	if info.MaxConnections != webhook.maxConnections {
+		return true
+	}
+	if len(info.AllowedUpdates) > 0 && !slices.Equal(info.AllowedUpdates, webhook.allowedUpdates) {
+		return true
+	}
+	if webhook.ip != "" && info.IPAddress != webhook.ip {
+		return true
+	}
+	if info.PendingUpdateCount > 0 && webhook.dropPendingUpdates {
+		return true
+	}
+	return false
 }
 
 func (webhook *Webhook) isAllowedIP(ip netip.Addr) bool {
@@ -292,6 +306,7 @@ func (webhook *Webhook) ServeRequest(ctx context.Context, r *WebhookRequest) *We
 
 	done := make(chan struct{})
 
+	//nolint:contextcheck // handler runs independently from HTTP request lifecycle
 	go func() {
 		handlerCtx, handlerCtxClose := context.WithCancel(context.Background())
 		defer handlerCtxClose()
@@ -370,13 +385,14 @@ func (webhook *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (webhook *Webhook) Run(ctx context.Context, listen string) error {
 	if !webhook.isSetup {
 		if err := webhook.Setup(ctx); err != nil {
-			return fmt.Errorf("setup webhook: %v", err)
+			return fmt.Errorf("setup webhook: %w", err)
 		}
 	}
 
 	server := &http.Server{
-		Addr:    listen,
-		Handler: webhook,
+		Addr:              listen,
+		Handler:           webhook,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
 	go func() {
@@ -384,9 +400,10 @@ func (webhook *Webhook) Run(ctx context.Context, listen string) error {
 
 		webhook.log("shutdown server...")
 
-		closeCtx, close := context.WithTimeout(context.Background(), 10*time.Second)
-		defer close()
+		closeCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
+		//nolint:contextcheck // parent context is cancelled, need fresh context for graceful shutdown
 		if err := server.Shutdown(closeCtx); err != nil {
 			webhook.log("server shutdown error: %v", err)
 		}
@@ -395,7 +412,7 @@ func (webhook *Webhook) Run(ctx context.Context, listen string) error {
 	webhook.log("starting webhook server on %s", listen)
 
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
-		return fmt.Errorf("server error: %v", err)
+		return fmt.Errorf("server error: %w", err)
 	}
 
 	return nil

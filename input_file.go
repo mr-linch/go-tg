@@ -100,8 +100,8 @@ func NewInputFileLocal(path string) (InputFile, error) {
 //	  return err
 //	}
 //	defer file.Close()
-func NewInputFileFS(fs fs.FS, path string) (InputFile, error) {
-	file, err := fs.Open(path)
+func NewInputFileFS(fsys fs.FS, path string) (InputFile, error) {
+	file, err := fsys.Open(path)
 	if err != nil {
 		return InputFile{}, fmt.Errorf("open file: %w", err)
 	}
