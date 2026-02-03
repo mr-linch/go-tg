@@ -7,11 +7,6 @@ formatters:
   enable:
     - gofumpt
 
-  exclusions:
-    paths:
-      - _examples
-      - ".*_gen\\.go$"
-
 linters:
   enable:
     - misspell
@@ -25,8 +20,3 @@ linters:
         - (net/http.ResponseWriter).Write
         - io.Copy
         - os.RemoveAll
-
-  exclusions:
-    paths:
-      - _examples
-      - ".*_gen\\.go$"

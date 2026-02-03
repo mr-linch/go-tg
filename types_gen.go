@@ -7,8 +7,8 @@ package tg
 // Spec hash: 64aa94655be4
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 )
 
 // Update this [object](https://core.telegram.org/bots/api#available-types) represents an incoming update. At most one of the optional parameters can be present in any given update.
@@ -1497,7 +1497,7 @@ type ForumTopicCreated struct {
 }
 
 // ForumTopicClosed this object represents a service message about a forum topic closed in the chat. Currently holds no information.
-type ForumTopicClosed struct {}
+type ForumTopicClosed struct{}
 
 // ForumTopicEdited this object represents a service message about an edited forum topic.
 type ForumTopicEdited struct {
@@ -1509,13 +1509,13 @@ type ForumTopicEdited struct {
 }
 
 // ForumTopicReopened this object represents a service message about a forum topic reopened in the chat. Currently holds no information.
-type ForumTopicReopened struct {}
+type ForumTopicReopened struct{}
 
 // GeneralForumTopicHidden this object represents a service message about General forum topic hidden in the chat. Currently holds no information.
-type GeneralForumTopicHidden struct {}
+type GeneralForumTopicHidden struct{}
 
 // GeneralForumTopicUnhidden this object represents a service message about General forum topic unhidden in the chat. Currently holds no information.
-type GeneralForumTopicUnhidden struct {}
+type GeneralForumTopicUnhidden struct{}
 
 // SharedUser this object contains information about a user that was shared with the bot using a [KeyboardButtonRequestUsers](https://core.telegram.org/bots/api#keyboardbuttonrequestusers) button.
 type SharedUser struct {
@@ -1581,7 +1581,7 @@ type VideoChatScheduled struct {
 }
 
 // VideoChatStarted this object represents a service message about a video chat started in the chat. Currently holds no information.
-type VideoChatStarted struct {}
+type VideoChatStarted struct{}
 
 // VideoChatEnded this object represents a service message about a video chat ended in the chat.
 type VideoChatEnded struct {
@@ -5172,7 +5172,7 @@ type Game struct {
 }
 
 // CallbackGame a placeholder, currently holds no information. Use [BotFather](https://t.me/botfather) to set up your game.
-type CallbackGame struct {}
+type CallbackGame struct{}
 
 // GameHighScore this object represents one row of the high scores table for a game.
 // And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »](/bots/faq)
@@ -5231,10 +5231,10 @@ func (v *MessageOriginType) UnmarshalText(b []byte) error {
 
 // MessageOrigin this object describes the origin of a message. It can be one of
 type MessageOrigin struct {
-	User *MessageOriginUser
+	User       *MessageOriginUser
 	HiddenUser *MessageOriginHiddenUser
-	Chat *MessageOriginChat
-	Channel *MessageOriginChannel
+	Chat       *MessageOriginChat
+	Channel    *MessageOriginChannel
 }
 
 func (u *MessageOrigin) UnmarshalJSON(data []byte) error {
@@ -5296,6 +5296,7 @@ func (u *MessageOrigin) Type() MessageOriginType {
 		return 0
 	}
 }
+
 // PaidMediaType represents the type of PaidMedia.
 type PaidMediaType int
 
@@ -5337,8 +5338,8 @@ func (v *PaidMediaType) UnmarshalText(b []byte) error {
 // PaidMedia this object describes paid media. Currently, it can be one of
 type PaidMedia struct {
 	Preview *PaidMediaPreview
-	Photo *PaidMediaPhoto
-	Video *PaidMediaVideo
+	Photo   *PaidMediaPhoto
+	Video   *PaidMediaVideo
 }
 
 func (u *PaidMedia) UnmarshalJSON(data []byte) error {
@@ -5392,6 +5393,7 @@ func (u *PaidMedia) Type() PaidMediaType {
 		return 0
 	}
 }
+
 // BackgroundFillType represents the type of BackgroundFill.
 type BackgroundFillType int
 
@@ -5432,8 +5434,8 @@ func (v *BackgroundFillType) UnmarshalText(b []byte) error {
 
 // BackgroundFill this object describes the way a background is filled based on the selected colors. Currently, it can be one of
 type BackgroundFill struct {
-	Solid *BackgroundFillSolid
-	Gradient *BackgroundFillGradient
+	Solid            *BackgroundFillSolid
+	Gradient         *BackgroundFillGradient
 	FreeformGradient *BackgroundFillFreeformGradient
 }
 
@@ -5488,6 +5490,7 @@ func (u *BackgroundFill) Type() BackgroundFillType {
 		return 0
 	}
 }
+
 // BackgroundTypeType represents the type of BackgroundType.
 type BackgroundTypeType int
 
@@ -5532,9 +5535,9 @@ func (v *BackgroundTypeType) UnmarshalText(b []byte) error {
 
 // BackgroundType this object describes the type of a background. Currently, it can be one of
 type BackgroundType struct {
-	Fill *BackgroundTypeFill
+	Fill      *BackgroundTypeFill
 	Wallpaper *BackgroundTypeWallpaper
-	Pattern *BackgroundTypePattern
+	Pattern   *BackgroundTypePattern
 	ChatTheme *BackgroundTypeChatTheme
 }
 
@@ -5597,6 +5600,7 @@ func (u *BackgroundType) Type() BackgroundTypeType {
 		return 0
 	}
 }
+
 // ChatMemberStatus represents the type of ChatMember.
 type ChatMemberStatus int
 
@@ -5649,12 +5653,12 @@ func (v *ChatMemberStatus) UnmarshalText(b []byte) error {
 
 // ChatMember this object contains information about one member of a chat. Currently, the following 6 types of chat members are supported:
 type ChatMember struct {
-	Owner *ChatMemberOwner
+	Owner         *ChatMemberOwner
 	Administrator *ChatMemberAdministrator
-	Member *ChatMemberMember
-	Restricted *ChatMemberRestricted
-	Left *ChatMemberLeft
-	Banned *ChatMemberBanned
+	Member        *ChatMemberMember
+	Restricted    *ChatMemberRestricted
+	Left          *ChatMemberLeft
+	Banned        *ChatMemberBanned
 }
 
 func (u *ChatMember) UnmarshalJSON(data []byte) error {
@@ -5732,6 +5736,7 @@ func (u *ChatMember) Status() ChatMemberStatus {
 		return 0
 	}
 }
+
 // StoryAreaTypeType represents the type of StoryAreaType.
 type StoryAreaTypeType int
 
@@ -5780,11 +5785,11 @@ func (v *StoryAreaTypeType) UnmarshalText(b []byte) error {
 
 // StoryAreaType describes the type of a clickable area on a story. Currently, it can be one of
 type StoryAreaType struct {
-	Location *StoryAreaTypeLocation
+	Location          *StoryAreaTypeLocation
 	SuggestedReaction *StoryAreaTypeSuggestedReaction
-	Link *StoryAreaTypeLink
-	Weather *StoryAreaTypeWeather
-	UniqueGift *StoryAreaTypeUniqueGift
+	Link              *StoryAreaTypeLink
+	Weather           *StoryAreaTypeWeather
+	UniqueGift        *StoryAreaTypeUniqueGift
 }
 
 func (u *StoryAreaType) UnmarshalJSON(data []byte) error {
@@ -5920,9 +5925,9 @@ func (v *ReactionTypeType) UnmarshalText(b []byte) error {
 
 // ReactionType this object describes the type of a reaction. Currently, it can be one of
 type ReactionType struct {
-	Emoji *ReactionTypeEmoji
+	Emoji       *ReactionTypeEmoji
 	CustomEmoji *ReactionTypeCustomEmoji
-	Paid *ReactionTypePaid
+	Paid        *ReactionTypePaid
 }
 
 func (u *ReactionType) UnmarshalJSON(data []byte) error {
@@ -6029,7 +6034,7 @@ func (v *OwnedGiftType) UnmarshalText(b []byte) error {
 // OwnedGift this object describes a gift received and owned by a user or a chat. Currently, it can be one of
 type OwnedGift struct {
 	Regular *OwnedGiftRegular
-	Unique *OwnedGiftUnique
+	Unique  *OwnedGiftUnique
 }
 
 func (u *OwnedGift) UnmarshalJSON(data []byte) error {
@@ -6075,6 +6080,7 @@ func (u *OwnedGift) Type() OwnedGiftType {
 		return 0
 	}
 }
+
 // BotCommandScopeType represents the type of BotCommandScope.
 type BotCommandScopeType int
 
@@ -6131,13 +6137,13 @@ func (v *BotCommandScopeType) UnmarshalText(b []byte) error {
 
 // BotCommandScope this object represents the scope to which bot commands are applied. Currently, the following 7 scopes are supported:
 type BotCommandScope struct {
-	Default *BotCommandScopeDefault
-	AllPrivateChats *BotCommandScopeAllPrivateChats
-	AllGroupChats *BotCommandScopeAllGroupChats
+	Default               *BotCommandScopeDefault
+	AllPrivateChats       *BotCommandScopeAllPrivateChats
+	AllGroupChats         *BotCommandScopeAllGroupChats
 	AllChatAdministrators *BotCommandScopeAllChatAdministrators
-	Chat *BotCommandScopeChat
-	ChatAdministrators *BotCommandScopeChatAdministrators
-	ChatMember *BotCommandScopeChatMember
+	Chat                  *BotCommandScopeChat
+	ChatAdministrators    *BotCommandScopeChatAdministrators
+	ChatMember            *BotCommandScopeChatMember
 }
 
 func (u *BotCommandScope) UnmarshalJSON(data []byte) error {
@@ -6301,8 +6307,8 @@ func (v *MenuButtonType) UnmarshalText(b []byte) error {
 // If a menu button other than [MenuButtonDefault](https://core.telegram.org/bots/api#menubuttondefault) is set for a private chat, then it is applied in the chat. Otherwise the default menu button is applied. By default, the menu button opens the list of bot commands.
 type MenuButton struct {
 	Commands *MenuButtonCommands
-	WebApp *MenuButtonWebApp
-	Default *MenuButtonDefault
+	WebApp   *MenuButtonWebApp
+	Default  *MenuButtonDefault
 }
 
 func (u *MenuButton) UnmarshalJSON(data []byte) error {
@@ -6412,7 +6418,7 @@ func (v *ChatBoostSourceSource) UnmarshalText(b []byte) error {
 
 // ChatBoostSource this object describes the source of a chat boost. It can be one of
 type ChatBoostSource struct {
-	Premium *ChatBoostSourcePremium
+	Premium  *ChatBoostSourcePremium
 	GiftCode *ChatBoostSourceGiftCode
 	Giveaway *ChatBoostSourceGiveaway
 }
@@ -6468,6 +6474,7 @@ func (u *ChatBoostSource) Source() ChatBoostSourceSource {
 		return 0
 	}
 }
+
 // InputMediaType represents the type of InputMedia.
 type InputMediaType int
 
@@ -6517,10 +6524,10 @@ func (v *InputMediaType) UnmarshalText(b []byte) error {
 // InputMedia this object represents the content of a media message to be sent. It should be one of
 type InputMedia struct {
 	Animation *InputMediaAnimation
-	Document *InputMediaDocument
-	Audio *InputMediaAudio
-	Photo *InputMediaPhoto
-	Video *InputMediaVideo
+	Document  *InputMediaDocument
+	Audio     *InputMediaAudio
+	Photo     *InputMediaPhoto
+	Video     *InputMediaVideo
 }
 
 func (u *InputMedia) UnmarshalJSON(data []byte) error {
@@ -6746,7 +6753,7 @@ func (v *InputProfilePhotoType) UnmarshalText(b []byte) error {
 
 // InputProfilePhoto this object describes a profile photo to set. Currently, it can be one of
 type InputProfilePhoto struct {
-	Static *InputProfilePhotoStatic
+	Static   *InputProfilePhotoStatic
 	Animated *InputProfilePhotoAnimated
 }
 
@@ -6956,32 +6963,30 @@ func (v InlineQueryResultType) MarshalText() ([]byte, error) {
 	return []byte(v.String()), nil
 }
 
-
 // InlineQueryResult this object represents one result of an inline query. Telegram clients currently support results of the following 20 types:
 // Note: All URLs passed in inline query results will be available to end users and therefore must be assumed to be public.
 type InlineQueryResult struct {
-	CachedAudio *InlineQueryResultCachedAudio
+	CachedAudio    *InlineQueryResultCachedAudio
 	CachedDocument *InlineQueryResultCachedDocument
-	CachedGIF *InlineQueryResultCachedGIF
+	CachedGIF      *InlineQueryResultCachedGIF
 	CachedMPEG4GIF *InlineQueryResultCachedMPEG4GIF
-	CachedPhoto *InlineQueryResultCachedPhoto
-	CachedSticker *InlineQueryResultCachedSticker
-	CachedVideo *InlineQueryResultCachedVideo
-	CachedVoice *InlineQueryResultCachedVoice
-	Article *InlineQueryResultArticle
-	Audio *InlineQueryResultAudio
-	Contact *InlineQueryResultContact
-	Game *InlineQueryResultGame
-	Document *InlineQueryResultDocument
-	GIF *InlineQueryResultGIF
-	Location *InlineQueryResultLocation
-	MPEG4GIF *InlineQueryResultMPEG4GIF
-	Photo *InlineQueryResultPhoto
-	Venue *InlineQueryResultVenue
-	Video *InlineQueryResultVideo
-	Voice *InlineQueryResultVoice
+	CachedPhoto    *InlineQueryResultCachedPhoto
+	CachedSticker  *InlineQueryResultCachedSticker
+	CachedVideo    *InlineQueryResultCachedVideo
+	CachedVoice    *InlineQueryResultCachedVoice
+	Article        *InlineQueryResultArticle
+	Audio          *InlineQueryResultAudio
+	Contact        *InlineQueryResultContact
+	Game           *InlineQueryResultGame
+	Document       *InlineQueryResultDocument
+	GIF            *InlineQueryResultGIF
+	Location       *InlineQueryResultLocation
+	MPEG4GIF       *InlineQueryResultMPEG4GIF
+	Photo          *InlineQueryResultPhoto
+	Venue          *InlineQueryResultVenue
+	Video          *InlineQueryResultVideo
+	Voice          *InlineQueryResultVoice
 }
-
 
 func (u InlineQueryResult) MarshalJSON() ([]byte, error) {
 	switch {
@@ -7238,9 +7243,9 @@ func (v *RevenueWithdrawalStateType) UnmarshalText(b []byte) error {
 
 // RevenueWithdrawalState this object describes the state of a revenue withdrawal operation. Currently, it can be one of
 type RevenueWithdrawalState struct {
-	Pending *RevenueWithdrawalStatePending
+	Pending   *RevenueWithdrawalStatePending
 	Succeeded *RevenueWithdrawalStateSucceeded
-	Failed *RevenueWithdrawalStateFailed
+	Failed    *RevenueWithdrawalStateFailed
 }
 
 func (u *RevenueWithdrawalState) UnmarshalJSON(data []byte) error {
@@ -7294,6 +7299,7 @@ func (u *RevenueWithdrawalState) Type() RevenueWithdrawalStateType {
 		return 0
 	}
 }
+
 // TransactionPartnerType represents the type of TransactionPartner.
 type TransactionPartnerType int
 
@@ -7350,13 +7356,13 @@ func (v *TransactionPartnerType) UnmarshalText(b []byte) error {
 
 // TransactionPartner this object describes the source of a transaction, or its recipient for outgoing transactions. Currently, it can be one of
 type TransactionPartner struct {
-	User *TransactionPartnerUser
-	Chat *TransactionPartnerChat
+	User             *TransactionPartnerUser
+	Chat             *TransactionPartnerChat
 	AffiliateProgram *TransactionPartnerAffiliateProgram
-	Fragment *TransactionPartnerFragment
-	TelegramAds *TransactionPartnerTelegramAds
-	TelegramAPI *TransactionPartnerTelegramAPI
-	Other *TransactionPartnerOther
+	Fragment         *TransactionPartnerFragment
+	TelegramAds      *TransactionPartnerTelegramAds
+	TelegramAPI      *TransactionPartnerTelegramAPI
+	Other            *TransactionPartnerOther
 }
 
 func (u *TransactionPartner) UnmarshalJSON(data []byte) error {
@@ -7442,6 +7448,7 @@ func (u *TransactionPartner) Type() TransactionPartnerType {
 		return 0
 	}
 }
+
 // PassportElementErrorSource represents the type of PassportElementError.
 type PassportElementErrorSource int
 
@@ -7506,15 +7513,15 @@ func (v *PassportElementErrorSource) UnmarshalText(b []byte) error {
 
 // PassportElementError this object represents an error in the Telegram Passport element which was submitted that should be resolved by the user. It should be one of:
 type PassportElementError struct {
-	DataField *PassportElementErrorDataField
-	FrontSide *PassportElementErrorFrontSide
-	ReverseSide *PassportElementErrorReverseSide
-	Selfie *PassportElementErrorSelfie
-	File *PassportElementErrorFile
-	Files *PassportElementErrorFiles
-	TranslationFile *PassportElementErrorTranslationFile
+	DataField        *PassportElementErrorDataField
+	FrontSide        *PassportElementErrorFrontSide
+	ReverseSide      *PassportElementErrorReverseSide
+	Selfie           *PassportElementErrorSelfie
+	File             *PassportElementErrorFile
+	Files            *PassportElementErrorFiles
+	TranslationFile  *PassportElementErrorTranslationFile
 	TranslationFiles *PassportElementErrorTranslationFiles
-	Unspecified *PassportElementErrorUnspecified
+	Unspecified      *PassportElementErrorUnspecified
 }
 
 func (u *PassportElementError) UnmarshalJSON(data []byte) error {
@@ -8018,7 +8025,6 @@ func (v ChatAction) String() string {
 	}[v-1]
 }
 
-
 // MessageType represents an enum type.
 type MessageType int8
 
@@ -8233,7 +8239,6 @@ func (v MessageType) String() string {
 	}
 	return "unknown"
 }
-
 
 // Type returns the UpdateType of this Update.
 func (v *Update) Type() UpdateType {
@@ -8496,4 +8501,3 @@ func (v *Message) Type() MessageType {
 		return MessageTypeUnknown
 	}
 }
-

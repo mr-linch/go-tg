@@ -1,6 +1,7 @@
 package routergen
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
 	"io"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/mr-linch/go-tg/gen/ir"
 	"github.com/mr-linch/go-tg/gen/naming"
+	"mvdan.cc/gofumpt/format"
 )
 
 //go:embed router.go.tmpl
@@ -92,7 +94,19 @@ func executeTemplate(name, tmplStr string, w io.Writer, data *TemplateData) erro
 	if err != nil {
 		return fmt.Errorf("parse template: %w", err)
 	}
-	return tmpl.Execute(w, data)
+
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return fmt.Errorf("execute template: %w", err)
+	}
+
+	formatted, err := format.Source(buf.Bytes(), format.Options{})
+	if err != nil {
+		return fmt.Errorf("format source: %w", err)
+	}
+
+	_, err = w.Write(formatted)
+	return err
 }
 
 func buildTemplateData(api *ir.API, pkg string, log *slog.Logger) (*TemplateData, error) {

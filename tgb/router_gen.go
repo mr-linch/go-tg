@@ -122,4 +122,3 @@ func (bot *Router) ChatBoost(handler ChatBoostHandler, filters ...Filter) *Route
 func (bot *Router) RemovedChatBoost(handler RemovedChatBoostHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeRemovedChatBoost, handler, filters...)
 }
-

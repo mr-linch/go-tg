@@ -340,8 +340,10 @@ func TestGenerate_UnionTypes(t *testing.T) {
 
 	got := buf.String()
 	assert.Contains(t, got, "type BackgroundFill struct")
-	assert.Contains(t, got, "Solid *BackgroundFillSolid")
-	assert.Contains(t, got, "Gradient *BackgroundFillGradient")
+	assert.Contains(t, got, "Solid")
+	assert.Contains(t, got, "*BackgroundFillSolid")
+	assert.Contains(t, got, "Gradient")
+	assert.Contains(t, got, "*BackgroundFillGradient")
 	assert.Contains(t, got, "func (u *BackgroundFill) UnmarshalJSON")
 	assert.Contains(t, got, `case "solid":`)
 	assert.Contains(t, got, `case "gradient":`)

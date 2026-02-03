@@ -115,4 +115,3 @@ type ChatJoinRequestUpdate struct {
 	*tg.ChatJoinRequest
 	BaseUpdate
 }
-

@@ -24,7 +24,7 @@ type MessageReactionHandler func(context.Context, *MessageReactionUpdate) error
 func (handler MessageReactionHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &MessageReactionUpdate{
 		MessageReactionUpdated: update.MessageReaction,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:             BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -35,7 +35,7 @@ type ShippingQueryHandler func(context.Context, *ShippingQueryUpdate) error
 func (handler ShippingQueryHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &ShippingQueryUpdate{
 		ShippingQuery: update.ShippingQuery,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:    BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -46,7 +46,7 @@ type PreCheckoutQueryHandler func(context.Context, *PreCheckoutQueryUpdate) erro
 func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &PreCheckoutQueryUpdate{
 		PreCheckoutQuery: update.PreCheckoutQuery,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:       BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -57,7 +57,7 @@ type RemovedChatBoostHandler func(context.Context, *RemovedChatBoostUpdate) erro
 func (handler RemovedChatBoostHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &RemovedChatBoostUpdate{
 		ChatBoostRemoved: update.RemovedChatBoost,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:       BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -68,7 +68,7 @@ type MessageHandler func(context.Context, *MessageUpdate) error
 func (handler MessageHandler) Handle(ctx context.Context, update *Update) error {
 	if v := firstNotNil(update.Message, update.EditedMessage, update.ChannelPost, update.EditedChannelPost, update.BusinessMessage, update.EditedBusinessMessage); v != nil {
 		return handler(ctx, &MessageUpdate{
-			Message: v,
+			Message:    v,
 			BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
 		})
 	}
@@ -82,7 +82,7 @@ type DeletedBusinessMessagesHandler func(context.Context, *DeletedBusinessMessag
 func (handler DeletedBusinessMessagesHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &DeletedBusinessMessagesUpdate{
 		BusinessMessagesDeleted: update.DeletedBusinessMessages,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:              BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -93,7 +93,7 @@ type InlineQueryHandler func(context.Context, *InlineQueryUpdate) error
 func (handler InlineQueryHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &InlineQueryUpdate{
 		InlineQuery: update.InlineQuery,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:  BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -104,7 +104,7 @@ type ChosenInlineResultHandler func(context.Context, *ChosenInlineResultUpdate) 
 func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &ChosenInlineResultUpdate{
 		ChosenInlineResult: update.ChosenInlineResult,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:         BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -115,7 +115,7 @@ type CallbackQueryHandler func(context.Context, *CallbackQueryUpdate) error
 func (handler CallbackQueryHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &CallbackQueryUpdate{
 		CallbackQuery: update.CallbackQuery,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:    BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -125,7 +125,7 @@ type PollHandler func(context.Context, *PollUpdate) error
 
 func (handler PollHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &PollUpdate{
-		Poll: update.Poll,
+		Poll:       update.Poll,
 		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
 	})
 }
@@ -149,7 +149,7 @@ func (handler ChatMemberUpdatedHandler) Handle(ctx context.Context, update *Upda
 	if v := firstNotNil(update.MyChatMember, update.ChatMember); v != nil {
 		return handler(ctx, &ChatMemberUpdatedUpdate{
 			ChatMemberUpdated: v,
-			BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+			BaseUpdate:        BaseUpdate{Update: update, Client: update.Client},
 		})
 	}
 	return nil
@@ -162,7 +162,7 @@ type ChatBoostHandler func(context.Context, *ChatBoostUpdate) error
 func (handler ChatBoostHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &ChatBoostUpdate{
 		ChatBoostUpdated: update.ChatBoost,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:       BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -173,7 +173,7 @@ type BusinessConnectionHandler func(context.Context, *BusinessConnectionUpdate) 
 func (handler BusinessConnectionHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &BusinessConnectionUpdate{
 		BusinessConnection: update.BusinessConnection,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:         BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -184,7 +184,7 @@ type MessageReactionCountHandler func(context.Context, *MessageReactionCountUpda
 func (handler MessageReactionCountHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &MessageReactionCountUpdate{
 		MessageReactionCountUpdated: update.MessageReactionCount,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:                  BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -195,7 +195,7 @@ type PurchasedPaidMediaHandler func(context.Context, *PurchasedPaidMediaUpdate) 
 func (handler PurchasedPaidMediaHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &PurchasedPaidMediaUpdate{
 		PaidMediaPurchased: update.PurchasedPaidMedia,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:         BaseUpdate{Update: update, Client: update.Client},
 	})
 }
 
@@ -206,7 +206,6 @@ type ChatJoinRequestHandler func(context.Context, *ChatJoinRequestUpdate) error
 func (handler ChatJoinRequestHandler) Handle(ctx context.Context, update *Update) error {
 	return handler(ctx, &ChatJoinRequestUpdate{
 		ChatJoinRequest: update.ChatJoinRequest,
-		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		BaseUpdate:      BaseUpdate{Update: update, Client: update.Client},
 	})
 }
-

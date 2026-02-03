@@ -10160,4 +10160,3 @@ func (call *GetGameHighScoresCall) InlineMessageID(inlineMessageID string) *GetG
 	call.request.String("inline_message_id", inlineMessageID)
 	return call
 }
-

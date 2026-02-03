@@ -1,6 +1,7 @@
 package methodgen
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
 	"io"
@@ -11,6 +12,7 @@ import (
 	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/ir"
 	"github.com/mr-linch/go-tg/gen/naming"
+	"mvdan.cc/gofumpt/format"
 )
 
 //go:embed methods.go.tmpl
@@ -134,7 +136,18 @@ func Generate(api *ir.API, w io.Writer, cfg *config.MethodGen, log *slog.Logger,
 		return fmt.Errorf("parse template: %w", err)
 	}
 
-	return tmpl.Execute(w, data)
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return fmt.Errorf("execute template: %w", err)
+	}
+
+	formatted, err := format.Source(buf.Bytes(), format.Options{})
+	if err != nil {
+		return fmt.Errorf("format source: %w", err)
+	}
+
+	_, err = w.Write(formatted)
+	return err
 }
 
 func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, log *slog.Logger) *TemplateData {
