@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+env:
+  GOLANGCI_LINT_VERSION: v2.8
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -23,14 +26,14 @@ jobs:
           go-version: stable
 
       - name: Lint root module
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.62
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
 
       - name: Lint gen module
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.62
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
           working-directory: gen
 
   tidy:
