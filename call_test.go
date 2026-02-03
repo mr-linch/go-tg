@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBindClient(t *testing.T) {
@@ -32,7 +33,7 @@ func TestCall_MarshalJSON(t *testing.T) {
 	call := NewSendMessageCall(ChatID(1), "Hello")
 
 	v, err := call.MarshalJSON()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.JSONEq(t, `{"chat_id":"1","text":"Hello","method":"sendMessage"}`, string(v))
 }
@@ -41,7 +42,7 @@ func TestCallNoResult_MarshalJSON(t *testing.T) {
 	call := NewSetChatTitleCall(ChatID(1), "Hello")
 
 	v, err := call.MarshalJSON()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.JSONEq(t, `{"chat_id":"1","title":"Hello","method":"setChatTitle"}`, string(v))
 }

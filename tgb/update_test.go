@@ -8,6 +8,7 @@ import (
 	"github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 var _ UpdateReply = (*MockUpdateReply)(nil)
@@ -16,17 +17,17 @@ type MockUpdateReply struct {
 	mock.Mock
 }
 
-func (mock *MockUpdateReply) Bind(client *tg.Client) {
-	mock.Called(client)
+func (m *MockUpdateReply) Bind(client *tg.Client) {
+	m.Called(client)
 }
 
-func (mock *MockUpdateReply) MarshalJSON() ([]byte, error) {
-	args := mock.Called()
+func (m *MockUpdateReply) MarshalJSON() ([]byte, error) {
+	args := m.Called()
 	return args.Get(0).([]byte), args.Error(1)
 }
 
-func (mock *MockUpdateReply) DoVoid(ctx context.Context) error {
-	args := mock.Called(ctx)
+func (m *MockUpdateReply) DoVoid(ctx context.Context) error {
+	args := m.Called(ctx)
 	return args.Error(0)
 }
 
@@ -43,7 +44,7 @@ func TestUpdate_Reply(t *testing.T) {
 		}
 
 		err := update.Reply(context.Background(), updateReply)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		updateReply.AssertExpectations(t)
 	})
@@ -60,7 +61,7 @@ func TestUpdate_Reply(t *testing.T) {
 		}
 
 		err := update.Respond(context.Background(), updateReply)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		updateReply.AssertExpectations(t)
 	})
@@ -75,19 +76,17 @@ func TestUpdate_Reply(t *testing.T) {
 		}
 
 		err := update.Reply(context.Background(), updateReply)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		obj := <-update.webhookReply
 
 		assert.NotNil(t, obj)
 
 		_, err = obj.MarshalJSON()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		updateReply.AssertExpectations(t)
-
 	})
-
 }
 
 type EncoderCollect struct {
@@ -253,12 +252,12 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		},
 		{
 			Name:           "AnswerPoll",
-			Request:        msg.AnswerPoll("question", []string{"1"}).Request(),
+			Request:        msg.AnswerPoll("question", []tg.InputPollOption{{Text: "1"}}).Request(),
 			ExceptedMethod: "sendPoll",
 			ExpectedArgs: map[string]string{
 				"chat_id":  "123",
 				"question": "question",
-				"options":  "[\"1\"]",
+				"options":  "[{\"text\":\"1\"}]",
 			},
 		},
 		{
@@ -346,11 +345,11 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		{
 			Name: "AnswerMediaGroup",
 			Request: msg.AnswerMediaGroup([]tg.InputMedia{
-				&tg.InputMediaPhoto{
+				tg.NewInputMediaPhoto(tg.InputMediaPhoto{
 					Media: tg.FileArg{
 						FileID: "file_id",
 					},
-				},
+				}),
 			}).Request(),
 			ExceptedMethod: "sendMediaGroup",
 			ExpectedArgs: map[string]string{
@@ -366,7 +365,7 @@ func TestMessageUpdateHelpers(t *testing.T) {
 			}
 
 			err := test.Request.Encode(&encoder)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, test.ExceptedMethod, test.Request.Method)
 
@@ -377,7 +376,6 @@ func TestMessageUpdateHelpers(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func TestCallbackQueryUpdateHelpers(t *testing.T) {
@@ -429,7 +427,7 @@ func TestCallbackQueryUpdateHelpers(t *testing.T) {
 			}
 
 			err := test.Request.Encode(&encoder)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, test.ExceptedMethod, test.Request.Method)
 
@@ -473,7 +471,7 @@ func TestInlineQueryUpdateHelpers(t *testing.T) {
 			}
 
 			err := test.Request.Encode(&encoder)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, test.ExceptedMethod, test.Request.Method)
 
@@ -517,7 +515,7 @@ func TestShippingQueryUpdateHelpers(t *testing.T) {
 			}
 
 			err := test.Request.Encode(&encoder)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, test.ExceptedMethod, test.Request.Method)
 
@@ -561,7 +559,7 @@ func TestPreCheckoutQueryUpdateHelpers(t *testing.T) {
 			}
 
 			err := test.Request.Encode(&encoder)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, test.ExceptedMethod, test.Request.Method)
 
@@ -619,7 +617,7 @@ func TestChatJoinRequestUpdateHelpers(t *testing.T) {
 			}
 
 			err := test.Request.Encode(&encoder)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, test.ExceptedMethod, test.Request.Method)
 

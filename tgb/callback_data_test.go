@@ -27,15 +27,14 @@ func TestNewCallbackDataParser(t *testing.T) {
 func TestCallbackDataParserEncode(t *testing.T) {
 	t.Run("NotStruct", func(t *testing.T) {
 		_, err := EncodeCallbackData(1)
-		assert.ErrorContains(t, err, "src should be a struct")
+		require.ErrorContains(t, err, "src should be a struct")
 	})
 
 	t.Run("Nil", func(t *testing.T) {
-		type test struct {
-		}
+		type test struct{}
 		var nilStruct *test
 		_, err := EncodeCallbackData(nilStruct)
-		assert.ErrorContains(t, err, "src is nil")
+		require.ErrorContains(t, err, "src is nil")
 	})
 
 	t.Run("Empty", func(t *testing.T) {
@@ -43,7 +42,7 @@ func TestCallbackDataParserEncode(t *testing.T) {
 		cbd, err := EncodeCallbackData(test{})
 		require.NoError(t, err)
 
-		assert.Equal(t, "", cbd)
+		assert.Empty(t, cbd)
 	})
 
 	t.Run("AllTypes", func(t *testing.T) {
@@ -78,7 +77,7 @@ func TestCallbackDataParserEncode(t *testing.T) {
 		}
 
 		_, err := EncodeCallbackData(test{})
-		assert.ErrorContains(t, err, "invalid base")
+		require.ErrorContains(t, err, "invalid base")
 	})
 
 	t.Run("InvalidUint", func(t *testing.T) {
@@ -87,7 +86,7 @@ func TestCallbackDataParserEncode(t *testing.T) {
 		}
 
 		_, err := EncodeCallbackData(test{})
-		assert.ErrorContains(t, err, "invalid base")
+		require.ErrorContains(t, err, "invalid base")
 	})
 
 	t.Run("InvalidFloatFmt", func(t *testing.T) {
@@ -96,7 +95,7 @@ func TestCallbackDataParserEncode(t *testing.T) {
 		}
 
 		_, err := EncodeCallbackData(test{})
-		assert.ErrorContains(t, err, "invalid fmt value")
+		require.ErrorContains(t, err, "invalid fmt value")
 	})
 
 	t.Run("InvalidFloatPrec", func(t *testing.T) {
@@ -105,7 +104,7 @@ func TestCallbackDataParserEncode(t *testing.T) {
 		}
 
 		_, err := EncodeCallbackData(test{})
-		assert.ErrorContains(t, err, "invalid prec value")
+		require.ErrorContains(t, err, "invalid prec value")
 	})
 
 	t.Run("UnsupportedFieldType", func(t *testing.T) {
@@ -114,7 +113,7 @@ func TestCallbackDataParserEncode(t *testing.T) {
 		}
 
 		_, err := EncodeCallbackData(test{})
-		assert.ErrorContains(t, err, "unsupported field type: chan")
+		require.ErrorContains(t, err, "unsupported field type: chan")
 	})
 
 	t.Run("CallbackDataIsTooLong", func(t *testing.T) {
@@ -125,7 +124,7 @@ func TestCallbackDataParserEncode(t *testing.T) {
 		_, err := EncodeCallbackData(test{
 			Str: "12345678901234567890123456789012345678901234567890123456789012345678901234567890",
 		})
-		assert.ErrorContains(t, err, "callback data length is too long: 80, max: 64")
+		require.ErrorContains(t, err, "callback data length is too long: 80, max: 64")
 	})
 }
 
@@ -133,19 +132,18 @@ func TestCallbackDataParserDecode(t *testing.T) {
 	t.Run("NotStruct", func(t *testing.T) {
 		var v int
 		err := DecodeCallbackData("", &v)
-		assert.ErrorContains(t, err, "dst should be a pointer to a struct")
+		require.ErrorContains(t, err, "dst should be a pointer to a struct")
 	})
 
 	t.Run("Nil", func(t *testing.T) {
-		type test struct {
-		}
+		type test struct{}
 		var nilStruct *test
 		err := DecodeCallbackData("", nilStruct)
-		assert.ErrorContains(t, err, "dst should be a pointer to a struct")
+		require.ErrorContains(t, err, "dst should be a pointer to a struct")
 
 		var notNilStruct test
 		err = DecodeCallbackData("", notNilStruct)
-		assert.ErrorContains(t, err, "dst should be a pointer to a struct")
+		require.ErrorContains(t, err, "dst should be a pointer to a struct")
 	})
 
 	t.Run("InvalidDataLength", func(t *testing.T) {
@@ -156,7 +154,7 @@ func TestCallbackDataParserDecode(t *testing.T) {
 
 		err := DecodeCallbackData("1", &dst)
 
-		assert.ErrorContains(t, err, "invalid data length")
+		require.ErrorContains(t, err, "invalid data length")
 	})
 
 	t.Run("InvalidBoolValue", func(t *testing.T) {
@@ -166,7 +164,7 @@ func TestCallbackDataParserDecode(t *testing.T) {
 
 		var dst test
 		err := DecodeCallbackData("invalid", &dst)
-		assert.ErrorContains(t, err, "invalid bool value")
+		require.ErrorContains(t, err, "invalid bool value")
 	})
 
 	t.Run("InvalidInt", func(t *testing.T) {
@@ -175,14 +173,14 @@ func TestCallbackDataParserDecode(t *testing.T) {
 		}
 
 		err := DecodeCallbackData("invalid", &dst)
-		assert.ErrorContains(t, err, "invalid syntax")
+		require.ErrorContains(t, err, "invalid syntax")
 
 		var dst2 struct {
 			Int int `tgbase:"102"`
 		}
 
 		err = DecodeCallbackData("invalid", &dst2)
-		assert.ErrorContains(t, err, "invalid base 102")
+		require.ErrorContains(t, err, "invalid base 102")
 	})
 
 	t.Run("InvalidInt", func(t *testing.T) {
@@ -191,14 +189,14 @@ func TestCallbackDataParserDecode(t *testing.T) {
 		}
 
 		err := DecodeCallbackData("invalid", &dst)
-		assert.ErrorContains(t, err, "invalid syntax")
+		require.ErrorContains(t, err, "invalid syntax")
 
 		var dst2 struct {
 			Uint uint `tgbase:"102"`
 		}
 
 		err = DecodeCallbackData("invalid", &dst2)
-		assert.ErrorContains(t, err, "invalid base 102")
+		require.ErrorContains(t, err, "invalid base 102")
 	})
 
 	t.Run("InvalidFloat", func(t *testing.T) {
@@ -207,22 +205,21 @@ func TestCallbackDataParserDecode(t *testing.T) {
 		}
 
 		err := DecodeCallbackData("invalid", &dst)
-		assert.ErrorContains(t, err, "invalid syntax")
+		require.ErrorContains(t, err, "invalid syntax")
 
 		var dst2 struct {
 			Float32 float32 `tgfmt:"e"`
 		}
 
 		err = DecodeCallbackData("invalid", &dst2)
-		assert.ErrorContains(t, err, "invalid syntax")
+		require.ErrorContains(t, err, "invalid syntax")
 
 		var dst3 struct {
 			Float32 float32 `tgfmt:"e" tgprec:"invalid"`
 		}
 
 		err = DecodeCallbackData("invalid", &dst3)
-		assert.ErrorContains(t, err, "invalid syntax")
-
+		require.ErrorContains(t, err, "invalid syntax")
 	})
 
 	t.Run("Empty", func(t *testing.T) {
@@ -264,14 +261,14 @@ func TestCallbackDataParserDecode(t *testing.T) {
 
 		var dst test
 		err := DecodeCallbackData("1", &dst)
-		assert.ErrorContains(t, err, "unsupported field type: chan")
+		require.ErrorContains(t, err, "unsupported field type: chan")
 	})
 }
 
 func TestCallbackDataFilter(t *testing.T) {
 	t.Run("ButtonError", func(t *testing.T) {
 		type test struct {
-			invalidType chan int // nolint:unused
+			invalidType chan int //nolint:unused // intentionally unused to test error handling
 		}
 
 		filter := NewCallbackDataFilter[test]("prefix")
@@ -305,7 +302,7 @@ func TestCallbackDataFilter(t *testing.T) {
 
 	t.Run("MustButtonError", func(t *testing.T) {
 		type test struct {
-			invalidType chan int // nolint:unused
+			invalidType chan int //nolint:unused // intentionally unused to test error handling
 		}
 
 		filter := NewCallbackDataFilter[test]("prefix")
@@ -346,7 +343,7 @@ func TestCallbackDataFilter(t *testing.T) {
 		filter := NewCallbackDataFilter[test]("prefix")
 
 		_, err := filter.Decode("invalid:1")
-		assert.ErrorContains(t, err, "invalid prefix")
+		require.ErrorContains(t, err, "invalid prefix")
 	})
 
 	t.Run("DecodeErrorInvalidData", func(t *testing.T) {
@@ -357,7 +354,7 @@ func TestCallbackDataFilter(t *testing.T) {
 		filter := NewCallbackDataFilter[test]("prefix")
 
 		_, err := filter.Decode("prefix:invalid")
-		assert.ErrorContains(t, err, "invalid bool value")
+		require.ErrorContains(t, err, "invalid bool value")
 	})
 
 	t.Run("Handler", func(t *testing.T) {
@@ -381,7 +378,7 @@ func TestCallbackDataFilter(t *testing.T) {
 			},
 		})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, 1, calls)
 	})
 
@@ -402,7 +399,7 @@ func TestCallbackDataFilter(t *testing.T) {
 			},
 		})
 
-		assert.ErrorContains(t, err, "assert.AnError")
+		require.ErrorContains(t, err, "assert.AnError")
 	})
 
 	t.Run("HandlerErrorInvalidData", func(t *testing.T) {
@@ -422,7 +419,7 @@ func TestCallbackDataFilter(t *testing.T) {
 			},
 		})
 
-		assert.ErrorContains(t, err, "invalid prefix")
+		require.ErrorContains(t, err, "invalid prefix")
 	})
 
 	t.Run("HandlerFilterTrue", func(t *testing.T) {

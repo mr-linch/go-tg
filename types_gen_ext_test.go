@@ -10,6 +10,44 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestUnixTime(t *testing.T) {
+	t.Run("Time", func(t *testing.T) {
+		assert.Equal(t, time.Time{}, UnixTime(0).Time())
+		assert.Equal(t, time.Unix(1234567890, 0), UnixTime(1234567890).Time())
+		assert.Equal(t, time.Unix(-1, 0), UnixTime(-1).Time())
+	})
+
+	t.Run("IsZero", func(t *testing.T) {
+		assert.True(t, UnixTime(0).IsZero())
+		assert.False(t, UnixTime(1).IsZero())
+		assert.False(t, UnixTime(-1).IsZero())
+	})
+
+	t.Run("JSON", func(t *testing.T) {
+		type s struct {
+			Date     UnixTime `json:"date"`
+			Optional UnixTime `json:"optional,omitempty"`
+		}
+
+		// Unmarshal
+		var v s
+		err := json.Unmarshal([]byte(`{"date":1234567890}`), &v)
+		require.NoError(t, err)
+		assert.Equal(t, UnixTime(1234567890), v.Date)
+		assert.True(t, v.Optional.IsZero())
+
+		// Marshal
+		data, err := json.Marshal(s{Date: UnixTime(1234567890)})
+		require.NoError(t, err)
+		assert.Equal(t, `{"date":1234567890}`, string(data))
+
+		// Marshal with omitempty: zero value is omitted
+		data, err = json.Marshal(s{Date: UnixTime(42)})
+		require.NoError(t, err)
+		assert.Equal(t, `{"date":42}`, string(data))
+	})
+}
+
 func TestPeerIDImpl(t *testing.T) {
 	for _, test := range []struct {
 		PeerID PeerID
@@ -90,7 +128,7 @@ func TestChatType_MarshalJSON(t *testing.T) {
 		{sample{ChatType(-1)}, `{"type":"unknown"}`},
 	} {
 		actual, err := json.Marshal(test.Sample)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, test.Want, string(actual))
 	}
@@ -100,25 +138,26 @@ func TestChatType_UnmarshalJSON(t *testing.T) {
 	type sample struct {
 		Type ChatType `json:"type"`
 	}
-	for _, test := range []struct {
-		Input  string
-		Sample sample
-		Want   ChatType
-		Err    bool
+	tests := []struct {
+		Input string
+		Want  ChatType
+		Err   bool
 	}{
-		{`{"type": "private"}`, sample{}, ChatTypePrivate, false},
-		{`{"type": "group"}`, sample{}, ChatTypeGroup, false},
-		{`{"type": "supergroup"}`, sample{}, ChatTypeSupergroup, false},
-		{`{"type": "channel"}`, sample{}, ChatTypeChannel, false},
-		{`{"type": "test"}`, sample{}, ChatType(-1), true},
-		{`{"type": "sender"}`, sample{}, ChatTypeSender, false},
-		{`{"type": {}}`, sample{}, ChatType(-1), true},
-	} {
-		if test.Err {
-			assert.Error(t, json.Unmarshal([]byte(test.Input), &test.Sample))
+		{`{"type": "private"}`, ChatTypePrivate, false},
+		{`{"type": "group"}`, ChatTypeGroup, false},
+		{`{"type": "supergroup"}`, ChatTypeSupergroup, false},
+		{`{"type": "channel"}`, ChatTypeChannel, false},
+		{`{"type": "test"}`, ChatType(-1), true},
+		{`{"type": "sender"}`, ChatTypeSender, false},
+		{`{"type": {}}`, ChatType(-1), true},
+	}
+	for _, tt := range tests {
+		var s sample
+		if tt.Err {
+			require.Error(t, json.Unmarshal([]byte(tt.Input), &s))
 		} else {
-			assert.NoError(t, json.Unmarshal([]byte(test.Input), &test.Sample))
-			assert.Equal(t, test.Want, test.Sample.Type)
+			require.NoError(t, json.Unmarshal([]byte(tt.Input), &s))
+			assert.Equal(t, tt.Want, s.Type)
 		}
 	}
 }
@@ -141,7 +180,7 @@ func TestInlineReplyMarkup(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, InlineKeyboardMarkup{
+	assert.Equal(t, InlineKeyboardMarkup{
 		InlineKeyboard: [][]InlineKeyboardButton{
 			{
 				{Text: "text", URL: "https://google.com"},
@@ -177,7 +216,7 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, &ReplyKeyboardMarkup{
+	assert.Equal(t, &ReplyKeyboardMarkup{
 		Keyboard: [][]KeyboardButton{
 			{
 				{Text: "text"},
@@ -201,7 +240,7 @@ func TestReplyKeyboardRemove(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, &ReplyKeyboardRemove{
+	assert.Equal(t, &ReplyKeyboardRemove{
 		RemoveKeyboard: true,
 		Selective:      true,
 	}, actual)
@@ -212,7 +251,7 @@ func TestForceReplay(t *testing.T) {
 
 	actual.isReplyMarkup()
 
-	assert.EqualValues(t, &ForceReply{
+	assert.Equal(t, &ForceReply{
 		ForceReply:            true,
 		Selective:             true,
 		InputFieldPlaceholder: "test",
@@ -232,6 +271,7 @@ func TestNewButtonLayout(t *testing.T) {
 		{{Text: "3", CallbackData: "3"}},
 	}, keyboard)
 }
+
 func TestButtonLayout_Add(t *testing.T) {
 	for _, test := range []struct {
 		Layout *ButtonLayout[KeyboardButton]
@@ -270,7 +310,7 @@ func TestButtonLayout_Add(t *testing.T) {
 			},
 		},
 	} {
-		assert.EqualValues(t, test.Want, test.Layout.Keyboard())
+		assert.Equal(t, test.Want, test.Layout.Keyboard())
 	}
 }
 
@@ -349,7 +389,7 @@ func TestButtonLayout_Insert(t *testing.T) {
 			},
 		},
 	} {
-		assert.EqualValues(t, test.Want, test.Layout.Keyboard())
+		assert.Equal(t, test.Want, test.Layout.Keyboard())
 	}
 }
 
@@ -372,44 +412,40 @@ func TestInlineQueryResultMarshalJSON(t *testing.T) {
 		Type   string
 		Result InlineQueryResult
 	}{
-		{"audio", InlineQueryResultCachedAudio{}},
-
-		{"document", InlineQueryResultCachedDocument{}},
-		{"gif", InlineQueryResultCachedGIF{}},
-		{"mpeg4_gif", InlineQueryResultCachedMPEG4GIF{}},
-		{"photo", InlineQueryResultCachedPhoto{}},
-		{"sticker", InlineQueryResultCachedSticker{}},
-		{"video", InlineQueryResultCachedVideo{}},
-		{"voice", InlineQueryResultCachedVoice{}},
-		{"audio", InlineQueryResultAudio{}},
-		{"document", InlineQueryResultDocument{}},
-		{"gif", InlineQueryResultGIF{}},
-		{"mpeg4_gif", InlineQueryResultMPEG4GIF{}},
-		{"photo", InlineQueryResultPhoto{}},
-		{"video", InlineQueryResultVideo{}},
-		{"voice", InlineQueryResultVoice{}},
-		{"article", InlineQueryResultArticle{}},
-		{"contact", InlineQueryResultContact{}},
-		{"game", InlineQueryResultGame{}},
-		{"location", InlineQueryResultLocation{}},
-		{"venue", InlineQueryResultVenue{}},
+		{"audio", NewInlineQueryResultCachedAudio(InlineQueryResultCachedAudio{})},
+		{"document", NewInlineQueryResultCachedDocument(InlineQueryResultCachedDocument{})},
+		{"gif", NewInlineQueryResultCachedGIF(InlineQueryResultCachedGIF{})},
+		{"mpeg4_gif", NewInlineQueryResultCachedMPEG4GIF(InlineQueryResultCachedMPEG4GIF{})},
+		{"photo", NewInlineQueryResultCachedPhoto(InlineQueryResultCachedPhoto{})},
+		{"sticker", NewInlineQueryResultCachedSticker(InlineQueryResultCachedSticker{})},
+		{"video", NewInlineQueryResultCachedVideo(InlineQueryResultCachedVideo{})},
+		{"voice", NewInlineQueryResultCachedVoice(InlineQueryResultCachedVoice{})},
+		{"audio", NewInlineQueryResultAudio(InlineQueryResultAudio{})},
+		{"document", NewInlineQueryResultDocument(InlineQueryResultDocument{})},
+		{"gif", NewInlineQueryResultGIF(InlineQueryResultGIF{})},
+		{"mpeg4_gif", NewInlineQueryResultMPEG4GIF(InlineQueryResultMPEG4GIF{})},
+		{"photo", NewInlineQueryResultPhoto(InlineQueryResultPhoto{})},
+		{"video", NewInlineQueryResultVideo(InlineQueryResultVideo{})},
+		{"voice", NewInlineQueryResultVoice(InlineQueryResultVoice{})},
+		{"article", NewInlineQueryResultArticle(InlineQueryResultArticle{})},
+		{"contact", NewInlineQueryResultContact(InlineQueryResultContact{})},
+		{"game", NewInlineQueryResultGame(InlineQueryResultGame{})},
+		{"location", NewInlineQueryResultLocation(InlineQueryResultLocation{})},
+		{"venue", NewInlineQueryResultVenue(InlineQueryResultVenue{})},
 	} {
 		t.Run(test.Type, func(t *testing.T) {
 			body, err := json.Marshal(test.Result)
-			assert.NoError(t, err, "marshal json")
-
-			test.Result.isInlineQueryResult()
+			require.NoError(t, err, "marshal json")
 
 			result := struct {
 				Type string `json:"type"`
 			}{}
 
 			err = json.Unmarshal(body, &result)
-			assert.NoError(t, err, "unmarshal json")
+			require.NoError(t, err, "unmarshal json")
 
 			assert.Equal(t, test.Type, result.Type)
 		})
-
 	}
 }
 
@@ -428,16 +464,13 @@ func TestInputMessageContent(t *testing.T) {
 
 func TestInputMedia_getMedia(t *testing.T) {
 	for _, test := range []InputMedia{
-		&InputMediaPhoto{},
-		&InputMediaVideo{},
-		&InputMediaAudio{},
-		&InputMediaAnimation{},
-		&InputMediaDocument{},
+		NewInputMediaPhoto(InputMediaPhoto{}),
+		NewInputMediaVideo(InputMediaVideo{}),
+		NewInputMediaAudio(InputMediaAudio{}),
+		NewInputMediaAnimation(InputMediaAnimation{}),
+		NewInputMediaDocument(InputMediaDocument{}),
 	} {
-		assert.Implements(t, (*InputMedia)(nil), test)
-
 		media, _ := test.getMedia()
-
 		assert.NotNil(t, media)
 	}
 }
@@ -448,38 +481,38 @@ func TestInputMedia_MarshalJSON(t *testing.T) {
 		Want       string
 	}{
 		{
-			InputMedia: &InputMediaPhoto{
+			InputMedia: NewInputMediaPhoto(InputMediaPhoto{
 				Media: FileArg{FileID: "file_id"},
-			},
+			}),
 			Want: `{"type":"photo","media":"file_id"}`,
 		},
 		{
-			InputMedia: &InputMediaVideo{
+			InputMedia: NewInputMediaVideo(InputMediaVideo{
 				Media: FileArg{FileID: "file_id"},
-			},
+			}),
 			Want: `{"type":"video","media":"file_id"}`,
 		},
 		{
-			InputMedia: &InputMediaAudio{
+			InputMedia: NewInputMediaAudio(InputMediaAudio{
 				Media: FileArg{FileID: "file_id"},
-			},
+			}),
 			Want: `{"type":"audio","media":"file_id"}`,
 		},
 		{
-			InputMedia: &InputMediaAnimation{
+			InputMedia: NewInputMediaAnimation(InputMediaAnimation{
 				Media: FileArg{FileID: "file_id"},
-			},
+			}),
 			Want: `{"type":"animation","media":"file_id"}`,
 		},
 		{
-			InputMedia: &InputMediaDocument{
+			InputMedia: NewInputMediaDocument(InputMediaDocument{
 				Media: FileArg{FileID: "file_id"},
-			},
+			}),
 			Want: `{"type":"document","media":"file_id"}`,
 		},
 	} {
 		v, err := json.Marshal(test.InputMedia)
-		assert.NoError(t, err, "marshal json")
+		require.NoError(t, err, "marshal json")
 		assert.Equal(t, test.Want, string(v))
 	}
 }
@@ -515,13 +548,12 @@ func TestFileArg_MarshalJSON(t *testing.T) {
 		},
 	} {
 		t.Run(test.Name, func(t *testing.T) {
-
 			v, err := json.Marshal(test.FileArg)
 
 			if test.Err {
-				assert.Error(t, err, "marshal json")
+				require.Error(t, err, "marshal json")
 			} else {
-				assert.NoError(t, err, "marshal json")
+				require.NoError(t, err, "marshal json")
 				assert.Equal(t, test.Want, string(v))
 			}
 		})
@@ -570,34 +602,32 @@ func TestBotCommandScope(t *testing.T) {
 		Scope BotCommandScope
 		Want  string
 	}{
-		{BotCommandScopeDefault{}, `{"type":"default"}`},
-		{BotCommandScopeAllPrivateChats{}, `{"type":"all_private_chats"}`},
-		{BotCommandScopeAllGroupChats{}, `{"type":"all_group_chats"}`},
-		{BotCommandScopeAllChatAdministrators{}, `{"type":"all_chat_administrators"}`},
-		{BotCommandScopeChat{}, `{"type":"chat","chat_id":0}`},
-		{BotCommandScopeChatAdministrators{}, `{"type":"chat_administrators","chat_id":0}`},
-		{BotCommandScopeChatMember{}, `{"type":"chat_member","chat_id":0,"user_id":0}`},
+		{NewBotCommandScopeDefault(BotCommandScopeDefault{}), `{"type":"default"}`},
+		{NewBotCommandScopeAllPrivateChats(BotCommandScopeAllPrivateChats{}), `{"type":"all_private_chats"}`},
+		{NewBotCommandScopeAllGroupChats(BotCommandScopeAllGroupChats{}), `{"type":"all_group_chats"}`},
+		{NewBotCommandScopeAllChatAdministrators(BotCommandScopeAllChatAdministrators{}), `{"type":"all_chat_administrators"}`},
+		{NewBotCommandScopeChat(BotCommandScopeChat{}), `{"type":"chat","chat_id":0}`},
+		{NewBotCommandScopeChatAdministrators(BotCommandScopeChatAdministrators{}), `{"type":"chat_administrators","chat_id":0}`},
+		{NewBotCommandScopeChatMember(BotCommandScopeChatMember{}), `{"type":"chat_member","chat_id":0,"user_id":0}`},
 	} {
 		v, err := json.Marshal(test.Scope)
-		assert.NoError(t, err, "marshal json")
+		require.NoError(t, err, "marshal json")
 		assert.Equal(t, test.Want, string(v))
-		test.Scope.isBotCommandScope()
 	}
 }
 
 func TestMenuButton(t *testing.T) {
 	for _, test := range []struct {
-		Scope MenuButton
-		Want  string
+		Button MenuButton
+		Want   string
 	}{
-		{MenuButtonDefault{}, `{"type":"default"}`},
-		{MenuButtonCommands{}, `{"type":"commands"}`},
-		{MenuButtonWebApp{}, `{"type":"web_app","text":"","web_app":{"url":""}}`},
+		{NewMenuButtonDefault(MenuButtonDefault{}), `{"type":"default"}`},
+		{NewMenuButtonCommands(MenuButtonCommands{}), `{"type":"commands"}`},
+		{NewMenuButtonWebApp(MenuButtonWebApp{}), `{"type":"web_app","text":"","web_app":{"url":""}}`},
 	} {
-		v, err := json.Marshal(test.Scope)
-		assert.NoError(t, err, "marshal json")
+		v, err := json.Marshal(test.Button)
+		require.NoError(t, err, "marshal json")
 		assert.Equal(t, test.Want, string(v))
-		test.Scope.isMenuButton()
 	}
 }
 
@@ -804,7 +834,7 @@ func TestUpdateType_String(t *testing.T) {
 
 func TestMessage_IsInaccessible(t *testing.T) {
 	accessible := &Message{
-		Date: time.Now().Unix(),
+		Date: UnixTime(time.Now().Unix()),
 	}
 
 	inaccessible := &Message{
@@ -843,7 +873,7 @@ func TestUpdateType_UnmarshalText(t *testing.T) {
 		{"business_message", UpdateTypeBusinessMessage, false},
 		{"edited_business_message", UpdateTypeEditedBusinessMessage, false},
 		{"deleted_business_messages", UpdateTypeDeletedBusinessMessages, false},
-		{"test", UpdateTypeUnknown, true},
+		{"test", UpdateTypeUnknown, false}, // unknown values set to Unknown
 	} {
 		t.Run(test.Text, func(t *testing.T) {
 			var typ UpdateType
@@ -851,9 +881,9 @@ func TestUpdateType_UnmarshalText(t *testing.T) {
 			err := typ.UnmarshalText([]byte(test.Text))
 
 			if test.Err {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, test.Want, typ)
 			}
 		})
@@ -864,12 +894,12 @@ func TestUpdateType_MarshalText(t *testing.T) {
 	v := UpdateTypeEditedMessage
 
 	b, err := v.MarshalText()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, []byte("edited_message"), b)
 
 	v = UpdateTypeUnknown
 	_, err = v.MarshalText()
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	output, err := json.Marshal(struct {
 		Type []UpdateType `json:"type"`
@@ -877,9 +907,8 @@ func TestUpdateType_MarshalText(t *testing.T) {
 		Type: []UpdateType{UpdateTypeCallbackQuery, UpdateTypeChannelPost},
 	})
 
-	assert.NoError(t, err)
-	assert.Equal(t, `{"type":["callback_query","channel_post"]}`, string(output))
-
+	require.NoError(t, err)
+	assert.JSONEq(t, `{"type":["callback_query","channel_post"]}`, string(output))
 }
 
 func TestUpdate_Type(t *testing.T) {
@@ -1043,7 +1072,7 @@ func TestMessageEntityType_MarshalText(t *testing.T) {
 		if test.Err {
 			assert.Error(t, err)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, test.Want, b)
 		}
 	}
@@ -1053,37 +1082,33 @@ func TestMessageEntityType_UnmarshalText(t *testing.T) {
 	for _, test := range []struct {
 		Input string
 		Want  MessageEntityType
-		Err   bool
 	}{
-		{"unknown", MessageEntityTypeUnknown, true},
-		{"mention", MessageEntityTypeMention, false},
-		{"hashtag", MessageEntityTypeHashtag, false},
-		{"cashtag", MessageEntityTypeCashtag, false},
-		{"bot_command", MessageEntityTypeBotCommand, false},
-		{"url", MessageEntityTypeURL, false},
-		{"email", MessageEntityTypeEmail, false},
-		{"phone_number", MessageEntityTypePhoneNumber, false},
-		{"bold", MessageEntityTypeBold, false},
-		{"italic", MessageEntityTypeItalic, false},
-		{"underline", MessageEntityTypeUnderline, false},
-		{"strikethrough", MessageEntityTypeStrikethrough, false},
-		{"spoiler", MessageEntityTypeSpoiler, false},
-		{"code", MessageEntityTypeCode, false},
-		{"pre", MessageEntityTypePre, false},
-		{"text_link", MessageEntityTypeTextLink, false},
-		{"text_mention", MessageEntityTypeTextMention, false},
-		{"custom_emoji", MessageEntityTypeCustomEmoji, false},
-		{"blockquote", MessageEntityTypeBlockquote, false},
+		{"unknown_value", MessageEntityTypeUnknown},
+		{"mention", MessageEntityTypeMention},
+		{"hashtag", MessageEntityTypeHashtag},
+		{"cashtag", MessageEntityTypeCashtag},
+		{"bot_command", MessageEntityTypeBotCommand},
+		{"url", MessageEntityTypeURL},
+		{"email", MessageEntityTypeEmail},
+		{"phone_number", MessageEntityTypePhoneNumber},
+		{"bold", MessageEntityTypeBold},
+		{"italic", MessageEntityTypeItalic},
+		{"underline", MessageEntityTypeUnderline},
+		{"strikethrough", MessageEntityTypeStrikethrough},
+		{"spoiler", MessageEntityTypeSpoiler},
+		{"code", MessageEntityTypeCode},
+		{"pre", MessageEntityTypePre},
+		{"text_link", MessageEntityTypeTextLink},
+		{"text_mention", MessageEntityTypeTextMention},
+		{"custom_emoji", MessageEntityTypeCustomEmoji},
+		{"blockquote", MessageEntityTypeBlockquote},
+		{"expandable_blockquote", MessageEntityTypeExpandableBlockquote},
 	} {
 		var e MessageEntityType
 
 		err := e.UnmarshalText([]byte(test.Input))
-		if test.Err {
-			assert.Error(t, err)
-		} else {
-			assert.NoError(t, err)
-			assert.Equal(t, test.Want, e)
-		}
+		require.NoError(t, err)
+		assert.Equal(t, test.Want, e)
 	}
 }
 
@@ -1153,15 +1178,20 @@ func TestStickerType_MarshalText(t *testing.T) {
 	for _, test := range []struct {
 		Type StickerType
 		Want string
+		Err  bool
 	}{
-		{StickerTypeUnknown, "unknown"},
-		{StickerTypeRegular, "regular"},
-		{StickerTypeMask, "mask"},
-		{StickerTypeCustomEmoji, "custom_emoji"},
+		{StickerTypeUnknown, "", true},
+		{StickerTypeRegular, "regular", false},
+		{StickerTypeMask, "mask", false},
+		{StickerTypeCustomEmoji, "custom_emoji", false},
 	} {
 		b, err := test.Type.MarshalText()
-		assert.NoError(t, err)
-		assert.Equal(t, test.Want, string(b))
+		if test.Err {
+			assert.Error(t, err)
+		} else {
+			require.NoError(t, err)
+			assert.Equal(t, test.Want, string(b))
+		}
 	}
 }
 
@@ -1170,7 +1200,7 @@ func TestStickerType_UnmarshalText(t *testing.T) {
 		Input string
 		Want  StickerType
 	}{
-		{"unknown", StickerTypeUnknown},
+		{"some_unknown_value", StickerTypeUnknown},
 		{"regular", StickerTypeRegular},
 		{"mask", StickerTypeMask},
 		{"custom_emoji", StickerTypeCustomEmoji},
@@ -1178,7 +1208,7 @@ func TestStickerType_UnmarshalText(t *testing.T) {
 		var e StickerType
 
 		err := e.UnmarshalText([]byte(test.Input))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, test.Want, e)
 	}
 }
@@ -1219,23 +1249,23 @@ func TestMenuButtonOneOf_UnmarshalJSON(t *testing.T) {
 func TestMessageOrigin_Type(t *testing.T) {
 	for _, test := range []struct {
 		Origin *MessageOrigin
-		Want   string
+		Want   MessageOriginType
 	}{
 		{
 			Origin: &MessageOrigin{},
-			Want:   "unknown",
+			Want:   0,
 		},
 		{
 			Origin: &MessageOrigin{User: &MessageOriginUser{}},
-			Want:   "user",
+			Want:   MessageOriginTypeUser,
 		},
 		{
 			Origin: &MessageOrigin{HiddenUser: &MessageOriginHiddenUser{}},
-			Want:   "hidden_user",
+			Want:   MessageOriginTypeHiddenUser,
 		},
 		{
 			Origin: &MessageOrigin{Chat: &MessageOriginChat{}},
-			Want:   "chat",
+			Want:   MessageOriginTypeChat,
 		},
 	} {
 		assert.Equal(t, test.Want, test.Origin.Type())
@@ -1249,7 +1279,7 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 		err := b.UnmarshalJSON([]byte(`{"type": "user", "date": 12345, "sender_user": {"id":1}}`))
 		require.NoError(t, err)
 
-		assert.Equal(t, "user", b.Type())
+		assert.Equal(t, MessageOriginTypeUser, b.Type())
 		require.NotNil(t, b.User)
 		assert.EqualValues(t, 12345, b.User.Date)
 		assert.Equal(t, UserID(1), b.User.SenderUser.ID)
@@ -1261,7 +1291,7 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 		err := b.UnmarshalJSON([]byte(`{"type": "hidden_user", "date": 12345, "sender_user_name": "john doe"}`))
 		require.NoError(t, err)
 
-		assert.Equal(t, "hidden_user", b.Type())
+		assert.Equal(t, MessageOriginTypeHiddenUser, b.Type())
 		require.NotNil(t, b.HiddenUser)
 		assert.EqualValues(t, 12345, b.HiddenUser.Date)
 		assert.Equal(t, "john doe", b.HiddenUser.SenderUserName)
@@ -1273,7 +1303,7 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 		err := b.UnmarshalJSON([]byte(`{"type": "chat", "date": 12345, "sender_chat": {"id":1}, "author_signature": "john doe"}`))
 		require.NoError(t, err)
 
-		assert.Equal(t, "chat", b.Type())
+		assert.Equal(t, MessageOriginTypeChat, b.Type())
 		require.NotNil(t, b.Chat)
 		assert.EqualValues(t, 12345, b.Chat.Date)
 		assert.Equal(t, ChatID(1), b.Chat.SenderChat.ID)
@@ -1286,7 +1316,7 @@ func TestMessageOrigin_UnmarshalJSON(t *testing.T) {
 		err := b.UnmarshalJSON([]byte(`{"type": "channel", "date": 12345, "chat": {"id":1}, "message_id": 2, "author_signature": "john doe"}`))
 		require.NoError(t, err)
 
-		assert.Equal(t, "channel", b.Type())
+		assert.Equal(t, MessageOriginTypeChannel, b.Type())
 		require.NotNil(t, b.Channel)
 		assert.EqualValues(t, 12345, b.Channel.Date)
 		assert.Equal(t, ChatID(1), b.Channel.Chat.ID)
@@ -1317,7 +1347,7 @@ func TestMaybeInaccessibleMessage(t *testing.T) {
 		assert.Equal(t, 2, m.MessageID())
 		require.NotNil(t, m.InaccessibleMessage)
 		assert.Equal(t, ChatID(1), m.InaccessibleMessage.Chat.ID)
-		assert.EqualValues(t, 2, m.InaccessibleMessage.MessageID)
+		assert.Equal(t, 2, m.InaccessibleMessage.MessageID)
 		assert.EqualValues(t, 0, m.InaccessibleMessage.Date)
 	})
 

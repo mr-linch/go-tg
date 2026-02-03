@@ -1,0 +1,79 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+formatters:
+  enable:
+    - gofumpt
+
+linters:
+  enable:
+    # HTTP/JSON
+    - bodyclose
+    - errchkjson
+    - contextcheck
+
+    # Error handling
+    - errorlint
+
+    # Code quality
+    - gocritic
+    - revive
+    - unconvert
+    - unparam
+    - nolintlint
+
+    # Complexity
+    - cyclop
+    - dupl
+    - nestif
+
+    # Testing
+    - testifylint
+
+    # Other
+    - misspell
+    - gosec
+    - prealloc
+    - usestdlibvars
+
+  exclusions:
+    generated: lax
+    paths:
+      - _examples
+    rules:
+      # Test files often have similar patterns
+      - linters: [dupl]
+        path: _test\.go$
+
+  settings:
+    errcheck:
+      exclude-functions:
+        - (io.Closer).Close
+        - (*io.PipeWriter).Close
+        - (*os.File).Close
+        - (net/http.ResponseWriter).Write
+        - io.Copy
+        - os.RemoveAll
+    cyclop:
+      max-complexity: 20
+    dupl:
+      threshold: 150
+    gocritic:
+      disabled-checks:
+        - hugeParam
+        - rangeValCopy
+      enabled-tags:
+        - performance
+        - style
+        - experimental
+    revive:
+      rules:
+        - name: unexported-naming
+          disabled: true
+    gosec:
+      excludes:
+        - G101 # hardcoded credentials - false positives for header names and test tokens
+        - G304 # file inclusion via variable - intentional file operations
+        - G404 # weak random - acceptable for jitter/backoff

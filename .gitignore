@@ -16,3 +16,12 @@
 .vscode
 .envrc
 go.work*
+CLAUDE.md
+.claude
+gen/go-tg-gen
+
+# Coverage
+coverage.out
+coverage.html
+coverage.txt
+.zed

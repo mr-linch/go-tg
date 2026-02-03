@@ -7,6 +7,7 @@ import (
 
 	"github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRouter(t *testing.T) {
@@ -16,7 +17,7 @@ func TestRouter(t *testing.T) {
 				Message: &tg.Message{},
 			},
 		})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("UpdateAndMessageHanlder", func(t *testing.T) {
@@ -37,7 +38,7 @@ func TestRouter(t *testing.T) {
 				},
 			})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, isMessageHandlerCalled)
 		assert.True(t, isUpdateHanlderCalled)
 	})
@@ -55,7 +56,7 @@ func TestRouter(t *testing.T) {
 				},
 			})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, isUpdateHanlderCalled, "update handler is not called")
 	})
 
@@ -66,10 +67,9 @@ func TestRouter(t *testing.T) {
 			Update: &tg.Update{},
 		})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 	t.Run("AllowError", func(t *testing.T) {
-
 		err := NewRouter().
 			Message(func(ctx context.Context, msg *MessageUpdate) error {
 				return nil
@@ -80,7 +80,6 @@ func TestRouter(t *testing.T) {
 		}})
 
 		assert.EqualError(t, err, "filter error: failure")
-
 	})
 	t.Run("Error", func(t *testing.T) {
 		handlerErr := fmt.Errorf("handler error")
@@ -112,7 +111,7 @@ func TestRouter(t *testing.T) {
 			},
 		})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.True(t, isErrorHandlerCalled)
 	})
 
@@ -148,7 +147,7 @@ func TestRouter(t *testing.T) {
 				Message: &tg.Message{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isMiddelwareCallled, "middleware should be called")
 			assert.True(t, isMessageHandlerCalled, "message handler should be called")
 		}
@@ -166,7 +165,7 @@ func TestRouter(t *testing.T) {
 				EditedMessage: &tg.Message{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isEditedMessageHandlerCalled, "edited message handler should be called")
 		}
 
@@ -183,7 +182,7 @@ func TestRouter(t *testing.T) {
 				ChannelPost: &tg.Message{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isChannelPostHandlerCalled, "channel post handler should be called")
 		}
 
@@ -200,7 +199,7 @@ func TestRouter(t *testing.T) {
 				EditedChannelPost: &tg.Message{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isEditedChannelPostHandlerCalled, "edited channel post handler should be called")
 		}
 
@@ -217,7 +216,7 @@ func TestRouter(t *testing.T) {
 				InlineQuery: &tg.InlineQuery{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isInlineQueryHandlerCalled, "inline query handler should be called")
 		}
 
@@ -234,7 +233,7 @@ func TestRouter(t *testing.T) {
 				ChosenInlineResult: &tg.ChosenInlineResult{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isChosenInlineResultHandlerCalled, "chosen inline result handler should be called")
 		}
 
@@ -251,7 +250,7 @@ func TestRouter(t *testing.T) {
 				CallbackQuery: &tg.CallbackQuery{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isCallbackQueryHandlerCalled, "callback query handler should be called")
 		}
 
@@ -268,7 +267,7 @@ func TestRouter(t *testing.T) {
 				ShippingQuery: &tg.ShippingQuery{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isShippingQueryHandlerCalled, "shipping query handler should be called")
 		}
 
@@ -285,7 +284,7 @@ func TestRouter(t *testing.T) {
 				PreCheckoutQuery: &tg.PreCheckoutQuery{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isPreCheckoutQueryHandlerCalled, "pre checkout query handler should be called")
 		}
 
@@ -302,7 +301,7 @@ func TestRouter(t *testing.T) {
 				Poll: &tg.Poll{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isPollHandlerCalled, "poll handler should be called")
 		}
 
@@ -319,7 +318,7 @@ func TestRouter(t *testing.T) {
 				PollAnswer: &tg.PollAnswer{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isPollAnswerHandlerCalled, "poll answer handler should be called")
 
 		}
@@ -337,7 +336,7 @@ func TestRouter(t *testing.T) {
 				MyChatMember: &tg.ChatMemberUpdated{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isMyChatMemberHandlerCalled, "my chat member handler should be called")
 		}
 
@@ -354,7 +353,7 @@ func TestRouter(t *testing.T) {
 				ChatMember: &tg.ChatMemberUpdated{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isChatMemberHandlerCalled, "chat member handler should be called")
 		}
 
@@ -371,7 +370,7 @@ func TestRouter(t *testing.T) {
 				ChatJoinRequest: &tg.ChatJoinRequest{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isChatJoinRequestHandlerCalled, "chat join request handler should be called")
 		}
 
@@ -388,7 +387,7 @@ func TestRouter(t *testing.T) {
 				MessageReaction: &tg.MessageReactionUpdated{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isMessageReactionHandlerCalled, "message reaction handler should be called")
 		}
 
@@ -405,7 +404,7 @@ func TestRouter(t *testing.T) {
 				MessageReactionCount: &tg.MessageReactionCountUpdated{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isMessageReactionCountHandlerCalled, "message reaction count handler should be called")
 		}
 
@@ -416,14 +415,13 @@ func TestRouter(t *testing.T) {
 				assert.NotNil(t, msg.ChatBoostUpdated)
 				isChatBoostedHandlerCalled = true
 				return nil
-
 			})
 
 			err := router.Handle(ctx, &Update{Update: &tg.Update{
 				ChatBoost: &tg.ChatBoostUpdated{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isChatBoostedHandlerCalled, "chat boosted handler should be called")
 		}
 
@@ -440,7 +438,7 @@ func TestRouter(t *testing.T) {
 				RemovedChatBoost: &tg.ChatBoostRemoved{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isRemovedChatBoostHandlerCalled, "removed chat boosted handler should be called")
 		}
 
@@ -457,7 +455,7 @@ func TestRouter(t *testing.T) {
 				BusinessConnection: &tg.BusinessConnection{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isBusinessConnectionHandlerCalled, "business connection handler should be called")
 		}
 
@@ -474,7 +472,7 @@ func TestRouter(t *testing.T) {
 				BusinessMessage: &tg.Message{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isBusinessMessageHandlerCalled, "business message handler should be called")
 		}
 
@@ -491,7 +489,7 @@ func TestRouter(t *testing.T) {
 				EditedBusinessMessage: &tg.Message{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isEditedBusinessMessageHandlerCalled, "edited business message handler should be called")
 		}
 
@@ -508,7 +506,7 @@ func TestRouter(t *testing.T) {
 				DeletedBusinessMessages: &tg.BusinessMessagesDeleted{},
 			}})
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.True(t, isDeletedBusinessMessagesHandlerCalled, "deleted business messages handler should be called")
 		}
 	})
@@ -542,7 +540,7 @@ func TestRouter(t *testing.T) {
 			},
 		})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, isPrivateChatHandlerCalled, "private chat handler should be called")
 		assert.False(t, isGroupChatHandlerCalled, "group chat handler should not be called")
 		assert.False(t, isGroupAndPrivateChatHandlerCalled, "group and private chat handler should not be called")
@@ -561,10 +559,9 @@ func TestRouter(t *testing.T) {
 			},
 		})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, isPrivateChatHandlerCalled, "private chat handler should not be called")
 		assert.True(t, isGroupChatHandlerCalled, "group chat handler should be called")
 		assert.False(t, isGroupAndPrivateChatHandlerCalled, "group and private chat handler should not be called")
 	})
-
 }

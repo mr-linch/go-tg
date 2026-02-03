@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAuthWidget_Query(t *testing.T) {
@@ -17,7 +18,7 @@ func TestAuthWidget_Query(t *testing.T) {
 			Widget: AuthWidget{
 				ID:        UserID(1),
 				FirstName: "John",
-				AuthDate:  1546300800,
+				AuthDate:  UnixTime(1546300800),
 				Hash:      "hash",
 			},
 
@@ -35,7 +36,7 @@ func TestAuthWidget_Query(t *testing.T) {
 				LastName:  "Doe",
 				Username:  "jdoe",
 				PhotoURL:  "https://example.com/photo.jpg",
-				AuthDate:  1546300800,
+				AuthDate:  UnixTime(1546300800),
 				Hash:      "hash",
 			},
 
@@ -80,7 +81,7 @@ func TestParseAuthWidgetQuery(t *testing.T) {
 				LastName:  "Doe",
 				Username:  "jdoe",
 				PhotoURL:  "https://example.com/photo.jpg",
-				AuthDate:  1546300800,
+				AuthDate:  UnixTime(1546300800),
 				Hash:      "hash",
 			},
 			Error: false,
@@ -115,13 +116,12 @@ func TestParseAuthWidgetQuery(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			got, err := ParseAuthWidgetQuery(test.Values)
 			if test.Error {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			assert.Equal(t, test.Excepted, got)
-
 		})
 	}
 }
@@ -134,7 +134,7 @@ func TestAuthWidget_Signature(t *testing.T) {
 		FirstName: "Sasha",
 		Username:  "MrLinch",
 		PhotoURL:  "https://t.me/i/userpic/320/q9a3ePyQ_J58XivHA6pL7UOLZWvphbLgBqh3OLhmtrs.jpg",
-		AuthDate:  1656790495,
+		AuthDate:  UnixTime(1656790495),
 		Hash:      "d64920549aa64c3f69577e217e77b253ca383bf0b9945266ab5e096739250d2d",
 	}
 
@@ -152,7 +152,7 @@ func TestAuthWidget_Valid(t *testing.T) {
 			FirstName: "Sasha",
 			Username:  "MrLinch",
 			PhotoURL:  "https://t.me/i/userpic/320/q9a3ePyQ_J58XivHA6pL7UOLZWvphbLgBqh3OLhmtrs.jpg",
-			AuthDate:  1656790495,
+			AuthDate:  UnixTime(1656790495),
 			Hash:      "d64920549aa64c3f69577e217e77b253ca383bf0b9945266ab5e096739250d2d",
 		}
 
@@ -165,23 +165,22 @@ func TestAuthWidget_Valid(t *testing.T) {
 			FirstName: "Sasha",
 			Username:  "MrLinch",
 			PhotoURL:  "https://t.me/i/userpic/320/q9a3ePyQ_J58XivHA6pL7UOLZWvphbLgBqh3OLhmtrs.jpg",
-			AuthDate:  1656790495,
+			AuthDate:  UnixTime(1656790495),
 			Hash:      "d64920549aa64c3f69577e217e77b253ca383bf0b9945266ab5e096739250d2d",
 		}
 
 		assert.False(t, w.Valid(token))
 	})
-
 }
 
-func TestAuthWidget_AuthDateTime(t *testing.T) {
+func TestAuthWidget_Time(t *testing.T) {
 	now := time.Now().Truncate(time.Second)
 
 	w := AuthWidget{
-		AuthDate: now.Unix(),
+		AuthDate: UnixTime(now.Unix()),
 	}
 
-	assert.Equal(t, now, w.AuthDateTime())
+	assert.Equal(t, now, w.AuthDate.Time())
 }
 
 func TestParseWebAppInitData(t *testing.T) {
@@ -210,7 +209,7 @@ func TestParseWebAppInitData(t *testing.T) {
 				Chat:         &WebAppChat{ID: 3},
 				StartParam:   "start_param",
 				CanSendAfter: 10,
-				AuthDate:     1546300800,
+				AuthDate:     UnixTime(1546300800),
 				Hash:         "hash",
 			},
 		},
@@ -319,13 +318,12 @@ func TestParseWebAppInitData(t *testing.T) {
 			got, err := ParseWebAppInitData(test.Values)
 
 			if test.Error {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			assert.Equal(t, test.Excepted, got)
-
 		})
 	}
 }
@@ -335,23 +333,22 @@ func TestWebAppInitData_Valid(t *testing.T) {
 
 	t.Run("True", func(t *testing.T) {
 		vs, err := url.ParseQuery("query_id=AAHznjIGAAAAAPOeMgZUHjBo&user=%7B%22id%22%3A103980787%2C%22first_name%22%3A%22Sasha%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22MrLinch%22%2C%22language_code%22%3A%22uk%22%7D&auth_date=1656798871&hash=8c59e353f627a5c67d41f8a2e8f8c12d9e0fbec8ac44680d779ebed3c326a41a")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		got, err := ParseWebAppInitData(vs)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, got)
 
 		assert.True(t, got.Valid(token))
 	})
 	t.Run("False", func(t *testing.T) {
 		vs, err := url.ParseQuery("query_id=AAAHznjIGAAAAAPOeMgZUHjBo&user=%7B%22id%22%3A103980787%2C%22first_name%22%3A%22Sasha%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22MrLinch%22%2C%22language_code%22%3A%22uk%22%7D&auth_date=1656798871&hash=8c59e353f627a5c67d41f8a2e8f8c12d9e0fbec8ac44680d779ebed3c326a41a")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		got, err := ParseWebAppInitData(vs)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, got)
 
 		assert.False(t, got.Valid(token))
 	})
-
 }

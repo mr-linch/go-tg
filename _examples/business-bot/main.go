@@ -63,8 +63,9 @@ func main() {
 				pm.Bold("ID: "), pm.Code(bcu.BusinessConnection.ID),
 			))
 
+			canReply := bcu.Rights != nil && bcu.Rights.CanReply
 			lines = append(lines, pm.Line(
-				pm.Bold("Can Reply? "), pm.Code(fmt.Sprintf("%t", bcu.BusinessConnection.CanReply)),
+				pm.Bold("Can Reply? "), pm.Code(fmt.Sprintf("%t", canReply)),
 			))
 
 			return bcu.Update.Reply(ctx,

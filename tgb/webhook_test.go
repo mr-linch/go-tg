@@ -15,6 +15,7 @@ import (
 	"github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewWebhook(t *testing.T) {
@@ -61,7 +62,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodGet, "/", strings.NewReader(""))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		req.RemoteAddr = "1.1.1.1"
 
 		webhook := NewWebhook(
@@ -79,7 +80,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(""))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		req.Header.Set("X-Forwarded-For", "1-1-1-1")
 
@@ -98,7 +99,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(""))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-Forwarded-For", "1.1.1.1")
@@ -118,7 +119,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(""))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		req.Header.Set(securityTokenHeader, "secret")
 		req.Header.Set("X-Forwarded-For", "1.1.1.1")
@@ -140,7 +141,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(""))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		req.RemoteAddr = "1.1.1.1"
 		req.Header.Set("Content-Type", "text/plain")
@@ -162,7 +163,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader("{"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		req.RemoteAddr = "1.1.1.1"
 		req.Header.Set("Content-Type", "application/json")
@@ -184,7 +185,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader("{}"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		req.RemoteAddr = "1.1.1.1"
 		req.Header.Set("Content-Type", "application/json")
@@ -206,7 +207,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader("{}"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		req.RemoteAddr = "149.154.160.2" // ip from default telegram range
 		req.Header.Set("Content-Type", "application/json")
@@ -227,7 +228,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(`{"update_id": 123456, "message": {"chat": {"id": 1234}}}`))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		req.RemoteAddr = "1.1.1.1"
 		req.Header.Set("Content-Type", "application/json")
@@ -252,13 +253,12 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 
 		body, err := io.ReadAll(w.Body)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
-		assert.Equal(t, `{"chat_id":"1234","method":"sendMessage","text":"test"}`, string(body))
+		assert.JSONEq(t, `{"chat_id":"1234","method":"sendMessage","text":"test"}`, string(body))
 	})
 
 	t.Run("HandleOKTwoReplyCall", func(t *testing.T) {
-
 		isHandlerCalled := false
 
 		handlerDone := make(chan struct{})
@@ -267,7 +267,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 			HandlerFunc(func(ctx context.Context, update *Update) error {
 				// first call should be send response to webhook
 				err := update.Reply(ctx, tg.NewSendMessageCall(update.Message.Chat, "test"))
-				assert.NoError(t, err)
+				require.NoError(t, err)
 
 				// second call should call UpdateReply.DoVoid()
 				ur := &MockUpdateReply{}
@@ -276,7 +276,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 				ur.On("DoVoid", mock.Anything).Return(nil)
 
 				err = update.Reply(ctx, ur)
-				assert.NoError(t, err)
+				require.NoError(t, err)
 
 				ur.AssertExpectations(t)
 
@@ -293,7 +293,7 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		)
 
 		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(`{"update_id": 123456, "message": {"chat": {"id": 1234}}}`))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		req.RemoteAddr = "1.1.1.1"
 		req.Header.Set("Content-Type", "application/json")
 
@@ -304,14 +304,13 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 
 		body, err := io.ReadAll(w.Body)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
-		assert.Equal(t, `{"chat_id":"1234","method":"sendMessage","text":"test"}`, string(body))
+		assert.JSONEq(t, `{"chat_id":"1234","method":"sendMessage","text":"test"}`, string(body))
 
 		<-handlerDone
 
 		assert.True(t, isHandlerCalled, "handler is not called")
-
 	})
 }
 
@@ -336,7 +335,7 @@ func TestWebhook_Setup(t *testing.T) {
 		)
 
 		err := webhook.Setup(context.Background())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("ShouldUpdateBecouseDropPendingAndHavePending", func(t *testing.T) {
@@ -378,7 +377,7 @@ func TestWebhook_Setup(t *testing.T) {
 		)
 
 		err := webhook.Setup(context.Background())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("ShouldUpdateBecouseAllowedUpdatesChanged", func(t *testing.T) {
@@ -396,7 +395,7 @@ func TestWebhook_Setup(t *testing.T) {
 
 				vs, err := url.ParseQuery(string(body))
 				assert.NoError(t, err)
-				assert.EqualValues(t, url.Values{
+				assert.Equal(t, url.Values{
 					"secret_token":    []string{"973b4c22458364768284928867d93c992e2b2db94e81f7dbca28e171390a0363"},
 					"url":             []string{"https://google.com"},
 					"ip_address":      []string{"1.1.1.1"},
@@ -420,17 +419,16 @@ func TestWebhook_Setup(t *testing.T) {
 		)
 
 		err := webhook.Setup(context.Background())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
-
 }
 
 type loggerMock struct {
 	mock.Mock
 }
 
-func (mock *loggerMock) Printf(format string, v ...interface{}) {
-	mock.Called(format, v)
+func (m *loggerMock) Printf(format string, v ...interface{}) {
+	m.Called(format, v)
 }
 
 func TestWebhook_log(t *testing.T) {

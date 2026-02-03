@@ -125,7 +125,7 @@ func TestManager_Init(t *testing.T) {
 func assertEmptyCache[T comparable](t *testing.T, manager *Manager[T]) bool {
 	t.Helper()
 
-	return assert.Len(t, manager.cache, 0, "cache should be empty")
+	return assert.Empty(t, manager.cache, "cache should be empty")
 }
 
 func TestManager_Wrap(t *testing.T) {
@@ -517,13 +517,12 @@ func TestManager_Wrap(t *testing.T) {
 			},
 		}})
 
-		assert.EqualError(t, err, "oh no")
+		require.EqualError(t, err, "oh no")
 		store.AssertExpectations(t)
 		assertEmptyCache(t, manager)
 	})
 
 	t.Run("HandleNoMatched", func(t *testing.T) {
-
 		type Session struct {
 			Counter int
 		}
@@ -602,7 +601,7 @@ func TestKeyFuncChat(t *testing.T) {
 
 	key = KeyFuncChat(&tgb.Update{})
 
-	assert.Equal(t, "", key)
+	assert.Empty(t, key)
 }
 
 func TestManager_Filter(t *testing.T) {
@@ -620,7 +619,7 @@ func TestManager_Filter(t *testing.T) {
 
 		allow, err := filter.Allow(context.Background(), &tgb.Update{})
 		assert.False(t, allow)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.False(t, isFilterCalled)
 	})
@@ -645,7 +644,7 @@ func TestManager_Filter(t *testing.T) {
 
 		allow, err := filter.Allow(ctx, &tgb.Update{})
 		assert.True(t, allow)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.True(t, isFilterCalled)
 	})

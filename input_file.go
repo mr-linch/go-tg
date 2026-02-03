@@ -40,7 +40,7 @@ func (file InputFile) Ptr() *InputFile {
 	return &file
 }
 
-// Close closes body, if body impliments io.Closer.
+// Close closes body, if body implements io.Closer.
 func (file InputFile) Close() error {
 	closer, ok := file.Body.(io.Closer)
 	if ok {
@@ -60,7 +60,8 @@ func NewInputFile(name string, body io.Reader) InputFile {
 // NewInputFileFromBytes creates new InputFile with given name and bytes slice.
 //
 // Example:
-//   file := NewInputFileBytes("test.txt", []byte("test, test, test..."))
+//
+//	file := NewInputFileBytes("test.txt", []byte("test, test, test..."))
 func NewInputFileBytes(name string, body []byte) InputFile {
 	return NewInputFile(name, bytes.NewReader(body))
 }
@@ -71,12 +72,11 @@ func NewInputFileBytes(name string, body []byte) InputFile {
 //
 // Example:
 //
-//   file, err := NewInputFileLocal("test.png")
-//   if err != nil {
-//       return err
-//   }
-//   defer  close()
-//
+//	file, err := NewInputFileLocal("test.png")
+//	if err != nil {
+//	    return err
+//	}
+//	defer  close()
 func NewInputFileLocal(path string) (InputFile, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -92,15 +92,16 @@ func NewInputFileLocal(path string) (InputFile, error) {
 // NewInputFileFS creates the InputFile from provided FS and file path.
 //
 // Usage:
-//  //go:embed assets/*
-//  var assets embed.FS
-//  file, err := NewInputFileFS(assets, "images/test.png")
-//  if err != nil {
-//    return err
-//  }
-//  defer file.Close()
-func NewInputFileFS(fs fs.FS, path string) (InputFile, error) {
-	file, err := fs.Open(path)
+//
+//	//go:embed assets/*
+//	var assets embed.FS
+//	file, err := NewInputFileFS(assets, "images/test.png")
+//	if err != nil {
+//	  return err
+//	}
+//	defer file.Close()
+func NewInputFileFS(fsys fs.FS, path string) (InputFile, error) {
+	file, err := fsys.Open(path)
 	if err != nil {
 		return InputFile{}, fmt.Errorf("open file: %w", err)
 	}

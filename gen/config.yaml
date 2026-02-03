@@ -1,0 +1,204 @@
+# go-tg-gen configuration.
+parser:
+  enums:
+    # Field-mapped: values from first field's auto-detected Enum
+    - name: ChatType
+      fields: [Chat.type, ChatFullInfo.type, InlineQuery.chat_type]
+    - name: StickerType
+      fields: [Sticker.type, StickerSet.sticker_type]
+    - name: MessageEntityType
+      fields: [MessageEntity.type]
+
+    # Expr-computed: structural enums
+    - name: UpdateType
+      expr: 'filter(Fields("Update"), {.Optional}) | map({.Name})'
+    - name: MessageType
+      expr: 'filter(Fields("Message"), {.Optional}) | map({.Name})'
+
+    # Method parameter enums
+    - name: ChatAction
+      expr: 'ParamEnumValues("sendChatAction", "action")'
+
+    # Expr-computed: union discriminator enums
+    - name: MessageOriginType
+      expr: 'SubtypeConsts("MessageOrigin", "type")'
+    - name: ChatMemberStatus
+      expr: 'SubtypeConsts("ChatMember", "status")'
+    - name: BackgroundFillType
+      expr: 'SubtypeConsts("BackgroundFill", "type")'
+    - name: ReactionTypeType
+      expr: 'SubtypeConsts("ReactionType", "type")'
+    - name: BotCommandScopeType
+      expr: 'SubtypeConsts("BotCommandScope", "type")'
+    - name: MenuButtonType
+      expr: 'SubtypeConsts("MenuButton", "type")'
+    - name: InlineQueryResultType
+      expr: 'SubtypeConsts("InlineQueryResult", "type")'
+    - name: InputMediaType
+      expr: 'SubtypeConsts("InputMedia", "type")'
+
+typegen:
+  enums:
+    - name: ChatType
+      underlying: int8
+      marshal: json
+    - name: StickerType
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: MessageEntityType
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: UpdateType
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: ChatAction
+      underlying: int8
+      marshal: stringer
+    - name: MessageType
+      underlying: int8
+      marshal: none
+      unknown: true
+
+  type_methods:
+    - type: Update
+      method: Type
+      return: UpdateType
+    - type: Message
+      method: Type
+      return: MessageType
+
+  exclude:
+    # Description-only types with custom implementations
+    - InputFile
+    # Union types without const discriminator (manual unmarshal logic)
+    - MaybeInaccessibleMessage
+    - InputMessageContent
+
+  field_type_rules:
+    - expr: 'TypeExpr.Types[0].Type in ["Integer", "Integer64"] && (Description contains "Unix time" || Description contains "Unix timestamp")'
+      type: UnixTime
+      scalar: true
+    - expr: '(Name == "file_id" || hasSuffix(Name, "_file_id")) && TypeExpr.Types[0].Type == "String"'
+      type: FileID
+      scalar: true
+    - expr: '(Name == "chat_id" || hasSuffix(Name, "_chat_id")) && TypeExpr.Types[0].Type in ["Integer", "Integer64"]'
+      type: ChatID
+      scalar: true
+    - expr: '(Name == "user_id" || hasSuffix(Name, "_user_id")) && TypeExpr.Types[0].Type in ["Integer", "Integer64"]'
+      type: UserID
+      scalar: true
+    - expr: 'hasSuffix(Name, "parse_mode")'
+      type: ParseMode
+      scalar: true
+    - expr: '(Name == "username" || hasSuffix(Name, "_username")) && TypeExpr.Types[0].Type == "String"'
+      type: Username
+      scalar: true
+    - expr: 'TypeExpr.Types[0].Type == "String" && Description contains "file_id" && Description contains "attach://"'
+      type: FileArg
+    - expr: 'TypeExpr.Types[0].Type == "String" && !(Description contains "file_id") && Description contains "attach://"'
+      type: InputFile
+
+  name_overrides:
+    Update.update_id: ID
+    Message.message_id: ID
+    Contact.vcard: VCard
+    InlineQueryResultContact.vcard: VCard
+    InputContactMessageContent.vcard: VCard
+
+  type_overrides:
+    User.id: UserID
+    Chat.id: ChatID
+    Chat.type: ChatType
+    ChatFullInfo.id: ChatID
+    ChatFullInfo.type: ChatType
+    InaccessibleMessage.date: UnixTime
+    MessageEntity.type: MessageEntityType
+    Sticker.type: StickerType
+    StickerSet.sticker_type: StickerType
+    InlineQuery.chat_type: ChatType
+    WebhookInfo.allowed_updates: "[]UpdateType"
+
+methodgen:
+  stringer_types:
+    - ParseMode
+    - ChatAction
+
+  param_type_rules:
+    # PeerID: chat_id or *_chat_id with Integer or String union (accepts both int and username)
+    - expr: '(Name == "chat_id" || hasSuffix(Name, "_chat_id")) && len(TypeExpr.Types) > 1'
+      type: PeerID
+    # UserID: user_id or *_user_id with Integer type
+    - expr: '(Name == "user_id" || hasSuffix(Name, "_user_id")) && TypeExpr.Types[0].Type in ["Integer", "Integer64"]'
+      type: UserID
+    # FileID: file_id or *_file_id with String type
+    - expr: '(Name == "file_id" || hasSuffix(Name, "_file_id")) && TypeExpr.Types[0].Type == "String"'
+      type: FileID
+    # FileArg: InputFile type with description mentioning "file_id" (can pass file_id, URL, or upload)
+    - expr: 'TypeExpr.Types[0].Type == "InputFile" && Description contains "file_id"'
+      type: FileArg
+    # InputFile: InputFile type without "file_id" mention (upload only)
+    - expr: 'TypeExpr.Types[0].Type == "InputFile" && !(Description contains "file_id")'
+      type: InputFile
+    # ParseMode
+    - expr: 'Name == "parse_mode"'
+      type: ParseMode
+    # Reply markup union -> ReplyMarkup interface
+    - expr: 'Name == "reply_markup" && len(TypeExpr.Types) > 1'
+      type: ReplyMarkup
+
+  param_type_overrides:
+    sendChatAction.action: ChatAction
+    getUpdates.allowed_updates: "[]UpdateType"
+    setWebhook.allowed_updates: "[]UpdateType"
+
+  return_type_overrides:
+    stopPoll: Poll
+
+  # Methods with mutually exclusive required params need multiple constructors
+  # Each variant can specify its own return_type
+  constructor_variants:
+    editMessageText:
+      - suffix: ""
+        required_params: [chat_id, message_id, text]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id, text]
+        return_type: True
+    editMessageCaption:
+      - suffix: ""
+        required_params: [chat_id, message_id, caption]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id, caption]
+        return_type: True
+    editMessageMedia:
+      - suffix: ""
+        required_params: [chat_id, message_id, media]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id, media]
+        return_type: True
+    editMessageLiveLocation:
+      - suffix: ""
+        required_params: [chat_id, message_id, latitude, longitude]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id, latitude, longitude]
+        return_type: True
+    editMessageReplyMarkup:
+      - suffix: ""
+        required_params: [chat_id, message_id]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id]
+        return_type: True
+    stopMessageLiveLocation:
+      - suffix: ""
+        required_params: [chat_id, message_id]
+        return_type: Message
+      - suffix: "Inline"
+        required_params: [inline_message_id]
+        return_type: True

@@ -7,106 +7,36 @@ import (
 	"time"
 )
 
+// UnixTime represents a Unix timestamp (seconds since epoch).
+// It is stored as int64 and serializes to/from JSON as an integer.
+type UnixTime int64
+
+// Time converts the Unix timestamp to time.Time.
+// Returns the zero time.Time for UnixTime(0).
+func (t UnixTime) Time() time.Time {
+	if t == 0 {
+		return time.Time{}
+	}
+	return time.Unix(int64(t), 0)
+}
+
+// IsZero reports whether the timestamp is zero (unset).
+func (t UnixTime) IsZero() bool {
+	return t == 0
+}
+
 type ChatID int64
 
-var _ PeerID = (ChatID)(0)
+var _ PeerID = ChatID(0)
 
 func (id ChatID) PeerID() string {
 	return strconv.FormatInt(int64(id), 10)
 }
 
-// ChatType represents enum of possible chat types.
-type ChatType int8
-
-const (
-	// ChatTypePrivate represents one-to-one chat.
-	ChatTypePrivate ChatType = iota + 1
-	// ChatTypeGroup represents group chats.
-	ChatTypeGroup
-	// ChatTypeSupergroup supergroup chats.
-	ChatTypeSupergroup
-	// ChatTypeChannel represents channels
-	ChatTypeChannel
-	// ChatTypeSender for a private chat with the inline query sender
-	ChatTypeSender
-)
-
-func (chatType ChatType) String() string {
-	if chatType < ChatTypePrivate || chatType > ChatTypeSender {
-		return "unknown"
-	}
-
-	return [...]string{"private", "group", "supergroup", "channel", "sender"}[chatType-1]
-}
-
-func (chatType ChatType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(chatType.String())
-}
-
-func (chatType *ChatType) UnmarshalJSON(b []byte) error {
-	var s string
-	if err := json.Unmarshal(b, &s); err != nil {
-		return err
-	}
-
-	switch s {
-	case "private":
-		*chatType = ChatTypePrivate
-	case "group":
-		*chatType = ChatTypeGroup
-	case "supergroup":
-		*chatType = ChatTypeSupergroup
-	case "channel":
-		*chatType = ChatTypeChannel
-	case "sender":
-		*chatType = ChatTypeSender
-	default:
-		return fmt.Errorf("unknown chat type: %s", s)
-	}
-
-	return nil
-}
-
-// ChatAction type of action to broadcast via sendChatAction.
-type ChatAction int8
-
-const (
-	ChatActionTyping ChatAction = iota + 1
-	ChatActionUploadPhoto
-	ChatActionRecordVideo
-	ChatActionUploadVideo
-	ChatActionRecordVoice
-	ChatActionUploadVoice
-	ChatActionUploadDocument
-	ChatActionChooseSticker
-	ChatActionFindLocation
-	ChatActionRecordVideoNote
-	ChatActionUploadVideoNote
-)
-
-func (action ChatAction) String() string {
-	if action < ChatActionTyping || action > ChatActionUploadVideoNote {
-		return "unknown"
-	}
-	return [...]string{
-		"typing",
-		"upload_photo",
-		"record_video",
-		"upload_video",
-		"record_voice",
-		"upload_voice",
-		"upload_document",
-		"choose_sticker",
-		"find_location",
-		"record_video_note",
-		"upload_video_note",
-	}[action-1]
-}
-
 // UserID it's unique identifier for Telegram user or bot.
 type UserID int64
 
-var _ PeerID = (UserID)(0)
+var _ PeerID = UserID(0)
 
 func (id UserID) PeerID() string {
 	return strconv.FormatInt(int64(id), 10)
@@ -195,15 +125,16 @@ func (arg *FileArg) isRef() bool {
 
 // getRef returns text representation of reference
 func (arg *FileArg) getRef() string {
-	if arg.FileID != "" {
+	switch {
+	case arg.FileID != "":
 		return string(arg.FileID)
-	} else if arg.URL != "" {
+	case arg.URL != "":
 		return arg.URL
-	} else if arg.addr != "" {
+	case arg.addr != "":
 		return arg.addr
+	default:
+		return ""
 	}
-
-	return ""
 }
 
 //go:generate go run github.com/mr-linch/go-tg-gen@latest -types-output types_gen.go
@@ -215,20 +146,6 @@ func (chat Chat) PeerID() string {
 func (user User) PeerID() string {
 	return user.ID.PeerID()
 }
-
-// InputMedia generic interface for InputMedia*.
-//
-// Known implementations:
-//   - [InputMediaPhoto]
-//   - [InputMediaVideo]
-//   - [InputMediaAudio]
-//   - [InputMediaDocument]
-//   - [InputMediaAnimation]
-type InputMedia interface {
-	getMedia() (media *FileArg, thumb *InputFile)
-}
-
-type CallbackGame struct{}
 
 // ReplyMarkup generic for keyboards.
 //
@@ -256,7 +173,7 @@ func (markup InlineKeyboardMarkup) Ptr() *InlineKeyboardMarkup {
 
 // NewInlineButtonURL create inline button
 // with http(s):// or tg:// URL to be opened when the button is pressed.
-func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
+func NewInlineKeyboardButtonURL(text, url string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text: text,
 		URL:  url,
@@ -265,7 +182,7 @@ func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
 
 // NewInlineKeyboardButtonCallback creates a new InlineKeyboardButton with specified callback data.
 // Query should have length 1-64 bytes.
-func NewInlineKeyboardButtonCallback(text string, query string) InlineKeyboardButton {
+func NewInlineKeyboardButtonCallback(text, query string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:         text,
 		CallbackData: query,
@@ -297,7 +214,7 @@ func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginURL) InlineKeybo
 //	will prompt the user to select one of their chats,
 //
 // open that chat and insert the bot's username and the specified inline query in the input field.
-func NewInlineKeyboardButtonSwitchInlineQuery(text string, query string) InlineKeyboardButton {
+func NewInlineKeyboardButtonSwitchInlineQuery(text, query string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:              text,
 		SwitchInlineQuery: query,
@@ -306,7 +223,7 @@ func NewInlineKeyboardButtonSwitchInlineQuery(text string, query string) InlineK
 
 // NewInlineKeyboardButtonSwitchInlineQueryCurrentChat represents button that
 // will insert the bot's username and the specified inline query in the current chat's input field
-func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text string, query string) InlineKeyboardButton {
+func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text, query string) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:                         text,
 		SwitchInlineQueryCurrentChat: query,
@@ -563,174 +480,6 @@ func (layout *ButtonLayout[T]) Row(buttons ...T) *ButtonLayout[T] {
 	return layout
 }
 
-// InlineQueryResult it's a generic interface for all inline query results.
-//
-// Known implementations:
-//   - [InlineQueryResultCachedAudio]
-//   - [InlineQueryResultCachedDocument]
-//   - [InlineQueryResultCachedGIF]
-//   - [InlineQueryResultCachedMPEG4GIF]
-//   - [InlineQueryResultCachedPhoto]
-//   - [InlineQueryResultCachedSticker]
-//   - [InlineQueryResultCachedVideo]
-//   - [InlineQueryResultCachedVoice]
-//   - [InlineQueryResultAudio]
-//   - [InlineQueryResultDocument]
-//   - [InlineQueryResultGIF]
-//   - [InlineQueryResultMPEG4GIF]
-//   - [InlineQueryResultPhoto]
-//   - [InlineQueryResultVideo]
-//   - [InlineQueryResultVoice]
-//   - [InlineQueryResultArticle]
-//   - [InlineQueryResultContact]
-//   - [InlineQueryResultGame]
-//   - [InlineQueryResultLocation]
-//   - [InlineQueryResultVenue]
-type InlineQueryResult interface {
-	isInlineQueryResult()
-	json.Marshaler
-}
-
-func (InlineQueryResultCachedAudio) isInlineQueryResult() {}
-func (result InlineQueryResultCachedAudio) MarshalJSON() ([]byte, error) {
-	result.Type = "audio"
-	type alias InlineQueryResultCachedAudio
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultCachedDocument) isInlineQueryResult() {}
-func (result InlineQueryResultCachedDocument) MarshalJSON() ([]byte, error) {
-	result.Type = "document"
-	type alias InlineQueryResultCachedDocument
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultCachedGIF) isInlineQueryResult() {}
-func (result InlineQueryResultCachedGIF) MarshalJSON() ([]byte, error) {
-	result.Type = "gif"
-	type alias InlineQueryResultCachedGIF
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultCachedMPEG4GIF) isInlineQueryResult() {}
-func (result InlineQueryResultCachedMPEG4GIF) MarshalJSON() ([]byte, error) {
-	result.Type = "mpeg4_gif"
-	type alias InlineQueryResultCachedMPEG4GIF
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultCachedPhoto) isInlineQueryResult() {}
-func (result InlineQueryResultCachedPhoto) MarshalJSON() ([]byte, error) {
-	result.Type = "photo"
-	type alias InlineQueryResultCachedPhoto
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultCachedSticker) isInlineQueryResult() {}
-func (result InlineQueryResultCachedSticker) MarshalJSON() ([]byte, error) {
-	result.Type = "sticker"
-	type alias InlineQueryResultCachedSticker
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultCachedVideo) isInlineQueryResult() {}
-func (result InlineQueryResultCachedVideo) MarshalJSON() ([]byte, error) {
-	result.Type = "video"
-	type alias InlineQueryResultCachedVideo
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultCachedVoice) isInlineQueryResult() {}
-func (result InlineQueryResultCachedVoice) MarshalJSON() ([]byte, error) {
-	result.Type = "voice"
-	type alias InlineQueryResultCachedVoice
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultAudio) isInlineQueryResult() {}
-func (result InlineQueryResultAudio) MarshalJSON() ([]byte, error) {
-	result.Type = "audio"
-	type alias InlineQueryResultAudio
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultDocument) isInlineQueryResult() {}
-func (result InlineQueryResultDocument) MarshalJSON() ([]byte, error) {
-	result.Type = "document"
-	type alias InlineQueryResultDocument
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultGIF) isInlineQueryResult() {}
-func (result InlineQueryResultGIF) MarshalJSON() ([]byte, error) {
-	result.Type = "gif"
-	type alias InlineQueryResultGIF
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultMPEG4GIF) isInlineQueryResult() {}
-func (result InlineQueryResultMPEG4GIF) MarshalJSON() ([]byte, error) {
-	result.Type = "mpeg4_gif"
-	type alias InlineQueryResultMPEG4GIF
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultPhoto) isInlineQueryResult() {}
-func (result InlineQueryResultPhoto) MarshalJSON() ([]byte, error) {
-	result.Type = "photo"
-	type alias InlineQueryResultPhoto
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultVideo) isInlineQueryResult() {}
-func (result InlineQueryResultVideo) MarshalJSON() ([]byte, error) {
-	result.Type = "video"
-	type alias InlineQueryResultVideo
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultVoice) isInlineQueryResult() {}
-func (result InlineQueryResultVoice) MarshalJSON() ([]byte, error) {
-	result.Type = "voice"
-	type alias InlineQueryResultVoice
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultArticle) isInlineQueryResult() {}
-func (result InlineQueryResultArticle) MarshalJSON() ([]byte, error) {
-	result.Type = "article"
-	type alias InlineQueryResultArticle
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultContact) isInlineQueryResult() {}
-func (result InlineQueryResultContact) MarshalJSON() ([]byte, error) {
-	result.Type = "contact"
-	type alias InlineQueryResultContact
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultGame) isInlineQueryResult() {}
-func (result InlineQueryResultGame) MarshalJSON() ([]byte, error) {
-	result.Type = "game"
-	type alias InlineQueryResultGame
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultLocation) isInlineQueryResult() {}
-func (result InlineQueryResultLocation) MarshalJSON() ([]byte, error) {
-	result.Type = "location"
-	type alias InlineQueryResultLocation
-	return json.Marshal(alias(result))
-}
-
-func (InlineQueryResultVenue) isInlineQueryResult() {}
-func (result InlineQueryResultVenue) MarshalJSON() ([]byte, error) {
-	result.Type = "venue"
-	type alias InlineQueryResultVenue
-	return json.Marshal(alias(result))
-}
-
 // InputMessageContent it's generic interface for all types of input message content.
 //
 // Known implementations:
@@ -749,489 +498,32 @@ func (content InputVenueMessageContent) isInputMessageContent()    {}
 func (content InputContactMessageContent) isInputMessageContent()  {}
 func (content InputInvoiceMessageContent) isInputMessageContent()  {}
 
-func (media *InputMediaPhoto) getMedia() (*FileArg, *InputFile) {
-	return &media.Media, nil
-}
-func (media *InputMediaVideo) getMedia() (*FileArg, *InputFile) {
-	return &media.Media, media.Thumbnail
-}
-func (media *InputMediaAudio) getMedia() (*FileArg, *InputFile) {
-	return &media.Media, media.Thumbnail
-}
-func (media *InputMediaDocument) getMedia() (*FileArg, *InputFile) {
-	return &media.Media, media.Thumbnail
-}
-func (media *InputMediaAnimation) getMedia() (*FileArg, *InputFile) {
-	return &media.Media, media.Thumbnail
-}
-
-func (media *InputMediaPhoto) MarshalJSON() ([]byte, error) {
-	media.Type = "photo"
-	type alias InputMediaPhoto
-	return json.Marshal(alias(*media))
-}
-
-func (media *InputMediaVideo) MarshalJSON() ([]byte, error) {
-	media.Type = "video"
-	type alias InputMediaVideo
-	return json.Marshal(alias(*media))
-}
-
-func (media *InputMediaAudio) MarshalJSON() ([]byte, error) {
-	media.Type = "audio"
-	type alias InputMediaAudio
-	return json.Marshal(alias(*media))
-}
-
-func (media *InputMediaDocument) MarshalJSON() ([]byte, error) {
-	media.Type = "document"
-	type alias InputMediaDocument
-	return json.Marshal(alias(*media))
-}
-
-func (media *InputMediaAnimation) MarshalJSON() ([]byte, error) {
-	media.Type = "animation"
-	type alias InputMediaAnimation
-	return json.Marshal(alias(*media))
-}
-
-// BotCommandScope it's generic interface for all types of bot command scope.
-//
-// Known implementations:
-//   - [BotCommandScopeDefault]
-//   - [BotCommandScopeAllPrivateChats]
-//   - [BotCommandScopeAllGroupChats]
-//   - [BotCommandScopeAllChatAdministrators]
-//   - [BotCommandScopeChat]
-//   - [BotCommandScopeChatAdministrators]
-//   - [BotCommandScopeChatMember]
-type BotCommandScope interface {
-	isBotCommandScope()
-	json.Marshaler
-}
-
-func (BotCommandScopeDefault) isBotCommandScope() {}
-func (scope BotCommandScopeDefault) MarshalJSON() ([]byte, error) {
-	scope.Type = "default"
-	type alias BotCommandScopeDefault
-	return json.Marshal(alias(scope))
-}
-
-func (BotCommandScopeAllPrivateChats) isBotCommandScope() {}
-func (scope BotCommandScopeAllPrivateChats) MarshalJSON() ([]byte, error) {
-	scope.Type = "all_private_chats"
-	type alias BotCommandScopeAllPrivateChats
-	return json.Marshal(alias(scope))
-}
-
-func (BotCommandScopeAllGroupChats) isBotCommandScope() {}
-func (scope BotCommandScopeAllGroupChats) MarshalJSON() ([]byte, error) {
-	scope.Type = "all_group_chats"
-	type alias BotCommandScopeAllGroupChats
-	return json.Marshal(alias(scope))
-}
-
-func (BotCommandScopeAllChatAdministrators) isBotCommandScope() {}
-func (scope BotCommandScopeAllChatAdministrators) MarshalJSON() ([]byte, error) {
-	scope.Type = "all_chat_administrators"
-	type alias BotCommandScopeAllChatAdministrators
-	return json.Marshal(alias(scope))
-}
-
-func (BotCommandScopeChat) isBotCommandScope() {}
-func (scope BotCommandScopeChat) MarshalJSON() ([]byte, error) {
-	scope.Type = "chat"
-	type alias BotCommandScopeChat
-	return json.Marshal(alias(scope))
-}
-
-func (BotCommandScopeChatAdministrators) isBotCommandScope() {}
-func (scope BotCommandScopeChatAdministrators) MarshalJSON() ([]byte, error) {
-	scope.Type = "chat_administrators"
-	type alias BotCommandScopeChatAdministrators
-	return json.Marshal(alias(scope))
-}
-
-func (BotCommandScopeChatMember) isBotCommandScope() {}
-func (scope BotCommandScopeChatMember) MarshalJSON() ([]byte, error) {
-	scope.Type = "chat_member"
-	type alias BotCommandScopeChatMember
-	return json.Marshal(alias(scope))
-}
-
-// MenuButton it's generic interface for all types of menu button.
-//
-// Known implementations:
-//   - [MenuButtonDefault]
-//   - [MenuButtonCommands]
-//   - [MenubuttonWebApp]
-type MenuButton interface {
-	isMenuButton()
-	json.Marshaler
-}
-
-func (MenuButtonDefault) isMenuButton() {}
-func (button MenuButtonDefault) MarshalJSON() ([]byte, error) {
-	button.Type = "default"
-	type alias MenuButtonDefault
-	return json.Marshal(alias(button))
-}
-
-func (MenuButtonCommands) isMenuButton() {}
-func (button MenuButtonCommands) MarshalJSON() ([]byte, error) {
-	button.Type = "commands"
-	type alias MenuButtonCommands
-	return json.Marshal(alias(button))
-}
-
-func (MenuButtonWebApp) isMenuButton() {}
-func (button MenuButtonWebApp) MarshalJSON() ([]byte, error) {
-	button.Type = "web_app"
-	type alias MenuButtonWebApp
-	return json.Marshal(alias(button))
-}
-
-// MenuButtonOneOf contains one of MenuButton implementations.
-// It's used for proper JSON marshaling.
-type MenuButtonOneOf struct {
-	Default  *MenuButtonDefault
-	Commands *MenuButtonCommands
-	WebApp   *MenuButtonWebApp
-}
-
-func (button *MenuButtonOneOf) UnmarshalJSON(v []byte) error {
-	var partial struct {
-		Type string `json:"type"`
-	}
-
-	if err := json.Unmarshal(v, &partial); err != nil {
-		return fmt.Errorf("unmarshal MenuButtonOneOf partial: %w", err)
-	}
-
-	switch partial.Type {
-	case "default":
-		button.Default = &MenuButtonDefault{}
-		return json.Unmarshal(v, button.Default)
-	case "commands":
-		button.Commands = &MenuButtonCommands{}
-		return json.Unmarshal(v, button.Commands)
-	case "web_app":
-		button.WebApp = &MenuButtonWebApp{}
-		return json.Unmarshal(v, button.WebApp)
-	default:
-		return fmt.Errorf("unknown MenuButtonOneOf type: %s", partial.Type)
-	}
-}
-
-// MessageType it's type for describe content of Message.
-type MessageType int
-
-const (
-	MessageTypeUnknown MessageType = iota
-	MessageTypeText
-	MessageTypeAnimation
-	MessageTypeAudio
-	MessageTypeDocument
-	MessageTypePhoto
-	MessageTypeSticker
-	MessageTypeVideo
-	MessageTypeVideoNote
-	MessageTypeVoice
-	MessageTypeContact
-	MessageTypeDice
-	MessageTypeGame
-	MessageTypePoll
-	MessageTypeVenue
-	MessageTypeLocation
-	MessageTypeNewChatMembers
-	MessageTypeLeftChatMember
-	MessageTypeNewChatTitle
-	MessageTypeNewChatPhoto
-	MessageTypeDeleteChatPhoto
-	MessageTypeGroupChatCreated
-	MessageTypeSupergroupChatCreated
-	MessageTypeChannelChatCreated
-	MessageTypeMessageAutoDeleteTimerChanged
-	MessageTypeMigrateToChatID
-	MessageTypeMigrateFromChatID
-	MessageTypePinnedMessage
-	MessageTypeInvoice
-	MessageTypeSuccessfulPayment
-	MessageTypeUsersShared
-	MessageTypeChatShared
-	MessageTypeConnectedWebsite
-	MessageTypePassportData
-	MessageTypeProximityAlertTriggered
-	MessageTypeVideoChatScheduled
-	MessageTypeVideoChatStarted
-	MessageTypeVideoChatEnded
-	MessageTypeVideoChatParticipantsInvited
-	MessageTypeWebAppData
-)
-
-func (msg *Message) Type() MessageType {
+// getMedia returns the media and thumbnail from an InputMedia union.
+func (u *InputMedia) getMedia() (media *FileArg, thumb *InputFile) {
 	switch {
-	case msg.Text != "":
-		return MessageTypeText
-	case msg.Animation != nil:
-		return MessageTypeAnimation
-	case msg.Audio != nil:
-		return MessageTypeAudio
-	case msg.Document != nil:
-		return MessageTypeDocument
-	case msg.Photo != nil:
-		return MessageTypePhoto
-	case msg.Sticker != nil:
-		return MessageTypeSticker
-	case msg.Video != nil:
-		return MessageTypeVideo
-	case msg.VideoNote != nil:
-		return MessageTypeVideoNote
-	case msg.Voice != nil:
-		return MessageTypeVoice
-	case msg.Contact != nil:
-		return MessageTypeContact
-	case msg.Dice != nil:
-		return MessageTypeDice
-	case msg.Game != nil:
-		return MessageTypeGame
-	case msg.Poll != nil:
-		return MessageTypePoll
-	case msg.Venue != nil:
-		return MessageTypeVenue
-	case msg.Location != nil:
-		return MessageTypeLocation
-	case len(msg.NewChatMembers) > 0:
-		return MessageTypeNewChatMembers
-	case msg.LeftChatMember != nil:
-		return MessageTypeLeftChatMember
-	case msg.NewChatTitle != "":
-		return MessageTypeNewChatTitle
-	case len(msg.NewChatPhoto) > 0:
-		return MessageTypeNewChatPhoto
-	case msg.DeleteChatPhoto:
-		return MessageTypeDeleteChatPhoto
-	case msg.GroupChatCreated:
-		return MessageTypeGroupChatCreated
-	case msg.SupergroupChatCreated:
-		return MessageTypeSupergroupChatCreated
-	case msg.ChannelChatCreated:
-		return MessageTypeChannelChatCreated
-	case msg.MessageAutoDeleteTimerChanged != nil:
-		return MessageTypeMessageAutoDeleteTimerChanged
-	case msg.MigrateToChatID != 0:
-		return MessageTypeMigrateToChatID
-	case msg.MigrateFromChatID != 0:
-		return MessageTypeMigrateFromChatID
-	case msg.PinnedMessage != nil:
-		return MessageTypePinnedMessage
-	case msg.Invoice != nil:
-		return MessageTypeInvoice
-	case msg.SuccessfulPayment != nil:
-		return MessageTypeSuccessfulPayment
-	case msg.UsersShared != nil:
-		return MessageTypeUsersShared
-	case msg.ChatShared != nil:
-		return MessageTypeChatShared
-	case msg.ConnectedWebsite != "":
-		return MessageTypeConnectedWebsite
-	case msg.PassportData != nil:
-		return MessageTypePassportData
-	case msg.ProximityAlertTriggered != nil:
-		return MessageTypeProximityAlertTriggered
-	case msg.VideoChatScheduled != nil:
-		return MessageTypeVideoChatScheduled
-	case msg.VideoChatStarted != nil:
-		return MessageTypeVideoChatStarted
-	case msg.VideoChatEnded != nil:
-		return MessageTypeVideoChatEnded
-	case msg.VideoChatParticipantsInvited != nil:
-		return MessageTypeVideoChatParticipantsInvited
-	case msg.WebAppData != nil:
-		return MessageTypeWebAppData
+	case u.Photo != nil:
+		return &u.Photo.Media, nil
+	case u.Video != nil:
+		return &u.Video.Media, u.Video.Thumbnail
+	case u.Animation != nil:
+		return &u.Animation.Media, u.Animation.Thumbnail
+	case u.Audio != nil:
+		return &u.Audio.Media, u.Audio.Thumbnail
+	case u.Document != nil:
+		return &u.Document.Media, u.Document.Thumbnail
 	default:
-		return MessageTypeUnknown
+		return nil, nil
 	}
 }
+
+// MenuButtonOneOf is an alias for MenuButton for backward compatibility.
+//
+// Deprecated: Use MenuButton directly.
+type MenuButtonOneOf = MenuButton
 
 // IsInaccessible returns true if message is inaccessible.
 func (msg *Message) IsInaccessible() bool {
-	return msg.Date == 0
-}
-
-// UpdateType it's type for describe content of Update.
-type UpdateType int
-
-const (
-	UpdateTypeUnknown UpdateType = iota
-	UpdateTypeMessage
-	UpdateTypeEditedMessage
-	UpdateTypeChannelPost
-	UpdateTypeEditedChannelPost
-	UpdateTypeInlineQuery
-	UpdateTypeChosenInlineResult
-	UpdateTypeCallbackQuery
-	UpdateTypeShippingQuery
-	UpdateTypePreCheckoutQuery
-	UpdateTypePoll
-	UpdateTypePollAnswer
-	UpdateTypeMyChatMember
-	UpdateTypeChatMember
-	UpdateTypeChatJoinRequest
-	UpdateTypeMessageReaction
-	UpdateTypeMessageReactionCount
-	UpdateTypeChatBoost
-	UpdateTypeRemovedChatBoost
-	UpdateTypeBusinessConnection
-	UpdateTypeBusinessMessage
-	UpdateTypeEditedBusinessMessage
-	UpdateTypeDeletedBusinessMessages
-)
-
-// MarshalText implements encoding.TextMarshaler.
-func (typ UpdateType) MarshalText() ([]byte, error) {
-	if typ != UpdateTypeUnknown {
-		return []byte(typ.String()), nil
-	}
-
-	return nil, fmt.Errorf("unknown update type")
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (typ *UpdateType) UnmarshalText(v []byte) error {
-	switch string(v) {
-	case "message":
-		*typ = UpdateTypeMessage
-	case "edited_message":
-		*typ = UpdateTypeEditedMessage
-	case "channel_post":
-		*typ = UpdateTypeChannelPost
-	case "edited_channel_post":
-		*typ = UpdateTypeEditedChannelPost
-	case "inline_query":
-		*typ = UpdateTypeInlineQuery
-	case "chosen_inline_result":
-		*typ = UpdateTypeChosenInlineResult
-	case "callback_query":
-		*typ = UpdateTypeCallbackQuery
-	case "shipping_query":
-		*typ = UpdateTypeShippingQuery
-	case "pre_checkout_query":
-		*typ = UpdateTypePreCheckoutQuery
-	case "poll":
-		*typ = UpdateTypePoll
-	case "poll_answer":
-		*typ = UpdateTypePollAnswer
-	case "my_chat_member":
-		*typ = UpdateTypeMyChatMember
-	case "chat_member":
-		*typ = UpdateTypeChatMember
-	case "chat_join_request":
-		*typ = UpdateTypeChatJoinRequest
-	case "message_reaction":
-		*typ = UpdateTypeMessageReaction
-	case "message_reaction_count":
-		*typ = UpdateTypeMessageReactionCount
-	case "chat_boost":
-		*typ = UpdateTypeChatBoost
-	case "removed_chat_boost":
-		*typ = UpdateTypeRemovedChatBoost
-	case "business_connection":
-		*typ = UpdateTypeBusinessConnection
-	case "business_message":
-		*typ = UpdateTypeBusinessMessage
-	case "edited_business_message":
-		*typ = UpdateTypeEditedBusinessMessage
-	case "deleted_business_messages":
-		*typ = UpdateTypeDeletedBusinessMessages
-	default:
-		return fmt.Errorf("unknown update type")
-	}
-
-	return nil
-}
-
-// String returns string representation of UpdateType.
-func (typ UpdateType) String() string {
-	if typ > UpdateTypeUnknown && typ <= UpdateTypeRemovedChatBoost {
-		return [...]string{
-			"message",
-			"edited_message",
-			"channel_post",
-			"edited_channel_post",
-			"inline_query",
-			"chosen_inline_result",
-			"callback_query",
-			"shipping_query",
-			"pre_checkout_query",
-			"poll",
-			"poll_answer",
-			"my_chat_member",
-			"chat_member",
-			"chat_join_request",
-			"message_reaction",
-			"message_reaction_count",
-			"chat_boost",
-			"removed_chat_boost",
-			"business_connection",
-			"business_message",
-			"edited_business_message",
-			"deleted_business_messages",
-		}[typ-1]
-	}
-
-	return "unknown"
-}
-
-func (update *Update) Type() UpdateType {
-	switch {
-	case update.Message != nil:
-		return UpdateTypeMessage
-	case update.EditedMessage != nil:
-		return UpdateTypeEditedMessage
-	case update.ChannelPost != nil:
-		return UpdateTypeChannelPost
-	case update.EditedChannelPost != nil:
-		return UpdateTypeEditedChannelPost
-	case update.InlineQuery != nil:
-		return UpdateTypeInlineQuery
-	case update.ChosenInlineResult != nil:
-		return UpdateTypeChosenInlineResult
-	case update.CallbackQuery != nil:
-		return UpdateTypeCallbackQuery
-	case update.ShippingQuery != nil:
-		return UpdateTypeShippingQuery
-	case update.PreCheckoutQuery != nil:
-		return UpdateTypePreCheckoutQuery
-	case update.Poll != nil:
-		return UpdateTypePoll
-	case update.PollAnswer != nil:
-		return UpdateTypePollAnswer
-	case update.MyChatMember != nil:
-		return UpdateTypeMyChatMember
-	case update.ChatMember != nil:
-		return UpdateTypeChatMember
-	case update.ChatJoinRequest != nil:
-		return UpdateTypeChatJoinRequest
-	case update.MessageReaction != nil:
-		return UpdateTypeMessageReaction
-	case update.MessageReactionCount != nil:
-		return UpdateTypeMessageReactionCount
-	case update.ChatBoost != nil:
-		return UpdateTypeChatBoost
-	case update.RemovedChatBoost != nil:
-		return UpdateTypeRemovedChatBoost
-	case update.BusinessConnection != nil:
-		return UpdateTypeBusinessConnection
-	case update.BusinessMessage != nil:
-		return UpdateTypeBusinessMessage
-	case update.EditedBusinessMessage != nil:
-		return UpdateTypeEditedBusinessMessage
-	case update.DeletedBusinessMessages != nil:
-		return UpdateTypeDeletedBusinessMessages
-	default:
-		return UpdateTypeUnknown
-	}
+	return msg.Date.IsZero()
 }
 
 // Msg returns message from whever possible.
@@ -1281,268 +573,9 @@ func (update *Update) Chat() *Chat {
 	return nil
 }
 
-// MessageEntityType it's type for describe content of MessageEntity.
-type MessageEntityType int
-
-const (
-	MessageEntityTypeUnknown MessageEntityType = iota
-
-	// @username
-	MessageEntityTypeMention
-
-	// #hashtag
-	MessageEntityTypeHashtag
-
-	// $USD
-	MessageEntityTypeCashtag
-
-	// /start@jobs_bot
-	MessageEntityTypeBotCommand
-
-	// https://telegram.org
-	MessageEntityTypeURL
-
-	// do-not-reply@telegram.org
-	MessageEntityTypeEmail
-
-	// +1-212-555-0123
-	MessageEntityTypePhoneNumber
-
-	// <strong>bold</strong>
-	MessageEntityTypeBold
-
-	// <i>italic</i>
-	MessageEntityTypeItalic
-
-	// <u>underline</u>
-	MessageEntityTypeUnderline
-
-	// <strike>strike</strike>
-	MessageEntityTypeStrikethrough
-
-	// <tg-spoiler>spoiler</tg-spoiler>
-	MessageEntityTypeSpoiler
-
-	// <blockquote>quote</blockquote>
-	MessageEntityTypeBlockquote
-
-	// <code>code</code>
-	MessageEntityTypeCode
-
-	// <pre>pre</pre>
-	MessageEntityTypePre
-
-	// <a href="https://telegram.org">link</a>
-	MessageEntityTypeTextLink
-
-	// for users without usernames
-	MessageEntityTypeTextMention
-
-	// for inline custom emoji sticker
-	MessageEntityTypeCustomEmoji
-)
-
-// String returns string representation of MessageEntityType.
-func (met MessageEntityType) String() string {
-	if met > MessageEntityTypeUnknown && met <= MessageEntityTypeCustomEmoji {
-		return [...]string{
-			"mention",
-			"hashtag",
-			"cashtag",
-			"bot_command",
-			"url",
-			"email",
-			"phone_number",
-			"bold",
-			"italic",
-			"underline",
-			"strikethrough",
-			"spoiler",
-			"blockquote",
-			"code",
-			"pre",
-			"text_link",
-			"text_mention",
-			"custom_emoji",
-		}[met-1]
-	}
-
-	return "unknown"
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (met MessageEntityType) MarshalText() ([]byte, error) {
-	if met != MessageEntityTypeUnknown {
-		return []byte(met.String()), nil
-	}
-
-	return nil, fmt.Errorf("unknown message entity type")
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (met *MessageEntityType) UnmarshalText(v []byte) error {
-	switch string(v) {
-	case "mention":
-		*met = MessageEntityTypeMention
-	case "hashtag":
-		*met = MessageEntityTypeHashtag
-	case "cashtag":
-		*met = MessageEntityTypeCashtag
-	case "bot_command":
-		*met = MessageEntityTypeBotCommand
-	case "url":
-		*met = MessageEntityTypeURL
-	case "email":
-		*met = MessageEntityTypeEmail
-	case "phone_number":
-		*met = MessageEntityTypePhoneNumber
-	case "bold":
-		*met = MessageEntityTypeBold
-	case "italic":
-		*met = MessageEntityTypeItalic
-	case "underline":
-		*met = MessageEntityTypeUnderline
-	case "strikethrough":
-		*met = MessageEntityTypeStrikethrough
-	case "spoiler":
-		*met = MessageEntityTypeSpoiler
-	case "code":
-		*met = MessageEntityTypeCode
-	case "pre":
-		*met = MessageEntityTypePre
-	case "text_link":
-		*met = MessageEntityTypeTextLink
-	case "text_mention":
-		*met = MessageEntityTypeTextMention
-	case "custom_emoji":
-		*met = MessageEntityTypeCustomEmoji
-	case "blockquote":
-		*met = MessageEntityTypeBlockquote
-	default:
-		return fmt.Errorf("unknown message entity type")
-	}
-
-	return nil
-}
-
 // Extract entitie value from plain text.
 func (me MessageEntity) Extract(text string) string {
 	return string([]rune(text)[me.Offset : me.Offset+me.Length])
-}
-
-// StickerType it's type for describe content of Sticker.
-type StickerType int
-
-const (
-	StickerTypeUnknown StickerType = iota
-	StickerTypeRegular
-	StickerTypeMask
-	StickerTypeCustomEmoji
-)
-
-func (sticker StickerType) String() string {
-	switch sticker {
-	case StickerTypeRegular:
-		return "regular"
-	case StickerTypeMask:
-		return "mask"
-	case StickerTypeCustomEmoji:
-		return "custom_emoji"
-	default:
-		return "unknown"
-	}
-}
-
-func (sticker StickerType) MarshalText() ([]byte, error) {
-	return []byte(sticker.String()), nil
-}
-
-func (sticker *StickerType) UnmarshalText(v []byte) error {
-	switch string(v) {
-	case "regular":
-		*sticker = StickerTypeRegular
-	case "mask":
-		*sticker = StickerTypeMask
-	case "custom_emoji":
-		*sticker = StickerTypeCustomEmoji
-	default:
-		*sticker = StickerTypeUnknown
-	}
-
-	return nil
-}
-
-// ForumTopicClosed represents a service message about a forum topic closed in the chat. Currently holds no information.
-type ForumTopicClosed struct{}
-
-// ForumTopicReopened represents a service message about a forum topic reopened in the chat. Currently holds no information.
-type ForumTopicReopened struct{}
-
-// GeneralForumTopicHidden represents a service message about General forum topic hidden in the chat. Currently holds no information.
-type GeneralForumTopicHidden struct{}
-
-// GeneralForumTopicUnhidden represents a service message about General forum topic unhidden in the chat. Currently holds no information.
-type GeneralForumTopicUnhidden struct{}
-
-// GiveawayCreated represents a service message about a giveaway created in the chat. Currently holds no information.
-type GiveawayCreated struct{}
-
-// VideoChatStarted represents a service message about a video chat started in the chat. Currently holds no information.
-type VideoChatStarted struct{}
-
-// MessageOrigin this object describes the origin of a message.
-// It can be one of:
-//   - [MessageOriginUser]
-//   - [MessageOriginHiddenUser]
-//   - [MessageOriginChat]
-//   - [MessageOriginChannel]
-type MessageOrigin struct {
-	User       *MessageOriginUser
-	HiddenUser *MessageOriginHiddenUser
-	Chat       *MessageOriginChat
-	Channel    *MessageOriginChannel
-}
-
-func (origin *MessageOrigin) UnmarshalJSON(v []byte) error {
-	var partial struct {
-		Type string `json:"type"`
-	}
-
-	if err := json.Unmarshal(v, &partial); err != nil {
-		return fmt.Errorf("unmarshal MessageOrigin partial: %w", err)
-	}
-
-	switch partial.Type {
-	case "user":
-		origin.User = &MessageOriginUser{}
-		return json.Unmarshal(v, origin.User)
-	case "hidden_user":
-		origin.HiddenUser = &MessageOriginHiddenUser{}
-		return json.Unmarshal(v, origin.HiddenUser)
-	case "chat":
-		origin.Chat = &MessageOriginChat{}
-		return json.Unmarshal(v, origin.Chat)
-	case "channel":
-		origin.Channel = &MessageOriginChannel{}
-		return json.Unmarshal(v, origin.Channel)
-	default:
-		return fmt.Errorf("unknown MessageOrigin type: %s", partial.Type)
-	}
-}
-
-func (origin *MessageOrigin) Type() string {
-	switch {
-	case origin.User != nil:
-		return "user"
-	case origin.HiddenUser != nil:
-		return "hidden_user"
-	case origin.Chat != nil:
-		return "chat"
-	case origin.Channel != nil:
-		return "channel"
-	default:
-		return "unknown"
-	}
 }
 
 // This object describes a message that can be inaccessible to the bot.
@@ -1582,14 +615,14 @@ func (mim *MaybeInaccessibleMessage) MessageID() int {
 
 func (mim *MaybeInaccessibleMessage) UnmarshalJSON(v []byte) error {
 	var partial struct {
-		Date int64 `json:"date"`
+		Date UnixTime `json:"date"`
 	}
 
 	if err := json.Unmarshal(v, &partial); err != nil {
 		return fmt.Errorf("unmarshal MaybeInaccessibleMessage partial: %w", err)
 	}
 
-	if partial.Date == 0 {
+	if partial.Date.IsZero() {
 		mim.InaccessibleMessage = &InaccessibleMessage{}
 		return json.Unmarshal(v, mim.InaccessibleMessage)
 	} else {

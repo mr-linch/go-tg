@@ -69,7 +69,7 @@ func main() {
 				tg.HTML.Line("by", tg.HTML.Bold(quote.Author.Name)),
 			)
 
-			result[i] = tg.InlineQueryResultArticle{
+			result[i] = tg.NewInlineQueryResultArticle(tg.InlineQueryResultArticle{
 				ID:          quote.ID,
 				Title:       quote.Author.Name,
 				Description: quoteText(quote.Text),
@@ -85,7 +85,7 @@ func main() {
 						),
 					),
 				).Ptr(),
-			}
+			})
 		}
 
 		return iq.Answer(result).CacheTime(0).DoVoid(ctx)

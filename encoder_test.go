@@ -55,7 +55,7 @@ func TestMultipartEncoder(t *testing.T) {
 
 	assert.NoError(t, encoder.Close())
 
-	assert.NotZero(t, buf.String())
+	assert.NotEmpty(t, buf.String())
 }
 
 func TestMultipartEncoder_WriteFile(t *testing.T) {
@@ -69,7 +69,7 @@ func TestMultipartEncoder_WriteFile(t *testing.T) {
 
 	assert.NoError(t, encoder.Close())
 
-	assert.NotZero(t, buf.String())
+	assert.NotEmpty(t, buf.String())
 }
 
 func TestMultipartEncoder_ContentType(t *testing.T) {

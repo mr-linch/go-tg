@@ -1,0 +1,36 @@
+package {{.Package}}
+
+{{template "header" .}}
+
+import "context"
+
+func firstNotNil[T any](fields ...*T) *T {
+	for _, field := range fields {
+		if field != nil {
+			return field
+		}
+	}
+	return nil
+}
+{{range .HandlerTypes}}
+// {{.HandlerName}} it's typed handler for {{.TypeName}}.
+// Implements Handler interface.
+type {{.HandlerName}} func(context.Context, *{{.WrapperName}}) error
+{{if .MultiField}}
+func (handler {{.HandlerName}}) Handle(ctx context.Context, update *Update) error {
+	if v := firstNotNil({{range $i, $f := .Fields}}{{if $i}}, {{end}}update.{{$f}}{{end}}); v != nil {
+		return handler(ctx, &{{.WrapperName}}{
+			{{.FieldName}}: v,
+			BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+		})
+	}
+	return nil
+}
+{{else}}
+func (handler {{.HandlerName}}) Handle(ctx context.Context, update *Update) error {
+	return handler(ctx, &{{.WrapperName}}{
+		{{.FieldName}}: update.{{index .Fields 0}},
+		BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
+	})
+}
+{{end}}{{end}}

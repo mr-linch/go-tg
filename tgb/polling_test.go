@@ -12,12 +12,12 @@ import (
 	tg "github.com/mr-linch/go-tg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPoller(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			var (
 				isGetUpdatesCalled     bool
 				isGetWebhookInfoCalled bool
@@ -53,7 +53,6 @@ func TestPoller(t *testing.T) {
 			}
 
 			assert.True(t, isGetUpdatesCalled || isGetWebhookInfoCalled || isDeleteWebhookCalled, "expected call one of getUpdates, getWebhookInfo or deleteWebhook")
-
 		}))
 
 		defer server.Close()
@@ -69,12 +68,11 @@ func TestPoller(t *testing.T) {
 			tg.New("1234:secret", tg.WithClientServerURL(server.URL), tg.WithClientDoer(server.Client())),
 		).Run(ctx)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("Custom", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			var (
 				isGetUpdatesCalled     bool
 				isGetWebhookInfoCalled bool
@@ -110,7 +108,6 @@ func TestPoller(t *testing.T) {
 			}
 
 			assert.True(t, isGetUpdatesCalled || isGetWebhookInfoCalled || isDeleteWebhookCalled, "expected call one of getUpdates, getWebhookInfo or deleteWebhook")
-
 		}))
 
 		defer server.Close()
@@ -129,7 +126,7 @@ func TestPoller(t *testing.T) {
 			WithPollerLimit(50),
 			WithPollerTimeout(time.Second*2),
 		).Run(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 

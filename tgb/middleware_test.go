@@ -5,14 +5,15 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestChain_Append(t *testing.T) {
-	old := chain{}
-	new := old.Append(MiddlewareFunc(func(h Handler) Handler { return h }))
+	original := chain{}
+	updated := original.Append(MiddlewareFunc(func(h Handler) Handler { return h }))
 
-	assert.Len(t, old, 0)
-	assert.Len(t, new, 1)
+	assert.Empty(t, original)
+	assert.Len(t, updated, 1)
 }
 
 func TestChain_Then(t *testing.T) {
@@ -35,8 +36,7 @@ func TestChain_Then(t *testing.T) {
 	}))
 
 	err := handler.Handle(context.Background(), &Update{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(t, []int{2, 1, 3}, calls)
-
 }

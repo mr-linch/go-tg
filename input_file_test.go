@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestInputFile_WithName(t *testing.T) {
@@ -39,23 +40,20 @@ func TestNewInputFileBytes(t *testing.T) {
 }
 
 func TestNewInputFileLocal(t *testing.T) {
-	{
-		file, err := NewInputFileLocal("examples/echo-bot/resources/gopher.png")
+	t.Run("OK", func(t *testing.T) {
+		file, err := NewInputFileLocal("_examples/echo-bot/resources/gopher.png")
+		require.NoError(t, err)
+		assert.Equal(t, "gopher.png", file.Name)
+		assert.NotNil(t, file.Body)
+		assert.NoError(t, file.Close())
+	})
 
-		if assert.NoError(t, err) {
-			assert.Equal(t, "gopher.png", file.Name)
-			assert.NotNil(t, file.Body)
-			assert.NoError(t, file.Close())
-		}
-	}
-
-	{
+	t.Run("NotExist", func(t *testing.T) {
 		file, err := NewInputFileLocal("./testdata/not-exist.png")
-
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Zero(t, file)
-		assert.Nil(t, file.Close())
-	}
+		assert.NoError(t, file.Close())
+	})
 }
 
 type MockFS struct {
@@ -69,24 +67,24 @@ func (mfs *MockFS) Open(path string) (fs.File, error) {
 }
 
 func TestNewInputFileFS(t *testing.T) {
-	fs := fstest.MapFS{
+	testFS := fstest.MapFS{
 		"hello.txt": {
 			Data: []byte("hello, world"),
 		},
 	}
 
 	t.Run("OK", func(t *testing.T) {
-		file, err := NewInputFileFS(fs, "hello.txt")
-		assert.NoError(t, err)
+		file, err := NewInputFileFS(testFS, "hello.txt")
+		require.NoError(t, err)
 		assert.NotNil(t, file)
 		assert.NoError(t, file.Close())
 	})
 
 	t.Run("NotExist", func(t *testing.T) {
-		file, err := NewInputFileFS(fs, "not-exist.txt")
-		assert.Error(t, err)
+		file, err := NewInputFileFS(testFS, "not-exist.txt")
+		require.Error(t, err)
 		assert.Zero(t, file)
-		assert.Nil(t, file.Close())
+		assert.NoError(t, file.Close())
 	})
 }
 
@@ -96,7 +94,7 @@ func TestInputFile_MarshalJSON(t *testing.T) {
 
 		data, err := json.Marshal(&file)
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, data)
 	})
 	t.Run("WithAddr", func(t *testing.T) {
@@ -105,7 +103,7 @@ func TestInputFile_MarshalJSON(t *testing.T) {
 
 		data, err := json.Marshal(&file)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, `"attach://test"`, string(data))
 	})
 }

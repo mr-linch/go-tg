@@ -1,4 +1,4 @@
-// Package session provides a session managment.
+// Package session provides a session management.
 //
 // # What is the session?
 //
@@ -85,7 +85,7 @@ func WithEncoding(
 // Manager provides a persistent data storage for bot.
 // You can use it to store chat-specific data persistently.
 type Manager[T comparable] struct {
-	intial    T
+	initial   T
 	keyFunc   KeyFunc
 	equalFunc func(T, T) bool
 	store     Store
@@ -120,7 +120,7 @@ func (manager *Manager[T]) setEncoding(
 // It is useful if you want to define [Manager] globally and init with e.g. store later.
 func NewManager[T comparable](initial T, opts ...ManagerOption) *Manager[T] {
 	manager := &Manager[T]{
-		intial: initial,
+		initial: initial,
 
 		keyFunc: KeyFuncChat,
 		store:   NewStoreMemory(),
@@ -171,7 +171,7 @@ func (manager *Manager[T]) getSession(ctx context.Context, key string) (*T, erro
 	}
 
 	if sessionData == nil {
-		initial := manager.intial
+		initial := manager.initial
 		return &initial, nil
 	}
 
@@ -198,7 +198,7 @@ func (manager *Manager[T]) Get(ctx context.Context) *T {
 //
 // If session value equals to initial value, it will be removed from [Store].
 func (manager *Manager[T]) Reset(session *T) {
-	*session = manager.intial
+	*session = manager.initial
 }
 
 // Filter creates a [github.com/mr-linch/go-tg/tgb.Filter] based on Session data.
@@ -306,7 +306,7 @@ func (manager *Manager[T]) Wrap(next tgb.Handler) tgb.Handler {
 
 		// check if session changed and should be updated
 		if !manager.equalFunc(sessionBeforeHandle, *session) {
-			if manager.equalFunc(*session, manager.intial) {
+			if manager.equalFunc(*session, manager.initial) {
 				if err := manager.store.Del(ctx, key); err != nil {
 					return fmt.Errorf("delete default session: %w", err)
 				}
