@@ -221,7 +221,7 @@ func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeR
 func buildConstructors(methodName string, params []GoParam, variants map[string][]config.ConstructorVariant) []GoConstructor {
 	// Check for explicit variants in config.
 	if cfgVariants, ok := variants[methodName]; ok {
-		var constructors []GoConstructor
+		constructors := make([]GoConstructor, 0, len(cfgVariants))
 		for _, v := range cfgVariants {
 			var requiredParams []GoParam
 			for _, paramName := range v.RequiredParams {
