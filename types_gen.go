@@ -8501,3 +8501,154 @@ func (v *Message) Type() MessageType {
 		return MessageTypeUnknown
 	}
 }
+
+// NewInlineKeyboardButtonURL creates a InlineKeyboardButton with URL.
+func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text: text,
+		URL:  url,
+	}
+}
+
+// NewInlineKeyboardButtonCallbackData creates a InlineKeyboardButton with CallbackData.
+func NewInlineKeyboardButtonCallbackData(text string, callbackData string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:         text,
+		CallbackData: callbackData,
+	}
+}
+
+// NewInlineKeyboardButtonWebApp creates a InlineKeyboardButton with WebApp.
+func NewInlineKeyboardButtonWebApp(text string, webApp WebAppInfo) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:   text,
+		WebApp: &webApp,
+	}
+}
+
+// NewInlineKeyboardButtonLoginURL creates a InlineKeyboardButton with LoginURL.
+func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginURL) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:     text,
+		LoginURL: &loginURL,
+	}
+}
+
+// NewInlineKeyboardButtonSwitchInlineQuery creates a InlineKeyboardButton with SwitchInlineQuery.
+func NewInlineKeyboardButtonSwitchInlineQuery(text string, switchInlineQuery string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:              text,
+		SwitchInlineQuery: switchInlineQuery,
+	}
+}
+
+// NewInlineKeyboardButtonSwitchInlineQueryCurrentChat creates a InlineKeyboardButton with SwitchInlineQueryCurrentChat.
+func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text string, switchInlineQueryCurrentChat string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:                         text,
+		SwitchInlineQueryCurrentChat: switchInlineQueryCurrentChat,
+	}
+}
+
+// NewInlineKeyboardButtonSwitchInlineQueryChosenChat creates a InlineKeyboardButton with SwitchInlineQueryChosenChat.
+func NewInlineKeyboardButtonSwitchInlineQueryChosenChat(text string, switchInlineQueryChosenChat SwitchInlineQueryChosenChat) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:                        text,
+		SwitchInlineQueryChosenChat: &switchInlineQueryChosenChat,
+	}
+}
+
+// NewInlineKeyboardButtonCopyText creates a InlineKeyboardButton with CopyText.
+func NewInlineKeyboardButtonCopyText(text string, copyText CopyTextButton) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:     text,
+		CopyText: &copyText,
+	}
+}
+
+// NewInlineKeyboardButtonCallbackGame creates a InlineKeyboardButton with CallbackGame.
+func NewInlineKeyboardButtonCallbackGame(text string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text:         text,
+		CallbackGame: &CallbackGame{},
+	}
+}
+
+// NewInlineKeyboardButtonPay creates a InlineKeyboardButton with Pay.
+func NewInlineKeyboardButtonPay(text string) InlineKeyboardButton {
+	return InlineKeyboardButton{
+		Text: text,
+		Pay:  true,
+	}
+}
+
+// NewKeyboardButton creates a KeyboardButton.
+func NewKeyboardButton(text string) KeyboardButton {
+	return KeyboardButton{
+		Text: text,
+	}
+}
+
+// NewKeyboardButtonRequestUsers creates a KeyboardButton with RequestUsers.
+func NewKeyboardButtonRequestUsers(text string, requestUsers KeyboardButtonRequestUsers) KeyboardButton {
+	return KeyboardButton{
+		Text:         text,
+		RequestUsers: &requestUsers,
+	}
+}
+
+// NewKeyboardButtonRequestChat creates a KeyboardButton with RequestChat.
+func NewKeyboardButtonRequestChat(text string, requestChat KeyboardButtonRequestChat) KeyboardButton {
+	return KeyboardButton{
+		Text:        text,
+		RequestChat: &requestChat,
+	}
+}
+
+// NewKeyboardButtonRequestContact creates a KeyboardButton with RequestContact.
+func NewKeyboardButtonRequestContact(text string) KeyboardButton {
+	return KeyboardButton{
+		Text:           text,
+		RequestContact: true,
+	}
+}
+
+// NewKeyboardButtonRequestLocation creates a KeyboardButton with RequestLocation.
+func NewKeyboardButtonRequestLocation(text string) KeyboardButton {
+	return KeyboardButton{
+		Text:            text,
+		RequestLocation: true,
+	}
+}
+
+// NewKeyboardButtonRequestPoll creates a KeyboardButton with RequestPoll.
+func NewKeyboardButtonRequestPoll(text string, requestPoll KeyboardButtonPollType) KeyboardButton {
+	return KeyboardButton{
+		Text:        text,
+		RequestPoll: &requestPoll,
+	}
+}
+
+// NewKeyboardButtonWebApp creates a KeyboardButton with WebApp.
+func NewKeyboardButtonWebApp(text string, webApp WebAppInfo) KeyboardButton {
+	return KeyboardButton{
+		Text:   text,
+		WebApp: &webApp,
+	}
+}
+
+// NewInlineQueryResultsButtonWebApp creates a InlineQueryResultsButton with WebApp.
+func NewInlineQueryResultsButtonWebApp(text string, webApp WebAppInfo) InlineQueryResultsButton {
+	return InlineQueryResultsButton{
+		Text:   text,
+		WebApp: &webApp,
+	}
+}
+
+// NewInlineQueryResultsButtonStartParameter creates a InlineQueryResultsButton with StartParameter.
+func NewInlineQueryResultsButtonStartParameter(text string, startParameter string) InlineQueryResultsButton {
+	return InlineQueryResultsButton{
+		Text:           text,
+		StartParameter: startParameter,
+	}
+}

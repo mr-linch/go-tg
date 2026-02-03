@@ -121,6 +121,24 @@ typegen:
     InlineQuery.chat_type: ChatType
     WebhookInfo.allowed_updates: "[]UpdateType"
 
+  # Variant constructors for types with mutually exclusive optional fields
+  variant_constructors:
+    - type: InlineKeyboardButton
+      base_field: text
+      defaults:
+        pay: "true"
+        callback_game: "&CallbackGame{}"
+
+    - type: KeyboardButton
+      base_field: text
+      include_base: true
+      defaults:
+        request_contact: "true"
+        request_location: "true"
+
+    - type: InlineQueryResultsButton
+      base_field: text
+
 methodgen:
   stringer_types:
     - ParseMode

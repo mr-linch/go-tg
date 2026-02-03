@@ -171,80 +171,8 @@ func (markup InlineKeyboardMarkup) Ptr() *InlineKeyboardMarkup {
 	return &markup
 }
 
-// NewInlineButtonURL create inline button
-// with http(s):// or tg:// URL to be opened when the button is pressed.
-func NewInlineKeyboardButtonURL(text, url string) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text: text,
-		URL:  url,
-	}
-}
-
-// NewInlineKeyboardButtonCallback creates a new InlineKeyboardButton with specified callback data.
-// Query should have length 1-64 bytes.
-func NewInlineKeyboardButtonCallback(text, query string) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text:         text,
-		CallbackData: query,
-	}
-}
-
 type CallbackDataEncoder[T any] interface {
 	Encode(data T) (string, error)
-}
-
-// NewInlineKeyboardButtonWebApp creates a button that open a web app.
-func NewInlineKeyboardButtonWebApp(text string, webApp WebAppInfo) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text:   text,
-		WebApp: &webApp,
-	}
-}
-
-// InlineKeyboardMarkup represents button that open web page with auth data.
-func NewInlineKeyboardButtonLoginURL(text string, loginURL LoginURL) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text:     text,
-		LoginURL: &loginURL,
-	}
-}
-
-// NewInlineKeyboardButtonSwitchInlineQuery represents button that
-//
-//	will prompt the user to select one of their chats,
-//
-// open that chat and insert the bot's username and the specified inline query in the input field.
-func NewInlineKeyboardButtonSwitchInlineQuery(text, query string) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text:              text,
-		SwitchInlineQuery: query,
-	}
-}
-
-// NewInlineKeyboardButtonSwitchInlineQueryCurrentChat represents button that
-// will insert the bot's username and the specified inline query in the current chat's input field
-func NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(text, query string) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text:                         text,
-		SwitchInlineQueryCurrentChat: query,
-	}
-}
-
-// NewInlineKeyboardButtonCallbackGame represents the button which open a game.
-func NewInlineKeyboardButtonCallbackGame(text string) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text:         text,
-		CallbackGame: &CallbackGame{},
-	}
-}
-
-// NewInlineKeyboardButtonPay represents a Pay button.
-// NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages
-func NewInlineKeyboardButtonPay(text string) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text: text,
-		Pay:  true,
-	}
 }
 
 func (markup InlineKeyboardMarkup) isReplyMarkup() {}
@@ -286,66 +214,6 @@ func (markup *ReplyKeyboardMarkup) WithInputFieldPlaceholder(placeholder string)
 func (markup *ReplyKeyboardMarkup) WithSelective() *ReplyKeyboardMarkup {
 	markup.Selective = true
 	return markup
-}
-
-// NewKeyboardButton creates a plain reply keyboard button.
-func NewKeyboardButton(text string) KeyboardButton {
-	return KeyboardButton{
-		Text: text,
-	}
-}
-
-// NewKeyboardButtonRequestContact creates a reply keyboard button that request a contact from user.
-// Available in private chats only.
-func NewKeyboardButtonRequestContact(text string) KeyboardButton {
-	return KeyboardButton{
-		Text:           text,
-		RequestContact: true,
-	}
-}
-
-// NewKeyboardButtonRequestLocation creates a reply keyboard button that request a location from user.
-// Available in private chats only.
-func NewKeyboardButtonRequestLocation(text string) KeyboardButton {
-	return KeyboardButton{
-		Text:            text,
-		RequestLocation: true,
-	}
-}
-
-// NewKeyboardButtonRequestPoll creates a reply keyboard button that request a poll from user.
-// Available in private chats only.
-func NewKeyboardButtonRequestPoll(text string, poll KeyboardButtonPollType) KeyboardButton {
-	return KeyboardButton{
-		Text:        text,
-		RequestPoll: &poll,
-	}
-}
-
-// NewKeyboardButtonWebApp create a reply keyboard button that open a web app.
-func NewKeyboardButtonWebApp(text string, webApp WebAppInfo) KeyboardButton {
-	return KeyboardButton{
-		Text:   text,
-		WebApp: &webApp,
-	}
-}
-
-// NewKeyboardButtonRequestUsers creates a reply keyboard button that request a user from user.
-// Available in private chats only.
-func NewKeyboardButtonRequestUsers(text string, config KeyboardButtonRequestUsers) KeyboardButton {
-	return KeyboardButton{
-		Text:         text,
-		RequestUsers: &config,
-	}
-}
-
-// NewKeyboardButtonRequestChats creates a reply keyboard button that request a chat from user.
-// Available in private chats only.
-func NewKeyboardButtonRequestChat(text string, config KeyboardButtonRequestChat) KeyboardButton {
-	return KeyboardButton{
-		Text:        text,
-		RequestChat: &config,
-	}
 }
 
 func (markup ReplyKeyboardMarkup) isReplyMarkup() {}

@@ -322,7 +322,7 @@ func TestMessageUpdateHelpers(t *testing.T) {
 			Name: "EditReplyMarkup",
 			Request: msg.EditReplyMarkup(tg.NewInlineKeyboardMarkup(
 				tg.NewButtonRow(
-					tg.NewInlineKeyboardButtonCallback("1", "1"),
+					tg.NewInlineKeyboardButtonCallbackData("1", "1"),
 				),
 			)).Request(),
 			ExceptedMethod: "editMessageReplyMarkup",

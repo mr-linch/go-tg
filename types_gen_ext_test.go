@@ -166,7 +166,7 @@ func TestInlineReplyMarkup(t *testing.T) {
 	actual := NewInlineKeyboardMarkup(
 		NewButtonRow(
 			NewInlineKeyboardButtonURL("text", "https://google.com"),
-			NewInlineKeyboardButtonCallback("text", "data"),
+			NewInlineKeyboardButtonCallbackData("text", "data"),
 			NewInlineKeyboardButtonWebApp("text", WebAppInfo{}),
 			NewInlineKeyboardButtonLoginURL("text", LoginURL{
 				URL: "https://google.com",
@@ -260,9 +260,9 @@ func TestForceReplay(t *testing.T) {
 
 func TestNewButtonLayout(t *testing.T) {
 	keyboard := NewButtonLayout(1,
-		NewInlineKeyboardButtonCallback("1", "1"),
-		NewInlineKeyboardButtonCallback("2", "2"),
-		NewInlineKeyboardButtonCallback("3", "3"),
+		NewInlineKeyboardButtonCallbackData("1", "1"),
+		NewInlineKeyboardButtonCallbackData("2", "2"),
+		NewInlineKeyboardButtonCallbackData("3", "3"),
 	).Keyboard()
 
 	assert.Equal(t, [][]InlineKeyboardButton{
@@ -395,9 +395,9 @@ func TestButtonLayout_Insert(t *testing.T) {
 
 func TestNewButtonColumn(t *testing.T) {
 	keyboard := NewButtonColumn(
-		NewInlineKeyboardButtonCallback("1", "1"),
-		NewInlineKeyboardButtonCallback("2", "2"),
-		NewInlineKeyboardButtonCallback("3", "3"),
+		NewInlineKeyboardButtonCallbackData("1", "1"),
+		NewInlineKeyboardButtonCallbackData("2", "2"),
+		NewInlineKeyboardButtonCallbackData("3", "3"),
 	)
 
 	assert.Equal(t, [][]InlineKeyboardButton{
