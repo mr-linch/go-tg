@@ -145,20 +145,13 @@ func New{{.TypeName}}(v {{.TypeName}}) {{$u.Name}} {
 type {{$e.Name}} {{$e.Underlying}}
 
 const (
-{{- if $e.HasUnknown}}
 	{{$e.Name}}Unknown {{$e.Name}} = iota
-{{- end}}
-{{- range $i, $v := $e.Values}}
-{{- if and (eq $i 0) (not $e.HasUnknown)}}
-	{{$v.ConstName}} {{$e.Name}} = iota + 1
-{{- else}}
-	{{$v.ConstName}}
-{{- end}}
+{{- range $e.Values}}
+	{{.ConstName}}
 {{- end}}
 )
 
 func (v {{$e.Name}}) String() string {
-{{- if $e.HasUnknown}}
 	if v > {{$e.Name}}Unknown && v <= {{(index $e.Values (sub (len $e.Values) 1)).ConstName}} {
 		return [...]string{
 {{- range $e.Values}}
@@ -167,16 +160,11 @@ func (v {{$e.Name}}) String() string {
 		}[v-1]
 	}
 	return "unknown"
-{{- else}}
-	if v < {{(index $e.Values 0).ConstName}} || v > {{(index $e.Values (sub (len $e.Values) 1)).ConstName}} {
-		return "unknown"
-	}
-	return [...]string{
-{{- range $e.Values}}
-		"{{.StringVal}}",
-{{- end}}
-	}[v-1]
-{{- end}}
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v {{$e.Name}}) IsUnknown() bool {
+	return v == {{$e.Name}}Unknown
 }
 {{if eq $e.Marshal "json"}}
 func (v {{$e.Name}}) MarshalJSON() ([]byte, error) {
@@ -194,20 +182,16 @@ func (v *{{$e.Name}}) UnmarshalJSON(b []byte) error {
 		*v = {{.ConstName}}
 {{- end}}
 	default:
-		*v = 0
+		*v = {{$e.Name}}Unknown
 	}
 	return nil
 }
 {{- else if eq $e.Marshal "text"}}
 func (v {{$e.Name}}) MarshalText() ([]byte, error) {
-{{- if $e.HasUnknown}}
 	if v != {{$e.Name}}Unknown {
 		return []byte(v.String()), nil
 	}
 	return nil, fmt.Errorf("unknown {{$e.Name}}")
-{{- else}}
-	return []byte(v.String()), nil
-{{- end}}
 }
 
 func (v *{{$e.Name}}) UnmarshalText(b []byte) error {
@@ -217,11 +201,7 @@ func (v *{{$e.Name}}) UnmarshalText(b []byte) error {
 		*v = {{.ConstName}}
 {{- end}}
 	default:
-{{- if $e.HasUnknown}}
 		*v = {{$e.Name}}Unknown
-{{- else}}
-		*v = 0
-{{- end}}
 	}
 	return nil
 }

@@ -1382,3 +1382,59 @@ func TestMaybeInaccessibleMessage(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestChatType_IsUnknown(t *testing.T) {
+	assert.True(t, ChatTypeUnknown.IsUnknown())
+	assert.True(t, ChatType(0).IsUnknown())
+	assert.False(t, ChatTypePrivate.IsUnknown())
+	assert.False(t, ChatTypeGroup.IsUnknown())
+}
+
+func TestChatAction_IsUnknown(t *testing.T) {
+	assert.True(t, ChatActionUnknown.IsUnknown())
+	assert.True(t, ChatAction(0).IsUnknown())
+	assert.False(t, ChatActionTyping.IsUnknown())
+}
+
+func TestStickerType_IsUnknown(t *testing.T) {
+	assert.True(t, StickerTypeUnknown.IsUnknown())
+	assert.True(t, StickerType(0).IsUnknown())
+	assert.False(t, StickerTypeRegular.IsUnknown())
+}
+
+func TestMessageEntityType_IsUnknown(t *testing.T) {
+	assert.True(t, MessageEntityTypeUnknown.IsUnknown())
+	assert.True(t, MessageEntityType(0).IsUnknown())
+	assert.False(t, MessageEntityTypeBold.IsUnknown())
+}
+
+func TestUpdateType_IsUnknown(t *testing.T) {
+	assert.True(t, UpdateTypeUnknown.IsUnknown())
+	assert.True(t, UpdateType(0).IsUnknown())
+	assert.False(t, UpdateTypeMessage.IsUnknown())
+}
+
+func TestMessageType_IsUnknown(t *testing.T) {
+	assert.True(t, MessageTypeUnknown.IsUnknown())
+	assert.True(t, MessageType(0).IsUnknown())
+	assert.False(t, MessageTypeText.IsUnknown())
+}
+
+func TestChatType_UnmarshalJSON_Unknown(t *testing.T) {
+	type sample struct {
+		Type ChatType `json:"type"`
+	}
+	var s sample
+	err := json.Unmarshal([]byte(`{"type": "future_type"}`), &s)
+	require.NoError(t, err)
+	assert.True(t, s.Type.IsUnknown())
+	assert.Equal(t, ChatTypeUnknown, s.Type)
+}
+
+func TestStickerType_UnmarshalText_Unknown(t *testing.T) {
+	var v StickerType
+	err := v.UnmarshalText([]byte("future_sticker_type"))
+	require.NoError(t, err)
+	assert.True(t, v.IsUnknown())
+	assert.Equal(t, StickerTypeUnknown, v)
+}

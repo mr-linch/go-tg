@@ -7923,7 +7923,8 @@ func NewPassportElementErrorUnspecified(v PassportElementErrorUnspecified) Passp
 type ChatType int8
 
 const (
-	ChatTypePrivate ChatType = iota + 1
+	ChatTypeUnknown ChatType = iota
+	ChatTypePrivate
 	ChatTypeGroup
 	ChatTypeSupergroup
 	ChatTypeChannel
@@ -7931,16 +7932,21 @@ const (
 )
 
 func (v ChatType) String() string {
-	if v < ChatTypePrivate || v > ChatTypeSender {
-		return "unknown"
+	if v > ChatTypeUnknown && v <= ChatTypeSender {
+		return [...]string{
+			"private",
+			"group",
+			"supergroup",
+			"channel",
+			"sender",
+		}[v-1]
 	}
-	return [...]string{
-		"private",
-		"group",
-		"supergroup",
-		"channel",
-		"sender",
-	}[v-1]
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v ChatType) IsUnknown() bool {
+	return v == ChatTypeUnknown
 }
 
 func (v ChatType) MarshalJSON() ([]byte, error) {
@@ -7964,7 +7970,7 @@ func (v *ChatType) UnmarshalJSON(b []byte) error {
 	case "sender":
 		*v = ChatTypeSender
 	default:
-		*v = 0
+		*v = ChatTypeUnknown
 	}
 	return nil
 }
@@ -7988,6 +7994,11 @@ func (v StickerType) String() string {
 		}[v-1]
 	}
 	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v StickerType) IsUnknown() bool {
+	return v == StickerTypeUnknown
 }
 
 func (v StickerType) MarshalText() ([]byte, error) {
@@ -8062,6 +8073,11 @@ func (v MessageEntityType) String() string {
 		}[v-1]
 	}
 	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v MessageEntityType) IsUnknown() bool {
+	return v == MessageEntityTypeUnknown
 }
 
 func (v MessageEntityType) MarshalText() ([]byte, error) {
@@ -8178,6 +8194,11 @@ func (v UpdateType) String() string {
 	return "unknown"
 }
 
+// IsUnknown reports whether this value is unknown.
+func (v UpdateType) IsUnknown() bool {
+	return v == UpdateTypeUnknown
+}
+
 func (v UpdateType) MarshalText() ([]byte, error) {
 	if v != UpdateTypeUnknown {
 		return []byte(v.String()), nil
@@ -8243,7 +8264,8 @@ func (v *UpdateType) UnmarshalText(b []byte) error {
 type ChatAction int8
 
 const (
-	ChatActionTyping ChatAction = iota + 1
+	ChatActionUnknown ChatAction = iota
+	ChatActionTyping
 	ChatActionUploadPhoto
 	ChatActionRecordVideo
 	ChatActionUploadVideo
@@ -8257,22 +8279,27 @@ const (
 )
 
 func (v ChatAction) String() string {
-	if v < ChatActionTyping || v > ChatActionUploadVideoNote {
-		return "unknown"
+	if v > ChatActionUnknown && v <= ChatActionUploadVideoNote {
+		return [...]string{
+			"typing",
+			"upload_photo",
+			"record_video",
+			"upload_video",
+			"record_voice",
+			"upload_voice",
+			"upload_document",
+			"choose_sticker",
+			"find_location",
+			"record_video_note",
+			"upload_video_note",
+		}[v-1]
 	}
-	return [...]string{
-		"typing",
-		"upload_photo",
-		"record_video",
-		"upload_video",
-		"record_voice",
-		"upload_voice",
-		"upload_document",
-		"choose_sticker",
-		"find_location",
-		"record_video_note",
-		"upload_video_note",
-	}[v-1]
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v ChatAction) IsUnknown() bool {
+	return v == ChatActionUnknown
 }
 
 // MessageType represents an enum type.
@@ -8488,6 +8515,11 @@ func (v MessageType) String() string {
 		}[v-1]
 	}
 	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v MessageType) IsUnknown() bool {
+	return v == MessageTypeUnknown
 }
 
 // Type returns the UpdateType of this Update.
