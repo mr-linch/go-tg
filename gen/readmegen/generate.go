@@ -27,6 +27,11 @@ func UpdateVersion(path string, api *ir.API) error {
 		return nil // Nothing to update
 	}
 
+	info, err := os.Stat(path)
+	if err != nil {
+		return err
+	}
+
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return err
@@ -61,5 +66,5 @@ func UpdateVersion(path string, api *ir.API) error {
 		updated = content
 	}
 
-	return os.WriteFile(path, updated, 0o600)
+	return os.WriteFile(path, updated, info.Mode())
 }

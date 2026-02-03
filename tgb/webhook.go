@@ -160,7 +160,7 @@ func (webhook *Webhook) Setup(ctx context.Context) (err error) {
 		return fmt.Errorf("get webhook info: %w", err)
 	}
 
-	if !webhook.isNeedsUpdate(info) {
+	if !webhook.needsUpdate(info) {
 		return nil
 	}
 
@@ -191,7 +191,7 @@ func (webhook *Webhook) Setup(ctx context.Context) (err error) {
 	return setWebhookCall.DoVoid(ctx)
 }
 
-func (webhook *Webhook) isNeedsUpdate(info tg.WebhookInfo) bool {
+func (webhook *Webhook) needsUpdate(info tg.WebhookInfo) bool {
 	if info.URL != webhook.url {
 		return true
 	}

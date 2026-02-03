@@ -118,13 +118,19 @@ func parseAPI(input string, cfg *config.Config) (*ir.API, error) {
 }
 
 func writeSpec(path string, api *ir.API) error {
-	data, err := yaml.Marshal(api)
+	f, err := os.Create(path)
 	if err != nil {
-		return fmt.Errorf("marshal spec: %w", err)
+		return fmt.Errorf("create spec file %s: %w", path, err)
 	}
-	if err := os.WriteFile(path, data, 0o600); err != nil {
-		return fmt.Errorf("write spec to %s: %w", path, err)
+	defer f.Close()
+
+	enc := yaml.NewEncoder(f)
+	enc.SetIndent(2)
+
+	if err := enc.Encode(api); err != nil {
+		return fmt.Errorf("encode spec: %w", err)
 	}
+
 	return nil
 }
 

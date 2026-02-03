@@ -29,7 +29,7 @@ type TypeRef struct {
 
 // TypeExpr represents a type expression: possibly an array of a possibly-union type.
 type TypeExpr struct {
-	Types []TypeRef `yaml:"types"`
+	Types []TypeRef `yaml:"types,flow"`
 	Array int       `yaml:"array,omitempty"`
 }
 

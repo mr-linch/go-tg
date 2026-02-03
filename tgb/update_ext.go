@@ -78,8 +78,8 @@ func (msg *MessageUpdate) AnswerChatAction(action tg.ChatAction) *tg.SendChatAct
 }
 
 // AnswerMediaGroup calls sendMediaGroup with pre-defined chatID to incoming message chat.
-func (msg *MessageUpdate) AnswerMediaGroup(action []tg.InputMedia) *tg.SendMediaGroupCall {
-	return msg.Client.SendMediaGroup(msg.Chat, action)
+func (msg *MessageUpdate) AnswerMediaGroup(media []tg.InputMedia) *tg.SendMediaGroupCall {
+	return msg.Client.SendMediaGroup(msg.Chat, media)
 }
 
 // Forward incoming message to another chat.

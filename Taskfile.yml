@@ -89,3 +89,30 @@ tasks:
       - task: lint
       - task: tidy:check
       - task: test
+
+  # Generation
+  gen:
+    desc: Download spec and generate all code
+    cmds:
+      - task: gen:fetch
+      - task: gen:run
+
+  gen:fetch:
+    desc: Download Telegram Bot API spec
+    cmds:
+      - mkdir -p _spec
+      - curl -sL https://core.telegram.org/bots/api -o _spec/api.html
+
+  gen:run:
+    desc: Run code generator
+    dir: gen
+    cmd: >-
+      go run ./cmd/go-tg-gen
+      -input ../_spec/api.html
+      -config config.yaml
+      -pkg tg
+      -types-output ../types_gen.go
+      -methods-output ../methods_gen.go
+      -tgb-output ../tgb
+      -spec-output ../_spec/api.yaml
+      -readme ../README.md
