@@ -83,16 +83,39 @@ type GoTypeMethodCase struct {
 	Condition string // condition expression, e.g. "v.Text != \"\""
 }
 
+// GoVariantConstructorType holds all variants for a single type.
+type GoVariantConstructorType struct {
+	TypeName    string                 // e.g. "InlineKeyboardButton"
+	BaseGoField string                 // e.g. "Text"
+	BaseGoType  string                 // e.g. "string"
+	BaseParam   string                 // e.g. "text string"
+	BaseArg     string                 // e.g. "text"
+	Variants    []GoVariantConstructor // list of variants
+}
+
+// GoVariantConstructor represents a single variant constructor.
+type GoVariantConstructor struct {
+	Name         string // e.g. "URL" -> NewInlineKeyboardButtonURL
+	GoField      string // e.g. "URL"
+	GoType       string // e.g. "string"
+	Param        string // e.g. "url string" (empty if HasDefault)
+	Arg          string // e.g. "url" (empty if HasDefault)
+	HasDefault   bool   // true if uses default value instead of param
+	DefaultValue string // e.g. "true" or "&CallbackGame{}"
+	Comment      string // e.g. "with URL"
+}
+
 // TemplateData is the data passed to the template.
 type TemplateData struct {
 	Package string
 	ir.Metadata
-	Types       []GoType
-	UnionTypes  []GoUnionType
-	Enums       []GoEnum
-	TypeMethods []GoTypeMethod
-	NeedJSON    bool
-	NeedFmt     bool
+	Types               []GoType
+	UnionTypes          []GoUnionType
+	Enums               []GoEnum
+	TypeMethods         []GoTypeMethod
+	VariantConstructors []GoVariantConstructorType
+	NeedJSON            bool
+	NeedFmt             bool
 }
 
 // Options controls generation behavior.
@@ -210,7 +233,26 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 		log.Debug("generating type method", "type", methodCfg.Type, "method", methodCfg.Method, "cases", len(goMethod.Cases))
 	}
 
-	// Warn about unused config entries.
+	// Resolve variant constructors (e.g., NewInlineKeyboardButtonURL).
+	for _, vcCfg := range cfg.VariantConstructors {
+		irType := findType(api.Types, vcCfg.Type)
+		if irType == nil {
+			log.Warn("type not found for variant_constructor", "type", vcCfg.Type)
+			continue
+		}
+		vc := buildVariantConstructors(irType, &vcCfg, cfg, rules, usedNameOverrides, usedTypeOverrides, log)
+		if vc != nil {
+			data.VariantConstructors = append(data.VariantConstructors, *vc)
+			log.Debug("generating variant constructors", "type", vcCfg.Type, "variants", len(vc.Variants))
+		}
+	}
+
+	warnUnusedConfig(cfg, rules, usedExcludes, usedNameOverrides, usedTypeOverrides, log)
+
+	return data
+}
+
+func warnUnusedConfig(cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedExcludes, usedNameOverrides, usedTypeOverrides map[string]bool, log *slog.Logger) {
 	for _, name := range cfg.Exclude {
 		if !usedExcludes[name] {
 			log.Warn("unused exclude entry", "name", name)
@@ -229,8 +271,6 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 	for _, expr := range rules.Unmatched() {
 		log.Warn("unmatched field_type_rule", "expr", expr)
 	}
-
-	return data
 }
 
 func resolveType(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) GoType {
@@ -548,4 +588,89 @@ func buildFieldCondition(goFieldName string, f *ir.Field) string {
 		// Complex type (pointer)
 		return "v." + goFieldName + " != nil"
 	}
+}
+
+// buildVariantConstructors creates variant constructor data for a type.
+func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, log *slog.Logger) *GoVariantConstructorType {
+	// Find the base field.
+	var baseField *ir.Field
+	for i := range t.Fields {
+		if t.Fields[i].Name == vcCfg.BaseField {
+			baseField = &t.Fields[i]
+			break
+		}
+	}
+	if baseField == nil {
+		log.Warn("base_field not found for variant_constructor", "type", vcCfg.Type, "base_field", vcCfg.BaseField)
+		return nil
+	}
+
+	typeName := normalizeTypeName(t.Name)
+	baseGoField := snakeToPascal(baseField.Name)
+	baseGoType := resolveGoType(t.Name, *baseField, cfg, rules, usedTypes)
+	baseArgName := snakeToCamel(baseField.Name)
+
+	vc := &GoVariantConstructorType{
+		TypeName:    typeName,
+		BaseGoField: baseGoField,
+		BaseGoType:  baseGoType,
+		BaseParam:   baseArgName + " " + baseGoType,
+		BaseArg:     baseArgName,
+	}
+
+	// Check if field should be excluded.
+	isExcluded := func(fieldName string) bool {
+		for _, ex := range vcCfg.Exclude {
+			if ex == fieldName {
+				return true
+			}
+		}
+		return false
+	}
+
+	// Generate base constructor if requested (e.g., NewKeyboardButton).
+	if vcCfg.IncludeBase {
+		vc.Variants = append(vc.Variants, GoVariantConstructor{
+			Name:    "",
+			Comment: "",
+		})
+	}
+
+	// Generate variant for each optional field.
+	for _, f := range t.Fields {
+		if !f.Optional || f.Name == vcCfg.BaseField || isExcluded(f.Name) {
+			continue
+		}
+
+		goFieldName := resolveFieldName(t.Name, f.Name, cfg, usedNames)
+		goType := resolveGoType(t.Name, f, cfg, rules, usedTypes)
+		argName := snakeToCamel(f.Name)
+
+		variant := GoVariantConstructor{
+			Name:    goFieldName,
+			GoField: goFieldName,
+			GoType:  goType,
+			Comment: "with " + goFieldName,
+		}
+
+		// Check if this field has a default value configured.
+		if defaultVal, ok := vcCfg.Defaults[f.Name]; ok {
+			variant.HasDefault = true
+			variant.DefaultValue = defaultVal
+		} else {
+			// For pointer types, accept value and take address in constructor.
+			paramType := goType
+			arg := argName
+			if strings.HasPrefix(goType, "*") {
+				paramType = goType[1:] // Remove "*" from param type
+				arg = "&" + argName    // Add "&" when assigning
+			}
+			variant.Param = argName + " " + paramType
+			variant.Arg = arg
+		}
+
+		vc.Variants = append(vc.Variants, variant)
+	}
+
+	return vc
 }

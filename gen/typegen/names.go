@@ -11,3 +11,8 @@ func normalizeTypeName(name string) string {
 func snakeToPascal(s string) string {
 	return naming.SnakeToPascal(s)
 }
+
+// snakeToCamel converts a snake_case string to camelCase.
+func snakeToCamel(s string) string {
+	return naming.SnakeToCamel(s)
+}

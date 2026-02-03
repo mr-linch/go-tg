@@ -326,7 +326,7 @@ func (p *CallbackDataFilter[T]) MustButton(text string, v T) tg.InlineKeyboardBu
 		return tg.InlineKeyboardButton{}
 	}
 
-	return tg.NewInlineKeyboardButtonCallback(text, data)
+	return tg.NewInlineKeyboardButtonCallbackData(text, data)
 }
 
 // Button returns a new tg.InlineKeyboardButton with the given data as callback data.
@@ -337,7 +337,7 @@ func (p *CallbackDataFilter[T]) Button(text string, v T) (tg.InlineKeyboardButto
 		return tg.InlineKeyboardButton{}, fmt.Errorf("encode: %w", err)
 	}
 
-	return tg.NewInlineKeyboardButtonCallback(text, data), nil
+	return tg.NewInlineKeyboardButtonCallbackData(text, data), nil
 }
 
 // Encode serializes a struct into callback data using the filter's parser.

@@ -46,14 +46,25 @@ type TypeMethodDef struct {
 	Return string `yaml:"return"` // Return enum type name (e.g., "MessageType")
 }
 
+// VariantConstructorDef defines variant constructors for types with mutually exclusive optional fields.
+// Example: InlineKeyboardButton has text (required) + one of: url, callback_data, web_app, etc.
+type VariantConstructorDef struct {
+	Type        string            `yaml:"type"`                   // Type name (e.g., "InlineKeyboardButton")
+	BaseField   string            `yaml:"base_field"`             // Required field name (e.g., "text")
+	IncludeBase bool              `yaml:"include_base,omitempty"` // Generate base constructor (e.g., NewKeyboardButton)
+	Exclude     []string          `yaml:"exclude,omitempty"`      // Fields to exclude from variant generation
+	Defaults    map[string]string `yaml:"defaults,omitempty"`     // Default values for bool/pointer fields (field_name -> "true" or "&Type{}")
+}
+
 // TypeGen holds type generation configuration.
 type TypeGen struct {
-	Exclude        []string          `yaml:"exclude"`
-	NameOverrides  map[string]string `yaml:"name_overrides"`
-	TypeOverrides  map[string]string `yaml:"type_overrides"`
-	FieldTypeRules []FieldTypeRule   `yaml:"field_type_rules"`
-	Enums          []EnumGenDef      `yaml:"enums,omitempty"`
-	TypeMethods    []TypeMethodDef   `yaml:"type_methods,omitempty"`
+	Exclude             []string                `yaml:"exclude"`
+	NameOverrides       map[string]string       `yaml:"name_overrides"`
+	TypeOverrides       map[string]string       `yaml:"type_overrides"`
+	FieldTypeRules      []FieldTypeRule         `yaml:"field_type_rules"`
+	Enums               []EnumGenDef            `yaml:"enums,omitempty"`
+	TypeMethods         []TypeMethodDef         `yaml:"type_methods,omitempty"`
+	VariantConstructors []VariantConstructorDef `yaml:"variant_constructors,omitempty"`
 }
 
 // IsExcluded reports whether typeName should be skipped.
