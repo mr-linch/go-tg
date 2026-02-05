@@ -1,0 +1,4 @@
+# Exclude YAML and HTML files from exports
+*.yaml export-ignore
+*.yml export-ignore
+*.html export-ignore
