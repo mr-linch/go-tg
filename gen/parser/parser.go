@@ -161,7 +161,8 @@ func findH4s(n *html.Node, result *[]*html.Node) {
 const baseURL = "https://core.telegram.org/bots/api"
 
 // extractText returns the concatenated text content of an HTML node tree,
-// skipping <i> elements (used for anchor icons) and converting <br> to space.
+// skipping <i> elements (used for anchor icons), converting <br> to space,
+// and preserving emoji <img> alt text.
 func extractText(n *html.Node) string {
 	if n.Type == html.TextNode {
 		return n.Data
@@ -172,6 +173,9 @@ func extractText(n *html.Node) string {
 		}
 		if n.DataAtom == atom.Br {
 			return " "
+		}
+		if n.DataAtom == atom.Img {
+			return getAttr(n, "alt")
 		}
 	}
 	var sb strings.Builder
@@ -204,6 +208,8 @@ func extractElementDescription(n *html.Node) (string, bool) {
 		return "", true
 	case atom.Br:
 		return " ", true
+	case atom.Img:
+		return getAttr(n, "alt"), true
 	case atom.A:
 		href := getHref(n)
 		text := extractText(n)
@@ -425,13 +431,18 @@ func parseParamTable(table *html.Node) []ir.Param {
 			typeExpr.Types[0].Type = string(ir.TypeInteger64)
 		}
 
+		enumVals := extractEmValues(tds[3])
+		if len(enumVals) == 0 {
+			enumVals = extractEnum(desc)
+		}
+
 		params = append(params, ir.Param{
 			Name:        name,
 			TypeExpr:    typeExpr,
 			Required:    required,
 			Description: desc,
 			Default:     extractDefault(desc),
-			Enum:        extractEmValues(tds[3]),
+			Enum:        enumVals,
 		})
 	}
 
@@ -722,9 +733,13 @@ func extractEnum(desc string) []string {
 		return nil
 	}
 
-	values := make([]string, len(matches))
-	for i, m := range matches {
-		values[i] = m[1]
+	seen := make(map[string]bool, len(matches))
+	var values []string
+	for _, m := range matches {
+		if !seen[m[1]] {
+			seen[m[1]] = true
+			values = append(values, m[1])
+		}
 	}
 	return values
 }
@@ -811,8 +826,13 @@ func collectChildren(n *html.Node, a atom.Atom) []*html.Node {
 
 // getHref returns the value of the href attribute.
 func getHref(n *html.Node) string {
+	return getAttr(n, "href")
+}
+
+// getAttr returns the value of the named attribute on an HTML element.
+func getAttr(n *html.Node, key string) string {
 	for _, attr := range n.Attr {
-		if attr.Key == "href" {
+		if attr.Key == key {
 			return attr.Val
 		}
 	}

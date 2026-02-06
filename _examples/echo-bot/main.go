@@ -62,7 +62,7 @@ func main() {
 				return mu.Update.Reply(ctx, mu.Answer("Reply to a message to get a reaction."))
 			}
 
-			reaction := tg.ReactionTypeEmojiAll[rand.Int()%len(tg.ReactionTypeEmojiAll)]
+			reaction := tg.NewReactionTypeEmoji(tg.ReactionEmojiAll[rand.Int()%len(tg.ReactionEmojiAll)])
 
 			return mu.Update.Reply(ctx, mu.React(reaction).IsBig(true))
 		}, tgb.Command("react")).

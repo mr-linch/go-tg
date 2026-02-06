@@ -498,7 +498,11 @@ func resolveEnum(irEnum *ir.Enum, cfg *config.EnumGenDef) GoEnum {
 	}
 
 	for _, val := range irEnum.Values {
-		constName := irEnum.Name + naming.SnakeToPascal(val)
+		name := val
+		if slug, ok := emojiName(val); ok {
+			name = slug
+		}
+		constName := irEnum.Name + naming.SnakeToPascal(name)
 		e.Values = append(e.Values, GoEnumValue{
 			ConstName: constName,
 			StringVal: val,

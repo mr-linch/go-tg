@@ -112,8 +112,8 @@ func TestKeyboardButtonConstructors(t *testing.T) {
 		},
 		{
 			Name:   "RequestPoll",
-			Button: NewKeyboardButtonRequestPoll("text", KeyboardButtonPollType{Type: "quiz"}),
-			Want:   KeyboardButton{Text: "text", RequestPoll: &KeyboardButtonPollType{Type: "quiz"}},
+			Button: NewKeyboardButtonRequestPoll("text", KeyboardButtonPollType{Type: PollTypeQuiz}),
+			Want:   KeyboardButton{Text: "text", RequestPoll: &KeyboardButtonPollType{Type: PollTypeQuiz}},
 		},
 		{
 			Name:   "WebApp",

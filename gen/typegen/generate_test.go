@@ -544,7 +544,7 @@ func TestGenerate_FullAPI(t *testing.T) {
 	assert.Contains(t, got, "func NewBotCommandScopeChat(chatID ChatID) BotCommandScope")
 	assert.Contains(t, got, "func NewBotCommandScopeChatMember(chatID ChatID, userID UserID) BotCommandScope")
 	assert.Contains(t, got, "func NewMenuButtonWebApp(text string, webApp WebAppInfo) MenuButton")
-	assert.Contains(t, got, "func NewReactionTypeEmoji(emoji string) ReactionType")
+	assert.Contains(t, got, "func NewReactionTypeEmoji(emoji ReactionEmoji) ReactionType")
 	assert.Contains(t, got, "func NewInputMediaPhoto(media FileArg) InputMedia")
 
 	// Go keyword escaping in constructor params

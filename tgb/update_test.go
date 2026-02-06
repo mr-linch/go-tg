@@ -262,7 +262,7 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		},
 		{
 			Name:           "AnswerDice",
-			Request:        msg.AnswerDice("🎰").Request(),
+			Request:        msg.AnswerDice(tg.DiceEmojiSlotMachine).Request(),
 			ExceptedMethod: "sendDice",
 			ExpectedArgs: map[string]string{
 				"chat_id": "123",
@@ -334,7 +334,7 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		},
 		{
 			Name:           "React",
-			Request:        msg.React(tg.ReactionTypeEmojiThumbsUp).Request(),
+			Request:        msg.React(tg.NewReactionTypeEmoji(tg.ReactionEmojiThumbsUp)).Request(),
 			ExceptedMethod: "setMessageReaction",
 			ExpectedArgs: map[string]string{
 				"chat_id":    "123",

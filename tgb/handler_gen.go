@@ -4,7 +4,7 @@ package tgb
 //
 // Telegram Bot API version: 9.3
 // Release date: December 31, 2025
-// Spec hash: 64aa94655be4
+// Spec hash: 1c93bd778a3c
 
 import "context"
 

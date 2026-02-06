@@ -218,6 +218,13 @@ func (v *{{$e.Name}}) UnmarshalText(b []byte) error {
 	return nil
 }
 {{- end}}
+
+// {{$e.Name}}All is a list of all known {{$e.Name}} values.
+var {{$e.Name}}All = []{{$e.Name}}{
+{{- range $e.Values}}
+	{{.ConstName}},
+{{- end}}
+}
 {{end}}
 {{- range $m := .TypeMethods}}
 // {{$m.MethodName}} returns the {{$m.ReturnType}} of this {{$m.TypeName}}.

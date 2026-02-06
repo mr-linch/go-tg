@@ -68,7 +68,7 @@ func (msg *MessageUpdate) AnswerPoll(question string, options []tg.InputPollOpti
 }
 
 // AnswerDice calls sendDice with pre-defined chatID to incoming message chat.
-func (msg *MessageUpdate) AnswerDice(emoji string) *tg.SendDiceCall {
+func (msg *MessageUpdate) AnswerDice(emoji tg.DiceEmoji) *tg.SendDiceCall {
 	return msg.Client.SendDice(msg.Chat).Emoji(emoji)
 }
 

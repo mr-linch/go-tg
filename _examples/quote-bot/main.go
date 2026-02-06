@@ -69,23 +69,24 @@ func main() {
 				tg.HTML.Line("by", tg.HTML.Bold(quote.Author.Name)),
 			)
 
-			result[i] = tg.NewInlineQueryResultArticle(tg.InlineQueryResultArticle{
-				ID:          quote.ID,
-				Title:       quote.Author.Name,
-				Description: quoteText(quote.Text),
-				InputMessageContent: tg.InputTextMessageContent{
+			article := tg.NewInlineQueryResultArticle(
+				quote.ID,
+				quote.Author.Name,
+				tg.InputTextMessageContent{
 					MessageText: messageText,
 					ParseMode:   tg.HTML,
 				},
-				ReplyMarkup: tg.NewInlineKeyboardMarkup(
-					tg.NewButtonRow(
-						tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(
-							fmt.Sprintf("More by %s", quote.Author.Name),
-							fmt.Sprintf("author:%s ", quote.Author.ID),
-						),
+			)
+			article.Article.Description = quoteText(quote.Text)
+			article.Article.ReplyMarkup = tg.NewInlineKeyboardMarkup(
+				tg.NewButtonRow(
+					tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(
+						fmt.Sprintf("More by %s", quote.Author.Name),
+						fmt.Sprintf("author:%s ", quote.Author.ID),
 					),
-				).Ptr(),
-			})
+				),
+			).Ptr()
+			result[i] = article
 		}
 
 		return iq.Answer(result).CacheTime(0).DoVoid(ctx)

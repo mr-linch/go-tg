@@ -12,12 +12,12 @@ func TestReactionType(t *testing.T) {
 	t.Run("Emoji", func(t *testing.T) {
 		var r ReactionType
 
-		err := r.UnmarshalJSON([]byte(`{"type": "emoji", "emoji": "😀"}`))
+		err := r.UnmarshalJSON([]byte(`{"type": "emoji", "emoji": "👍"}`))
 		require.NoError(t, err)
 
 		assert.Equal(t, ReactionTypeTypeEmoji, r.Type())
 		require.NotNil(t, r.Emoji)
-		assert.Equal(t, "😀", r.Emoji.Emoji)
+		assert.Equal(t, ReactionEmojiThumbsUp, r.Emoji.Emoji)
 	})
 
 	t.Run("CustomEmoji", func(t *testing.T) {
@@ -56,18 +56,18 @@ func TestReactionType(t *testing.T) {
 
 func TestReactionType_MarshalJSON(t *testing.T) {
 	t.Run("Emoji", func(t *testing.T) {
-		r := newEmojiReaction("😀")
+		r := NewReactionTypeEmoji(ReactionEmojiThumbsUp)
 
 		assert.Equal(t, ReactionTypeTypeEmoji, r.Type())
 
 		b, err := json.Marshal(r)
 		require.NoError(t, err)
 
-		assert.JSONEq(t, `{"type":"emoji","emoji":"😀"}`, string(b))
+		assert.JSONEq(t, `{"type":"emoji","emoji":"👍"}`, string(b))
 	})
 
 	t.Run("CustomEmoji", func(t *testing.T) {
-		r := newCustomEmojiReaction("12345")
+		r := NewReactionTypeCustomEmoji("12345")
 
 		assert.Equal(t, ReactionTypeTypeCustomEmoji, r.Type())
 

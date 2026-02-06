@@ -37,6 +37,26 @@ parser:
     - name: InputMediaType
       expr: 'SubtypeConsts("InputMedia", "type")'
 
+    # Field-mapped: standalone enums
+    - name: PollType
+      fields: [Poll.type]
+    - name: MaskPositionPoint
+      fields: [MaskPosition.point]
+    - name: EncryptedPassportElementType
+      fields: [EncryptedPassportElement.type]
+    - name: StickerFormat
+      fields: [InputSticker.format]
+    - name: Currency
+      fields: [SuggestedPostPaid.currency, SuggestedPostPrice.currency]
+    - name: TransactionPartnerUserTransactionTypeEnum
+      fields: [TransactionPartnerUser.transaction_type]
+
+    # Emoji-based enums (resolved via gomoji)
+    - name: DiceEmoji
+      expr: 'ParamEnumValues("sendDice", "emoji")'
+    - name: ReactionEmoji
+      fields: [ReactionTypeEmoji.emoji]
+
 typegen:
   enums:
     - name: ChatType
@@ -60,6 +80,37 @@ typegen:
     - name: MessageType
       underlying: int8
       marshal: none
+      unknown: true
+    - name: PollType
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: MaskPositionPoint
+      underlying: int8
+      marshal: text
+    - name: EncryptedPassportElementType
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: StickerFormat
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: Currency
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: TransactionPartnerUserTransactionTypeEnum
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: DiceEmoji
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: ReactionEmoji
+      underlying: int8
+      marshal: text
       unknown: true
 
   type_methods:
@@ -120,6 +171,18 @@ typegen:
     StickerSet.sticker_type: StickerType
     InlineQuery.chat_type: ChatType
     WebhookInfo.allowed_updates: "[]UpdateType"
+    Poll.type: PollType
+    KeyboardButtonPollType.type: PollType
+    MaskPosition.point: MaskPositionPoint
+    EncryptedPassportElement.type: EncryptedPassportElementType
+    InputSticker.format: StickerFormat
+    SuggestedPostPaid.currency: Currency
+    SuggestedPostPrice.currency: Currency
+    TransactionPartnerUser.transaction_type: TransactionPartnerUserTransactionTypeEnum
+    ForumTopic.icon_color: TopicIconColor
+    ForumTopicCreated.icon_color: TopicIconColor
+    Dice.emoji: DiceEmoji
+    ReactionTypeEmoji.emoji: ReactionEmoji
 
   # Variant constructors for types with mutually exclusive optional fields
   variant_constructors:
@@ -143,6 +206,7 @@ methodgen:
   stringer_types:
     - ParseMode
     - ChatAction
+    - DiceEmoji
 
   param_type_rules:
     # PeerID: chat_id or *_chat_id with Integer or String union (accepts both int and username)
@@ -171,6 +235,8 @@ methodgen:
     sendChatAction.action: ChatAction
     getUpdates.allowed_updates: "[]UpdateType"
     setWebhook.allowed_updates: "[]UpdateType"
+    sendDice.emoji: DiceEmoji
+    createForumTopic.icon_color: TopicIconColor
 
   return_type_overrides:
     stopPoll: Poll

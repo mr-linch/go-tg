@@ -4,7 +4,7 @@ package tg
 //
 // Telegram Bot API version: 9.3
 // Release date: December 31, 2025
-// Spec hash: 64aa94655be4
+// Spec hash: 1c93bd778a3c
 
 import (
 	"encoding/json"
@@ -1097,9 +1097,9 @@ type Contact struct {
 // Dice this object represents an animated emoji that displays a random value.
 type Dice struct {
 	// Emoji on which the dice throw animation is based
-	Emoji string `json:"emoji"`
+	Emoji DiceEmoji `json:"emoji"`
 
-	// Value of the dice, 1-6 for “”, “” and “” base emoji, 1-5 for “” and “” base emoji, 1-64 for “” base emoji
+	// Value of the dice, 1-6 for “🎲”, “🎯” and “🎳” base emoji, 1-5 for “🏀” and “⚽” base emoji, 1-64 for “🎰” base emoji
 	Value int `json:"value"`
 }
 
@@ -1166,7 +1166,7 @@ type Poll struct {
 	IsAnonymous bool `json:"is_anonymous"`
 
 	// Poll type, currently can be “regular” or “quiz”
-	Type string `json:"type"`
+	Type PollType `json:"type"`
 
 	// True, if the poll allows multiple answers
 	AllowsMultipleAnswers bool `json:"allows_multiple_answers"`
@@ -1445,7 +1445,7 @@ type ForumTopicCreated struct {
 	Name string `json:"name"`
 
 	// Color of the topic icon in RGB format
-	IconColor int `json:"icon_color"`
+	IconColor TopicIconColor `json:"icon_color"`
 
 	// Optional. Unique identifier of the custom emoji shown as the topic icon
 	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
@@ -1604,7 +1604,7 @@ type SuggestedPostPaid struct {
 	SuggestedPostMessage *Message `json:"suggested_post_message,omitempty"`
 
 	// Currency in which the payment was made. Currently, one of “XTR” for Telegram Stars or “TON” for toncoins
-	Currency string `json:"currency"`
+	Currency Currency `json:"currency"`
 
 	// Optional. The amount of the currency that was received by the channel in nanotoncoins; for payments in toncoins only
 	Amount int `json:"amount,omitempty"`
@@ -1733,7 +1733,7 @@ type LinkPreviewOptions struct {
 // SuggestedPostPrice describes the price of a suggested post.
 type SuggestedPostPrice struct {
 	// Currency in which the post will be paid. Currently, must be one of “XTR” for Telegram Stars or “TON” for toncoins
-	Currency string `json:"currency"`
+	Currency Currency `json:"currency"`
 
 	// The amount of the currency that will be paid for the post in the smallest units of the currency, i.e. Telegram Stars or nanotoncoins. Currently, price in Telegram Stars must be between 5 and 100000, and price in nanotoncoins must be between 10000000 and 10000000000000.
 	Amount int `json:"amount"`
@@ -1908,7 +1908,7 @@ type KeyboardButtonRequestChat struct {
 // KeyboardButtonPollType this object represents type of a poll, which is allowed to be created and sent when the corresponding button is pressed.
 type KeyboardButtonPollType struct {
 	// Optional. If quiz is passed, the user will be allowed to create only polls in the quiz mode. If regular is passed, only regular polls will be allowed. Otherwise, the user will be allowed to create a poll of any type.
-	Type string `json:"type,omitempty"`
+	Type PollType `json:"type,omitempty"`
 }
 
 // ReplyKeyboardRemove upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display the default letter-keyboard. By default, custom keyboards are displayed until a new keyboard is sent by a bot. An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see [ReplyKeyboardMarkup](https://core.telegram.org/bots/api#replykeyboardmarkup)). Not supported in channels and for messages sent on behalf of a Telegram Business account.
@@ -1958,7 +1958,7 @@ type InlineKeyboardButton struct {
 	// Optional. Description of the game that will be launched when the user presses the button.  NOTE: This type of button must always be the first button in the first row.
 	CallbackGame *CallbackGame `json:"callback_game,omitempty"`
 
-	// Optional. Specify True, to send a [Pay button](https://core.telegram.org/bots/api#payments). Substrings “” and “XTR” in the buttons's text will be replaced with a Telegram Star icon.  NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages.
+	// Optional. Specify True, to send a [Pay button](https://core.telegram.org/bots/api#payments). Substrings “⭐” and “XTR” in the buttons's text will be replaced with a Telegram Star icon.  NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages.
 	Pay bool `json:"pay,omitempty"`
 }
 
@@ -2553,8 +2553,8 @@ type ChatLocation struct {
 
 // ReactionTypeEmoji the reaction is based on an emoji.
 type ReactionTypeEmoji struct {
-	// Reaction emoji. Currently, it can be one of "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-	Emoji string `json:"emoji"`
+	// Reaction emoji. Currently, it can be one of "❤", "👍", "👎", "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢", "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥", "🌚", "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋", "🖕", "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝", "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄", "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
+	Emoji ReactionEmoji `json:"emoji"`
 }
 
 // ReactionTypeCustomEmoji the reaction is based on a custom emoji.
@@ -2623,7 +2623,7 @@ type ForumTopic struct {
 	Name string `json:"name"`
 
 	// Color of the topic icon in RGB format
-	IconColor int `json:"icon_color"`
+	IconColor TopicIconColor `json:"icon_color"`
 
 	// Optional. Unique identifier of the custom emoji shown as the topic icon
 	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
@@ -3484,7 +3484,7 @@ type StickerSet struct {
 // MaskPosition this object describes the position on faces where a mask should be placed by default.
 type MaskPosition struct {
 	// The part of the face relative to which the mask should be placed. One of “forehead”, “eyes”, “mouth”, or “chin”.
-	Point string `json:"point"`
+	Point MaskPositionPoint `json:"point"`
 
 	// Shift by X-axis measured in widths of the mask scaled to the face size, from left to right. For example, choosing -1.0 will place mask just to the left of the default mask position.
 	XShift float64 `json:"x_shift"`
@@ -3502,7 +3502,7 @@ type InputSticker struct {
 	Sticker FileArg `json:"sticker"`
 
 	// Format of the added sticker, must be one of “static” for a .WEBP or .PNG image, “animated” for a .TGS animation, “video” for a .WEBM video
-	Format string `json:"format"`
+	Format StickerFormat `json:"format"`
 
 	// List of 1-20 emoji associated with the sticker
 	EmojiList []string `json:"emoji_list"`
@@ -4598,7 +4598,7 @@ type AffiliateInfo struct {
 // TransactionPartnerUser describes a transaction with a user.
 type TransactionPartnerUser struct {
 	// Type of the transaction, currently one of “invoice_payment” for payments via invoices, “paid_media_payment” for payments for paid media, “gift_purchase” for gifts sent by the bot, “premium_purchase” for Telegram Premium subscriptions gifted by the bot, “business_account_transfer” for direct transfers from managed business accounts
-	TransactionType string `json:"transaction_type"`
+	TransactionType TransactionPartnerUserTransactionTypeEnum `json:"transaction_type"`
 
 	// Information about the user
 	User User `json:"user"`
@@ -4715,7 +4715,7 @@ type PassportFile struct {
 // EncryptedPassportElement describes documents or other Telegram Passport elements shared with the bot by the user.
 type EncryptedPassportElement struct {
 	// Element type. One of “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport”, “address”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”, “temporary_registration”, “phone_number”, “email”.
-	Type string `json:"type"`
+	Type EncryptedPassportElementType `json:"type"`
 
 	// Optional. Base64-encoded encrypted Telegram Passport element data provided by the user; available only for “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport” and “address” types. Can be decrypted and verified using the accompanying [EncryptedCredentials](https://core.telegram.org/bots/api#encryptedcredentials).
 	Data string `json:"data,omitempty"`
@@ -5868,7 +5868,7 @@ func (u *ReactionType) IsUnknown() bool {
 }
 
 // NewReactionTypeEmoji creates a ReactionType containing a ReactionTypeEmoji.
-func NewReactionTypeEmoji(emoji string) ReactionType {
+func NewReactionTypeEmoji(emoji ReactionEmoji) ReactionType {
 	return ReactionType{Emoji: &ReactionTypeEmoji{
 		Emoji: emoji,
 	}}
@@ -8045,6 +8045,15 @@ func (v *ChatType) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// ChatTypeAll is a list of all known ChatType values.
+var ChatTypeAll = []ChatType{
+	ChatTypePrivate,
+	ChatTypeGroup,
+	ChatTypeSupergroup,
+	ChatTypeChannel,
+	ChatTypeSender,
+}
+
 // StickerType represents an enum type.
 type StickerType int8
 
@@ -8090,6 +8099,13 @@ func (v *StickerType) UnmarshalText(b []byte) error {
 		*v = StickerTypeUnknown
 	}
 	return nil
+}
+
+// StickerTypeAll is a list of all known StickerType values.
+var StickerTypeAll = []StickerType{
+	StickerTypeRegular,
+	StickerTypeMask,
+	StickerTypeCustomEmoji,
 }
 
 // MessageEntityType represents an enum type.
@@ -8201,6 +8217,29 @@ func (v *MessageEntityType) UnmarshalText(b []byte) error {
 		*v = MessageEntityTypeUnknown
 	}
 	return nil
+}
+
+// MessageEntityTypeAll is a list of all known MessageEntityType values.
+var MessageEntityTypeAll = []MessageEntityType{
+	MessageEntityTypeMention,
+	MessageEntityTypeHashtag,
+	MessageEntityTypeCashtag,
+	MessageEntityTypeBotCommand,
+	MessageEntityTypeURL,
+	MessageEntityTypeEmail,
+	MessageEntityTypePhoneNumber,
+	MessageEntityTypeBold,
+	MessageEntityTypeItalic,
+	MessageEntityTypeUnderline,
+	MessageEntityTypeStrikethrough,
+	MessageEntityTypeSpoiler,
+	MessageEntityTypeBlockquote,
+	MessageEntityTypeExpandableBlockquote,
+	MessageEntityTypeCode,
+	MessageEntityTypePre,
+	MessageEntityTypeTextLink,
+	MessageEntityTypeTextMention,
+	MessageEntityTypeCustomEmoji,
 }
 
 // UpdateType represents an enum type.
@@ -8330,6 +8369,33 @@ func (v *UpdateType) UnmarshalText(b []byte) error {
 	return nil
 }
 
+// UpdateTypeAll is a list of all known UpdateType values.
+var UpdateTypeAll = []UpdateType{
+	UpdateTypeMessage,
+	UpdateTypeEditedMessage,
+	UpdateTypeChannelPost,
+	UpdateTypeEditedChannelPost,
+	UpdateTypeBusinessConnection,
+	UpdateTypeBusinessMessage,
+	UpdateTypeEditedBusinessMessage,
+	UpdateTypeDeletedBusinessMessages,
+	UpdateTypeMessageReaction,
+	UpdateTypeMessageReactionCount,
+	UpdateTypeInlineQuery,
+	UpdateTypeChosenInlineResult,
+	UpdateTypeCallbackQuery,
+	UpdateTypeShippingQuery,
+	UpdateTypePreCheckoutQuery,
+	UpdateTypePurchasedPaidMedia,
+	UpdateTypePoll,
+	UpdateTypePollAnswer,
+	UpdateTypeMyChatMember,
+	UpdateTypeChatMember,
+	UpdateTypeChatJoinRequest,
+	UpdateTypeChatBoost,
+	UpdateTypeRemovedChatBoost,
+}
+
 // ChatAction represents an enum type.
 type ChatAction int8
 
@@ -8370,6 +8436,21 @@ func (v ChatAction) String() string {
 // IsUnknown reports whether this value is unknown.
 func (v ChatAction) IsUnknown() bool {
 	return v == ChatActionUnknown
+}
+
+// ChatActionAll is a list of all known ChatAction values.
+var ChatActionAll = []ChatAction{
+	ChatActionTyping,
+	ChatActionUploadPhoto,
+	ChatActionRecordVideo,
+	ChatActionUploadVideo,
+	ChatActionRecordVoice,
+	ChatActionUploadVoice,
+	ChatActionUploadDocument,
+	ChatActionChooseSticker,
+	ChatActionFindLocation,
+	ChatActionRecordVideoNote,
+	ChatActionUploadVideoNote,
 }
 
 // MessageType represents an enum type.
@@ -8590,6 +8671,962 @@ func (v MessageType) String() string {
 // IsUnknown reports whether this value is unknown.
 func (v MessageType) IsUnknown() bool {
 	return v == MessageTypeUnknown
+}
+
+// MessageTypeAll is a list of all known MessageType values.
+var MessageTypeAll = []MessageType{
+	MessageTypeMessageThreadID,
+	MessageTypeDirectMessagesTopic,
+	MessageTypeFrom,
+	MessageTypeSenderChat,
+	MessageTypeSenderBoostCount,
+	MessageTypeSenderBusinessBot,
+	MessageTypeBusinessConnectionID,
+	MessageTypeForwardOrigin,
+	MessageTypeIsTopicMessage,
+	MessageTypeIsAutomaticForward,
+	MessageTypeReplyToMessage,
+	MessageTypeExternalReply,
+	MessageTypeQuote,
+	MessageTypeReplyToStory,
+	MessageTypeReplyToChecklistTaskID,
+	MessageTypeViaBot,
+	MessageTypeEditDate,
+	MessageTypeHasProtectedContent,
+	MessageTypeIsFromOffline,
+	MessageTypeIsPaidPost,
+	MessageTypeMediaGroupID,
+	MessageTypeAuthorSignature,
+	MessageTypePaidStarCount,
+	MessageTypeText,
+	MessageTypeEntities,
+	MessageTypeLinkPreviewOptions,
+	MessageTypeSuggestedPostInfo,
+	MessageTypeEffectID,
+	MessageTypeAnimation,
+	MessageTypeAudio,
+	MessageTypeDocument,
+	MessageTypePaidMedia,
+	MessageTypePhoto,
+	MessageTypeSticker,
+	MessageTypeStory,
+	MessageTypeVideo,
+	MessageTypeVideoNote,
+	MessageTypeVoice,
+	MessageTypeCaption,
+	MessageTypeCaptionEntities,
+	MessageTypeShowCaptionAboveMedia,
+	MessageTypeHasMediaSpoiler,
+	MessageTypeChecklist,
+	MessageTypeContact,
+	MessageTypeDice,
+	MessageTypeGame,
+	MessageTypePoll,
+	MessageTypeVenue,
+	MessageTypeLocation,
+	MessageTypeNewChatMembers,
+	MessageTypeLeftChatMember,
+	MessageTypeNewChatTitle,
+	MessageTypeNewChatPhoto,
+	MessageTypeDeleteChatPhoto,
+	MessageTypeGroupChatCreated,
+	MessageTypeSupergroupChatCreated,
+	MessageTypeChannelChatCreated,
+	MessageTypeMessageAutoDeleteTimerChanged,
+	MessageTypeMigrateToChatID,
+	MessageTypeMigrateFromChatID,
+	MessageTypePinnedMessage,
+	MessageTypeInvoice,
+	MessageTypeSuccessfulPayment,
+	MessageTypeRefundedPayment,
+	MessageTypeUsersShared,
+	MessageTypeChatShared,
+	MessageTypeGift,
+	MessageTypeUniqueGift,
+	MessageTypeGiftUpgradeSent,
+	MessageTypeConnectedWebsite,
+	MessageTypeWriteAccessAllowed,
+	MessageTypePassportData,
+	MessageTypeProximityAlertTriggered,
+	MessageTypeBoostAdded,
+	MessageTypeChatBackgroundSet,
+	MessageTypeChecklistTasksDone,
+	MessageTypeChecklistTasksAdded,
+	MessageTypeDirectMessagePriceChanged,
+	MessageTypeForumTopicCreated,
+	MessageTypeForumTopicEdited,
+	MessageTypeForumTopicClosed,
+	MessageTypeForumTopicReopened,
+	MessageTypeGeneralForumTopicHidden,
+	MessageTypeGeneralForumTopicUnhidden,
+	MessageTypeGiveawayCreated,
+	MessageTypeGiveaway,
+	MessageTypeGiveawayWinners,
+	MessageTypeGiveawayCompleted,
+	MessageTypePaidMessagePriceChanged,
+	MessageTypeSuggestedPostApproved,
+	MessageTypeSuggestedPostApprovalFailed,
+	MessageTypeSuggestedPostDeclined,
+	MessageTypeSuggestedPostPaid,
+	MessageTypeSuggestedPostRefunded,
+	MessageTypeVideoChatScheduled,
+	MessageTypeVideoChatStarted,
+	MessageTypeVideoChatEnded,
+	MessageTypeVideoChatParticipantsInvited,
+	MessageTypeWebAppData,
+	MessageTypeReplyMarkup,
+}
+
+// PollType represents an enum type.
+type PollType int8
+
+const (
+	PollTypeUnknown PollType = iota
+	PollTypeRegular
+	PollTypeQuiz
+)
+
+func (v PollType) String() string {
+	if v > PollTypeUnknown && v <= PollTypeQuiz {
+		return [...]string{
+			"regular",
+			"quiz",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v PollType) IsUnknown() bool {
+	return v == PollTypeUnknown
+}
+
+func (v PollType) MarshalText() ([]byte, error) {
+	if v != PollTypeUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown PollType")
+}
+
+func (v *PollType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "regular":
+		*v = PollTypeRegular
+	case "quiz":
+		*v = PollTypeQuiz
+	default:
+		*v = PollTypeUnknown
+	}
+	return nil
+}
+
+// PollTypeAll is a list of all known PollType values.
+var PollTypeAll = []PollType{
+	PollTypeRegular,
+	PollTypeQuiz,
+}
+
+// MaskPositionPoint represents an enum type.
+type MaskPositionPoint int8
+
+const (
+	MaskPositionPointUnknown MaskPositionPoint = iota
+	MaskPositionPointForehead
+	MaskPositionPointEyes
+	MaskPositionPointMouth
+	MaskPositionPointChin
+)
+
+func (v MaskPositionPoint) String() string {
+	if v > MaskPositionPointUnknown && v <= MaskPositionPointChin {
+		return [...]string{
+			"forehead",
+			"eyes",
+			"mouth",
+			"chin",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v MaskPositionPoint) IsUnknown() bool {
+	return v == MaskPositionPointUnknown
+}
+
+func (v MaskPositionPoint) MarshalText() ([]byte, error) {
+	if v != MaskPositionPointUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown MaskPositionPoint")
+}
+
+func (v *MaskPositionPoint) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "forehead":
+		*v = MaskPositionPointForehead
+	case "eyes":
+		*v = MaskPositionPointEyes
+	case "mouth":
+		*v = MaskPositionPointMouth
+	case "chin":
+		*v = MaskPositionPointChin
+	default:
+		*v = MaskPositionPointUnknown
+	}
+	return nil
+}
+
+// MaskPositionPointAll is a list of all known MaskPositionPoint values.
+var MaskPositionPointAll = []MaskPositionPoint{
+	MaskPositionPointForehead,
+	MaskPositionPointEyes,
+	MaskPositionPointMouth,
+	MaskPositionPointChin,
+}
+
+// EncryptedPassportElementType represents an enum type.
+type EncryptedPassportElementType int8
+
+const (
+	EncryptedPassportElementTypeUnknown EncryptedPassportElementType = iota
+	EncryptedPassportElementTypePersonalDetails
+	EncryptedPassportElementTypePassport
+	EncryptedPassportElementTypeDriverLicense
+	EncryptedPassportElementTypeIdentityCard
+	EncryptedPassportElementTypeInternalPassport
+	EncryptedPassportElementTypeAddress
+	EncryptedPassportElementTypeUtilityBill
+	EncryptedPassportElementTypeBankStatement
+	EncryptedPassportElementTypeRentalAgreement
+	EncryptedPassportElementTypePassportRegistration
+	EncryptedPassportElementTypeTemporaryRegistration
+	EncryptedPassportElementTypePhoneNumber
+	EncryptedPassportElementTypeEmail
+)
+
+func (v EncryptedPassportElementType) String() string {
+	if v > EncryptedPassportElementTypeUnknown && v <= EncryptedPassportElementTypeEmail {
+		return [...]string{
+			"personal_details",
+			"passport",
+			"driver_license",
+			"identity_card",
+			"internal_passport",
+			"address",
+			"utility_bill",
+			"bank_statement",
+			"rental_agreement",
+			"passport_registration",
+			"temporary_registration",
+			"phone_number",
+			"email",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v EncryptedPassportElementType) IsUnknown() bool {
+	return v == EncryptedPassportElementTypeUnknown
+}
+
+func (v EncryptedPassportElementType) MarshalText() ([]byte, error) {
+	if v != EncryptedPassportElementTypeUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown EncryptedPassportElementType")
+}
+
+func (v *EncryptedPassportElementType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "personal_details":
+		*v = EncryptedPassportElementTypePersonalDetails
+	case "passport":
+		*v = EncryptedPassportElementTypePassport
+	case "driver_license":
+		*v = EncryptedPassportElementTypeDriverLicense
+	case "identity_card":
+		*v = EncryptedPassportElementTypeIdentityCard
+	case "internal_passport":
+		*v = EncryptedPassportElementTypeInternalPassport
+	case "address":
+		*v = EncryptedPassportElementTypeAddress
+	case "utility_bill":
+		*v = EncryptedPassportElementTypeUtilityBill
+	case "bank_statement":
+		*v = EncryptedPassportElementTypeBankStatement
+	case "rental_agreement":
+		*v = EncryptedPassportElementTypeRentalAgreement
+	case "passport_registration":
+		*v = EncryptedPassportElementTypePassportRegistration
+	case "temporary_registration":
+		*v = EncryptedPassportElementTypeTemporaryRegistration
+	case "phone_number":
+		*v = EncryptedPassportElementTypePhoneNumber
+	case "email":
+		*v = EncryptedPassportElementTypeEmail
+	default:
+		*v = EncryptedPassportElementTypeUnknown
+	}
+	return nil
+}
+
+// EncryptedPassportElementTypeAll is a list of all known EncryptedPassportElementType values.
+var EncryptedPassportElementTypeAll = []EncryptedPassportElementType{
+	EncryptedPassportElementTypePersonalDetails,
+	EncryptedPassportElementTypePassport,
+	EncryptedPassportElementTypeDriverLicense,
+	EncryptedPassportElementTypeIdentityCard,
+	EncryptedPassportElementTypeInternalPassport,
+	EncryptedPassportElementTypeAddress,
+	EncryptedPassportElementTypeUtilityBill,
+	EncryptedPassportElementTypeBankStatement,
+	EncryptedPassportElementTypeRentalAgreement,
+	EncryptedPassportElementTypePassportRegistration,
+	EncryptedPassportElementTypeTemporaryRegistration,
+	EncryptedPassportElementTypePhoneNumber,
+	EncryptedPassportElementTypeEmail,
+}
+
+// StickerFormat represents an enum type.
+type StickerFormat int8
+
+const (
+	StickerFormatUnknown StickerFormat = iota
+	StickerFormatStatic
+	StickerFormatAnimated
+	StickerFormatVideo
+)
+
+func (v StickerFormat) String() string {
+	if v > StickerFormatUnknown && v <= StickerFormatVideo {
+		return [...]string{
+			"static",
+			"animated",
+			"video",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v StickerFormat) IsUnknown() bool {
+	return v == StickerFormatUnknown
+}
+
+func (v StickerFormat) MarshalText() ([]byte, error) {
+	if v != StickerFormatUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown StickerFormat")
+}
+
+func (v *StickerFormat) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "static":
+		*v = StickerFormatStatic
+	case "animated":
+		*v = StickerFormatAnimated
+	case "video":
+		*v = StickerFormatVideo
+	default:
+		*v = StickerFormatUnknown
+	}
+	return nil
+}
+
+// StickerFormatAll is a list of all known StickerFormat values.
+var StickerFormatAll = []StickerFormat{
+	StickerFormatStatic,
+	StickerFormatAnimated,
+	StickerFormatVideo,
+}
+
+// Currency represents an enum type.
+type Currency int8
+
+const (
+	CurrencyUnknown Currency = iota
+	CurrencyXTR
+	CurrencyTON
+)
+
+func (v Currency) String() string {
+	if v > CurrencyUnknown && v <= CurrencyTON {
+		return [...]string{
+			"XTR",
+			"TON",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v Currency) IsUnknown() bool {
+	return v == CurrencyUnknown
+}
+
+func (v Currency) MarshalText() ([]byte, error) {
+	if v != CurrencyUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown Currency")
+}
+
+func (v *Currency) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "XTR":
+		*v = CurrencyXTR
+	case "TON":
+		*v = CurrencyTON
+	default:
+		*v = CurrencyUnknown
+	}
+	return nil
+}
+
+// CurrencyAll is a list of all known Currency values.
+var CurrencyAll = []Currency{
+	CurrencyXTR,
+	CurrencyTON,
+}
+
+// TransactionPartnerUserTransactionTypeEnum represents an enum type.
+type TransactionPartnerUserTransactionTypeEnum int8
+
+const (
+	TransactionPartnerUserTransactionTypeEnumUnknown TransactionPartnerUserTransactionTypeEnum = iota
+	TransactionPartnerUserTransactionTypeEnumInvoicePayment
+	TransactionPartnerUserTransactionTypeEnumPaidMediaPayment
+	TransactionPartnerUserTransactionTypeEnumGiftPurchase
+	TransactionPartnerUserTransactionTypeEnumPremiumPurchase
+	TransactionPartnerUserTransactionTypeEnumBusinessAccountTransfer
+)
+
+func (v TransactionPartnerUserTransactionTypeEnum) String() string {
+	if v > TransactionPartnerUserTransactionTypeEnumUnknown && v <= TransactionPartnerUserTransactionTypeEnumBusinessAccountTransfer {
+		return [...]string{
+			"invoice_payment",
+			"paid_media_payment",
+			"gift_purchase",
+			"premium_purchase",
+			"business_account_transfer",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v TransactionPartnerUserTransactionTypeEnum) IsUnknown() bool {
+	return v == TransactionPartnerUserTransactionTypeEnumUnknown
+}
+
+func (v TransactionPartnerUserTransactionTypeEnum) MarshalText() ([]byte, error) {
+	if v != TransactionPartnerUserTransactionTypeEnumUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown TransactionPartnerUserTransactionTypeEnum")
+}
+
+func (v *TransactionPartnerUserTransactionTypeEnum) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "invoice_payment":
+		*v = TransactionPartnerUserTransactionTypeEnumInvoicePayment
+	case "paid_media_payment":
+		*v = TransactionPartnerUserTransactionTypeEnumPaidMediaPayment
+	case "gift_purchase":
+		*v = TransactionPartnerUserTransactionTypeEnumGiftPurchase
+	case "premium_purchase":
+		*v = TransactionPartnerUserTransactionTypeEnumPremiumPurchase
+	case "business_account_transfer":
+		*v = TransactionPartnerUserTransactionTypeEnumBusinessAccountTransfer
+	default:
+		*v = TransactionPartnerUserTransactionTypeEnumUnknown
+	}
+	return nil
+}
+
+// TransactionPartnerUserTransactionTypeEnumAll is a list of all known TransactionPartnerUserTransactionTypeEnum values.
+var TransactionPartnerUserTransactionTypeEnumAll = []TransactionPartnerUserTransactionTypeEnum{
+	TransactionPartnerUserTransactionTypeEnumInvoicePayment,
+	TransactionPartnerUserTransactionTypeEnumPaidMediaPayment,
+	TransactionPartnerUserTransactionTypeEnumGiftPurchase,
+	TransactionPartnerUserTransactionTypeEnumPremiumPurchase,
+	TransactionPartnerUserTransactionTypeEnumBusinessAccountTransfer,
+}
+
+// DiceEmoji represents an enum type.
+type DiceEmoji int8
+
+const (
+	DiceEmojiUnknown DiceEmoji = iota
+	DiceEmojiGameDie
+	DiceEmojiBullseye
+	DiceEmojiBasketball
+	DiceEmojiSoccerBall
+	DiceEmojiBowling
+	DiceEmojiSlotMachine
+)
+
+func (v DiceEmoji) String() string {
+	if v > DiceEmojiUnknown && v <= DiceEmojiSlotMachine {
+		return [...]string{
+			"🎲",
+			"🎯",
+			"🏀",
+			"⚽",
+			"🎳",
+			"🎰",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v DiceEmoji) IsUnknown() bool {
+	return v == DiceEmojiUnknown
+}
+
+func (v DiceEmoji) MarshalText() ([]byte, error) {
+	if v != DiceEmojiUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown DiceEmoji")
+}
+
+func (v *DiceEmoji) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "🎲":
+		*v = DiceEmojiGameDie
+	case "🎯":
+		*v = DiceEmojiBullseye
+	case "🏀":
+		*v = DiceEmojiBasketball
+	case "⚽":
+		*v = DiceEmojiSoccerBall
+	case "🎳":
+		*v = DiceEmojiBowling
+	case "🎰":
+		*v = DiceEmojiSlotMachine
+	default:
+		*v = DiceEmojiUnknown
+	}
+	return nil
+}
+
+// DiceEmojiAll is a list of all known DiceEmoji values.
+var DiceEmojiAll = []DiceEmoji{
+	DiceEmojiGameDie,
+	DiceEmojiBullseye,
+	DiceEmojiBasketball,
+	DiceEmojiSoccerBall,
+	DiceEmojiBowling,
+	DiceEmojiSlotMachine,
+}
+
+// ReactionEmoji represents an enum type.
+type ReactionEmoji int8
+
+const (
+	ReactionEmojiUnknown ReactionEmoji = iota
+	ReactionEmojiRedHeart
+	ReactionEmojiThumbsUp
+	ReactionEmojiThumbsDown
+	ReactionEmojiFire
+	ReactionEmojiSmilingFaceWithHearts
+	ReactionEmojiClappingHands
+	ReactionEmojiBeamingFaceWithSmilingEyes
+	ReactionEmojiThinkingFace
+	ReactionEmojiExplodingHead
+	ReactionEmojiFaceScreamingInFear
+	ReactionEmojiFaceWithSymbolsOnMouth
+	ReactionEmojiCryingFace
+	ReactionEmojiPartyPopper
+	ReactionEmojiStarStruck
+	ReactionEmojiFaceVomiting
+	ReactionEmojiPileOfPoo
+	ReactionEmojiFoldedHands
+	ReactionEmojiOKHand
+	ReactionEmojiDove
+	ReactionEmojiClownFace
+	ReactionEmojiYawningFace
+	ReactionEmojiWoozyFace
+	ReactionEmojiSmilingFaceWithHeartEyes
+	ReactionEmojiSpoutingWhale
+	ReactionEmojiHeartOnFire
+	ReactionEmojiNewMoonFace
+	ReactionEmojiHotDog
+	ReactionEmojiHundredPoints
+	ReactionEmojiRollingOnTheFloorLaughing
+	ReactionEmojiHighVoltage
+	ReactionEmojiBanana
+	ReactionEmojiTrophy
+	ReactionEmojiBrokenHeart
+	ReactionEmojiFaceWithRaisedEyebrow
+	ReactionEmojiNeutralFace
+	ReactionEmojiStrawberry
+	ReactionEmojiBottleWithPoppingCork
+	ReactionEmojiKissMark
+	ReactionEmojiMiddleFinger
+	ReactionEmojiSmilingFaceWithHorns
+	ReactionEmojiSleepingFace
+	ReactionEmojiLoudlyCryingFace
+	ReactionEmojiNerdFace
+	ReactionEmojiGhost
+	ReactionEmojiManTechnologist
+	ReactionEmojiEyes
+	ReactionEmojiJackOLantern
+	ReactionEmojiSeeNoEvilMonkey
+	ReactionEmojiSmilingFaceWithHalo
+	ReactionEmojiFearfulFace
+	ReactionEmojiHandshake
+	ReactionEmojiWritingHand
+	ReactionEmojiSmilingFaceWithOpenHands
+	ReactionEmojiSalutingFace
+	ReactionEmojiSantaClaus
+	ReactionEmojiChristmasTree
+	ReactionEmojiSnowman
+	ReactionEmojiNailPolish
+	ReactionEmojiZanyFace
+	ReactionEmojiMoai
+	ReactionEmojiCoolButton
+	ReactionEmojiHeartWithArrow
+	ReactionEmojiHearNoEvilMonkey
+	ReactionEmojiUnicorn
+	ReactionEmojiFaceBlowingAKiss
+	ReactionEmojiPill
+	ReactionEmojiSpeakNoEvilMonkey
+	ReactionEmojiSmilingFaceWithSunglasses
+	ReactionEmojiAlienMonster
+	ReactionEmojiManShrugging
+	ReactionEmojiPersonShrugging
+	ReactionEmojiWomanShrugging
+	ReactionEmojiEnragedFace
+)
+
+func (v ReactionEmoji) String() string {
+	if v > ReactionEmojiUnknown && v <= ReactionEmojiEnragedFace {
+		return [...]string{
+			"❤",
+			"👍",
+			"👎",
+			"🔥",
+			"🥰",
+			"👏",
+			"😁",
+			"🤔",
+			"🤯",
+			"😱",
+			"🤬",
+			"😢",
+			"🎉",
+			"🤩",
+			"🤮",
+			"💩",
+			"🙏",
+			"👌",
+			"🕊",
+			"🤡",
+			"🥱",
+			"🥴",
+			"😍",
+			"🐳",
+			"❤‍🔥",
+			"🌚",
+			"🌭",
+			"💯",
+			"🤣",
+			"⚡",
+			"🍌",
+			"🏆",
+			"💔",
+			"🤨",
+			"😐",
+			"🍓",
+			"🍾",
+			"💋",
+			"🖕",
+			"😈",
+			"😴",
+			"😭",
+			"🤓",
+			"👻",
+			"👨‍💻",
+			"👀",
+			"🎃",
+			"🙈",
+			"😇",
+			"😨",
+			"🤝",
+			"✍",
+			"🤗",
+			"🫡",
+			"🎅",
+			"🎄",
+			"☃",
+			"💅",
+			"🤪",
+			"🗿",
+			"🆒",
+			"💘",
+			"🙉",
+			"🦄",
+			"😘",
+			"💊",
+			"🙊",
+			"😎",
+			"👾",
+			"🤷‍♂",
+			"🤷",
+			"🤷‍♀",
+			"😡",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v ReactionEmoji) IsUnknown() bool {
+	return v == ReactionEmojiUnknown
+}
+
+func (v ReactionEmoji) MarshalText() ([]byte, error) {
+	if v != ReactionEmojiUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown ReactionEmoji")
+}
+
+func (v *ReactionEmoji) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "❤":
+		*v = ReactionEmojiRedHeart
+	case "👍":
+		*v = ReactionEmojiThumbsUp
+	case "👎":
+		*v = ReactionEmojiThumbsDown
+	case "🔥":
+		*v = ReactionEmojiFire
+	case "🥰":
+		*v = ReactionEmojiSmilingFaceWithHearts
+	case "👏":
+		*v = ReactionEmojiClappingHands
+	case "😁":
+		*v = ReactionEmojiBeamingFaceWithSmilingEyes
+	case "🤔":
+		*v = ReactionEmojiThinkingFace
+	case "🤯":
+		*v = ReactionEmojiExplodingHead
+	case "😱":
+		*v = ReactionEmojiFaceScreamingInFear
+	case "🤬":
+		*v = ReactionEmojiFaceWithSymbolsOnMouth
+	case "😢":
+		*v = ReactionEmojiCryingFace
+	case "🎉":
+		*v = ReactionEmojiPartyPopper
+	case "🤩":
+		*v = ReactionEmojiStarStruck
+	case "🤮":
+		*v = ReactionEmojiFaceVomiting
+	case "💩":
+		*v = ReactionEmojiPileOfPoo
+	case "🙏":
+		*v = ReactionEmojiFoldedHands
+	case "👌":
+		*v = ReactionEmojiOKHand
+	case "🕊":
+		*v = ReactionEmojiDove
+	case "🤡":
+		*v = ReactionEmojiClownFace
+	case "🥱":
+		*v = ReactionEmojiYawningFace
+	case "🥴":
+		*v = ReactionEmojiWoozyFace
+	case "😍":
+		*v = ReactionEmojiSmilingFaceWithHeartEyes
+	case "🐳":
+		*v = ReactionEmojiSpoutingWhale
+	case "❤‍🔥":
+		*v = ReactionEmojiHeartOnFire
+	case "🌚":
+		*v = ReactionEmojiNewMoonFace
+	case "🌭":
+		*v = ReactionEmojiHotDog
+	case "💯":
+		*v = ReactionEmojiHundredPoints
+	case "🤣":
+		*v = ReactionEmojiRollingOnTheFloorLaughing
+	case "⚡":
+		*v = ReactionEmojiHighVoltage
+	case "🍌":
+		*v = ReactionEmojiBanana
+	case "🏆":
+		*v = ReactionEmojiTrophy
+	case "💔":
+		*v = ReactionEmojiBrokenHeart
+	case "🤨":
+		*v = ReactionEmojiFaceWithRaisedEyebrow
+	case "😐":
+		*v = ReactionEmojiNeutralFace
+	case "🍓":
+		*v = ReactionEmojiStrawberry
+	case "🍾":
+		*v = ReactionEmojiBottleWithPoppingCork
+	case "💋":
+		*v = ReactionEmojiKissMark
+	case "🖕":
+		*v = ReactionEmojiMiddleFinger
+	case "😈":
+		*v = ReactionEmojiSmilingFaceWithHorns
+	case "😴":
+		*v = ReactionEmojiSleepingFace
+	case "😭":
+		*v = ReactionEmojiLoudlyCryingFace
+	case "🤓":
+		*v = ReactionEmojiNerdFace
+	case "👻":
+		*v = ReactionEmojiGhost
+	case "👨‍💻":
+		*v = ReactionEmojiManTechnologist
+	case "👀":
+		*v = ReactionEmojiEyes
+	case "🎃":
+		*v = ReactionEmojiJackOLantern
+	case "🙈":
+		*v = ReactionEmojiSeeNoEvilMonkey
+	case "😇":
+		*v = ReactionEmojiSmilingFaceWithHalo
+	case "😨":
+		*v = ReactionEmojiFearfulFace
+	case "🤝":
+		*v = ReactionEmojiHandshake
+	case "✍":
+		*v = ReactionEmojiWritingHand
+	case "🤗":
+		*v = ReactionEmojiSmilingFaceWithOpenHands
+	case "🫡":
+		*v = ReactionEmojiSalutingFace
+	case "🎅":
+		*v = ReactionEmojiSantaClaus
+	case "🎄":
+		*v = ReactionEmojiChristmasTree
+	case "☃":
+		*v = ReactionEmojiSnowman
+	case "💅":
+		*v = ReactionEmojiNailPolish
+	case "🤪":
+		*v = ReactionEmojiZanyFace
+	case "🗿":
+		*v = ReactionEmojiMoai
+	case "🆒":
+		*v = ReactionEmojiCoolButton
+	case "💘":
+		*v = ReactionEmojiHeartWithArrow
+	case "🙉":
+		*v = ReactionEmojiHearNoEvilMonkey
+	case "🦄":
+		*v = ReactionEmojiUnicorn
+	case "😘":
+		*v = ReactionEmojiFaceBlowingAKiss
+	case "💊":
+		*v = ReactionEmojiPill
+	case "🙊":
+		*v = ReactionEmojiSpeakNoEvilMonkey
+	case "😎":
+		*v = ReactionEmojiSmilingFaceWithSunglasses
+	case "👾":
+		*v = ReactionEmojiAlienMonster
+	case "🤷‍♂":
+		*v = ReactionEmojiManShrugging
+	case "🤷":
+		*v = ReactionEmojiPersonShrugging
+	case "🤷‍♀":
+		*v = ReactionEmojiWomanShrugging
+	case "😡":
+		*v = ReactionEmojiEnragedFace
+	default:
+		*v = ReactionEmojiUnknown
+	}
+	return nil
+}
+
+// ReactionEmojiAll is a list of all known ReactionEmoji values.
+var ReactionEmojiAll = []ReactionEmoji{
+	ReactionEmojiRedHeart,
+	ReactionEmojiThumbsUp,
+	ReactionEmojiThumbsDown,
+	ReactionEmojiFire,
+	ReactionEmojiSmilingFaceWithHearts,
+	ReactionEmojiClappingHands,
+	ReactionEmojiBeamingFaceWithSmilingEyes,
+	ReactionEmojiThinkingFace,
+	ReactionEmojiExplodingHead,
+	ReactionEmojiFaceScreamingInFear,
+	ReactionEmojiFaceWithSymbolsOnMouth,
+	ReactionEmojiCryingFace,
+	ReactionEmojiPartyPopper,
+	ReactionEmojiStarStruck,
+	ReactionEmojiFaceVomiting,
+	ReactionEmojiPileOfPoo,
+	ReactionEmojiFoldedHands,
+	ReactionEmojiOKHand,
+	ReactionEmojiDove,
+	ReactionEmojiClownFace,
+	ReactionEmojiYawningFace,
+	ReactionEmojiWoozyFace,
+	ReactionEmojiSmilingFaceWithHeartEyes,
+	ReactionEmojiSpoutingWhale,
+	ReactionEmojiHeartOnFire,
+	ReactionEmojiNewMoonFace,
+	ReactionEmojiHotDog,
+	ReactionEmojiHundredPoints,
+	ReactionEmojiRollingOnTheFloorLaughing,
+	ReactionEmojiHighVoltage,
+	ReactionEmojiBanana,
+	ReactionEmojiTrophy,
+	ReactionEmojiBrokenHeart,
+	ReactionEmojiFaceWithRaisedEyebrow,
+	ReactionEmojiNeutralFace,
+	ReactionEmojiStrawberry,
+	ReactionEmojiBottleWithPoppingCork,
+	ReactionEmojiKissMark,
+	ReactionEmojiMiddleFinger,
+	ReactionEmojiSmilingFaceWithHorns,
+	ReactionEmojiSleepingFace,
+	ReactionEmojiLoudlyCryingFace,
+	ReactionEmojiNerdFace,
+	ReactionEmojiGhost,
+	ReactionEmojiManTechnologist,
+	ReactionEmojiEyes,
+	ReactionEmojiJackOLantern,
+	ReactionEmojiSeeNoEvilMonkey,
+	ReactionEmojiSmilingFaceWithHalo,
+	ReactionEmojiFearfulFace,
+	ReactionEmojiHandshake,
+	ReactionEmojiWritingHand,
+	ReactionEmojiSmilingFaceWithOpenHands,
+	ReactionEmojiSalutingFace,
+	ReactionEmojiSantaClaus,
+	ReactionEmojiChristmasTree,
+	ReactionEmojiSnowman,
+	ReactionEmojiNailPolish,
+	ReactionEmojiZanyFace,
+	ReactionEmojiMoai,
+	ReactionEmojiCoolButton,
+	ReactionEmojiHeartWithArrow,
+	ReactionEmojiHearNoEvilMonkey,
+	ReactionEmojiUnicorn,
+	ReactionEmojiFaceBlowingAKiss,
+	ReactionEmojiPill,
+	ReactionEmojiSpeakNoEvilMonkey,
+	ReactionEmojiSmilingFaceWithSunglasses,
+	ReactionEmojiAlienMonster,
+	ReactionEmojiManShrugging,
+	ReactionEmojiPersonShrugging,
+	ReactionEmojiWomanShrugging,
+	ReactionEmojiEnragedFace,
 }
 
 // Type returns the UpdateType of this Update.

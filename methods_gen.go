@@ -4,7 +4,7 @@ package tg
 //
 // Telegram Bot API version: 9.3
 // Release date: December 31, 2025
-// Spec hash: 64aa94655be4
+// Spec hash: 1c93bd778a3c
 
 // GetUpdatesCall represents a call to the getUpdates method.
 // Use this method to receive incoming updates using long polling ([wiki](https://en.wikipedia.org/wiki/Push_technology#Long_polling)). Returns an Array of [Update](https://core.telegram.org/bots/api#update) objects.
@@ -2744,8 +2744,8 @@ func (call *SendDiceCall) DirectMessagesTopicID(directMessagesTopicID int) *Send
 }
 
 // Emoji sets the emoji parameter.
-func (call *SendDiceCall) Emoji(emoji string) *SendDiceCall {
-	call.request.String("emoji", emoji)
+func (call *SendDiceCall) Emoji(emoji DiceEmoji) *SendDiceCall {
+	call.request.Stringer("emoji", emoji)
 	return call
 }
 
@@ -4682,8 +4682,8 @@ func (call *CreateForumTopicCall) Name(name string) *CreateForumTopicCall {
 }
 
 // IconColor sets the icon_color parameter.
-func (call *CreateForumTopicCall) IconColor(iconColor int) *CreateForumTopicCall {
-	call.request.Int("icon_color", iconColor)
+func (call *CreateForumTopicCall) IconColor(iconColor TopicIconColor) *CreateForumTopicCall {
+	call.request.JSON("icon_color", iconColor)
 	return call
 }
 

@@ -650,9 +650,9 @@ func TestUnionConstructorSignatures(t *testing.T) {
 		assert.Equal(t, "App", menu.WebApp.Text)
 		assert.Equal(t, "https://example.com", menu.WebApp.WebApp.URL)
 
-		reaction := NewReactionTypeEmoji("👍")
+		reaction := NewReactionTypeEmoji(ReactionEmojiThumbsUp)
 		require.NotNil(t, reaction.Emoji)
-		assert.Equal(t, "👍", reaction.Emoji.Emoji)
+		assert.Equal(t, ReactionEmojiThumbsUp, reaction.Emoji.Emoji)
 
 		media := NewInputMediaPhoto(FileArg{FileID: "test"})
 		require.NotNil(t, media.Photo)

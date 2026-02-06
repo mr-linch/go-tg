@@ -515,3 +515,15 @@ func (mim *MaybeInaccessibleMessage) UnmarshalJSON(v []byte) error {
 func (rp *ResponseParameters) RetryAfterDuration() time.Duration {
 	return time.Duration(rp.RetryAfter) * time.Second
 }
+
+// TopicIconColor represents the color of a forum topic icon in RGB format.
+type TopicIconColor int
+
+const (
+	TopicIconColorBlue   TopicIconColor = 0x6FB9F0
+	TopicIconColorYellow TopicIconColor = 0xFFD67E
+	TopicIconColorPurple TopicIconColor = 0xCB86DB
+	TopicIconColorGreen  TopicIconColor = 0x8EEE98
+	TopicIconColorPink   TopicIconColor = 0xFF93B2
+	TopicIconColorRed    TopicIconColor = 0xFB6F5F
+)
