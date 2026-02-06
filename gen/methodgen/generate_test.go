@@ -325,6 +325,40 @@ func TestGenerate_InputMediaSlice(t *testing.T) {
 	})
 }
 
+func TestGenerate_InputMediaSlice_HeterogeneousUnions(t *testing.T) {
+	api := &ir.API{
+		Types: []ir.Type{
+			{Name: "InputMedia", Subtypes: []string{"InputMediaPhoto", "InputMediaVideo"}},
+			{Name: "InputPaidMedia", Subtypes: []string{"InputPaidMediaPhoto", "InputPaidMediaVideo"}},
+		},
+		Methods: []ir.Method{
+			{
+				Name: "hypotheticalMethod",
+				Params: []ir.Param{
+					{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
+					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{
+						{Type: "InputMediaPhoto"},
+						{Type: "InputPaidMediaVideo"},
+					}, Array: 1}, Required: true},
+				},
+				Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}},
+			},
+		},
+	}
+
+	cfg := loadTestConfig(t)
+	var buf bytes.Buffer
+	err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
+	require.NoError(t, err)
+
+	output := buf.String()
+	// Mixed subtypes from different unions must fall back to any + JSON
+	assert.Contains(t, output, "media any")
+	assert.Contains(t, output, "JSON(\"media\", media)")
+	assert.NotContains(t, output, "InputMediaSlice")
+	assert.NotContains(t, output, "InputPaidMediaSlice")
+}
+
 func TestGenerate_InputMedia(t *testing.T) {
 	api := &ir.API{
 		Methods: []ir.Method{

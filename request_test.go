@@ -216,6 +216,32 @@ func TestRequest_InputMediaUpload(t *testing.T) {
 		assert.Contains(t, encoder.fileKeys, "attachment_0")
 	})
 
+	t.Run("MultiItemIndexing", func(t *testing.T) {
+		r := NewRequest("sendMediaGroup")
+
+		photo := NewInputMediaPhoto(FileArg{
+			Upload: NewInputFileBytes("photo.jpg", []byte("photo")),
+		})
+
+		doc := NewInputMediaDocument(FileArg{
+			Upload: NewInputFileBytes("doc.pdf", []byte("doc")),
+		})
+		doc.Document.Thumbnail = NewInputFileBytes("thumb.jpg", []byte("thumb")).Ptr()
+
+		r.InputMediaSlice("media", []InputMedia{photo, doc})
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		sort.StringSlice(encoder.fileKeys).Sort()
+		assert.Equal(t, []string{
+			"attachment_0",
+			"attachment_1",
+			"attachment_1_thumb",
+		}, encoder.fileKeys)
+	})
+
 	t.Run("PlainJSON", func(t *testing.T) {
 		// This reproduces the bug: using .JSON() without file extraction
 		r := NewRequest("sendMediaGroup")
@@ -225,6 +251,123 @@ func TestRequest_InputMediaUpload(t *testing.T) {
 		err := r.Encode(encoder)
 		require.Error(t, err, "expected error because FileArg.addr is not set")
 		assert.Contains(t, err.Error(), "FileArg is not json serializable")
+	})
+}
+
+func TestRequest_InputMediaNilVariant(t *testing.T) {
+	t.Run("InputMedia", func(t *testing.T) {
+		r := NewRequest("editMessageMedia")
+		r.InputMedia("media", InputMedia{})
+
+		assert.Empty(t, r.files, "nil variant should not produce file uploads")
+	})
+
+	t.Run("InputPaidMediaSlice", func(t *testing.T) {
+		r := NewRequest("sendPaidMedia")
+		r.InputPaidMediaSlice("media", []InputPaidMedia{{}})
+
+		assert.Empty(t, r.files, "nil variant should not produce file uploads")
+	})
+}
+
+func TestRequest_InputMediaByRef(t *testing.T) {
+	t.Run("InputMediaSlice", func(t *testing.T) {
+		r := NewRequest("sendMediaGroup")
+		r.InputMediaSlice("media", []InputMedia{
+			NewInputMediaPhoto(FileArg{FileID: "existing_file_id"}),
+		})
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		assert.Contains(t, encoder.stringKeys, "media")
+		assert.Empty(t, encoder.fileKeys, "ref media should not produce file uploads")
+	})
+
+	t.Run("InputMedia", func(t *testing.T) {
+		r := NewRequest("editMessageMedia")
+		r.InputMedia("media", NewInputMediaPhoto(FileArg{URL: "https://example.com/photo.jpg"}))
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		assert.Contains(t, encoder.stringKeys, "media")
+		assert.Empty(t, encoder.fileKeys, "ref media should not produce file uploads")
+	})
+}
+
+func TestRequest_InputPaidMediaSlice(t *testing.T) {
+	t.Run("Upload", func(t *testing.T) {
+		r := NewRequest("sendPaidMedia")
+		r.InputPaidMediaSlice("media", []InputPaidMedia{
+			NewInputPaidMediaPhoto(FileArg{
+				Upload: NewInputFileBytes("photo.jpg", []byte("photo")),
+			}),
+		})
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		assert.Contains(t, encoder.stringKeys, "media")
+		assert.Contains(t, encoder.fileKeys, "attachment_0")
+	})
+
+	t.Run("ByRef", func(t *testing.T) {
+		r := NewRequest("sendPaidMedia")
+		r.InputPaidMediaSlice("media", []InputPaidMedia{
+			NewInputPaidMediaPhoto(FileArg{FileID: "existing_file_id"}),
+		})
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		assert.Contains(t, encoder.stringKeys, "media")
+		assert.Empty(t, encoder.fileKeys)
+	})
+
+	t.Run("VideoWithThumbAndCover", func(t *testing.T) {
+		media := NewInputPaidMediaVideo(FileArg{
+			Upload: NewInputFileBytes("video.mp4", []byte("video")),
+		})
+		media.Video.Thumbnail = NewInputFileBytes("thumb.jpg", []byte("thumb")).Ptr()
+		media.Video.Cover = &FileArg{
+			Upload: NewInputFileBytes("cover.jpg", []byte("cover")),
+		}
+
+		r := NewRequest("sendPaidMedia")
+		r.InputPaidMediaSlice("media", []InputPaidMedia{media})
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		sort.StringSlice(encoder.fileKeys).Sort()
+		assert.Equal(t, []string{
+			"attachment_0",
+			"attachment_0_cover",
+			"attachment_0_thumb",
+		}, encoder.fileKeys)
+	})
+
+	t.Run("CoverByRef", func(t *testing.T) {
+		media := NewInputPaidMediaVideo(FileArg{
+			Upload: NewInputFileBytes("video.mp4", []byte("video")),
+		})
+		media.Video.Cover = &FileArg{FileID: "cover_file_id"}
+
+		r := NewRequest("sendPaidMedia")
+		r.InputPaidMediaSlice("media", []InputPaidMedia{media})
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		sort.StringSlice(encoder.fileKeys).Sort()
+		assert.Equal(t, []string{"attachment_0"}, encoder.fileKeys, "cover by ref should not produce file upload")
 	})
 }
 
@@ -273,8 +416,12 @@ func TestRequest_Has(t *testing.T) {
 	r := NewRequest("sendMessage")
 
 	r.String("chat_id", "1")
+	r.JSON("reply_markup", struct{}{})
+	r.InputFile("file", InputFile{})
 
 	assert.True(t, r.Has("chat_id"))
+	assert.True(t, r.Has("reply_markup"))
+	assert.True(t, r.Has("file"))
 	assert.False(t, r.Has("text"))
 }
 
@@ -286,6 +433,9 @@ func TestRequest_Get(t *testing.T) {
 	v, ok := r.GetArg("chat_id")
 	assert.True(t, ok)
 	assert.Equal(t, "1", v)
+
+	_, ok = r.GetArg("missing")
+	assert.False(t, ok)
 }
 
 func TestRequest_GetJSON(t *testing.T) {
@@ -298,4 +448,7 @@ func TestRequest_GetJSON(t *testing.T) {
 	v, ok := r.GetJSON("reply_markup")
 	assert.True(t, ok)
 	assert.Equal(t, replyMarkup, v)
+
+	_, ok = r.GetJSON("missing")
+	assert.False(t, ok)
 }
