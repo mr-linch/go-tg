@@ -347,6 +347,15 @@ func TestGenerate_UnionTypes(t *testing.T) {
 	assert.Contains(t, got, "func (u *BackgroundFill) UnmarshalJSON")
 	assert.Contains(t, got, `case "solid":`)
 	assert.Contains(t, got, `case "gradient":`)
+
+	// Variant structs must NOT contain the json-tagged discriminator field
+	assert.NotContains(t, got, "Type string `json:\"type\"`")
+
+	// MarshalJSON must use struct embedding, not direct field assignment
+	assert.NotContains(t, got, `.Type = "solid"`)
+	assert.NotContains(t, got, `.Type = "gradient"`)
+	assert.Contains(t, got, `D: "solid"`)
+	assert.Contains(t, got, `D: "gradient"`)
 }
 
 func TestGenerate_UnixTimeFields(t *testing.T) {
@@ -520,4 +529,24 @@ func TestGenerate_FullAPI(t *testing.T) {
 
 	// Field type rules: *InputFile (optional thumbnail with attach:// only)
 	assert.Contains(t, got, "Thumbnail *InputFile")
+
+	// Variant structs must NOT contain discriminator fields
+	assert.NotContains(t, got, "BotCommandScopeDefault struct {\n\tType")
+	assert.NotContains(t, got, "MenuButtonCommands struct {\n\tType")
+	assert.NotContains(t, got, "ReactionTypePaid struct {\n\tType")
+
+	// Zero-arg constructors: variants with no required fields take no params
+	assert.Contains(t, got, "func NewBotCommandScopeDefault() BotCommandScope")
+	assert.Contains(t, got, "func NewMenuButtonCommands() MenuButton")
+	assert.Contains(t, got, "func NewReactionTypePaid() ReactionType")
+
+	// Constructors with required fields take those fields as params
+	assert.Contains(t, got, "func NewBotCommandScopeChat(chatID ChatID) BotCommandScope")
+	assert.Contains(t, got, "func NewBotCommandScopeChatMember(chatID ChatID, userID UserID) BotCommandScope")
+	assert.Contains(t, got, "func NewMenuButtonWebApp(text string, webApp WebAppInfo) MenuButton")
+	assert.Contains(t, got, "func NewReactionTypeEmoji(emoji string) ReactionType")
+	assert.Contains(t, got, "func NewInputMediaPhoto(media FileArg) InputMedia")
+
+	// Go keyword escaping in constructor params
+	assert.Contains(t, got, "func NewPassportElementErrorDataField(type_ string")
 }

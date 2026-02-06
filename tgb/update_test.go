@@ -345,10 +345,8 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		{
 			Name: "AnswerMediaGroup",
 			Request: msg.AnswerMediaGroup([]tg.InputMedia{
-				tg.NewInputMediaPhoto(tg.InputMediaPhoto{
-					Media: tg.FileArg{
-						FileID: "file_id",
-					},
+				tg.NewInputMediaPhoto(tg.FileArg{
+					FileID: "file_id",
 				}),
 			}).Request(),
 			ExceptedMethod: "sendMediaGroup",

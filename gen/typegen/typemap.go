@@ -8,6 +8,7 @@ import (
 
 	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/ir"
+	"github.com/mr-linch/go-tg/gen/naming"
 )
 
 // primitiveGoType maps IR primitive type names to Go type strings.
@@ -121,7 +122,7 @@ func resolveBaseType(name string) string {
 	if goType, ok := primitiveGoType[ir.PrimitiveType(name)]; ok {
 		return goType
 	}
-	return normalizeTypeName(name)
+	return naming.NormalizeTypeName(name)
 }
 
 // isScalar reports whether the Go type is a scalar (no pointer needed for optional).

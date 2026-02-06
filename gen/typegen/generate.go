@@ -11,6 +11,7 @@ import (
 
 	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/ir"
+	"github.com/mr-linch/go-tg/gen/naming"
 	"mvdan.cc/gofumpt/format"
 )
 
@@ -47,10 +48,18 @@ type GoUnionType struct {
 
 // GoUnionVariant represents one arm of a union type.
 type GoUnionVariant struct {
-	FieldName string
-	TypeName  string
-	ConstVal  string
-	EnumConst string // Enum constant name, e.g. "MessageOriginTypeUser"
+	FieldName      string
+	TypeName       string
+	ConstVal       string
+	EnumConst      string               // Enum constant name, e.g. "MessageOriginTypeUser"
+	RequiredFields []GoConstructorParam // non-discriminator required fields (for constructors)
+}
+
+// GoConstructorParam represents a required parameter for a union variant constructor.
+type GoConstructorParam struct {
+	GoField   string // Go field name, e.g. "ChatID"
+	GoType    string // Go type string, e.g. "ChatID"
+	ParamName string // camelCase parameter name, e.g. "chatID"
 }
 
 // GoEnum represents a standalone enum type for template rendering.
@@ -122,6 +131,8 @@ type TemplateData struct {
 type Options struct {
 	// Package is the Go package name for the generated file (default: "tg").
 	Package string
+	// SkipFormat disables gofumpt formatting of the output (useful for debugging).
+	SkipFormat bool
 }
 
 // Generate writes the generated types to w.
@@ -158,6 +169,11 @@ func Generate(api *ir.API, w io.Writer, cfg *config.TypeGen, log *slog.Logger, o
 		return fmt.Errorf("execute template: %w", err)
 	}
 
+	if opts.SkipFormat {
+		_, err = w.Write(buf.Bytes())
+		return err
+	}
+
 	formatted, err := format.Source(buf.Bytes(), format.Options{})
 	if err != nil {
 		return fmt.Errorf("format source: %w", err)
@@ -186,7 +202,7 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 		}
 
 		if len(t.Subtypes) > 0 && len(t.Fields) == 0 {
-			if u := resolveUnionType(t, api.Types, inputTypes); u != nil {
+			if u := resolveUnionType(t, api.Types, inputTypes, cfg, rules, usedNameOverrides, usedTypeOverrides); u != nil {
 				log.Debug("generating union", "name", t.Name, "variants", len(u.Variants), "hasConstructors", u.HasConstructors)
 				data.UnionTypes = append(data.UnionTypes, *u)
 				data.NeedJSON = true
@@ -274,13 +290,17 @@ func warnUnusedConfig(cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedEx
 }
 
 func resolveType(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) GoType {
-	name := normalizeTypeName(t.Name)
+	name := naming.NormalizeTypeName(t.Name)
 	gt := GoType{
 		Comment: formatTypeComment(name, t.Description),
 		Name:    name,
 	}
 
 	for _, f := range t.Fields {
+		// Skip discriminator fields — they are handled by the union's MarshalJSON/UnmarshalJSON.
+		if f.Const != "" {
+			continue
+		}
 		gf := resolveField(t.Name, f, cfg, rules, usedNames, usedTypes)
 		gt.Fields = append(gt.Fields, gf)
 	}
@@ -308,7 +328,7 @@ func resolveFieldName(typeName, fieldName string, cfg *config.TypeGen, usedNameO
 		usedNameOverrides[key] = true
 		return override
 	}
-	return snakeToPascal(fieldName)
+	return naming.SnakeToPascal(fieldName)
 }
 
 func buildJSONTag(fieldName string, optional bool) string {
@@ -350,7 +370,7 @@ func formatFieldComment(s string) string {
 	return wrapComment(s)
 }
 
-func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool) *GoUnionType {
+func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) *GoUnionType {
 	firstSubtype := findType(allTypes, t.Subtypes[0])
 	if firstSubtype == nil {
 		return nil
@@ -367,8 +387,8 @@ func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool)
 		return nil
 	}
 
-	name := normalizeTypeName(t.Name)
-	discGoField := snakeToPascal(discField)
+	name := naming.NormalizeTypeName(t.Name)
+	discGoField := naming.SnakeToPascal(discField)
 	discTypeName := name + discGoField
 	union := &GoUnionType{
 		Name:                    name,
@@ -389,17 +409,37 @@ func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool)
 			continue
 		}
 		constVal := getConstValue(st, discField)
-		normalizedSt := normalizeTypeName(stName)
+		normalizedSt := naming.NormalizeTypeName(stName)
 		fieldName := strings.TrimPrefix(normalizedSt, name)
 		// Use fieldName for enum constant to ensure uniqueness (some unions have
 		// variants with duplicate discriminator values, e.g. InlineQueryResult)
 		enumConst := discTypeName + fieldName
-		union.Variants = append(union.Variants, GoUnionVariant{
+
+		variant := GoUnionVariant{
 			FieldName: fieldName,
 			TypeName:  normalizedSt,
 			ConstVal:  constVal,
 			EnumConst: enumConst,
-		})
+		}
+
+		// Collect required non-discriminator fields for constructor params.
+		if union.HasConstructors {
+			for _, f := range st.Fields {
+				if f.Const != "" || f.Optional {
+					continue
+				}
+				goFieldName := resolveFieldName(st.Name, f.Name, cfg, usedNames)
+				goType := resolveGoType(st.Name, f, cfg, rules, usedTypes)
+				paramName := naming.EscapeReserved(naming.SnakeToCamel(f.Name))
+				variant.RequiredFields = append(variant.RequiredFields, GoConstructorParam{
+					GoField:   goFieldName,
+					GoType:    goType,
+					ParamName: paramName,
+				})
+			}
+		}
+
+		union.Variants = append(union.Variants, variant)
 
 		if seenConstVals[constVal] {
 			hasDuplicates = true
@@ -458,7 +498,7 @@ func resolveEnum(irEnum *ir.Enum, cfg *config.EnumGenDef) GoEnum {
 	}
 
 	for _, val := range irEnum.Values {
-		constName := irEnum.Name + snakeToPascal(val)
+		constName := irEnum.Name + naming.SnakeToPascal(val)
 		e.Values = append(e.Values, GoEnumValue{
 			ConstName: constName,
 			StringVal: val,
@@ -526,7 +566,7 @@ func collectInputTypes(api *ir.API) map[string]bool {
 // resolveTypeMethod builds a GoTypeMethod from a type and its corresponding enum.
 func resolveTypeMethod(t *ir.Type, enum *ir.Enum, cfg *config.TypeMethodDef) GoTypeMethod {
 	method := GoTypeMethod{
-		TypeName:   normalizeTypeName(t.Name),
+		TypeName:   naming.NormalizeTypeName(t.Name),
 		MethodName: cfg.Method,
 		ReturnType: cfg.Return,
 	}
@@ -547,7 +587,7 @@ func resolveTypeMethod(t *ir.Type, enum *ir.Enum, cfg *config.TypeMethodDef) GoT
 			continue // only optional fields are checked
 		}
 
-		goFieldName := snakeToPascal(val)
+		goFieldName := naming.SnakeToPascal(val)
 		enumConst := cfg.Return + goFieldName
 		condition := buildFieldCondition(goFieldName, f)
 
@@ -605,10 +645,10 @@ func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, c
 		return nil
 	}
 
-	typeName := normalizeTypeName(t.Name)
-	baseGoField := snakeToPascal(baseField.Name)
+	typeName := naming.NormalizeTypeName(t.Name)
+	baseGoField := naming.SnakeToPascal(baseField.Name)
 	baseGoType := resolveGoType(t.Name, *baseField, cfg, rules, usedTypes)
-	baseArgName := snakeToCamel(baseField.Name)
+	baseArgName := naming.SnakeToCamel(baseField.Name)
 
 	vc := &GoVariantConstructorType{
 		TypeName:    typeName,
@@ -644,7 +684,7 @@ func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, c
 
 		goFieldName := resolveFieldName(t.Name, f.Name, cfg, usedNames)
 		goType := resolveGoType(t.Name, f, cfg, rules, usedTypes)
-		argName := snakeToCamel(f.Name)
+		argName := naming.SnakeToCamel(f.Name)
 
 		variant := GoVariantConstructor{
 			Name:    goFieldName,

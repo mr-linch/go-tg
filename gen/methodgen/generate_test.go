@@ -267,15 +267,81 @@ func TestGenerate_InputFile(t *testing.T) {
 }
 
 func TestGenerate_InputMediaSlice(t *testing.T) {
+	t.Run("DirectType", func(t *testing.T) {
+		api := &ir.API{
+			Methods: []ir.Method{
+				{
+					Name: "sendMediaGroup",
+					Params: []ir.Param{
+						{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
+						{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMedia"}}, Array: 1}, Required: true},
+					},
+					Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}, Array: 1},
+				},
+			},
+		}
+
+		cfg := loadTestConfig(t)
+		var buf bytes.Buffer
+		err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
+		require.NoError(t, err)
+
+		output := buf.String()
+		assert.Contains(t, output, "media []InputMedia")
+		assert.Contains(t, output, "InputMediaSlice(\"media\", media)")
+	})
+
+	t.Run("UnionSubtypes", func(t *testing.T) {
+		// Real API spec lists individual subtypes, not the parent union
+		api := &ir.API{
+			Types: []ir.Type{
+				{Name: "InputMedia", Subtypes: []string{"InputMediaAudio", "InputMediaDocument", "InputMediaPhoto", "InputMediaVideo"}},
+			},
+			Methods: []ir.Method{
+				{
+					Name: "sendMediaGroup",
+					Params: []ir.Param{
+						{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
+						{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{
+							{Type: "InputMediaAudio"},
+							{Type: "InputMediaDocument"},
+							{Type: "InputMediaPhoto"},
+							{Type: "InputMediaVideo"},
+						}, Array: 1}, Required: true},
+					},
+					Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}, Array: 1},
+				},
+			},
+		}
+
+		cfg := loadTestConfig(t)
+		var buf bytes.Buffer
+		err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
+		require.NoError(t, err)
+
+		output := buf.String()
+		assert.Contains(t, output, "media []InputMedia")
+		assert.Contains(t, output, "InputMediaSlice(\"media\", media)")
+	})
+}
+
+func TestGenerate_InputMediaSlice_HeterogeneousUnions(t *testing.T) {
 	api := &ir.API{
+		Types: []ir.Type{
+			{Name: "InputMedia", Subtypes: []string{"InputMediaPhoto", "InputMediaVideo"}},
+			{Name: "InputPaidMedia", Subtypes: []string{"InputPaidMediaPhoto", "InputPaidMediaVideo"}},
+		},
 		Methods: []ir.Method{
 			{
-				Name: "sendMediaGroup",
+				Name: "hypotheticalMethod",
 				Params: []ir.Param{
 					{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
-					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMedia"}}, Array: 1}, Required: true},
+					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{
+						{Type: "InputMediaPhoto"},
+						{Type: "InputPaidMediaVideo"},
+					}, Array: 1}, Required: true},
 				},
-				Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}, Array: 1},
+				Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}},
 			},
 		},
 	}
@@ -286,8 +352,59 @@ func TestGenerate_InputMediaSlice(t *testing.T) {
 	require.NoError(t, err)
 
 	output := buf.String()
-	assert.Contains(t, output, "media []InputMedia")
-	assert.Contains(t, output, "InputMediaSlice(\"media\", media)")
+	// Mixed subtypes from different unions must fall back to any + JSON
+	assert.Contains(t, output, "media any")
+	assert.Contains(t, output, "JSON(\"media\", media)")
+	assert.NotContains(t, output, "InputMediaSlice")
+	assert.NotContains(t, output, "InputPaidMediaSlice")
+}
+
+func TestGenerate_InputMedia(t *testing.T) {
+	api := &ir.API{
+		Methods: []ir.Method{
+			{
+				Name: "editMessageMedia",
+				Params: []ir.Param{
+					{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
+					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMedia"}}}, Required: true},
+				},
+				Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}},
+			},
+		},
+	}
+
+	cfg := loadTestConfig(t)
+	var buf bytes.Buffer
+	err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
+	require.NoError(t, err)
+
+	output := buf.String()
+	assert.Contains(t, output, "media InputMedia")
+	assert.Contains(t, output, "InputMedia(\"media\", media)")
+}
+
+func TestGenerate_InputPaidMediaSlice(t *testing.T) {
+	api := &ir.API{
+		Methods: []ir.Method{
+			{
+				Name: "sendPaidMedia",
+				Params: []ir.Param{
+					{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
+					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputPaidMedia"}}, Array: 1}, Required: true},
+				},
+				Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}},
+			},
+		},
+	}
+
+	cfg := loadTestConfig(t)
+	var buf bytes.Buffer
+	err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
+	require.NoError(t, err)
+
+	output := buf.String()
+	assert.Contains(t, output, "media []InputPaidMedia")
+	assert.Contains(t, output, "InputPaidMediaSlice(\"media\", media)")
 }
 
 func TestGenerate_ParseMode(t *testing.T) {
@@ -356,6 +473,11 @@ func TestGenerate_FullAPI(t *testing.T) {
 	assert.Contains(t, output, "GetUpdatesCall")
 	assert.Contains(t, output, "SendMessageCall")
 	assert.Contains(t, output, "SendPhotoCall")
+
+	// Verify InputMedia methods use correct request methods
+	assert.Contains(t, output, "InputMediaSlice(\"media\", media)")
+	assert.Contains(t, output, "InputMedia(\"media\", media)")
+	assert.Contains(t, output, "InputPaidMediaSlice(\"media\", media)")
 }
 
 func TestGenerate_PackageOption(t *testing.T) {

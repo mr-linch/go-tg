@@ -87,16 +87,17 @@ var primitiveGoType = map[ir.PrimitiveType]string{
 
 // requestMethodMap maps Go types to Request builder method names.
 var requestMethodMap = map[string]string{
-	"int":     "Int",
-	"int64":   "Int64",
-	"float64": "Float64",
-	"string":  "String",
-	"bool":    "Bool",
-	"PeerID":  "PeerID",
-	"ChatID":  "ChatID",
-	"UserID":  "UserID",
-	"FileID":  "FileID",
-	"FileArg": "File",
+	"int":        "Int",
+	"int64":      "Int64",
+	"float64":    "Float64",
+	"string":     "String",
+	"bool":       "Bool",
+	"PeerID":     "PeerID",
+	"ChatID":     "ChatID",
+	"UserID":     "UserID",
+	"FileID":     "FileID",
+	"FileArg":    "File",
+	"InputMedia": "InputMedia",
 }
 
 // Generate writes the generated methods to w.
@@ -153,11 +154,19 @@ func Generate(api *ir.API, w io.Writer, cfg *config.MethodGen, log *slog.Logger,
 func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, log *slog.Logger) *TemplateData {
 	data := &TemplateData{}
 
+	// Build subtype → union parent map for resolving multi-type params.
+	subtypeToUnion := make(map[string]string)
+	for _, t := range api.Types {
+		for _, st := range t.Subtypes {
+			subtypeToUnion[st] = t.Name
+		}
+	}
+
 	usedParamOverrides := make(map[string]bool)
 	usedReturnOverrides := make(map[string]bool)
 
 	for _, m := range api.Methods {
-		goMethod := resolveMethod(m, cfg, rules, stringerTypes, usedParamOverrides, usedReturnOverrides)
+		goMethod := resolveMethod(m, cfg, rules, stringerTypes, subtypeToUnion, usedParamOverrides, usedReturnOverrides)
 		data.Methods = append(data.Methods, goMethod)
 	}
 
@@ -179,14 +188,14 @@ func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamT
 	return data
 }
 
-func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes, usedParamOverrides, usedReturnOverrides map[string]bool) GoMethod {
+func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, subtypeToUnion map[string]string, usedParamOverrides, usedReturnOverrides map[string]bool) GoMethod {
 	goName := naming.MethodName(m.Name)
 	callTypeName := goName + "Call"
 
 	// Resolve params.
 	params := make([]GoParam, 0, len(m.Params))
 	for _, p := range m.Params {
-		goParam := resolveParam(m.Name, p, cfg, rules, stringerTypes, usedParamOverrides)
+		goParam := resolveParam(m.Name, p, cfg, rules, stringerTypes, subtypeToUnion, usedParamOverrides)
 		params = append(params, goParam)
 	}
 
@@ -290,13 +299,13 @@ func resolveReturnType(m ir.Method, overrides map[string]string, usedOverrides m
 	return "Call[" + returnType + "]", false
 }
 
-func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes, usedOverrides map[string]bool) GoParam {
+func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, subtypeToUnion map[string]string, usedOverrides map[string]bool) GoParam {
 	// Resolve names.
 	goName := naming.SnakeToPascal(p.Name)
 	goArgName := naming.EscapeReserved(naming.SnakeToCamel(p.Name))
 
 	// Resolve type.
-	goType := resolveParamType(methodName, p, cfg, rules, usedOverrides)
+	goType := resolveParamType(methodName, p, cfg, rules, subtypeToUnion, usedOverrides)
 
 	// Determine request method.
 	requestMethod := resolveRequestMethod(goType, stringerTypes)
@@ -312,7 +321,7 @@ func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *C
 	}
 }
 
-func resolveParamType(methodName string, p ir.Param, cfg *config.MethodGen, rules *CompiledParamTypeRules, usedOverrides map[string]bool) string {
+func resolveParamType(methodName string, p ir.Param, cfg *config.MethodGen, rules *CompiledParamTypeRules, subtypeToUnion map[string]string, usedOverrides map[string]bool) string {
 	// Check explicit override first.
 	key := methodName + "." + p.Name
 	if override, ok := cfg.ParamTypeOverrides[key]; ok {
@@ -330,13 +339,33 @@ func resolveParamType(methodName string, p ir.Param, cfg *config.MethodGen, rule
 		return "any"
 	}
 
-	// For unions with multiple types, default to any (unless matched by rule).
+	// For unions with multiple types, check if all are subtypes of a single union.
 	if len(p.TypeExpr.Types) > 1 {
+		if union := findCommonUnion(p.TypeExpr.Types, subtypeToUnion); union != "" {
+			return applyArray(resolveBaseType(union), p.TypeExpr.Array)
+		}
 		return "any"
 	}
 
 	baseType := resolveBaseType(p.TypeExpr.Types[0].Type)
 	return applyArray(baseType, p.TypeExpr.Array)
+}
+
+// findCommonUnion returns the union parent type name if all types are subtypes of the same union.
+func findCommonUnion(types []ir.TypeRef, subtypeToUnion map[string]string) string {
+	if len(types) == 0 {
+		return ""
+	}
+	union := subtypeToUnion[types[0].Type]
+	if union == "" {
+		return ""
+	}
+	for _, t := range types[1:] {
+		if subtypeToUnion[t.Type] != union {
+			return ""
+		}
+	}
+	return union
 }
 
 func resolveBaseType(name string) string {
@@ -368,9 +397,12 @@ func resolveRequestMethod(goType string, stringerTypes map[string]bool) string {
 		return "Stringer"
 	}
 
-	// Special case for InputMedia slice.
-	if goType == "[]InputMedia" {
+	// Special cases for media slices that need file extraction.
+	switch goType {
+	case "[]InputMedia":
 		return "InputMediaSlice"
+	case "[]InputPaidMedia":
+		return "InputPaidMediaSlice"
 	}
 
 	// Default to JSON for everything else.

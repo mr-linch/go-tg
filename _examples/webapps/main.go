@@ -68,12 +68,12 @@ func run(ctx context.Context) error {
 	}
 	log.Printf("auth as https://t.me/%s", me.Username)
 
-	if err := client.SetChatMenuButton().MenuButton(tg.NewMenuButtonWebApp(tg.MenuButtonWebApp{
-		Text: "Open Web App",
-		WebApp: tg.WebAppInfo{
+	if err := client.SetChatMenuButton().MenuButton(tg.NewMenuButtonWebApp(
+		"Open Web App",
+		tg.WebAppInfo{
 			URL: flagBaseURL + "/webapp",
 		},
-	})).DoVoid(ctx); err != nil {
+	)).DoVoid(ctx); err != nil {
 		return fmt.Errorf("set menu button: %w", err)
 	}
 

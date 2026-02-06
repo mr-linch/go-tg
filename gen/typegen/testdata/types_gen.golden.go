@@ -124,18 +124,12 @@ type InputProfilePhotoStatic struct {
 
 // BackgroundFillSolid the background is filled with a solid color.
 type BackgroundFillSolid struct {
-	// Type of the background fill, always "solid".
-	Type string `json:"type"`
-
 	// The color of the background fill.
 	Color int `json:"color"`
 }
 
 // BackgroundFillGradient the background is a gradient fill.
 type BackgroundFillGradient struct {
-	// Type of the background fill, always "gradient".
-	Type string `json:"type"`
-
 	// Top color of the gradient.
 	TopColor int `json:"top_color"`
 }
@@ -214,11 +208,15 @@ func (u *BackgroundFill) UnmarshalJSON(data []byte) error {
 func (u BackgroundFill) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Solid != nil:
-		u.Solid.Type = "solid"
-		return json.Marshal(u.Solid)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundFillSolid
+		}{D: "solid", BackgroundFillSolid: u.Solid})
 	case u.Gradient != nil:
-		u.Gradient.Type = "gradient"
-		return json.Marshal(u.Gradient)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundFillGradient
+		}{D: "gradient", BackgroundFillGradient: u.Gradient})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
