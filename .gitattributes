@@ -1,0 +1,3 @@
+*.html linguist-vendored
+*.yaml linguist-vendored
+*.yml linguist-vendored
