@@ -817,9 +817,6 @@ type ReplyParameters struct {
 
 // MessageOriginUser the message was originally sent by a known user.
 type MessageOriginUser struct {
-	// Type of the message origin, always “user”
-	Type string `json:"type"`
-
 	// Date the message was sent originally in Unix time
 	Date UnixTime `json:"date"`
 
@@ -829,9 +826,6 @@ type MessageOriginUser struct {
 
 // MessageOriginHiddenUser the message was originally sent by an unknown user.
 type MessageOriginHiddenUser struct {
-	// Type of the message origin, always “hidden_user”
-	Type string `json:"type"`
-
 	// Date the message was sent originally in Unix time
 	Date UnixTime `json:"date"`
 
@@ -841,9 +835,6 @@ type MessageOriginHiddenUser struct {
 
 // MessageOriginChat the message was originally sent on behalf of a chat to a group chat.
 type MessageOriginChat struct {
-	// Type of the message origin, always “chat”
-	Type string `json:"type"`
-
 	// Date the message was sent originally in Unix time
 	Date UnixTime `json:"date"`
 
@@ -856,9 +847,6 @@ type MessageOriginChat struct {
 
 // MessageOriginChannel the message was originally sent to a channel chat.
 type MessageOriginChannel struct {
-	// Type of the message origin, always “channel”
-	Type string `json:"type"`
-
 	// Date the message was sent originally in Unix time
 	Date UnixTime `json:"date"`
 
@@ -1066,9 +1054,6 @@ type PaidMediaInfo struct {
 
 // PaidMediaPreview the paid media isn't available before the payment.
 type PaidMediaPreview struct {
-	// Type of the paid media, always “preview”
-	Type string `json:"type"`
-
 	// Optional. Media width as defined by the sender
 	Width int `json:"width,omitempty"`
 
@@ -1081,18 +1066,12 @@ type PaidMediaPreview struct {
 
 // PaidMediaPhoto the paid media is a photo.
 type PaidMediaPhoto struct {
-	// Type of the paid media, always “photo”
-	Type string `json:"type"`
-
 	// The photo
 	Photo []PhotoSize `json:"photo"`
 }
 
 // PaidMediaVideo the paid media is a video.
 type PaidMediaVideo struct {
-	// Type of the paid media, always “video”
-	Type string `json:"type"`
-
 	// The video
 	Video Video `json:"video"`
 }
@@ -1384,18 +1363,12 @@ type ChatBoostAdded struct {
 
 // BackgroundFillSolid the background is filled using the selected color.
 type BackgroundFillSolid struct {
-	// Type of the background fill, always “solid”
-	Type string `json:"type"`
-
 	// The color of the background fill in the RGB24 format
 	Color int `json:"color"`
 }
 
 // BackgroundFillGradient the background is a gradient fill.
 type BackgroundFillGradient struct {
-	// Type of the background fill, always “gradient”
-	Type string `json:"type"`
-
 	// Top color of the gradient in the RGB24 format
 	TopColor int `json:"top_color"`
 
@@ -1408,18 +1381,12 @@ type BackgroundFillGradient struct {
 
 // BackgroundFillFreeformGradient the background is a freeform gradient that rotates after every message in the chat.
 type BackgroundFillFreeformGradient struct {
-	// Type of the background fill, always “freeform_gradient”
-	Type string `json:"type"`
-
 	// A list of the 3 or 4 base colors that are used to generate the freeform gradient in the RGB24 format
 	Colors []int `json:"colors"`
 }
 
 // BackgroundTypeFill the background is automatically filled based on the selected colors.
 type BackgroundTypeFill struct {
-	// Type of the background, always “fill”
-	Type string `json:"type"`
-
 	// The background fill
 	Fill BackgroundFill `json:"fill"`
 
@@ -1429,9 +1396,6 @@ type BackgroundTypeFill struct {
 
 // BackgroundTypeWallpaper the background is a wallpaper in the JPEG format.
 type BackgroundTypeWallpaper struct {
-	// Type of the background, always “wallpaper”
-	Type string `json:"type"`
-
 	// Document with the wallpaper
 	Document Document `json:"document"`
 
@@ -1447,9 +1411,6 @@ type BackgroundTypeWallpaper struct {
 
 // BackgroundTypePattern the background is a .PNG or .TGV (gzipped subset of SVG with MIME type “application/x-tgwallpattern”) pattern to be combined with the background fill chosen by the user.
 type BackgroundTypePattern struct {
-	// Type of the background, always “pattern”
-	Type string `json:"type"`
-
 	// Document with the pattern
 	Document Document `json:"document"`
 
@@ -1468,9 +1429,6 @@ type BackgroundTypePattern struct {
 
 // BackgroundTypeChatTheme the background is taken directly from a built-in chat theme.
 type BackgroundTypeChatTheme struct {
-	// Type of the background, always “chat_theme”
-	Type string `json:"type"`
-
 	// Name of the chat theme, which is usually an emoji
 	ThemeName string `json:"theme_name"`
 }
@@ -2211,9 +2169,6 @@ type ChatMemberUpdated struct {
 
 // ChatMemberOwner represents a [chat member](https://core.telegram.org/bots/api#chatmember) that owns the chat and has all administrator privileges.
 type ChatMemberOwner struct {
-	// The member's status in the chat, always “creator”
-	Status string `json:"status"`
-
 	// Information about the user
 	User User `json:"user"`
 
@@ -2226,9 +2181,6 @@ type ChatMemberOwner struct {
 
 // ChatMemberAdministrator represents a [chat member](https://core.telegram.org/bots/api#chatmember) that has some additional privileges.
 type ChatMemberAdministrator struct {
-	// The member's status in the chat, always “administrator”
-	Status string `json:"status"`
-
 	// Information about the user
 	User User `json:"user"`
 
@@ -2289,9 +2241,6 @@ type ChatMemberAdministrator struct {
 
 // ChatMemberMember represents a [chat member](https://core.telegram.org/bots/api#chatmember) that has no additional privileges or restrictions.
 type ChatMemberMember struct {
-	// The member's status in the chat, always “member”
-	Status string `json:"status"`
-
 	// Information about the user
 	User User `json:"user"`
 
@@ -2301,9 +2250,6 @@ type ChatMemberMember struct {
 
 // ChatMemberRestricted represents a [chat member](https://core.telegram.org/bots/api#chatmember) that is under certain restrictions in the chat. Supergroups only.
 type ChatMemberRestricted struct {
-	// The member's status in the chat, always “restricted”
-	Status string `json:"status"`
-
 	// Information about the user
 	User User `json:"user"`
 
@@ -2358,18 +2304,12 @@ type ChatMemberRestricted struct {
 
 // ChatMemberLeft represents a [chat member](https://core.telegram.org/bots/api#chatmember) that isn't currently a member of the chat, but may join it themselves.
 type ChatMemberLeft struct {
-	// The member's status in the chat, always “left”
-	Status string `json:"status"`
-
 	// Information about the user
 	User User `json:"user"`
 }
 
 // ChatMemberBanned represents a [chat member](https://core.telegram.org/bots/api#chatmember) that was banned in the chat and can't return to the chat or view chat messages.
 type ChatMemberBanned struct {
-	// The member's status in the chat, always “kicked”
-	Status string `json:"status"`
-
 	// Information about the user
 	User User `json:"user"`
 
@@ -2547,9 +2487,6 @@ type LocationAddress struct {
 
 // StoryAreaTypeLocation describes a story area pointing to a location. Currently, a story can have up to 10 location areas.
 type StoryAreaTypeLocation struct {
-	// Type of the area, always “location”
-	Type string `json:"type"`
-
 	// Location latitude in degrees
 	Latitude float64 `json:"latitude"`
 
@@ -2562,9 +2499,6 @@ type StoryAreaTypeLocation struct {
 
 // StoryAreaTypeSuggestedReaction describes a story area pointing to a suggested reaction. Currently, a story can have up to 5 suggested reaction areas.
 type StoryAreaTypeSuggestedReaction struct {
-	// Type of the area, always “suggested_reaction”
-	Type string `json:"type"`
-
 	// Type of the reaction
 	ReactionType ReactionType `json:"reaction_type"`
 
@@ -2577,18 +2511,12 @@ type StoryAreaTypeSuggestedReaction struct {
 
 // StoryAreaTypeLink describes a story area pointing to an HTTP or tg:// link. Currently, a story can have up to 3 link areas.
 type StoryAreaTypeLink struct {
-	// Type of the area, always “link”
-	Type string `json:"type"`
-
 	// HTTP or tg:// URL to be opened when the area is clicked
 	URL string `json:"url"`
 }
 
 // StoryAreaTypeWeather describes a story area containing weather information. Currently, a story can have up to 3 weather areas.
 type StoryAreaTypeWeather struct {
-	// Type of the area, always “weather”
-	Type string `json:"type"`
-
 	// Temperature, in degree Celsius
 	Temperature float64 `json:"temperature"`
 
@@ -2601,9 +2529,6 @@ type StoryAreaTypeWeather struct {
 
 // StoryAreaTypeUniqueGift describes a story area pointing to a unique gift. Currently, a story can have at most 1 unique gift area.
 type StoryAreaTypeUniqueGift struct {
-	// Type of the area, always “unique_gift”
-	Type string `json:"type"`
-
 	// Unique name of the gift
 	Name string `json:"name"`
 }
@@ -2628,27 +2553,18 @@ type ChatLocation struct {
 
 // ReactionTypeEmoji the reaction is based on an emoji.
 type ReactionTypeEmoji struct {
-	// Type of the reaction, always “emoji”
-	Type string `json:"type"`
-
 	// Reaction emoji. Currently, it can be one of "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
 	Emoji string `json:"emoji"`
 }
 
 // ReactionTypeCustomEmoji the reaction is based on a custom emoji.
 type ReactionTypeCustomEmoji struct {
-	// Type of the reaction, always “custom_emoji”
-	Type string `json:"type"`
-
 	// Custom emoji identifier
 	CustomEmojiID string `json:"custom_emoji_id"`
 }
 
 // ReactionTypePaid the reaction is paid.
-type ReactionTypePaid struct {
-	// Type of the reaction, always “paid”
-	Type string `json:"type"`
-}
+type ReactionTypePaid struct{}
 
 // ReactionCount represents a reaction added to a message along with the number of times it was added.
 type ReactionCount struct {
@@ -2943,9 +2859,6 @@ type UniqueGiftInfo struct {
 
 // OwnedGiftRegular describes a regular gift owned by a user or a chat.
 type OwnedGiftRegular struct {
-	// Type of the gift, always “regular”
-	Type string `json:"type"`
-
 	// Information about the regular gift
 	Gift Gift `json:"gift"`
 
@@ -2991,9 +2904,6 @@ type OwnedGiftRegular struct {
 
 // OwnedGiftUnique describes a unique gift received and owned by a user or a chat.
 type OwnedGiftUnique struct {
-	// Type of the gift, always “unique”
-	Type string `json:"type"`
-
 	// Information about the unique gift
 	Gift UniqueGift `json:"gift"`
 
@@ -3068,52 +2978,31 @@ type BotCommand struct {
 }
 
 // BotCommandScopeDefault represents the default [scope](https://core.telegram.org/bots/api#botcommandscope) of bot commands. Default commands are used if no commands with a [narrower scope](https://core.telegram.org/bots/api#determining-list-of-commands) are specified for the user.
-type BotCommandScopeDefault struct {
-	// Scope type, must be default
-	Type string `json:"type"`
-}
+type BotCommandScopeDefault struct{}
 
 // BotCommandScopeAllPrivateChats represents the [scope](https://core.telegram.org/bots/api#botcommandscope) of bot commands, covering all private chats.
-type BotCommandScopeAllPrivateChats struct {
-	// Scope type, must be all_private_chats
-	Type string `json:"type"`
-}
+type BotCommandScopeAllPrivateChats struct{}
 
 // BotCommandScopeAllGroupChats represents the [scope](https://core.telegram.org/bots/api#botcommandscope) of bot commands, covering all group and supergroup chats.
-type BotCommandScopeAllGroupChats struct {
-	// Scope type, must be all_group_chats
-	Type string `json:"type"`
-}
+type BotCommandScopeAllGroupChats struct{}
 
 // BotCommandScopeAllChatAdministrators represents the [scope](https://core.telegram.org/bots/api#botcommandscope) of bot commands, covering all group and supergroup chat administrators.
-type BotCommandScopeAllChatAdministrators struct {
-	// Scope type, must be all_chat_administrators
-	Type string `json:"type"`
-}
+type BotCommandScopeAllChatAdministrators struct{}
 
 // BotCommandScopeChat represents the [scope](https://core.telegram.org/bots/api#botcommandscope) of bot commands, covering a specific chat.
 type BotCommandScopeChat struct {
-	// Scope type, must be chat
-	Type string `json:"type"`
-
 	// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername). Channel direct messages chats and channel chats aren't supported.
 	ChatID ChatID `json:"chat_id"`
 }
 
 // BotCommandScopeChatAdministrators represents the [scope](https://core.telegram.org/bots/api#botcommandscope) of bot commands, covering all administrators of a specific group or supergroup chat.
 type BotCommandScopeChatAdministrators struct {
-	// Scope type, must be chat_administrators
-	Type string `json:"type"`
-
 	// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername). Channel direct messages chats and channel chats aren't supported.
 	ChatID ChatID `json:"chat_id"`
 }
 
 // BotCommandScopeChatMember represents the [scope](https://core.telegram.org/bots/api#botcommandscope) of bot commands, covering a specific member of a group or supergroup chat.
 type BotCommandScopeChatMember struct {
-	// Scope type, must be chat_member
-	Type string `json:"type"`
-
 	// Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername). Channel direct messages chats and channel chats aren't supported.
 	ChatID ChatID `json:"chat_id"`
 
@@ -3140,16 +3029,10 @@ type BotShortDescription struct {
 }
 
 // MenuButtonCommands represents a menu button, which opens the bot's list of commands.
-type MenuButtonCommands struct {
-	// Type of the button, must be commands
-	Type string `json:"type"`
-}
+type MenuButtonCommands struct{}
 
 // MenuButtonWebApp represents a menu button, which launches a [Web App](/bots/webapps).
 type MenuButtonWebApp struct {
-	// Type of the button, must be web_app
-	Type string `json:"type"`
-
 	// Text on the button
 	Text string `json:"text"`
 
@@ -3158,34 +3041,22 @@ type MenuButtonWebApp struct {
 }
 
 // MenuButtonDefault describes that no specific value for the menu button was set.
-type MenuButtonDefault struct {
-	// Type of the button, must be default
-	Type string `json:"type"`
-}
+type MenuButtonDefault struct{}
 
 // ChatBoostSourcePremium the boost was obtained by subscribing to Telegram Premium or by gifting a Telegram Premium subscription to another user.
 type ChatBoostSourcePremium struct {
-	// Source of the boost, always “premium”
-	Source string `json:"source"`
-
 	// User that boosted the chat
 	User User `json:"user"`
 }
 
 // ChatBoostSourceGiftCode the boost was obtained by the creation of Telegram Premium gift codes to boost a chat. Each such code boosts the chat 4 times for the duration of the corresponding Telegram Premium subscription.
 type ChatBoostSourceGiftCode struct {
-	// Source of the boost, always “gift_code”
-	Source string `json:"source"`
-
 	// User for which the gift code was created
 	User User `json:"user"`
 }
 
 // ChatBoostSourceGiveaway the boost was obtained by the creation of a Telegram Premium or a Telegram Star giveaway. This boosts the chat 4 times for the duration of the corresponding Telegram Premium subscription for Telegram Premium giveaways and prize_star_count / 500 times for one year for Telegram Star giveaways.
 type ChatBoostSourceGiveaway struct {
-	// Source of the boost, always “giveaway”
-	Source string `json:"source"`
-
 	// Identifier of a message in the chat with the giveaway; the message could have been deleted already. May be 0 if the message isn't sent yet.
 	GiveawayMessageID int `json:"giveaway_message_id"`
 
@@ -3333,9 +3204,6 @@ type ResponseParameters struct {
 
 // InputMediaPhoto represents a photo to be sent.
 type InputMediaPhoto struct {
-	// Type of the result, must be photo
-	Type string `json:"type"`
-
 	// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Media FileArg `json:"media"`
 
@@ -3357,9 +3225,6 @@ type InputMediaPhoto struct {
 
 // InputMediaVideo represents a video to be sent.
 type InputMediaVideo struct {
-	// Type of the result, must be video
-	Type string `json:"type"`
-
 	// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Media FileArg `json:"media"`
 
@@ -3402,9 +3267,6 @@ type InputMediaVideo struct {
 
 // InputMediaAnimation represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
 type InputMediaAnimation struct {
-	// Type of the result, must be animation
-	Type string `json:"type"`
-
 	// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Media FileArg `json:"media"`
 
@@ -3438,9 +3300,6 @@ type InputMediaAnimation struct {
 
 // InputMediaAudio represents an audio file to be treated as music to be sent.
 type InputMediaAudio struct {
-	// Type of the result, must be audio
-	Type string `json:"type"`
-
 	// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Media FileArg `json:"media"`
 
@@ -3468,9 +3327,6 @@ type InputMediaAudio struct {
 
 // InputMediaDocument represents a general file to be sent.
 type InputMediaDocument struct {
-	// Type of the result, must be document
-	Type string `json:"type"`
-
 	// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Media FileArg `json:"media"`
 
@@ -3492,18 +3348,12 @@ type InputMediaDocument struct {
 
 // InputPaidMediaPhoto the paid media to send is a photo.
 type InputPaidMediaPhoto struct {
-	// Type of the media, must be photo
-	Type string `json:"type"`
-
 	// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Media FileArg `json:"media"`
 }
 
 // InputPaidMediaVideo the paid media to send is a video.
 type InputPaidMediaVideo struct {
-	// Type of the media, must be video
-	Type string `json:"type"`
-
 	// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass “attach://<file_attach_name>” to upload a new one using multipart/form-data under <file_attach_name> name. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Media FileArg `json:"media"`
 
@@ -3531,18 +3381,12 @@ type InputPaidMediaVideo struct {
 
 // InputProfilePhotoStatic a static profile photo in the .JPG format.
 type InputProfilePhotoStatic struct {
-	// Type of the profile photo, must be static
-	Type string `json:"type"`
-
 	// The static profile photo. Profile photos can't be reused and can only be uploaded as a new file, so you can pass “attach://<file_attach_name>” if the photo was uploaded using multipart/form-data under <file_attach_name>. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Photo InputFile `json:"photo"`
 }
 
 // InputProfilePhotoAnimated an animated profile photo in the MPEG4 format.
 type InputProfilePhotoAnimated struct {
-	// Type of the profile photo, must be animated
-	Type string `json:"type"`
-
 	// The animated profile photo. Profile photos can't be reused and can only be uploaded as a new file, so you can pass “attach://<file_attach_name>” if the photo was uploaded using multipart/form-data under <file_attach_name>. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Animation InputFile `json:"animation"`
 
@@ -3552,18 +3396,12 @@ type InputProfilePhotoAnimated struct {
 
 // InputStoryContentPhoto describes a photo to post as a story.
 type InputStoryContentPhoto struct {
-	// Type of the content, must be photo
-	Type string `json:"type"`
-
 	// The photo to post as a story. The photo must be of the size 1080x1920 and must not exceed 10 MB. The photo can't be reused and can only be uploaded as a new file, so you can pass “attach://<file_attach_name>” if the photo was uploaded using multipart/form-data under <file_attach_name>. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Photo InputFile `json:"photo"`
 }
 
 // InputStoryContentVideo describes a video to post as a story.
 type InputStoryContentVideo struct {
-	// Type of the content, must be video
-	Type string `json:"type"`
-
 	// The video to post as a story. The video must be of the size 720x1280, streamable, encoded with H.265 codec, with key frames added each second in the MPEG4 format, and must not exceed 30 MB. The video can't be reused and can only be uploaded as a new file, so you can pass “attach://<file_attach_name>” if the video was uploaded using multipart/form-data under <file_attach_name>. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
 	Video InputFile `json:"video"`
 
@@ -3711,9 +3549,6 @@ type InlineQueryResultsButton struct {
 
 // InlineQueryResultArticle represents a link to an article or web page.
 type InlineQueryResultArticle struct {
-	// Type of the result, must be article
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 Bytes
 	ID string `json:"id"`
 
@@ -3744,9 +3579,6 @@ type InlineQueryResultArticle struct {
 
 // InlineQueryResultPhoto represents a link to a photo. By default, this photo will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
 type InlineQueryResultPhoto struct {
-	// Type of the result, must be photo
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -3789,9 +3621,6 @@ type InlineQueryResultPhoto struct {
 
 // InlineQueryResultGIF represents a link to an animated GIF file. By default, this animated GIF file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultGIF struct {
-	// Type of the result, must be gif
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -3837,9 +3666,6 @@ type InlineQueryResultGIF struct {
 
 // InlineQueryResultMPEG4GIF represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultMPEG4GIF struct {
-	// Type of the result, must be mpeg4_gif
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -3885,9 +3711,6 @@ type InlineQueryResultMPEG4GIF struct {
 
 // InlineQueryResultVideo represents a link to a page containing an embedded video player or a video file. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
 type InlineQueryResultVideo struct {
-	// Type of the result, must be video
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -3936,9 +3759,6 @@ type InlineQueryResultVideo struct {
 
 // InlineQueryResultAudio represents a link to an MP3 audio file. By default, this audio file will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
 type InlineQueryResultAudio struct {
-	// Type of the result, must be audio
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -3972,9 +3792,6 @@ type InlineQueryResultAudio struct {
 
 // InlineQueryResultVoice represents a link to a voice recording in an .OGG container encoded with OPUS. By default, this voice recording will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the the voice message.
 type InlineQueryResultVoice struct {
-	// Type of the result, must be voice
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4005,9 +3822,6 @@ type InlineQueryResultVoice struct {
 
 // InlineQueryResultDocument represents a link to a file. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file. Currently, only .PDF and .ZIP files can be sent using this method.
 type InlineQueryResultDocument struct {
-	// Type of the result, must be document
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4050,9 +3864,6 @@ type InlineQueryResultDocument struct {
 
 // InlineQueryResultLocation represents a location on a map. By default, the location will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the location.
 type InlineQueryResultLocation struct {
-	// Type of the result, must be location
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 Bytes
 	ID string `json:"id"`
 
@@ -4095,9 +3906,6 @@ type InlineQueryResultLocation struct {
 
 // InlineQueryResultVenue represents a venue. By default, the venue will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the venue.
 type InlineQueryResultVenue struct {
-	// Type of the result, must be venue
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 Bytes
 	ID string `json:"id"`
 
@@ -4143,9 +3951,6 @@ type InlineQueryResultVenue struct {
 
 // InlineQueryResultContact represents a contact with a phone number. By default, this contact will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the contact.
 type InlineQueryResultContact struct {
-	// Type of the result, must be contact
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 Bytes
 	ID string `json:"id"`
 
@@ -4179,9 +3984,6 @@ type InlineQueryResultContact struct {
 
 // InlineQueryResultGame represents a [Game](https://core.telegram.org/bots/api#games).
 type InlineQueryResultGame struct {
-	// Type of the result, must be game
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4194,9 +3996,6 @@ type InlineQueryResultGame struct {
 
 // InlineQueryResultCachedPhoto represents a link to a photo stored on the Telegram servers. By default, this photo will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
 type InlineQueryResultCachedPhoto struct {
-	// Type of the result, must be photo
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4230,9 +4029,6 @@ type InlineQueryResultCachedPhoto struct {
 
 // InlineQueryResultCachedGIF represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
 type InlineQueryResultCachedGIF struct {
-	// Type of the result, must be gif
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4263,9 +4059,6 @@ type InlineQueryResultCachedGIF struct {
 
 // InlineQueryResultCachedMPEG4GIF represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultCachedMPEG4GIF struct {
-	// Type of the result, must be mpeg4_gif
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4296,9 +4089,6 @@ type InlineQueryResultCachedMPEG4GIF struct {
 
 // InlineQueryResultCachedSticker represents a link to a sticker stored on the Telegram servers. By default, this sticker will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the sticker.
 type InlineQueryResultCachedSticker struct {
-	// Type of the result, must be sticker
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4314,9 +4104,6 @@ type InlineQueryResultCachedSticker struct {
 
 // InlineQueryResultCachedDocument represents a link to a file stored on the Telegram servers. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file.
 type InlineQueryResultCachedDocument struct {
-	// Type of the result, must be document
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4347,9 +4134,6 @@ type InlineQueryResultCachedDocument struct {
 
 // InlineQueryResultCachedVideo represents a link to a video file stored on the Telegram servers. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
 type InlineQueryResultCachedVideo struct {
-	// Type of the result, must be video
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4383,9 +4167,6 @@ type InlineQueryResultCachedVideo struct {
 
 // InlineQueryResultCachedVoice represents a link to a voice message stored on the Telegram servers. By default, this voice message will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the voice message.
 type InlineQueryResultCachedVoice struct {
-	// Type of the result, must be voice
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4413,9 +4194,6 @@ type InlineQueryResultCachedVoice struct {
 
 // InlineQueryResultCachedAudio represents a link to an MP3 audio file stored on the Telegram servers. By default, this audio file will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
 type InlineQueryResultCachedAudio struct {
-	// Type of the result, must be audio
-	Type string `json:"type"`
-
 	// Unique identifier for this result, 1-64 bytes
 	ID string `json:"id"`
 
@@ -4723,9 +4501,6 @@ type SuccessfulPayment struct {
 
 // RefundedPayment this object contains basic information about a refunded payment.
 type RefundedPayment struct {
-	// Three-letter ISO 4217 [currency](/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90). Currently, always “XTR”
-	Currency string `json:"currency"`
-
 	// Total refunded price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45, total_amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
 	TotalAmount int `json:"total_amount"`
 
@@ -4788,16 +4563,10 @@ type PaidMediaPurchased struct {
 }
 
 // RevenueWithdrawalStatePending the withdrawal is in progress.
-type RevenueWithdrawalStatePending struct {
-	// Type of the state, always “pending”
-	Type string `json:"type"`
-}
+type RevenueWithdrawalStatePending struct{}
 
 // RevenueWithdrawalStateSucceeded the withdrawal succeeded.
 type RevenueWithdrawalStateSucceeded struct {
-	// Type of the state, always “succeeded”
-	Type string `json:"type"`
-
 	// Date the withdrawal was completed in Unix time
 	Date UnixTime `json:"date"`
 
@@ -4806,10 +4575,7 @@ type RevenueWithdrawalStateSucceeded struct {
 }
 
 // RevenueWithdrawalStateFailed the withdrawal failed and the transaction was refunded.
-type RevenueWithdrawalStateFailed struct {
-	// Type of the state, always “failed”
-	Type string `json:"type"`
-}
+type RevenueWithdrawalStateFailed struct{}
 
 // AffiliateInfo contains information about the affiliate that received a commission via this transaction.
 type AffiliateInfo struct {
@@ -4831,9 +4597,6 @@ type AffiliateInfo struct {
 
 // TransactionPartnerUser describes a transaction with a user.
 type TransactionPartnerUser struct {
-	// Type of the transaction partner, always “user”
-	Type string `json:"type"`
-
 	// Type of the transaction, currently one of “invoice_payment” for payments via invoices, “paid_media_payment” for payments for paid media, “gift_purchase” for gifts sent by the bot, “premium_purchase” for Telegram Premium subscriptions gifted by the bot, “business_account_transfer” for direct transfers from managed business accounts
 	TransactionType string `json:"transaction_type"`
 
@@ -4864,9 +4627,6 @@ type TransactionPartnerUser struct {
 
 // TransactionPartnerChat describes a transaction with a chat.
 type TransactionPartnerChat struct {
-	// Type of the transaction partner, always “chat”
-	Type string `json:"type"`
-
 	// Information about the chat
 	Chat Chat `json:"chat"`
 
@@ -4876,9 +4636,6 @@ type TransactionPartnerChat struct {
 
 // TransactionPartnerAffiliateProgram describes the affiliate program that issued the affiliate commission received via this transaction.
 type TransactionPartnerAffiliateProgram struct {
-	// Type of the transaction partner, always “affiliate_program”
-	Type string `json:"type"`
-
 	// Optional. Information about the bot that sponsored the affiliate program
 	SponsorUser *User `json:"sponsor_user,omitempty"`
 
@@ -4888,33 +4645,21 @@ type TransactionPartnerAffiliateProgram struct {
 
 // TransactionPartnerFragment describes a withdrawal transaction with Fragment.
 type TransactionPartnerFragment struct {
-	// Type of the transaction partner, always “fragment”
-	Type string `json:"type"`
-
 	// Optional. State of the transaction if the transaction is outgoing
 	WithdrawalState *RevenueWithdrawalState `json:"withdrawal_state,omitempty"`
 }
 
 // TransactionPartnerTelegramAds describes a withdrawal transaction to the Telegram Ads platform.
-type TransactionPartnerTelegramAds struct {
-	// Type of the transaction partner, always “telegram_ads”
-	Type string `json:"type"`
-}
+type TransactionPartnerTelegramAds struct{}
 
 // TransactionPartnerTelegramAPI describes a transaction with payment for [paid broadcasting](https://core.telegram.org/bots/api#paid-broadcasts).
 type TransactionPartnerTelegramAPI struct {
-	// Type of the transaction partner, always “telegram_api”
-	Type string `json:"type"`
-
 	// The number of successful requests that exceeded regular limits and were therefore billed
 	RequestCount int `json:"request_count"`
 }
 
 // TransactionPartnerOther describes a transaction with an unknown source or recipient.
-type TransactionPartnerOther struct {
-	// Type of the transaction partner, always “other”
-	Type string `json:"type"`
-}
+type TransactionPartnerOther struct{}
 
 // StarTransaction describes a Telegram Star transaction. Note that if the buyer initiates a chargeback with the payment provider from whom they acquired Stars (e.g., Apple, Google) following this transaction, the refunded Stars will be deducted from the bot's balance. This is outside of Telegram's control.
 type StarTransaction struct {
@@ -5014,9 +4759,6 @@ type EncryptedCredentials struct {
 
 // PassportElementErrorDataField represents an issue in one of the data fields that was provided by the user. The error is considered resolved when the field's value changes.
 type PassportElementErrorDataField struct {
-	// Error source, must be data
-	Source string `json:"source"`
-
 	// The section of the user's Telegram Passport which has the error, one of “personal_details”, “passport”, “driver_license”, “identity_card”, “internal_passport”, “address”
 	Type string `json:"type"`
 
@@ -5032,9 +4774,6 @@ type PassportElementErrorDataField struct {
 
 // PassportElementErrorFrontSide represents an issue with the front side of a document. The error is considered resolved when the file with the front side of the document changes.
 type PassportElementErrorFrontSide struct {
-	// Error source, must be front_side
-	Source string `json:"source"`
-
 	// The section of the user's Telegram Passport which has the issue, one of “passport”, “driver_license”, “identity_card”, “internal_passport”
 	Type string `json:"type"`
 
@@ -5047,9 +4786,6 @@ type PassportElementErrorFrontSide struct {
 
 // PassportElementErrorReverseSide represents an issue with the reverse side of a document. The error is considered resolved when the file with reverse side of the document changes.
 type PassportElementErrorReverseSide struct {
-	// Error source, must be reverse_side
-	Source string `json:"source"`
-
 	// The section of the user's Telegram Passport which has the issue, one of “driver_license”, “identity_card”
 	Type string `json:"type"`
 
@@ -5062,9 +4798,6 @@ type PassportElementErrorReverseSide struct {
 
 // PassportElementErrorSelfie represents an issue with the selfie with a document. The error is considered resolved when the file with the selfie changes.
 type PassportElementErrorSelfie struct {
-	// Error source, must be selfie
-	Source string `json:"source"`
-
 	// The section of the user's Telegram Passport which has the issue, one of “passport”, “driver_license”, “identity_card”, “internal_passport”
 	Type string `json:"type"`
 
@@ -5077,9 +4810,6 @@ type PassportElementErrorSelfie struct {
 
 // PassportElementErrorFile represents an issue with a document scan. The error is considered resolved when the file with the document scan changes.
 type PassportElementErrorFile struct {
-	// Error source, must be file
-	Source string `json:"source"`
-
 	// The section of the user's Telegram Passport which has the issue, one of “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”, “temporary_registration”
 	Type string `json:"type"`
 
@@ -5092,9 +4822,6 @@ type PassportElementErrorFile struct {
 
 // PassportElementErrorFiles represents an issue with a list of scans. The error is considered resolved when the list of files containing the scans changes.
 type PassportElementErrorFiles struct {
-	// Error source, must be files
-	Source string `json:"source"`
-
 	// The section of the user's Telegram Passport which has the issue, one of “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”, “temporary_registration”
 	Type string `json:"type"`
 
@@ -5107,9 +4834,6 @@ type PassportElementErrorFiles struct {
 
 // PassportElementErrorTranslationFile represents an issue with one of the files that constitute the translation of a document. The error is considered resolved when the file changes.
 type PassportElementErrorTranslationFile struct {
-	// Error source, must be translation_file
-	Source string `json:"source"`
-
 	// Type of element of the user's Telegram Passport which has the issue, one of “passport”, “driver_license”, “identity_card”, “internal_passport”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”, “temporary_registration”
 	Type string `json:"type"`
 
@@ -5122,9 +4846,6 @@ type PassportElementErrorTranslationFile struct {
 
 // PassportElementErrorTranslationFiles represents an issue with the translated version of a document. The error is considered resolved when a file with the document translation change.
 type PassportElementErrorTranslationFiles struct {
-	// Error source, must be translation_files
-	Source string `json:"source"`
-
 	// Type of element of the user's Telegram Passport which has the issue, one of “passport”, “driver_license”, “identity_card”, “internal_passport”, “utility_bill”, “bank_statement”, “rental_agreement”, “passport_registration”, “temporary_registration”
 	Type string `json:"type"`
 
@@ -5137,9 +4858,6 @@ type PassportElementErrorTranslationFiles struct {
 
 // PassportElementErrorUnspecified represents an issue in an unspecified place. The error is considered resolved when new data is added.
 type PassportElementErrorUnspecified struct {
-	// Error source, must be unspecified
-	Source string `json:"source"`
-
 	// Type of element of the user's Telegram Passport which has the issue
 	Type string `json:"type"`
 
@@ -5277,17 +4995,25 @@ func (u *MessageOrigin) UnmarshalJSON(data []byte) error {
 func (u MessageOrigin) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.User != nil:
-		u.User.Type = "user"
-		return json.Marshal(u.User)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*MessageOriginUser
+		}{D: "user", MessageOriginUser: u.User})
 	case u.HiddenUser != nil:
-		u.HiddenUser.Type = "hidden_user"
-		return json.Marshal(u.HiddenUser)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*MessageOriginHiddenUser
+		}{D: "hidden_user", MessageOriginHiddenUser: u.HiddenUser})
 	case u.Chat != nil:
-		u.Chat.Type = "chat"
-		return json.Marshal(u.Chat)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*MessageOriginChat
+		}{D: "chat", MessageOriginChat: u.Chat})
 	case u.Channel != nil:
-		u.Channel.Type = "channel"
-		return json.Marshal(u.Channel)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*MessageOriginChannel
+		}{D: "channel", MessageOriginChannel: u.Channel})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -5392,14 +5118,20 @@ func (u *PaidMedia) UnmarshalJSON(data []byte) error {
 func (u PaidMedia) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Preview != nil:
-		u.Preview.Type = "preview"
-		return json.Marshal(u.Preview)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*PaidMediaPreview
+		}{D: "preview", PaidMediaPreview: u.Preview})
 	case u.Photo != nil:
-		u.Photo.Type = "photo"
-		return json.Marshal(u.Photo)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*PaidMediaPhoto
+		}{D: "photo", PaidMediaPhoto: u.Photo})
 	case u.Video != nil:
-		u.Video.Type = "video"
-		return json.Marshal(u.Video)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*PaidMediaVideo
+		}{D: "video", PaidMediaVideo: u.Video})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -5502,14 +5234,20 @@ func (u *BackgroundFill) UnmarshalJSON(data []byte) error {
 func (u BackgroundFill) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Solid != nil:
-		u.Solid.Type = "solid"
-		return json.Marshal(u.Solid)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundFillSolid
+		}{D: "solid", BackgroundFillSolid: u.Solid})
 	case u.Gradient != nil:
-		u.Gradient.Type = "gradient"
-		return json.Marshal(u.Gradient)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundFillGradient
+		}{D: "gradient", BackgroundFillGradient: u.Gradient})
 	case u.FreeformGradient != nil:
-		u.FreeformGradient.Type = "freeform_gradient"
-		return json.Marshal(u.FreeformGradient)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundFillFreeformGradient
+		}{D: "freeform_gradient", BackgroundFillFreeformGradient: u.FreeformGradient})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -5620,17 +5358,25 @@ func (u *BackgroundType) UnmarshalJSON(data []byte) error {
 func (u BackgroundType) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Fill != nil:
-		u.Fill.Type = "fill"
-		return json.Marshal(u.Fill)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundTypeFill
+		}{D: "fill", BackgroundTypeFill: u.Fill})
 	case u.Wallpaper != nil:
-		u.Wallpaper.Type = "wallpaper"
-		return json.Marshal(u.Wallpaper)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundTypeWallpaper
+		}{D: "wallpaper", BackgroundTypeWallpaper: u.Wallpaper})
 	case u.Pattern != nil:
-		u.Pattern.Type = "pattern"
-		return json.Marshal(u.Pattern)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundTypePattern
+		}{D: "pattern", BackgroundTypePattern: u.Pattern})
 	case u.ChatTheme != nil:
-		u.ChatTheme.Type = "chat_theme"
-		return json.Marshal(u.ChatTheme)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BackgroundTypeChatTheme
+		}{D: "chat_theme", BackgroundTypeChatTheme: u.ChatTheme})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -5759,23 +5505,35 @@ func (u *ChatMember) UnmarshalJSON(data []byte) error {
 func (u ChatMember) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Owner != nil:
-		u.Owner.Status = "creator"
-		return json.Marshal(u.Owner)
+		return json.Marshal(struct {
+			D string `json:"status"`
+			*ChatMemberOwner
+		}{D: "creator", ChatMemberOwner: u.Owner})
 	case u.Administrator != nil:
-		u.Administrator.Status = "administrator"
-		return json.Marshal(u.Administrator)
+		return json.Marshal(struct {
+			D string `json:"status"`
+			*ChatMemberAdministrator
+		}{D: "administrator", ChatMemberAdministrator: u.Administrator})
 	case u.Member != nil:
-		u.Member.Status = "member"
-		return json.Marshal(u.Member)
+		return json.Marshal(struct {
+			D string `json:"status"`
+			*ChatMemberMember
+		}{D: "member", ChatMemberMember: u.Member})
 	case u.Restricted != nil:
-		u.Restricted.Status = "restricted"
-		return json.Marshal(u.Restricted)
+		return json.Marshal(struct {
+			D string `json:"status"`
+			*ChatMemberRestricted
+		}{D: "restricted", ChatMemberRestricted: u.Restricted})
 	case u.Left != nil:
-		u.Left.Status = "left"
-		return json.Marshal(u.Left)
+		return json.Marshal(struct {
+			D string `json:"status"`
+			*ChatMemberLeft
+		}{D: "left", ChatMemberLeft: u.Left})
 	case u.Banned != nil:
-		u.Banned.Status = "kicked"
-		return json.Marshal(u.Banned)
+		return json.Marshal(struct {
+			D string `json:"status"`
+			*ChatMemberBanned
+		}{D: "kicked", ChatMemberBanned: u.Banned})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -5900,20 +5658,30 @@ func (u *StoryAreaType) UnmarshalJSON(data []byte) error {
 func (u StoryAreaType) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Location != nil:
-		u.Location.Type = "location"
-		return json.Marshal(u.Location)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*StoryAreaTypeLocation
+		}{D: "location", StoryAreaTypeLocation: u.Location})
 	case u.SuggestedReaction != nil:
-		u.SuggestedReaction.Type = "suggested_reaction"
-		return json.Marshal(u.SuggestedReaction)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*StoryAreaTypeSuggestedReaction
+		}{D: "suggested_reaction", StoryAreaTypeSuggestedReaction: u.SuggestedReaction})
 	case u.Link != nil:
-		u.Link.Type = "link"
-		return json.Marshal(u.Link)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*StoryAreaTypeLink
+		}{D: "link", StoryAreaTypeLink: u.Link})
 	case u.Weather != nil:
-		u.Weather.Type = "weather"
-		return json.Marshal(u.Weather)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*StoryAreaTypeWeather
+		}{D: "weather", StoryAreaTypeWeather: u.Weather})
 	case u.UniqueGift != nil:
-		u.UniqueGift.Type = "unique_gift"
-		return json.Marshal(u.UniqueGift)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*StoryAreaTypeUniqueGift
+		}{D: "unique_gift", StoryAreaTypeUniqueGift: u.UniqueGift})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -5946,28 +5714,41 @@ func (u *StoryAreaType) IsUnknown() bool {
 }
 
 // NewStoryAreaTypeLocation creates a StoryAreaType containing a StoryAreaTypeLocation.
-func NewStoryAreaTypeLocation(v StoryAreaTypeLocation) StoryAreaType {
-	return StoryAreaType{Location: &v}
+func NewStoryAreaTypeLocation(latitude float64, longitude float64) StoryAreaType {
+	return StoryAreaType{Location: &StoryAreaTypeLocation{
+		Latitude:  latitude,
+		Longitude: longitude,
+	}}
 }
 
 // NewStoryAreaTypeSuggestedReaction creates a StoryAreaType containing a StoryAreaTypeSuggestedReaction.
-func NewStoryAreaTypeSuggestedReaction(v StoryAreaTypeSuggestedReaction) StoryAreaType {
-	return StoryAreaType{SuggestedReaction: &v}
+func NewStoryAreaTypeSuggestedReaction(reactionType ReactionType) StoryAreaType {
+	return StoryAreaType{SuggestedReaction: &StoryAreaTypeSuggestedReaction{
+		ReactionType: reactionType,
+	}}
 }
 
 // NewStoryAreaTypeLink creates a StoryAreaType containing a StoryAreaTypeLink.
-func NewStoryAreaTypeLink(v StoryAreaTypeLink) StoryAreaType {
-	return StoryAreaType{Link: &v}
+func NewStoryAreaTypeLink(url string) StoryAreaType {
+	return StoryAreaType{Link: &StoryAreaTypeLink{
+		URL: url,
+	}}
 }
 
 // NewStoryAreaTypeWeather creates a StoryAreaType containing a StoryAreaTypeWeather.
-func NewStoryAreaTypeWeather(v StoryAreaTypeWeather) StoryAreaType {
-	return StoryAreaType{Weather: &v}
+func NewStoryAreaTypeWeather(temperature float64, emoji string, backgroundColor int) StoryAreaType {
+	return StoryAreaType{Weather: &StoryAreaTypeWeather{
+		Temperature:     temperature,
+		Emoji:           emoji,
+		BackgroundColor: backgroundColor,
+	}}
 }
 
 // NewStoryAreaTypeUniqueGift creates a StoryAreaType containing a StoryAreaTypeUniqueGift.
-func NewStoryAreaTypeUniqueGift(v StoryAreaTypeUniqueGift) StoryAreaType {
-	return StoryAreaType{UniqueGift: &v}
+func NewStoryAreaTypeUniqueGift(name string) StoryAreaType {
+	return StoryAreaType{UniqueGift: &StoryAreaTypeUniqueGift{
+		Name: name,
+	}}
 }
 
 // ReactionTypeType represents the type of ReactionType.
@@ -6045,14 +5826,20 @@ func (u *ReactionType) UnmarshalJSON(data []byte) error {
 func (u ReactionType) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Emoji != nil:
-		u.Emoji.Type = "emoji"
-		return json.Marshal(u.Emoji)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*ReactionTypeEmoji
+		}{D: "emoji", ReactionTypeEmoji: u.Emoji})
 	case u.CustomEmoji != nil:
-		u.CustomEmoji.Type = "custom_emoji"
-		return json.Marshal(u.CustomEmoji)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*ReactionTypeCustomEmoji
+		}{D: "custom_emoji", ReactionTypeCustomEmoji: u.CustomEmoji})
 	case u.Paid != nil:
-		u.Paid.Type = "paid"
-		return json.Marshal(u.Paid)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*ReactionTypePaid
+		}{D: "paid", ReactionTypePaid: u.Paid})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -6081,18 +5868,22 @@ func (u *ReactionType) IsUnknown() bool {
 }
 
 // NewReactionTypeEmoji creates a ReactionType containing a ReactionTypeEmoji.
-func NewReactionTypeEmoji(v ReactionTypeEmoji) ReactionType {
-	return ReactionType{Emoji: &v}
+func NewReactionTypeEmoji(emoji string) ReactionType {
+	return ReactionType{Emoji: &ReactionTypeEmoji{
+		Emoji: emoji,
+	}}
 }
 
 // NewReactionTypeCustomEmoji creates a ReactionType containing a ReactionTypeCustomEmoji.
-func NewReactionTypeCustomEmoji(v ReactionTypeCustomEmoji) ReactionType {
-	return ReactionType{CustomEmoji: &v}
+func NewReactionTypeCustomEmoji(customEmojiID string) ReactionType {
+	return ReactionType{CustomEmoji: &ReactionTypeCustomEmoji{
+		CustomEmojiID: customEmojiID,
+	}}
 }
 
 // NewReactionTypePaid creates a ReactionType containing a ReactionTypePaid.
-func NewReactionTypePaid(v ReactionTypePaid) ReactionType {
-	return ReactionType{Paid: &v}
+func NewReactionTypePaid() ReactionType {
+	return ReactionType{Paid: &ReactionTypePaid{}}
 }
 
 // OwnedGiftType represents the type of OwnedGift.
@@ -6162,11 +5953,15 @@ func (u *OwnedGift) UnmarshalJSON(data []byte) error {
 func (u OwnedGift) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Regular != nil:
-		u.Regular.Type = "regular"
-		return json.Marshal(u.Regular)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*OwnedGiftRegular
+		}{D: "regular", OwnedGiftRegular: u.Regular})
 	case u.Unique != nil:
-		u.Unique.Type = "unique"
-		return json.Marshal(u.Unique)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*OwnedGiftUnique
+		}{D: "unique", OwnedGiftUnique: u.Unique})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -6299,26 +6094,40 @@ func (u *BotCommandScope) UnmarshalJSON(data []byte) error {
 func (u BotCommandScope) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Default != nil:
-		u.Default.Type = "default"
-		return json.Marshal(u.Default)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BotCommandScopeDefault
+		}{D: "default", BotCommandScopeDefault: u.Default})
 	case u.AllPrivateChats != nil:
-		u.AllPrivateChats.Type = "all_private_chats"
-		return json.Marshal(u.AllPrivateChats)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BotCommandScopeAllPrivateChats
+		}{D: "all_private_chats", BotCommandScopeAllPrivateChats: u.AllPrivateChats})
 	case u.AllGroupChats != nil:
-		u.AllGroupChats.Type = "all_group_chats"
-		return json.Marshal(u.AllGroupChats)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BotCommandScopeAllGroupChats
+		}{D: "all_group_chats", BotCommandScopeAllGroupChats: u.AllGroupChats})
 	case u.AllChatAdministrators != nil:
-		u.AllChatAdministrators.Type = "all_chat_administrators"
-		return json.Marshal(u.AllChatAdministrators)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BotCommandScopeAllChatAdministrators
+		}{D: "all_chat_administrators", BotCommandScopeAllChatAdministrators: u.AllChatAdministrators})
 	case u.Chat != nil:
-		u.Chat.Type = "chat"
-		return json.Marshal(u.Chat)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BotCommandScopeChat
+		}{D: "chat", BotCommandScopeChat: u.Chat})
 	case u.ChatAdministrators != nil:
-		u.ChatAdministrators.Type = "chat_administrators"
-		return json.Marshal(u.ChatAdministrators)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BotCommandScopeChatAdministrators
+		}{D: "chat_administrators", BotCommandScopeChatAdministrators: u.ChatAdministrators})
 	case u.ChatMember != nil:
-		u.ChatMember.Type = "chat_member"
-		return json.Marshal(u.ChatMember)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*BotCommandScopeChatMember
+		}{D: "chat_member", BotCommandScopeChatMember: u.ChatMember})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -6355,38 +6164,45 @@ func (u *BotCommandScope) IsUnknown() bool {
 }
 
 // NewBotCommandScopeDefault creates a BotCommandScope containing a BotCommandScopeDefault.
-func NewBotCommandScopeDefault(v BotCommandScopeDefault) BotCommandScope {
-	return BotCommandScope{Default: &v}
+func NewBotCommandScopeDefault() BotCommandScope {
+	return BotCommandScope{Default: &BotCommandScopeDefault{}}
 }
 
 // NewBotCommandScopeAllPrivateChats creates a BotCommandScope containing a BotCommandScopeAllPrivateChats.
-func NewBotCommandScopeAllPrivateChats(v BotCommandScopeAllPrivateChats) BotCommandScope {
-	return BotCommandScope{AllPrivateChats: &v}
+func NewBotCommandScopeAllPrivateChats() BotCommandScope {
+	return BotCommandScope{AllPrivateChats: &BotCommandScopeAllPrivateChats{}}
 }
 
 // NewBotCommandScopeAllGroupChats creates a BotCommandScope containing a BotCommandScopeAllGroupChats.
-func NewBotCommandScopeAllGroupChats(v BotCommandScopeAllGroupChats) BotCommandScope {
-	return BotCommandScope{AllGroupChats: &v}
+func NewBotCommandScopeAllGroupChats() BotCommandScope {
+	return BotCommandScope{AllGroupChats: &BotCommandScopeAllGroupChats{}}
 }
 
 // NewBotCommandScopeAllChatAdministrators creates a BotCommandScope containing a BotCommandScopeAllChatAdministrators.
-func NewBotCommandScopeAllChatAdministrators(v BotCommandScopeAllChatAdministrators) BotCommandScope {
-	return BotCommandScope{AllChatAdministrators: &v}
+func NewBotCommandScopeAllChatAdministrators() BotCommandScope {
+	return BotCommandScope{AllChatAdministrators: &BotCommandScopeAllChatAdministrators{}}
 }
 
 // NewBotCommandScopeChat creates a BotCommandScope containing a BotCommandScopeChat.
-func NewBotCommandScopeChat(v BotCommandScopeChat) BotCommandScope {
-	return BotCommandScope{Chat: &v}
+func NewBotCommandScopeChat(chatID ChatID) BotCommandScope {
+	return BotCommandScope{Chat: &BotCommandScopeChat{
+		ChatID: chatID,
+	}}
 }
 
 // NewBotCommandScopeChatAdministrators creates a BotCommandScope containing a BotCommandScopeChatAdministrators.
-func NewBotCommandScopeChatAdministrators(v BotCommandScopeChatAdministrators) BotCommandScope {
-	return BotCommandScope{ChatAdministrators: &v}
+func NewBotCommandScopeChatAdministrators(chatID ChatID) BotCommandScope {
+	return BotCommandScope{ChatAdministrators: &BotCommandScopeChatAdministrators{
+		ChatID: chatID,
+	}}
 }
 
 // NewBotCommandScopeChatMember creates a BotCommandScope containing a BotCommandScopeChatMember.
-func NewBotCommandScopeChatMember(v BotCommandScopeChatMember) BotCommandScope {
-	return BotCommandScope{ChatMember: &v}
+func NewBotCommandScopeChatMember(chatID ChatID, userID UserID) BotCommandScope {
+	return BotCommandScope{ChatMember: &BotCommandScopeChatMember{
+		ChatID: chatID,
+		UserID: userID,
+	}}
 }
 
 // MenuButtonType represents the type of MenuButton.
@@ -6465,14 +6281,20 @@ func (u *MenuButton) UnmarshalJSON(data []byte) error {
 func (u MenuButton) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Commands != nil:
-		u.Commands.Type = "commands"
-		return json.Marshal(u.Commands)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*MenuButtonCommands
+		}{D: "commands", MenuButtonCommands: u.Commands})
 	case u.WebApp != nil:
-		u.WebApp.Type = "web_app"
-		return json.Marshal(u.WebApp)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*MenuButtonWebApp
+		}{D: "web_app", MenuButtonWebApp: u.WebApp})
 	case u.Default != nil:
-		u.Default.Type = "default"
-		return json.Marshal(u.Default)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*MenuButtonDefault
+		}{D: "default", MenuButtonDefault: u.Default})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -6501,18 +6323,21 @@ func (u *MenuButton) IsUnknown() bool {
 }
 
 // NewMenuButtonCommands creates a MenuButton containing a MenuButtonCommands.
-func NewMenuButtonCommands(v MenuButtonCommands) MenuButton {
-	return MenuButton{Commands: &v}
+func NewMenuButtonCommands() MenuButton {
+	return MenuButton{Commands: &MenuButtonCommands{}}
 }
 
 // NewMenuButtonWebApp creates a MenuButton containing a MenuButtonWebApp.
-func NewMenuButtonWebApp(v MenuButtonWebApp) MenuButton {
-	return MenuButton{WebApp: &v}
+func NewMenuButtonWebApp(text string, webApp WebAppInfo) MenuButton {
+	return MenuButton{WebApp: &MenuButtonWebApp{
+		Text:   text,
+		WebApp: webApp,
+	}}
 }
 
 // NewMenuButtonDefault creates a MenuButton containing a MenuButtonDefault.
-func NewMenuButtonDefault(v MenuButtonDefault) MenuButton {
-	return MenuButton{Default: &v}
+func NewMenuButtonDefault() MenuButton {
+	return MenuButton{Default: &MenuButtonDefault{}}
 }
 
 // ChatBoostSourceSource represents the type of ChatBoostSource.
@@ -6590,14 +6415,20 @@ func (u *ChatBoostSource) UnmarshalJSON(data []byte) error {
 func (u ChatBoostSource) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Premium != nil:
-		u.Premium.Source = "premium"
-		return json.Marshal(u.Premium)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*ChatBoostSourcePremium
+		}{D: "premium", ChatBoostSourcePremium: u.Premium})
 	case u.GiftCode != nil:
-		u.GiftCode.Source = "gift_code"
-		return json.Marshal(u.GiftCode)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*ChatBoostSourceGiftCode
+		}{D: "gift_code", ChatBoostSourceGiftCode: u.GiftCode})
 	case u.Giveaway != nil:
-		u.Giveaway.Source = "giveaway"
-		return json.Marshal(u.Giveaway)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*ChatBoostSourceGiveaway
+		}{D: "giveaway", ChatBoostSourceGiveaway: u.Giveaway})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -6716,20 +6547,30 @@ func (u *InputMedia) UnmarshalJSON(data []byte) error {
 func (u InputMedia) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Animation != nil:
-		u.Animation.Type = "animation"
-		return json.Marshal(u.Animation)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputMediaAnimation
+		}{D: "animation", InputMediaAnimation: u.Animation})
 	case u.Document != nil:
-		u.Document.Type = "document"
-		return json.Marshal(u.Document)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputMediaDocument
+		}{D: "document", InputMediaDocument: u.Document})
 	case u.Audio != nil:
-		u.Audio.Type = "audio"
-		return json.Marshal(u.Audio)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputMediaAudio
+		}{D: "audio", InputMediaAudio: u.Audio})
 	case u.Photo != nil:
-		u.Photo.Type = "photo"
-		return json.Marshal(u.Photo)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputMediaPhoto
+		}{D: "photo", InputMediaPhoto: u.Photo})
 	case u.Video != nil:
-		u.Video.Type = "video"
-		return json.Marshal(u.Video)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputMediaVideo
+		}{D: "video", InputMediaVideo: u.Video})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -6762,28 +6603,38 @@ func (u *InputMedia) IsUnknown() bool {
 }
 
 // NewInputMediaAnimation creates a InputMedia containing a InputMediaAnimation.
-func NewInputMediaAnimation(v InputMediaAnimation) InputMedia {
-	return InputMedia{Animation: &v}
+func NewInputMediaAnimation(media FileArg) InputMedia {
+	return InputMedia{Animation: &InputMediaAnimation{
+		Media: media,
+	}}
 }
 
 // NewInputMediaDocument creates a InputMedia containing a InputMediaDocument.
-func NewInputMediaDocument(v InputMediaDocument) InputMedia {
-	return InputMedia{Document: &v}
+func NewInputMediaDocument(media FileArg) InputMedia {
+	return InputMedia{Document: &InputMediaDocument{
+		Media: media,
+	}}
 }
 
 // NewInputMediaAudio creates a InputMedia containing a InputMediaAudio.
-func NewInputMediaAudio(v InputMediaAudio) InputMedia {
-	return InputMedia{Audio: &v}
+func NewInputMediaAudio(media FileArg) InputMedia {
+	return InputMedia{Audio: &InputMediaAudio{
+		Media: media,
+	}}
 }
 
 // NewInputMediaPhoto creates a InputMedia containing a InputMediaPhoto.
-func NewInputMediaPhoto(v InputMediaPhoto) InputMedia {
-	return InputMedia{Photo: &v}
+func NewInputMediaPhoto(media FileArg) InputMedia {
+	return InputMedia{Photo: &InputMediaPhoto{
+		Media: media,
+	}}
 }
 
 // NewInputMediaVideo creates a InputMedia containing a InputMediaVideo.
-func NewInputMediaVideo(v InputMediaVideo) InputMedia {
-	return InputMedia{Video: &v}
+func NewInputMediaVideo(media FileArg) InputMedia {
+	return InputMedia{Video: &InputMediaVideo{
+		Media: media,
+	}}
 }
 
 // InputPaidMediaType represents the type of InputPaidMedia.
@@ -6853,11 +6704,15 @@ func (u *InputPaidMedia) UnmarshalJSON(data []byte) error {
 func (u InputPaidMedia) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Photo != nil:
-		u.Photo.Type = "photo"
-		return json.Marshal(u.Photo)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputPaidMediaPhoto
+		}{D: "photo", InputPaidMediaPhoto: u.Photo})
 	case u.Video != nil:
-		u.Video.Type = "video"
-		return json.Marshal(u.Video)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputPaidMediaVideo
+		}{D: "video", InputPaidMediaVideo: u.Video})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -6884,13 +6739,17 @@ func (u *InputPaidMedia) IsUnknown() bool {
 }
 
 // NewInputPaidMediaPhoto creates a InputPaidMedia containing a InputPaidMediaPhoto.
-func NewInputPaidMediaPhoto(v InputPaidMediaPhoto) InputPaidMedia {
-	return InputPaidMedia{Photo: &v}
+func NewInputPaidMediaPhoto(media FileArg) InputPaidMedia {
+	return InputPaidMedia{Photo: &InputPaidMediaPhoto{
+		Media: media,
+	}}
 }
 
 // NewInputPaidMediaVideo creates a InputPaidMedia containing a InputPaidMediaVideo.
-func NewInputPaidMediaVideo(v InputPaidMediaVideo) InputPaidMedia {
-	return InputPaidMedia{Video: &v}
+func NewInputPaidMediaVideo(media FileArg) InputPaidMedia {
+	return InputPaidMedia{Video: &InputPaidMediaVideo{
+		Media: media,
+	}}
 }
 
 // InputProfilePhotoType represents the type of InputProfilePhoto.
@@ -6960,11 +6819,15 @@ func (u *InputProfilePhoto) UnmarshalJSON(data []byte) error {
 func (u InputProfilePhoto) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Static != nil:
-		u.Static.Type = "static"
-		return json.Marshal(u.Static)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputProfilePhotoStatic
+		}{D: "static", InputProfilePhotoStatic: u.Static})
 	case u.Animated != nil:
-		u.Animated.Type = "animated"
-		return json.Marshal(u.Animated)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputProfilePhotoAnimated
+		}{D: "animated", InputProfilePhotoAnimated: u.Animated})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -6991,13 +6854,17 @@ func (u *InputProfilePhoto) IsUnknown() bool {
 }
 
 // NewInputProfilePhotoStatic creates a InputProfilePhoto containing a InputProfilePhotoStatic.
-func NewInputProfilePhotoStatic(v InputProfilePhotoStatic) InputProfilePhoto {
-	return InputProfilePhoto{Static: &v}
+func NewInputProfilePhotoStatic(photo InputFile) InputProfilePhoto {
+	return InputProfilePhoto{Static: &InputProfilePhotoStatic{
+		Photo: photo,
+	}}
 }
 
 // NewInputProfilePhotoAnimated creates a InputProfilePhoto containing a InputProfilePhotoAnimated.
-func NewInputProfilePhotoAnimated(v InputProfilePhotoAnimated) InputProfilePhoto {
-	return InputProfilePhoto{Animated: &v}
+func NewInputProfilePhotoAnimated(animation InputFile) InputProfilePhoto {
+	return InputProfilePhoto{Animated: &InputProfilePhotoAnimated{
+		Animation: animation,
+	}}
 }
 
 // InputStoryContentType represents the type of InputStoryContent.
@@ -7067,11 +6934,15 @@ func (u *InputStoryContent) UnmarshalJSON(data []byte) error {
 func (u InputStoryContent) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Photo != nil:
-		u.Photo.Type = "photo"
-		return json.Marshal(u.Photo)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputStoryContentPhoto
+		}{D: "photo", InputStoryContentPhoto: u.Photo})
 	case u.Video != nil:
-		u.Video.Type = "video"
-		return json.Marshal(u.Video)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InputStoryContentVideo
+		}{D: "video", InputStoryContentVideo: u.Video})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -7098,13 +6969,17 @@ func (u *InputStoryContent) IsUnknown() bool {
 }
 
 // NewInputStoryContentPhoto creates a InputStoryContent containing a InputStoryContentPhoto.
-func NewInputStoryContentPhoto(v InputStoryContentPhoto) InputStoryContent {
-	return InputStoryContent{Photo: &v}
+func NewInputStoryContentPhoto(photo InputFile) InputStoryContent {
+	return InputStoryContent{Photo: &InputStoryContentPhoto{
+		Photo: photo,
+	}}
 }
 
 // NewInputStoryContentVideo creates a InputStoryContent containing a InputStoryContentVideo.
-func NewInputStoryContentVideo(v InputStoryContentVideo) InputStoryContent {
-	return InputStoryContent{Video: &v}
+func NewInputStoryContentVideo(video InputFile) InputStoryContent {
+	return InputStoryContent{Video: &InputStoryContentVideo{
+		Video: video,
+	}}
 }
 
 // InlineQueryResultType represents the type of InlineQueryResult.
@@ -7194,65 +7069,105 @@ type InlineQueryResult struct {
 func (u InlineQueryResult) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.CachedAudio != nil:
-		u.CachedAudio.Type = "audio"
-		return json.Marshal(u.CachedAudio)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultCachedAudio
+		}{D: "audio", InlineQueryResultCachedAudio: u.CachedAudio})
 	case u.CachedDocument != nil:
-		u.CachedDocument.Type = "document"
-		return json.Marshal(u.CachedDocument)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultCachedDocument
+		}{D: "document", InlineQueryResultCachedDocument: u.CachedDocument})
 	case u.CachedGIF != nil:
-		u.CachedGIF.Type = "gif"
-		return json.Marshal(u.CachedGIF)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultCachedGIF
+		}{D: "gif", InlineQueryResultCachedGIF: u.CachedGIF})
 	case u.CachedMPEG4GIF != nil:
-		u.CachedMPEG4GIF.Type = "mpeg4_gif"
-		return json.Marshal(u.CachedMPEG4GIF)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultCachedMPEG4GIF
+		}{D: "mpeg4_gif", InlineQueryResultCachedMPEG4GIF: u.CachedMPEG4GIF})
 	case u.CachedPhoto != nil:
-		u.CachedPhoto.Type = "photo"
-		return json.Marshal(u.CachedPhoto)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultCachedPhoto
+		}{D: "photo", InlineQueryResultCachedPhoto: u.CachedPhoto})
 	case u.CachedSticker != nil:
-		u.CachedSticker.Type = "sticker"
-		return json.Marshal(u.CachedSticker)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultCachedSticker
+		}{D: "sticker", InlineQueryResultCachedSticker: u.CachedSticker})
 	case u.CachedVideo != nil:
-		u.CachedVideo.Type = "video"
-		return json.Marshal(u.CachedVideo)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultCachedVideo
+		}{D: "video", InlineQueryResultCachedVideo: u.CachedVideo})
 	case u.CachedVoice != nil:
-		u.CachedVoice.Type = "voice"
-		return json.Marshal(u.CachedVoice)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultCachedVoice
+		}{D: "voice", InlineQueryResultCachedVoice: u.CachedVoice})
 	case u.Article != nil:
-		u.Article.Type = "article"
-		return json.Marshal(u.Article)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultArticle
+		}{D: "article", InlineQueryResultArticle: u.Article})
 	case u.Audio != nil:
-		u.Audio.Type = "audio"
-		return json.Marshal(u.Audio)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultAudio
+		}{D: "audio", InlineQueryResultAudio: u.Audio})
 	case u.Contact != nil:
-		u.Contact.Type = "contact"
-		return json.Marshal(u.Contact)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultContact
+		}{D: "contact", InlineQueryResultContact: u.Contact})
 	case u.Game != nil:
-		u.Game.Type = "game"
-		return json.Marshal(u.Game)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultGame
+		}{D: "game", InlineQueryResultGame: u.Game})
 	case u.Document != nil:
-		u.Document.Type = "document"
-		return json.Marshal(u.Document)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultDocument
+		}{D: "document", InlineQueryResultDocument: u.Document})
 	case u.GIF != nil:
-		u.GIF.Type = "gif"
-		return json.Marshal(u.GIF)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultGIF
+		}{D: "gif", InlineQueryResultGIF: u.GIF})
 	case u.Location != nil:
-		u.Location.Type = "location"
-		return json.Marshal(u.Location)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultLocation
+		}{D: "location", InlineQueryResultLocation: u.Location})
 	case u.MPEG4GIF != nil:
-		u.MPEG4GIF.Type = "mpeg4_gif"
-		return json.Marshal(u.MPEG4GIF)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultMPEG4GIF
+		}{D: "mpeg4_gif", InlineQueryResultMPEG4GIF: u.MPEG4GIF})
 	case u.Photo != nil:
-		u.Photo.Type = "photo"
-		return json.Marshal(u.Photo)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultPhoto
+		}{D: "photo", InlineQueryResultPhoto: u.Photo})
 	case u.Venue != nil:
-		u.Venue.Type = "venue"
-		return json.Marshal(u.Venue)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultVenue
+		}{D: "venue", InlineQueryResultVenue: u.Venue})
 	case u.Video != nil:
-		u.Video.Type = "video"
-		return json.Marshal(u.Video)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultVideo
+		}{D: "video", InlineQueryResultVideo: u.Video})
 	case u.Voice != nil:
-		u.Voice.Type = "voice"
-		return json.Marshal(u.Voice)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*InlineQueryResultVoice
+		}{D: "voice", InlineQueryResultVoice: u.Voice})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -7315,103 +7230,183 @@ func (u *InlineQueryResult) IsUnknown() bool {
 }
 
 // NewInlineQueryResultCachedAudio creates a InlineQueryResult containing a InlineQueryResultCachedAudio.
-func NewInlineQueryResultCachedAudio(v InlineQueryResultCachedAudio) InlineQueryResult {
-	return InlineQueryResult{CachedAudio: &v}
+func NewInlineQueryResultCachedAudio(id string, audioFileID FileID) InlineQueryResult {
+	return InlineQueryResult{CachedAudio: &InlineQueryResultCachedAudio{
+		ID:          id,
+		AudioFileID: audioFileID,
+	}}
 }
 
 // NewInlineQueryResultCachedDocument creates a InlineQueryResult containing a InlineQueryResultCachedDocument.
-func NewInlineQueryResultCachedDocument(v InlineQueryResultCachedDocument) InlineQueryResult {
-	return InlineQueryResult{CachedDocument: &v}
+func NewInlineQueryResultCachedDocument(id string, title string, documentFileID FileID) InlineQueryResult {
+	return InlineQueryResult{CachedDocument: &InlineQueryResultCachedDocument{
+		ID:             id,
+		Title:          title,
+		DocumentFileID: documentFileID,
+	}}
 }
 
 // NewInlineQueryResultCachedGIF creates a InlineQueryResult containing a InlineQueryResultCachedGIF.
-func NewInlineQueryResultCachedGIF(v InlineQueryResultCachedGIF) InlineQueryResult {
-	return InlineQueryResult{CachedGIF: &v}
+func NewInlineQueryResultCachedGIF(id string, gifFileID FileID) InlineQueryResult {
+	return InlineQueryResult{CachedGIF: &InlineQueryResultCachedGIF{
+		ID:        id,
+		GIFFileID: gifFileID,
+	}}
 }
 
 // NewInlineQueryResultCachedMPEG4GIF creates a InlineQueryResult containing a InlineQueryResultCachedMPEG4GIF.
-func NewInlineQueryResultCachedMPEG4GIF(v InlineQueryResultCachedMPEG4GIF) InlineQueryResult {
-	return InlineQueryResult{CachedMPEG4GIF: &v}
+func NewInlineQueryResultCachedMPEG4GIF(id string, mpeG4FileID FileID) InlineQueryResult {
+	return InlineQueryResult{CachedMPEG4GIF: &InlineQueryResultCachedMPEG4GIF{
+		ID:          id,
+		MPEG4FileID: mpeG4FileID,
+	}}
 }
 
 // NewInlineQueryResultCachedPhoto creates a InlineQueryResult containing a InlineQueryResultCachedPhoto.
-func NewInlineQueryResultCachedPhoto(v InlineQueryResultCachedPhoto) InlineQueryResult {
-	return InlineQueryResult{CachedPhoto: &v}
+func NewInlineQueryResultCachedPhoto(id string, photoFileID FileID) InlineQueryResult {
+	return InlineQueryResult{CachedPhoto: &InlineQueryResultCachedPhoto{
+		ID:          id,
+		PhotoFileID: photoFileID,
+	}}
 }
 
 // NewInlineQueryResultCachedSticker creates a InlineQueryResult containing a InlineQueryResultCachedSticker.
-func NewInlineQueryResultCachedSticker(v InlineQueryResultCachedSticker) InlineQueryResult {
-	return InlineQueryResult{CachedSticker: &v}
+func NewInlineQueryResultCachedSticker(id string, stickerFileID FileID) InlineQueryResult {
+	return InlineQueryResult{CachedSticker: &InlineQueryResultCachedSticker{
+		ID:            id,
+		StickerFileID: stickerFileID,
+	}}
 }
 
 // NewInlineQueryResultCachedVideo creates a InlineQueryResult containing a InlineQueryResultCachedVideo.
-func NewInlineQueryResultCachedVideo(v InlineQueryResultCachedVideo) InlineQueryResult {
-	return InlineQueryResult{CachedVideo: &v}
+func NewInlineQueryResultCachedVideo(id string, videoFileID FileID, title string) InlineQueryResult {
+	return InlineQueryResult{CachedVideo: &InlineQueryResultCachedVideo{
+		ID:          id,
+		VideoFileID: videoFileID,
+		Title:       title,
+	}}
 }
 
 // NewInlineQueryResultCachedVoice creates a InlineQueryResult containing a InlineQueryResultCachedVoice.
-func NewInlineQueryResultCachedVoice(v InlineQueryResultCachedVoice) InlineQueryResult {
-	return InlineQueryResult{CachedVoice: &v}
+func NewInlineQueryResultCachedVoice(id string, voiceFileID FileID, title string) InlineQueryResult {
+	return InlineQueryResult{CachedVoice: &InlineQueryResultCachedVoice{
+		ID:          id,
+		VoiceFileID: voiceFileID,
+		Title:       title,
+	}}
 }
 
 // NewInlineQueryResultArticle creates a InlineQueryResult containing a InlineQueryResultArticle.
-func NewInlineQueryResultArticle(v InlineQueryResultArticle) InlineQueryResult {
-	return InlineQueryResult{Article: &v}
+func NewInlineQueryResultArticle(id string, title string, inputMessageContent InputMessageContent) InlineQueryResult {
+	return InlineQueryResult{Article: &InlineQueryResultArticle{
+		ID:                  id,
+		Title:               title,
+		InputMessageContent: inputMessageContent,
+	}}
 }
 
 // NewInlineQueryResultAudio creates a InlineQueryResult containing a InlineQueryResultAudio.
-func NewInlineQueryResultAudio(v InlineQueryResultAudio) InlineQueryResult {
-	return InlineQueryResult{Audio: &v}
+func NewInlineQueryResultAudio(id string, audioURL string, title string) InlineQueryResult {
+	return InlineQueryResult{Audio: &InlineQueryResultAudio{
+		ID:       id,
+		AudioURL: audioURL,
+		Title:    title,
+	}}
 }
 
 // NewInlineQueryResultContact creates a InlineQueryResult containing a InlineQueryResultContact.
-func NewInlineQueryResultContact(v InlineQueryResultContact) InlineQueryResult {
-	return InlineQueryResult{Contact: &v}
+func NewInlineQueryResultContact(id string, phoneNumber string, firstName string) InlineQueryResult {
+	return InlineQueryResult{Contact: &InlineQueryResultContact{
+		ID:          id,
+		PhoneNumber: phoneNumber,
+		FirstName:   firstName,
+	}}
 }
 
 // NewInlineQueryResultGame creates a InlineQueryResult containing a InlineQueryResultGame.
-func NewInlineQueryResultGame(v InlineQueryResultGame) InlineQueryResult {
-	return InlineQueryResult{Game: &v}
+func NewInlineQueryResultGame(id string, gameShortName string) InlineQueryResult {
+	return InlineQueryResult{Game: &InlineQueryResultGame{
+		ID:            id,
+		GameShortName: gameShortName,
+	}}
 }
 
 // NewInlineQueryResultDocument creates a InlineQueryResult containing a InlineQueryResultDocument.
-func NewInlineQueryResultDocument(v InlineQueryResultDocument) InlineQueryResult {
-	return InlineQueryResult{Document: &v}
+func NewInlineQueryResultDocument(id string, title string, documentURL string, mimeType string) InlineQueryResult {
+	return InlineQueryResult{Document: &InlineQueryResultDocument{
+		ID:          id,
+		Title:       title,
+		DocumentURL: documentURL,
+		MIMEType:    mimeType,
+	}}
 }
 
 // NewInlineQueryResultGIF creates a InlineQueryResult containing a InlineQueryResultGIF.
-func NewInlineQueryResultGIF(v InlineQueryResultGIF) InlineQueryResult {
-	return InlineQueryResult{GIF: &v}
+func NewInlineQueryResultGIF(id string, gifurl string, thumbnailURL string) InlineQueryResult {
+	return InlineQueryResult{GIF: &InlineQueryResultGIF{
+		ID:           id,
+		GIFURL:       gifurl,
+		ThumbnailURL: thumbnailURL,
+	}}
 }
 
 // NewInlineQueryResultLocation creates a InlineQueryResult containing a InlineQueryResultLocation.
-func NewInlineQueryResultLocation(v InlineQueryResultLocation) InlineQueryResult {
-	return InlineQueryResult{Location: &v}
+func NewInlineQueryResultLocation(id string, latitude float64, longitude float64, title string) InlineQueryResult {
+	return InlineQueryResult{Location: &InlineQueryResultLocation{
+		ID:        id,
+		Latitude:  latitude,
+		Longitude: longitude,
+		Title:     title,
+	}}
 }
 
 // NewInlineQueryResultMPEG4GIF creates a InlineQueryResult containing a InlineQueryResultMPEG4GIF.
-func NewInlineQueryResultMPEG4GIF(v InlineQueryResultMPEG4GIF) InlineQueryResult {
-	return InlineQueryResult{MPEG4GIF: &v}
+func NewInlineQueryResultMPEG4GIF(id string, mpeG4URL string, thumbnailURL string) InlineQueryResult {
+	return InlineQueryResult{MPEG4GIF: &InlineQueryResultMPEG4GIF{
+		ID:           id,
+		MPEG4URL:     mpeG4URL,
+		ThumbnailURL: thumbnailURL,
+	}}
 }
 
 // NewInlineQueryResultPhoto creates a InlineQueryResult containing a InlineQueryResultPhoto.
-func NewInlineQueryResultPhoto(v InlineQueryResultPhoto) InlineQueryResult {
-	return InlineQueryResult{Photo: &v}
+func NewInlineQueryResultPhoto(id string, photoURL string, thumbnailURL string) InlineQueryResult {
+	return InlineQueryResult{Photo: &InlineQueryResultPhoto{
+		ID:           id,
+		PhotoURL:     photoURL,
+		ThumbnailURL: thumbnailURL,
+	}}
 }
 
 // NewInlineQueryResultVenue creates a InlineQueryResult containing a InlineQueryResultVenue.
-func NewInlineQueryResultVenue(v InlineQueryResultVenue) InlineQueryResult {
-	return InlineQueryResult{Venue: &v}
+func NewInlineQueryResultVenue(id string, latitude float64, longitude float64, title string, address string) InlineQueryResult {
+	return InlineQueryResult{Venue: &InlineQueryResultVenue{
+		ID:        id,
+		Latitude:  latitude,
+		Longitude: longitude,
+		Title:     title,
+		Address:   address,
+	}}
 }
 
 // NewInlineQueryResultVideo creates a InlineQueryResult containing a InlineQueryResultVideo.
-func NewInlineQueryResultVideo(v InlineQueryResultVideo) InlineQueryResult {
-	return InlineQueryResult{Video: &v}
+func NewInlineQueryResultVideo(id string, videoURL string, mimeType string, thumbnailURL string, title string) InlineQueryResult {
+	return InlineQueryResult{Video: &InlineQueryResultVideo{
+		ID:           id,
+		VideoURL:     videoURL,
+		MIMEType:     mimeType,
+		ThumbnailURL: thumbnailURL,
+		Title:        title,
+	}}
 }
 
 // NewInlineQueryResultVoice creates a InlineQueryResult containing a InlineQueryResultVoice.
-func NewInlineQueryResultVoice(v InlineQueryResultVoice) InlineQueryResult {
-	return InlineQueryResult{Voice: &v}
+func NewInlineQueryResultVoice(id string, voiceURL string, title string) InlineQueryResult {
+	return InlineQueryResult{Voice: &InlineQueryResultVoice{
+		ID:       id,
+		VoiceURL: voiceURL,
+		Title:    title,
+	}}
 }
 
 // RevenueWithdrawalStateType represents the type of RevenueWithdrawalState.
@@ -7489,14 +7484,20 @@ func (u *RevenueWithdrawalState) UnmarshalJSON(data []byte) error {
 func (u RevenueWithdrawalState) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.Pending != nil:
-		u.Pending.Type = "pending"
-		return json.Marshal(u.Pending)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*RevenueWithdrawalStatePending
+		}{D: "pending", RevenueWithdrawalStatePending: u.Pending})
 	case u.Succeeded != nil:
-		u.Succeeded.Type = "succeeded"
-		return json.Marshal(u.Succeeded)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*RevenueWithdrawalStateSucceeded
+		}{D: "succeeded", RevenueWithdrawalStateSucceeded: u.Succeeded})
 	case u.Failed != nil:
-		u.Failed.Type = "failed"
-		return json.Marshal(u.Failed)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*RevenueWithdrawalStateFailed
+		}{D: "failed", RevenueWithdrawalStateFailed: u.Failed})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -7631,26 +7632,40 @@ func (u *TransactionPartner) UnmarshalJSON(data []byte) error {
 func (u TransactionPartner) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.User != nil:
-		u.User.Type = "user"
-		return json.Marshal(u.User)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*TransactionPartnerUser
+		}{D: "user", TransactionPartnerUser: u.User})
 	case u.Chat != nil:
-		u.Chat.Type = "chat"
-		return json.Marshal(u.Chat)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*TransactionPartnerChat
+		}{D: "chat", TransactionPartnerChat: u.Chat})
 	case u.AffiliateProgram != nil:
-		u.AffiliateProgram.Type = "affiliate_program"
-		return json.Marshal(u.AffiliateProgram)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*TransactionPartnerAffiliateProgram
+		}{D: "affiliate_program", TransactionPartnerAffiliateProgram: u.AffiliateProgram})
 	case u.Fragment != nil:
-		u.Fragment.Type = "fragment"
-		return json.Marshal(u.Fragment)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*TransactionPartnerFragment
+		}{D: "fragment", TransactionPartnerFragment: u.Fragment})
 	case u.TelegramAds != nil:
-		u.TelegramAds.Type = "telegram_ads"
-		return json.Marshal(u.TelegramAds)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*TransactionPartnerTelegramAds
+		}{D: "telegram_ads", TransactionPartnerTelegramAds: u.TelegramAds})
 	case u.TelegramAPI != nil:
-		u.TelegramAPI.Type = "telegram_api"
-		return json.Marshal(u.TelegramAPI)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*TransactionPartnerTelegramAPI
+		}{D: "telegram_api", TransactionPartnerTelegramAPI: u.TelegramAPI})
 	case u.Other != nil:
-		u.Other.Type = "other"
-		return json.Marshal(u.Other)
+		return json.Marshal(struct {
+			D string `json:"type"`
+			*TransactionPartnerOther
+		}{D: "other", TransactionPartnerOther: u.Other})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -7809,32 +7824,50 @@ func (u *PassportElementError) UnmarshalJSON(data []byte) error {
 func (u PassportElementError) MarshalJSON() ([]byte, error) {
 	switch {
 	case u.DataField != nil:
-		u.DataField.Source = "data"
-		return json.Marshal(u.DataField)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorDataField
+		}{D: "data", PassportElementErrorDataField: u.DataField})
 	case u.FrontSide != nil:
-		u.FrontSide.Source = "front_side"
-		return json.Marshal(u.FrontSide)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorFrontSide
+		}{D: "front_side", PassportElementErrorFrontSide: u.FrontSide})
 	case u.ReverseSide != nil:
-		u.ReverseSide.Source = "reverse_side"
-		return json.Marshal(u.ReverseSide)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorReverseSide
+		}{D: "reverse_side", PassportElementErrorReverseSide: u.ReverseSide})
 	case u.Selfie != nil:
-		u.Selfie.Source = "selfie"
-		return json.Marshal(u.Selfie)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorSelfie
+		}{D: "selfie", PassportElementErrorSelfie: u.Selfie})
 	case u.File != nil:
-		u.File.Source = "file"
-		return json.Marshal(u.File)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorFile
+		}{D: "file", PassportElementErrorFile: u.File})
 	case u.Files != nil:
-		u.Files.Source = "files"
-		return json.Marshal(u.Files)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorFiles
+		}{D: "files", PassportElementErrorFiles: u.Files})
 	case u.TranslationFile != nil:
-		u.TranslationFile.Source = "translation_file"
-		return json.Marshal(u.TranslationFile)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorTranslationFile
+		}{D: "translation_file", PassportElementErrorTranslationFile: u.TranslationFile})
 	case u.TranslationFiles != nil:
-		u.TranslationFiles.Source = "translation_files"
-		return json.Marshal(u.TranslationFiles)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorTranslationFiles
+		}{D: "translation_files", PassportElementErrorTranslationFiles: u.TranslationFiles})
 	case u.Unspecified != nil:
-		u.Unspecified.Source = "unspecified"
-		return json.Marshal(u.Unspecified)
+		return json.Marshal(struct {
+			D string `json:"source"`
+			*PassportElementErrorUnspecified
+		}{D: "unspecified", PassportElementErrorUnspecified: u.Unspecified})
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
 	default:
@@ -7875,48 +7908,85 @@ func (u *PassportElementError) IsUnknown() bool {
 }
 
 // NewPassportElementErrorDataField creates a PassportElementError containing a PassportElementErrorDataField.
-func NewPassportElementErrorDataField(v PassportElementErrorDataField) PassportElementError {
-	return PassportElementError{DataField: &v}
+func NewPassportElementErrorDataField(type_ string, fieldName string, dataHash string, message string) PassportElementError {
+	return PassportElementError{DataField: &PassportElementErrorDataField{
+		Type:      type_,
+		FieldName: fieldName,
+		DataHash:  dataHash,
+		Message:   message,
+	}}
 }
 
 // NewPassportElementErrorFrontSide creates a PassportElementError containing a PassportElementErrorFrontSide.
-func NewPassportElementErrorFrontSide(v PassportElementErrorFrontSide) PassportElementError {
-	return PassportElementError{FrontSide: &v}
+func NewPassportElementErrorFrontSide(type_ string, fileHash string, message string) PassportElementError {
+	return PassportElementError{FrontSide: &PassportElementErrorFrontSide{
+		Type:     type_,
+		FileHash: fileHash,
+		Message:  message,
+	}}
 }
 
 // NewPassportElementErrorReverseSide creates a PassportElementError containing a PassportElementErrorReverseSide.
-func NewPassportElementErrorReverseSide(v PassportElementErrorReverseSide) PassportElementError {
-	return PassportElementError{ReverseSide: &v}
+func NewPassportElementErrorReverseSide(type_ string, fileHash string, message string) PassportElementError {
+	return PassportElementError{ReverseSide: &PassportElementErrorReverseSide{
+		Type:     type_,
+		FileHash: fileHash,
+		Message:  message,
+	}}
 }
 
 // NewPassportElementErrorSelfie creates a PassportElementError containing a PassportElementErrorSelfie.
-func NewPassportElementErrorSelfie(v PassportElementErrorSelfie) PassportElementError {
-	return PassportElementError{Selfie: &v}
+func NewPassportElementErrorSelfie(type_ string, fileHash string, message string) PassportElementError {
+	return PassportElementError{Selfie: &PassportElementErrorSelfie{
+		Type:     type_,
+		FileHash: fileHash,
+		Message:  message,
+	}}
 }
 
 // NewPassportElementErrorFile creates a PassportElementError containing a PassportElementErrorFile.
-func NewPassportElementErrorFile(v PassportElementErrorFile) PassportElementError {
-	return PassportElementError{File: &v}
+func NewPassportElementErrorFile(type_ string, fileHash string, message string) PassportElementError {
+	return PassportElementError{File: &PassportElementErrorFile{
+		Type:     type_,
+		FileHash: fileHash,
+		Message:  message,
+	}}
 }
 
 // NewPassportElementErrorFiles creates a PassportElementError containing a PassportElementErrorFiles.
-func NewPassportElementErrorFiles(v PassportElementErrorFiles) PassportElementError {
-	return PassportElementError{Files: &v}
+func NewPassportElementErrorFiles(type_ string, fileHashes []string, message string) PassportElementError {
+	return PassportElementError{Files: &PassportElementErrorFiles{
+		Type:       type_,
+		FileHashes: fileHashes,
+		Message:    message,
+	}}
 }
 
 // NewPassportElementErrorTranslationFile creates a PassportElementError containing a PassportElementErrorTranslationFile.
-func NewPassportElementErrorTranslationFile(v PassportElementErrorTranslationFile) PassportElementError {
-	return PassportElementError{TranslationFile: &v}
+func NewPassportElementErrorTranslationFile(type_ string, fileHash string, message string) PassportElementError {
+	return PassportElementError{TranslationFile: &PassportElementErrorTranslationFile{
+		Type:     type_,
+		FileHash: fileHash,
+		Message:  message,
+	}}
 }
 
 // NewPassportElementErrorTranslationFiles creates a PassportElementError containing a PassportElementErrorTranslationFiles.
-func NewPassportElementErrorTranslationFiles(v PassportElementErrorTranslationFiles) PassportElementError {
-	return PassportElementError{TranslationFiles: &v}
+func NewPassportElementErrorTranslationFiles(type_ string, fileHashes []string, message string) PassportElementError {
+	return PassportElementError{TranslationFiles: &PassportElementErrorTranslationFiles{
+		Type:       type_,
+		FileHashes: fileHashes,
+		Message:    message,
+	}}
 }
 
 // NewPassportElementErrorUnspecified creates a PassportElementError containing a PassportElementErrorUnspecified.
-func NewPassportElementErrorUnspecified(v PassportElementErrorUnspecified) PassportElementError {
-	return PassportElementError{Unspecified: &v}
+func NewPassportElementErrorUnspecified(type_ string, elementHash string, message string) PassportElementError {
+	return PassportElementError{Unspecified: &PassportElementErrorUnspecified{
+		Type:        type_,
+		ElementHash: elementHash,
+		Message:     message,
+	}}
 }
 
 // ChatType represents an enum type.

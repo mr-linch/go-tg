@@ -102,8 +102,8 @@ func (r *Request) GetJSON(name string) (any, bool) {
 }
 
 func (r *Request) InputMediaSlice(name string, im []InputMedia) *Request {
-	for _, v := range im {
-		r.InputMedia(v)
+	for i := range im {
+		r.extractInputMedia(&im[i])
 	}
 
 	r.JSON(name, im)
@@ -111,8 +111,50 @@ func (r *Request) InputMediaSlice(name string, im []InputMedia) *Request {
 	return r
 }
 
-func (r *Request) InputMedia(im InputMedia) *Request {
+func (r *Request) InputMedia(name string, im InputMedia) *Request {
+	r.extractInputMedia(&im)
+	r.JSON(name, im)
+
+	return r
+}
+
+func (r *Request) extractInputMedia(im *InputMedia) {
 	media, thumb := im.getMedia()
+	if media == nil {
+		return
+	}
+
+	id := fmt.Sprintf("attachment_%d", r.attachmentIdx)
+	addr := fmt.Sprintf("attach://%s", id)
+
+	if media.getRef() == "" {
+		r.InputFile(id, media.Upload)
+		media.addr = addr
+		r.attachmentIdx++
+	}
+
+	if thumb != nil {
+		thumbID := id + "_thumb"
+		r.InputFile(thumbID, *thumb)
+		thumb.addr = fmt.Sprintf("attach://%s", thumbID)
+	}
+}
+
+func (r *Request) InputPaidMediaSlice(name string, im []InputPaidMedia) *Request {
+	for i := range im {
+		r.extractInputPaidMedia(&im[i])
+	}
+
+	r.JSON(name, im)
+
+	return r
+}
+
+func (r *Request) extractInputPaidMedia(im *InputPaidMedia) {
+	media, thumb, cover := im.getMedia()
+	if media == nil {
+		return
+	}
 
 	id := fmt.Sprintf("attachment_%d", r.attachmentIdx)
 	addr := fmt.Sprintf("attach://%s", id)
@@ -129,7 +171,11 @@ func (r *Request) InputMedia(im InputMedia) *Request {
 		thumb.addr = fmt.Sprintf("attach://%s", thumbID)
 	}
 
-	return r
+	if cover != nil && cover.getRef() == "" {
+		coverID := id + "_cover"
+		r.InputFile(coverID, cover.Upload)
+		cover.addr = fmt.Sprintf("attach://%s", coverID)
+	}
 }
 
 func (r *Request) Stringer(name string, v fmt.Stringer) *Request {

@@ -44,13 +44,13 @@ func TestRequest_Setters(t *testing.T) {
 	r.FileID("file_id", FileID("file_id"))
 
 	r.InputMediaSlice("media", []InputMedia{
-		NewInputMediaDocument(InputMediaDocument{
-			Media: FileArg{
+		func() InputMedia {
+			m := NewInputMediaDocument(FileArg{
 				Upload: NewInputFileBytes("file_name", []byte("file_content")),
-			},
-
-			Thumbnail: NewInputFileBytes("thumb.jpg", []byte("")).Ptr(),
-		}),
+			})
+			m.Document.Thumbnail = NewInputFileBytes("thumb.jpg", []byte("")).Ptr()
+			return m
+		}(),
 	})
 
 	encoder := &testEncoder{}
@@ -181,6 +181,51 @@ func (m *JSONMarshalerMock) MarshalJSON() ([]byte, error) {
 	}
 
 	return v.([]byte), args.Error(1)
+}
+
+func TestRequest_InputMediaUpload(t *testing.T) {
+	makeMedia := func() []InputMedia {
+		return []InputMedia{
+			NewInputMediaPhoto(FileArg{
+				Upload: NewInputFileBytes("photo.jpg", []byte("photo_content")),
+			}),
+		}
+	}
+
+	t.Run("InputMediaSlice", func(t *testing.T) {
+		r := NewRequest("sendMediaGroup")
+		r.InputMediaSlice("media", makeMedia())
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		assert.Contains(t, encoder.stringKeys, "media")
+		assert.Contains(t, encoder.fileKeys, "attachment_0")
+	})
+
+	t.Run("InputMedia", func(t *testing.T) {
+		r := NewRequest("editMessageMedia")
+		r.InputMedia("media", makeMedia()[0])
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.NoError(t, err)
+
+		assert.Contains(t, encoder.stringKeys, "media")
+		assert.Contains(t, encoder.fileKeys, "attachment_0")
+	})
+
+	t.Run("PlainJSON", func(t *testing.T) {
+		// This reproduces the bug: using .JSON() without file extraction
+		r := NewRequest("sendMediaGroup")
+		r.JSON("media", makeMedia())
+
+		encoder := &testEncoder{}
+		err := r.Encode(encoder)
+		require.Error(t, err, "expected error because FileArg.addr is not set")
+		assert.Contains(t, err.Error(), "FileArg is not json serializable")
+	})
 }
 
 func TestRequest_MarshalJSON(t *testing.T) {

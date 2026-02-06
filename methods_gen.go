@@ -1798,7 +1798,7 @@ func NewSendPaidMediaCall(chatID PeerID, starCount int, media []InputPaidMedia) 
 			request: NewRequest("sendPaidMedia").
 				PeerID("chat_id", chatID).
 				Int("star_count", starCount).
-				JSON("media", media),
+				InputPaidMediaSlice("media", media),
 		},
 	}
 }
@@ -1848,7 +1848,7 @@ func (call *SendPaidMediaCall) StarCount(starCount int) *SendPaidMediaCall {
 
 // Media sets the media parameter.
 func (call *SendPaidMediaCall) Media(media []InputPaidMedia) *SendPaidMediaCall {
-	call.request.JSON("media", media)
+	call.request.InputPaidMediaSlice("media", media)
 	return call
 }
 
@@ -1929,12 +1929,12 @@ type SendMediaGroupCall struct {
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 //   - media: A JSON-serialized array describing messages to be sent, must include 2-10 items
-func NewSendMediaGroupCall(chatID PeerID, media any) *SendMediaGroupCall {
+func NewSendMediaGroupCall(chatID PeerID, media []InputMedia) *SendMediaGroupCall {
 	return &SendMediaGroupCall{
 		Call[[]Message]{
 			request: NewRequest("sendMediaGroup").
 				PeerID("chat_id", chatID).
-				JSON("media", media),
+				InputMediaSlice("media", media),
 		},
 	}
 }
@@ -1944,7 +1944,7 @@ func NewSendMediaGroupCall(chatID PeerID, media any) *SendMediaGroupCall {
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 //   - media: A JSON-serialized array describing messages to be sent, must include 2-10 items
-func (client *Client) SendMediaGroup(chatID PeerID, media any) *SendMediaGroupCall {
+func (client *Client) SendMediaGroup(chatID PeerID, media []InputMedia) *SendMediaGroupCall {
 	return BindClient(
 		NewSendMediaGroupCall(chatID, media),
 		client,
@@ -1976,8 +1976,8 @@ func (call *SendMediaGroupCall) DirectMessagesTopicID(directMessagesTopicID int)
 }
 
 // Media sets the media parameter.
-func (call *SendMediaGroupCall) Media(media any) *SendMediaGroupCall {
-	call.request.JSON("media", media)
+func (call *SendMediaGroupCall) Media(media []InputMedia) *SendMediaGroupCall {
+	call.request.InputMediaSlice("media", media)
 	return call
 }
 
@@ -7498,7 +7498,7 @@ func NewEditMessageMediaCall(chatID PeerID, messageID int, media InputMedia) *Ed
 			request: NewRequest("editMessageMedia").
 				PeerID("chat_id", chatID).
 				Int("message_id", messageID).
-				JSON("media", media),
+				InputMedia("media", media),
 		},
 	}
 }
@@ -7526,7 +7526,7 @@ func NewEditMessageMediaInlineCall(inlineMessageID string, media InputMedia) *Ed
 		Call[Message]{
 			request: NewRequest("editMessageMedia").
 				String("inline_message_id", inlineMessageID).
-				JSON("media", media),
+				InputMedia("media", media),
 		},
 	}
 }
@@ -7569,7 +7569,7 @@ func (call *EditMessageMediaCall) InlineMessageID(inlineMessageID string) *EditM
 
 // Media sets the media parameter.
 func (call *EditMessageMediaCall) Media(media InputMedia) *EditMessageMediaCall {
-	call.request.JSON("media", media)
+	call.request.InputMedia("media", media)
 	return call
 }
 

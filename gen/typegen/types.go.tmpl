@@ -104,8 +104,10 @@ func (u {{$u.Name}}) MarshalJSON() ([]byte, error) {
 	switch {
 {{- range $u.Variants}}
 	case u.{{.FieldName}} != nil:
-		u.{{.FieldName}}.{{$u.DiscriminatorGoField}} = "{{.ConstVal}}"
-		return json.Marshal(u.{{.FieldName}})
+		return json.Marshal(struct {
+			D string `json:"{{$u.Discriminator}}"`
+			*{{.TypeName}}
+		}{D: "{{.ConstVal}}", {{.TypeName}}: u.{{.FieldName}}})
 {{- end}}
 	case u.Unknown != nil:
 		return u.Unknown.Data, nil
@@ -132,11 +134,21 @@ func (u *{{$u.Name}}) IsUnknown() bool {
 	return u.Unknown != nil
 }
 {{- if $u.HasConstructors}}
-{{range $u.Variants}}
-// New{{.TypeName}} creates a {{$u.Name}} containing a {{.TypeName}}.
-func New{{.TypeName}}(v {{.TypeName}}) {{$u.Name}} {
-	return {{$u.Name}}{{"{"}}{{.FieldName}}: &v{{"}"}}
+{{range $v := $u.Variants}}
+// New{{$v.TypeName}} creates a {{$u.Name}} containing a {{$v.TypeName}}.
+{{- if $v.RequiredFields}}
+func New{{$v.TypeName}}({{range $i, $f := $v.RequiredFields}}{{if $i}}, {{end}}{{$f.ParamName}} {{$f.GoType}}{{end}}) {{$u.Name}} {
+	return {{$u.Name}}{{"{"}}{{$v.FieldName}}: &{{$v.TypeName}}{
+{{- range $v.RequiredFields}}
+		{{.GoField}}: {{.ParamName}},
+{{- end}}
+	}{{"}"}}
 }
+{{- else}}
+func New{{$v.TypeName}}() {{$u.Name}} {
+	return {{$u.Name}}{{"{"}}{{$v.FieldName}}: &{{$v.TypeName}}{}{{"}"}}
+}
+{{- end}}
 {{end}}
 {{- end}}
 {{- end}}

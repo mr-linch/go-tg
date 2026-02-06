@@ -384,6 +384,18 @@ func (u *InputMedia) getMedia() (media *FileArg, thumb *InputFile) {
 	}
 }
 
+// getMedia returns the media, thumbnail and cover from an InputPaidMedia union.
+func (u *InputPaidMedia) getMedia() (media *FileArg, thumb *InputFile, cover *FileArg) {
+	switch {
+	case u.Photo != nil:
+		return &u.Photo.Media, nil, nil
+	case u.Video != nil:
+		return &u.Video.Media, u.Video.Thumbnail, u.Video.Cover
+	default:
+		return nil, nil, nil
+	}
+}
+
 // MenuButtonOneOf is an alias for MenuButton for backward compatibility.
 //
 // Deprecated: Use MenuButton directly.
