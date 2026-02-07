@@ -147,6 +147,28 @@ func (user User) PeerID() string {
 	return user.ID.PeerID()
 }
 
+// FullName returns the user's full name.
+// It combines first name and last name, or returns just first name if last name is empty.
+func (user User) FullName() string {
+	if user.LastName == "" {
+		return user.FirstName
+	}
+	return user.FirstName + " " + user.LastName
+}
+
+// FullName returns the chat's display name.
+// For groups, supergroups and channels it returns the title.
+// For private chats it combines first name and last name.
+func (chat Chat) FullName() string {
+	if chat.Title != "" {
+		return chat.Title
+	}
+	if chat.LastName == "" {
+		return chat.FirstName
+	}
+	return chat.FirstName + " " + chat.LastName
+}
+
 func (markup InlineKeyboardMarkup) Ptr() *InlineKeyboardMarkup {
 	return &markup
 }
@@ -195,12 +217,56 @@ func (msg *Message) IsInaccessible() bool {
 	return msg.Date.IsZero()
 }
 
+// TextOrCaption returns the message text or caption, whichever is set.
+// For text messages it returns Text, for media messages it returns Caption.
+func (msg *Message) TextOrCaption() string {
+	if msg.Text != "" {
+		return msg.Text
+	}
+	return msg.Caption
+}
+
+// TextOrCaptionEntities returns text entities or caption entities, whichever applies.
+// For text messages it returns Entities, for media messages it returns CaptionEntities.
+func (msg *Message) TextOrCaptionEntities() []MessageEntity {
+	if msg.Text != "" {
+		return msg.Entities
+	}
+	return msg.CaptionEntities
+}
+
+// FileID returns the file ID from whichever media field is set.
+// For photos, it returns the file ID of the largest size.
+// Returns empty FileID if the message contains no media.
+func (msg *Message) FileID() FileID {
+	switch {
+	case len(msg.Photo) > 0:
+		return msg.Photo[len(msg.Photo)-1].FileID
+	case msg.Animation != nil:
+		return msg.Animation.FileID
+	case msg.Audio != nil:
+		return msg.Audio.FileID
+	case msg.Document != nil:
+		return msg.Document.FileID
+	case msg.Video != nil:
+		return msg.Video.FileID
+	case msg.VideoNote != nil:
+		return msg.VideoNote.FileID
+	case msg.Voice != nil:
+		return msg.Voice.FileID
+	case msg.Sticker != nil:
+		return msg.Sticker.FileID
+	}
+	return ""
+}
+
 // Msg returns message from whever possible.
 // It returns nil if message is not found.
 func (update *Update) Msg() *Message {
-	switch {
-	case update == nil:
+	if update == nil {
 		return nil
+	}
+	switch {
 	case update.Message != nil:
 		return update.Message
 	case update.EditedMessage != nil:
@@ -220,26 +286,174 @@ func (update *Update) Msg() *Message {
 	}
 }
 
-// Chat returns chat from whever possible.
+// Chat returns chat from wherever possible.
+// It returns nil if no chat can be determined from this update.
 func (update *Update) Chat() *Chat {
 	if update == nil {
 		return nil
 	}
-
 	if msg := update.Msg(); msg != nil {
 		return &msg.Chat
 	}
 
 	switch {
+	case update.MessageReaction != nil:
+		return &update.MessageReaction.Chat
+	case update.MessageReactionCount != nil:
+		return &update.MessageReactionCount.Chat
 	case update.ChatMember != nil:
 		return &update.ChatMember.Chat
 	case update.MyChatMember != nil:
 		return &update.MyChatMember.Chat
 	case update.ChatJoinRequest != nil:
 		return &update.ChatJoinRequest.Chat
+	case update.DeletedBusinessMessages != nil:
+		return &update.DeletedBusinessMessages.Chat
+	case update.ChatBoost != nil:
+		return &update.ChatBoost.Chat
+	case update.RemovedChatBoost != nil:
+		return &update.RemovedChatBoost.Chat
+	case update.PollAnswer != nil && update.PollAnswer.VoterChat != nil:
+		return update.PollAnswer.VoterChat
 	}
 
 	return nil
+}
+
+// User returns the user from wherever possible.
+// It returns nil if no user can be determined from this update.
+func (update *Update) User() *User {
+	if update == nil {
+		return nil
+	}
+	if msg := update.Msg(); msg != nil {
+		return msg.From
+	}
+
+	switch {
+	case update.CallbackQuery != nil:
+		return &update.CallbackQuery.From
+	case update.InlineQuery != nil:
+		return &update.InlineQuery.From
+	case update.ChosenInlineResult != nil:
+		return &update.ChosenInlineResult.From
+	case update.ShippingQuery != nil:
+		return &update.ShippingQuery.From
+	case update.PreCheckoutQuery != nil:
+		return &update.PreCheckoutQuery.From
+	case update.PurchasedPaidMedia != nil:
+		return &update.PurchasedPaidMedia.From
+	case update.MyChatMember != nil:
+		return &update.MyChatMember.From
+	case update.ChatMember != nil:
+		return &update.ChatMember.From
+	case update.ChatJoinRequest != nil:
+		return &update.ChatJoinRequest.From
+	case update.MessageReaction != nil:
+		return update.MessageReaction.User
+	case update.PollAnswer != nil:
+		return update.PollAnswer.User
+	case update.BusinessConnection != nil:
+		return &update.BusinessConnection.User
+	}
+
+	return nil
+}
+
+// SenderChat returns the sender chat from wherever possible.
+// This is set when a message is sent on behalf of a chat (e.g. anonymous admin),
+// or when a reaction is performed by an anonymous chat.
+// It returns nil if no sender chat can be determined.
+func (update *Update) SenderChat() *Chat {
+	if update == nil {
+		return nil
+	}
+	if msg := update.Msg(); msg != nil {
+		return msg.SenderChat
+	}
+
+	switch {
+	case update.MessageReaction != nil:
+		return update.MessageReaction.ActorChat
+	case update.PollAnswer != nil:
+		return update.PollAnswer.VoterChat
+	}
+
+	return nil
+}
+
+// MsgID returns the message ID from wherever possible.
+// It returns 0 if no message ID can be determined from this update.
+func (update *Update) MsgID() int {
+	if update == nil {
+		return 0
+	}
+	if msg := update.Msg(); msg != nil {
+		return msg.ID
+	}
+
+	switch {
+	case update.MessageReaction != nil:
+		return update.MessageReaction.MessageID
+	case update.MessageReactionCount != nil:
+		return update.MessageReactionCount.MessageID
+	}
+
+	return 0
+}
+
+// ChatID returns the chat ID from wherever possible.
+// Unlike Chat().ID, this also covers BusinessConnection.UserChatID
+// where no Chat object is available.
+// It returns 0 if no chat ID can be determined from this update.
+func (update *Update) ChatID() ChatID {
+	if update == nil {
+		return 0
+	}
+	if chat := update.Chat(); chat != nil {
+		return chat.ID
+	}
+
+	if update.BusinessConnection != nil {
+		return update.BusinessConnection.UserChatID
+	}
+
+	return 0
+}
+
+// InlineMessageID returns the inline message ID from wherever possible.
+// It returns an empty string if no inline message ID can be determined.
+func (update *Update) InlineMessageID() string {
+	if update == nil {
+		return ""
+	}
+	switch {
+	case update.CallbackQuery != nil:
+		return update.CallbackQuery.InlineMessageID
+	case update.ChosenInlineResult != nil:
+		return update.ChosenInlineResult.InlineMessageID
+	}
+
+	return ""
+}
+
+// BusinessConnectionID returns the business connection ID from wherever possible.
+// It returns an empty string if no business connection ID can be determined.
+func (update *Update) BusinessConnectionID() string {
+	if update == nil {
+		return ""
+	}
+	switch {
+	case update.BusinessConnection != nil:
+		return update.BusinessConnection.ID
+	case update.DeletedBusinessMessages != nil:
+		return update.DeletedBusinessMessages.BusinessConnectionID
+	default:
+		if msg := update.Msg(); msg != nil {
+			return msg.BusinessConnectionID
+		}
+		return ""
+	}
 }
 
 // Extract entitie value from plain text.

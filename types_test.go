@@ -1282,6 +1282,84 @@ func TestMessageEntity_Extract(t *testing.T) {
 	assert.Equal(t, "hey@lipsum.com", emailEntity.Extract(text))
 }
 
+func TestUser_FullName(t *testing.T) {
+	for _, test := range []struct {
+		User     User
+		FullName string
+	}{
+		{User{FirstName: "John", LastName: "Doe"}, "John Doe"},
+		{User{FirstName: "John"}, "John"},
+		{User{FirstName: "John", LastName: ""}, "John"},
+	} {
+		assert.Equal(t, test.FullName, test.User.FullName())
+	}
+}
+
+func TestChat_FullName(t *testing.T) {
+	for _, test := range []struct {
+		Chat     Chat
+		FullName string
+	}{
+		{Chat{Title: "My Group"}, "My Group"},
+		{Chat{FirstName: "John", LastName: "Doe"}, "John Doe"},
+		{Chat{FirstName: "John"}, "John"},
+		{Chat{Title: "Channel", FirstName: "John"}, "Channel"},
+	} {
+		assert.Equal(t, test.FullName, test.Chat.FullName())
+	}
+}
+
+func TestMessage_TextOrCaption(t *testing.T) {
+	for _, test := range []struct {
+		Message *Message
+		Result  string
+	}{
+		{&Message{Text: "hello"}, "hello"},
+		{&Message{Caption: "photo caption"}, "photo caption"},
+		{&Message{Text: "hello", Caption: "caption"}, "hello"},
+		{&Message{}, ""},
+	} {
+		assert.Equal(t, test.Result, test.Message.TextOrCaption())
+	}
+}
+
+func TestMessage_TextOrCaptionEntities(t *testing.T) {
+	textEntities := []MessageEntity{{Type: MessageEntityTypeBold, Offset: 0, Length: 5}}
+	captionEntities := []MessageEntity{{Type: MessageEntityTypeItalic, Offset: 0, Length: 3}}
+
+	for _, test := range []struct {
+		Message  *Message
+		Entities []MessageEntity
+	}{
+		{&Message{Text: "hello", Entities: textEntities}, textEntities},
+		{&Message{Caption: "cap", CaptionEntities: captionEntities}, captionEntities},
+		{&Message{Text: "hello", Entities: textEntities, CaptionEntities: captionEntities}, textEntities},
+		{&Message{}, nil},
+	} {
+		assert.Equal(t, test.Entities, test.Message.TextOrCaptionEntities())
+	}
+}
+
+func TestMessage_FileID(t *testing.T) {
+	for _, test := range []struct {
+		Message *Message
+		FileID  FileID
+	}{
+		{&Message{}, ""},
+		{&Message{Photo: []PhotoSize{{FileID: "small"}, {FileID: "large"}}}, "large"},
+		{&Message{Animation: &Animation{FileID: "anim"}}, "anim"},
+		{&Message{Audio: &Audio{FileID: "audio"}}, "audio"},
+		{&Message{Document: &Document{FileID: "doc"}}, "doc"},
+		{&Message{Video: &Video{FileID: "vid"}}, "vid"},
+		{&Message{VideoNote: &VideoNote{FileID: "vnote"}}, "vnote"},
+		{&Message{Voice: &Voice{FileID: "voice"}}, "voice"},
+		{&Message{Sticker: &Sticker{FileID: "sticker"}}, "sticker"},
+		{&Message{Text: "just text"}, ""},
+	} {
+		assert.Equal(t, test.FileID, test.Message.FileID())
+	}
+}
+
 func TestUpdate_Msg(t *testing.T) {
 	msg := &Message{ID: 1}
 
@@ -1289,7 +1367,6 @@ func TestUpdate_Msg(t *testing.T) {
 		Update  *Update
 		Message *Message
 	}{
-		{nil, nil},
 		{&Update{}, nil},
 		{&Update{Message: msg}, msg},
 		{&Update{EditedMessage: msg}, msg},
@@ -1313,14 +1390,131 @@ func TestUpdate_Chat(t *testing.T) {
 		Update *Update
 		Chat   *Chat
 	}{
-		{nil, nil},
 		{&Update{InlineQuery: &InlineQuery{}}, nil},
 		{&Update{Message: &Message{Chat: chat}}, &chat},
 		{&Update{ChatMember: &ChatMemberUpdated{Chat: chat}}, &chat},
 		{&Update{MyChatMember: &ChatMemberUpdated{Chat: chat}}, &chat},
 		{&Update{ChatJoinRequest: &ChatJoinRequest{Chat: chat}}, &chat},
+		{&Update{MessageReaction: &MessageReactionUpdated{Chat: chat}}, &chat},
+		{&Update{MessageReactionCount: &MessageReactionCountUpdated{Chat: chat}}, &chat},
+		{&Update{DeletedBusinessMessages: &BusinessMessagesDeleted{Chat: chat}}, &chat},
+		{&Update{ChatBoost: &ChatBoostUpdated{Chat: chat}}, &chat},
+		{&Update{RemovedChatBoost: &ChatBoostRemoved{Chat: chat}}, &chat},
+		{&Update{PollAnswer: &PollAnswer{VoterChat: &chat}}, &chat},
+		{&Update{PollAnswer: &PollAnswer{}}, nil},
 	} {
 		assert.Equal(t, test.Chat, test.Update.Chat())
+	}
+}
+
+func TestUpdate_User(t *testing.T) {
+	user := User{ID: 1}
+
+	for _, test := range []struct {
+		Update *Update
+		User   *User
+	}{
+		{&Update{}, nil},
+		{&Update{Message: &Message{From: &user}}, &user},
+		{&Update{ChannelPost: &Message{}}, nil},
+		{&Update{CallbackQuery: &CallbackQuery{From: user}}, &user},
+		{&Update{InlineQuery: &InlineQuery{From: user}}, &user},
+		{&Update{ChosenInlineResult: &ChosenInlineResult{From: user}}, &user},
+		{&Update{ShippingQuery: &ShippingQuery{From: user}}, &user},
+		{&Update{PreCheckoutQuery: &PreCheckoutQuery{From: user}}, &user},
+		{&Update{PurchasedPaidMedia: &PaidMediaPurchased{From: user}}, &user},
+		{&Update{MyChatMember: &ChatMemberUpdated{From: user}}, &user},
+		{&Update{ChatMember: &ChatMemberUpdated{From: user}}, &user},
+		{&Update{ChatJoinRequest: &ChatJoinRequest{From: user}}, &user},
+		{&Update{MessageReaction: &MessageReactionUpdated{User: &user}}, &user},
+		{&Update{MessageReaction: &MessageReactionUpdated{}}, nil},
+		{&Update{PollAnswer: &PollAnswer{User: &user}}, &user},
+		{&Update{PollAnswer: &PollAnswer{}}, nil},
+		{&Update{BusinessConnection: &BusinessConnection{User: user}}, &user},
+		{&Update{Poll: &Poll{}}, nil},
+	} {
+		assert.Equal(t, test.User, test.Update.User())
+	}
+}
+
+func TestUpdate_SenderChat(t *testing.T) {
+	chat := Chat{ID: 1}
+
+	for _, test := range []struct {
+		Update     *Update
+		SenderChat *Chat
+	}{
+		{&Update{}, nil},
+		{&Update{Message: &Message{SenderChat: &chat}}, &chat},
+		{&Update{Message: &Message{}}, nil},
+		{&Update{MessageReaction: &MessageReactionUpdated{ActorChat: &chat}}, &chat},
+		{&Update{MessageReaction: &MessageReactionUpdated{}}, nil},
+		{&Update{PollAnswer: &PollAnswer{VoterChat: &chat}}, &chat},
+		{&Update{PollAnswer: &PollAnswer{}}, nil},
+	} {
+		assert.Equal(t, test.SenderChat, test.Update.SenderChat())
+	}
+}
+
+func TestUpdate_MsgID(t *testing.T) {
+	for _, test := range []struct {
+		Update *Update
+		MsgID  int
+	}{
+		{&Update{}, 0},
+		{&Update{Message: &Message{ID: 42}}, 42},
+		{&Update{MessageReaction: &MessageReactionUpdated{MessageID: 7}}, 7},
+		{&Update{MessageReactionCount: &MessageReactionCountUpdated{MessageID: 9}}, 9},
+		{&Update{InlineQuery: &InlineQuery{}}, 0},
+	} {
+		assert.Equal(t, test.MsgID, test.Update.MsgID())
+	}
+}
+
+func TestUpdate_ChatID(t *testing.T) {
+	for _, test := range []struct {
+		Update *Update
+		ChatID ChatID
+	}{
+		{&Update{}, 0},
+		{&Update{Message: &Message{Chat: Chat{ID: 42}}}, 42},
+		{&Update{ChatMember: &ChatMemberUpdated{Chat: Chat{ID: 10}}}, 10},
+		{&Update{BusinessConnection: &BusinessConnection{UserChatID: 99}}, 99},
+		{&Update{InlineQuery: &InlineQuery{}}, 0},
+	} {
+		assert.Equal(t, test.ChatID, test.Update.ChatID())
+	}
+}
+
+func TestUpdate_InlineMessageID(t *testing.T) {
+	for _, test := range []struct {
+		Update          *Update
+		InlineMessageID string
+	}{
+		{&Update{}, ""},
+		{&Update{CallbackQuery: &CallbackQuery{InlineMessageID: "abc"}}, "abc"},
+		{&Update{CallbackQuery: &CallbackQuery{}}, ""},
+		{&Update{ChosenInlineResult: &ChosenInlineResult{InlineMessageID: "xyz"}}, "xyz"},
+		{&Update{ChosenInlineResult: &ChosenInlineResult{}}, ""},
+		{&Update{Message: &Message{}}, ""},
+	} {
+		assert.Equal(t, test.InlineMessageID, test.Update.InlineMessageID())
+	}
+}
+
+func TestUpdate_BusinessConnectionID(t *testing.T) {
+	for _, test := range []struct {
+		Update               *Update
+		BusinessConnectionID string
+	}{
+		{&Update{}, ""},
+		{&Update{BusinessConnection: &BusinessConnection{ID: "bc1"}}, "bc1"},
+		{&Update{DeletedBusinessMessages: &BusinessMessagesDeleted{BusinessConnectionID: "bc2"}}, "bc2"},
+		{&Update{BusinessMessage: &Message{BusinessConnectionID: "bc3"}}, "bc3"},
+		{&Update{Message: &Message{}}, ""},
+		{&Update{InlineQuery: &InlineQuery{}}, ""},
+	} {
+		assert.Equal(t, test.BusinessConnectionID, test.Update.BusinessConnectionID())
 	}
 }
 
