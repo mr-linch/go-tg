@@ -18,7 +18,7 @@ import (
 const pageSize = 10
 
 var (
-	inlineQueryParamRegexp = regexp.MustCompile(`(\w+):([^\s]+)`)
+	inlineQueryParamRegexp = regexp.MustCompile(`(\w+):(\S+)`)
 
 	// notViaBot filters out messages sent via inline bots.
 	notViaBot = tgb.FilterFunc(func(ctx context.Context, update *tgb.Update) (bool, error) {
@@ -93,7 +93,7 @@ func main() {
 				nextOffset = strconv.Itoa(offset + pageSize)
 			}
 
-			return iq.Answer(items...).
+			return iq.Answer(tg.InlineQueryResultOf(items...)).
 				CacheTime(0).
 				NextOffset(nextOffset).
 				DoVoid(ctx)

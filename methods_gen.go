@@ -1865,13 +1865,13 @@ type SendPaidMediaCall struct {
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername). If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance. Otherwise, they will be credited to the bot's balance.
 //   - starCount: The number of Telegram Stars that must be paid to buy access to the media; 1-25000
 //   - media: A JSON-serialized array describing the media to be sent; up to 10 items
-func NewSendPaidMediaCall(chatID PeerID, starCount int, media ...InputPaidMediaClass) *SendPaidMediaCall {
+func NewSendPaidMediaCall(chatID PeerID, starCount int, media []InputPaidMedia) *SendPaidMediaCall {
 	return &SendPaidMediaCall{
 		Call[Message]{
 			request: NewRequest("sendPaidMedia").
 				PeerID("chat_id", chatID).
 				Int("star_count", starCount).
-				InputPaidMediaSlice("media", InputPaidMediaOf(media...)),
+				InputPaidMediaSlice("media", media),
 		},
 	}
 }
@@ -1882,9 +1882,9 @@ func NewSendPaidMediaCall(chatID PeerID, starCount int, media ...InputPaidMediaC
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername). If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance. Otherwise, they will be credited to the bot's balance.
 //   - starCount: The number of Telegram Stars that must be paid to buy access to the media; 1-25000
 //   - media: A JSON-serialized array describing the media to be sent; up to 10 items
-func (client *Client) SendPaidMedia(chatID PeerID, starCount int, media ...InputPaidMediaClass) *SendPaidMediaCall {
+func (client *Client) SendPaidMedia(chatID PeerID, starCount int, media []InputPaidMedia) *SendPaidMediaCall {
 	return BindClient(
-		NewSendPaidMediaCall(chatID, starCount, media...),
+		NewSendPaidMediaCall(chatID, starCount, media),
 		client,
 	)
 }
@@ -1920,8 +1920,8 @@ func (call *SendPaidMediaCall) StarCount(starCount int) *SendPaidMediaCall {
 }
 
 // Media sets the media parameter.
-func (call *SendPaidMediaCall) Media(media ...InputPaidMediaClass) *SendPaidMediaCall {
-	call.request.InputPaidMediaSlice("media", InputPaidMediaOf(media...))
+func (call *SendPaidMediaCall) Media(media []InputPaidMedia) *SendPaidMediaCall {
+	call.request.InputPaidMediaSlice("media", media)
 	return call
 }
 
@@ -2004,12 +2004,12 @@ type SendMediaGroupCall struct {
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 //   - media: A JSON-serialized array describing messages to be sent, must include 2-10 items
-func NewSendMediaGroupCall(chatID PeerID, media ...InputMediaClass) *SendMediaGroupCall {
+func NewSendMediaGroupCall(chatID PeerID, media []InputMedia) *SendMediaGroupCall {
 	return &SendMediaGroupCall{
 		Call[[]Message]{
 			request: NewRequest("sendMediaGroup").
 				PeerID("chat_id", chatID).
-				InputMediaSlice("media", InputMediaOf(media...)),
+				InputMediaSlice("media", media),
 		},
 	}
 }
@@ -2019,9 +2019,9 @@ func NewSendMediaGroupCall(chatID PeerID, media ...InputMediaClass) *SendMediaGr
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 //   - media: A JSON-serialized array describing messages to be sent, must include 2-10 items
-func (client *Client) SendMediaGroup(chatID PeerID, media ...InputMediaClass) *SendMediaGroupCall {
+func (client *Client) SendMediaGroup(chatID PeerID, media []InputMedia) *SendMediaGroupCall {
 	return BindClient(
-		NewSendMediaGroupCall(chatID, media...),
+		NewSendMediaGroupCall(chatID, media),
 		client,
 	)
 }
@@ -2051,8 +2051,8 @@ func (call *SendMediaGroupCall) DirectMessagesTopicID(directMessagesTopicID int)
 }
 
 // Media sets the media parameter.
-func (call *SendMediaGroupCall) Media(media ...InputMediaClass) *SendMediaGroupCall {
-	call.request.InputMediaSlice("media", InputMediaOf(media...))
+func (call *SendMediaGroupCall) Media(media []InputMedia) *SendMediaGroupCall {
+	call.request.InputMediaSlice("media", media)
 	return call
 }
 
@@ -3062,8 +3062,8 @@ func (call *SetMessageReactionCall) MessageID(messageID int) *SetMessageReaction
 }
 
 // Reaction sets the reaction parameter.
-func (call *SetMessageReactionCall) Reaction(reaction ...ReactionTypeClass) *SetMessageReactionCall {
-	call.request.JSON("reaction", ReactionTypeOf(reaction...))
+func (call *SetMessageReactionCall) Reaction(reaction []ReactionType) *SetMessageReactionCall {
+	call.request.JSON("reaction", reaction)
 	return call
 }
 
@@ -9403,12 +9403,12 @@ type AnswerInlineQueryCall struct {
 // Required params:
 //   - inlineQueryID: Unique identifier for the answered query
 //   - results: A JSON-serialized array of results for the inline query
-func NewAnswerInlineQueryCall(inlineQueryID string, results ...InlineQueryResultClass) *AnswerInlineQueryCall {
+func NewAnswerInlineQueryCall(inlineQueryID string, results []InlineQueryResult) *AnswerInlineQueryCall {
 	return &AnswerInlineQueryCall{
 		CallNoResult{
 			request: NewRequest("answerInlineQuery").
 				String("inline_query_id", inlineQueryID).
-				JSON("results", InlineQueryResultOf(results...)),
+				JSON("results", results),
 		},
 	}
 }
@@ -9418,9 +9418,9 @@ func NewAnswerInlineQueryCall(inlineQueryID string, results ...InlineQueryResult
 // Required params:
 //   - inlineQueryID: Unique identifier for the answered query
 //   - results: A JSON-serialized array of results for the inline query
-func (client *Client) AnswerInlineQuery(inlineQueryID string, results ...InlineQueryResultClass) *AnswerInlineQueryCall {
+func (client *Client) AnswerInlineQuery(inlineQueryID string, results []InlineQueryResult) *AnswerInlineQueryCall {
 	return BindClient(
-		NewAnswerInlineQueryCall(inlineQueryID, results...),
+		NewAnswerInlineQueryCall(inlineQueryID, results),
 		client,
 	)
 }
@@ -9432,8 +9432,8 @@ func (call *AnswerInlineQueryCall) InlineQueryID(inlineQueryID string) *AnswerIn
 }
 
 // Results sets the results parameter.
-func (call *AnswerInlineQueryCall) Results(results ...InlineQueryResultClass) *AnswerInlineQueryCall {
-	call.request.JSON("results", InlineQueryResultOf(results...))
+func (call *AnswerInlineQueryCall) Results(results []InlineQueryResult) *AnswerInlineQueryCall {
+	call.request.JSON("results", results)
 	return call
 }
 
@@ -10293,12 +10293,12 @@ type SetPassportDataErrorsCall struct {
 // Required params:
 //   - userID: User identifier
 //   - errors: A JSON-serialized array describing the errors
-func NewSetPassportDataErrorsCall(userID UserID, errors ...PassportElementErrorClass) *SetPassportDataErrorsCall {
+func NewSetPassportDataErrorsCall(userID UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
 	return &SetPassportDataErrorsCall{
 		CallNoResult{
 			request: NewRequest("setPassportDataErrors").
 				UserID("user_id", userID).
-				JSON("errors", PassportElementErrorOf(errors...)),
+				JSON("errors", errors),
 		},
 	}
 }
@@ -10308,9 +10308,9 @@ func NewSetPassportDataErrorsCall(userID UserID, errors ...PassportElementErrorC
 // Required params:
 //   - userID: User identifier
 //   - errors: A JSON-serialized array describing the errors
-func (client *Client) SetPassportDataErrors(userID UserID, errors ...PassportElementErrorClass) *SetPassportDataErrorsCall {
+func (client *Client) SetPassportDataErrors(userID UserID, errors []PassportElementError) *SetPassportDataErrorsCall {
 	return BindClient(
-		NewSetPassportDataErrorsCall(userID, errors...),
+		NewSetPassportDataErrorsCall(userID, errors),
 		client,
 	)
 }
@@ -10322,8 +10322,8 @@ func (call *SetPassportDataErrorsCall) UserID(userID UserID) *SetPassportDataErr
 }
 
 // Errors sets the errors parameter.
-func (call *SetPassportDataErrorsCall) Errors(errors ...PassportElementErrorClass) *SetPassportDataErrorsCall {
-	call.request.JSON("errors", PassportElementErrorOf(errors...))
+func (call *SetPassportDataErrorsCall) Errors(errors []PassportElementError) *SetPassportDataErrorsCall {
+	call.request.JSON("errors", errors)
 	return call
 }
 

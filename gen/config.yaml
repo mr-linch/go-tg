@@ -413,7 +413,7 @@ shortcuts:
     - targets: [MessageUpdate, CallbackQueryUpdate]
       method: setMessageReaction
       helper_name: React
-      chain: [{ setter: Reaction, param: reactions, type: "...ReactionTypeClass" }]
+      chain: [{ setter: Reaction, param: reactions, type: "[]ReactionType" }]
 
     # === Forward/Copy (swapped param bindings) ===
     - targets: [MessageUpdate]

@@ -26,8 +26,8 @@ type GoParam struct {
 	GoArgName     string // camelCase arg name ("chatID")
 	GoType        string // resolved type ("PeerID")
 	RequestMethod string // request builder method ("PeerID")
-	ClassConvert  string // scalar: "AsInputMedia" (method); variadic: "InputMediaOf" (function)
-	Variadic      bool   // true → renders as ...XClass, ClassConvert is a function name
+	ClassConvert  string // scalar union: "AsInputMedia" (method on the value)
+	Variadic      bool   // true → renders as ...Type (currently unused after removing variadic Class pattern)
 	Description   string
 	Required      bool
 }
@@ -360,14 +360,6 @@ func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *C
 		// Scalar union param → XClass interface with .AsX() method call
 		classConvert = "As" + goType
 		goType += "Class"
-	} else if strings.HasPrefix(goType, "[]") {
-		baseType := goType[2:]
-		if classTypes[baseType] {
-			// Slice union param → variadic ...XClass with XOf() conversion
-			classConvert = baseType + "Of"
-			goType = baseType + "Class"
-			variadic = true
-		}
 	}
 
 	return GoParam{

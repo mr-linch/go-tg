@@ -334,7 +334,7 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		},
 		{
 			Name:           "React",
-			Request:        msg.React(tg.NewReactionTypeEmoji(tg.ReactionEmojiThumbsUp)).Request(),
+			Request:        msg.React(tg.ReactionTypeOf(tg.NewReactionTypeEmoji(tg.ReactionEmojiThumbsUp))).Request(),
 			ExceptedMethod: "setMessageReaction",
 			ExpectedArgs: map[string]string{
 				"chat_id":    "123",
@@ -345,9 +345,9 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		{
 			Name: "AnswerMediaGroup",
 			Request: msg.AnswerMediaGroup(
-				tg.NewInputMediaPhoto(tg.FileArg{
+				tg.InputMediaOf(tg.NewInputMediaPhoto(tg.FileArg{
 					FileID: "file_id",
-				}),
+				})),
 			).Request(),
 			ExceptedMethod: "sendMediaGroup",
 			ExpectedArgs: map[string]string{
@@ -454,7 +454,7 @@ func TestInlineQueryUpdateHelpers(t *testing.T) {
 	}{
 		{
 			Name:           "Answer",
-			Request:        iq.Answer().Request(),
+			Request:        iq.Answer([]tg.InlineQueryResult{}).Request(),
 			ExceptedMethod: "answerInlineQuery",
 			ExpectedArgs: map[string]string{
 				"inline_query_id": iq.ID,

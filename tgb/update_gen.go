@@ -63,9 +63,9 @@ func (cbq *CallbackQueryUpdate) EditReplyMarkup(markup tg.InlineKeyboardMarkup) 
 }
 
 // React calls [tg.Client.SetMessageReaction].
-func (cbq *CallbackQueryUpdate) React(reactions ...tg.ReactionTypeClass) *tg.SetMessageReactionCall {
+func (cbq *CallbackQueryUpdate) React(reactions []tg.ReactionType) *tg.SetMessageReactionCall {
 	return cbq.Client.SetMessageReaction(cbq.Message.Chat(), cbq.Message.MessageID()).
-		Reaction(reactions...)
+		Reaction(reactions)
 }
 
 // Answer calls [tg.Client.AnswerCallbackQuery].
@@ -158,8 +158,8 @@ type InlineQueryUpdate struct {
 }
 
 // Answer calls [tg.Client.AnswerInlineQuery].
-func (iq *InlineQueryUpdate) Answer(results ...tg.InlineQueryResultClass) *tg.AnswerInlineQueryCall {
-	return iq.Client.AnswerInlineQuery(iq.ID, results...)
+func (iq *InlineQueryUpdate) Answer(results []tg.InlineQueryResult) *tg.AnswerInlineQueryCall {
+	return iq.Client.AnswerInlineQuery(iq.ID, results)
 }
 
 // MessageUpdate it's extend wrapper around [tg.Message].
@@ -209,13 +209,13 @@ func (msg *MessageUpdate) AnswerVideoNote(videoNote tg.FileArg) *tg.SendVideoNot
 }
 
 // AnswerPaidMedia calls [tg.Client.SendPaidMedia].
-func (msg *MessageUpdate) AnswerPaidMedia(starCount int, media ...tg.InputPaidMediaClass) *tg.SendPaidMediaCall {
-	return msg.Client.SendPaidMedia(msg.Chat, starCount, media...)
+func (msg *MessageUpdate) AnswerPaidMedia(starCount int, media []tg.InputPaidMedia) *tg.SendPaidMediaCall {
+	return msg.Client.SendPaidMedia(msg.Chat, starCount, media)
 }
 
 // AnswerMediaGroup calls [tg.Client.SendMediaGroup].
-func (msg *MessageUpdate) AnswerMediaGroup(media ...tg.InputMediaClass) *tg.SendMediaGroupCall {
-	return msg.Client.SendMediaGroup(msg.Chat, media...)
+func (msg *MessageUpdate) AnswerMediaGroup(media []tg.InputMedia) *tg.SendMediaGroupCall {
+	return msg.Client.SendMediaGroup(msg.Chat, media)
 }
 
 // AnswerLocation calls [tg.Client.SendLocation].
@@ -306,9 +306,9 @@ func (msg *MessageUpdate) EditReplyMarkup(markup tg.InlineKeyboardMarkup) *tg.Ed
 }
 
 // React calls [tg.Client.SetMessageReaction].
-func (msg *MessageUpdate) React(reactions ...tg.ReactionTypeClass) *tg.SetMessageReactionCall {
+func (msg *MessageUpdate) React(reactions []tg.ReactionType) *tg.SetMessageReactionCall {
 	return msg.Client.SetMessageReaction(msg.Chat, msg.ID).
-		Reaction(reactions...)
+		Reaction(reactions)
 }
 
 // Forward calls [tg.Client.ForwardMessage].

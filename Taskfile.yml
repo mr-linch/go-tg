@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 vars:
   COVERAGE_FILE: coverage.out
@@ -33,6 +33,7 @@ tasks:
     cmds:
       - task: lint:main
       - task: lint:gen
+      - task: lint:examples
 
   lint:main:
     desc: Lint root module
@@ -93,7 +94,6 @@ tasks:
     desc: Run all CI checks locally
     cmds:
       - task: lint
-      - task: lint:examples
       - task: tidy:check
       - task: test
 

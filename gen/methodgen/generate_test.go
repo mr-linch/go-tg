@@ -297,7 +297,7 @@ func TestGenerate_InputMediaSlice(t *testing.T) {
 	})
 
 	t.Run("DirectType_WithDiscriminator", func(t *testing.T) {
-		// With discriminator union, []InputMedia becomes variadic ...InputMediaClass
+		// With discriminator union, []InputMedia stays as []InputMedia (not variadic)
 		api := &ir.API{
 			Types: []ir.Type{
 				{Name: "InputMedia", Subtypes: []string{"InputMediaPhoto", "InputMediaVideo"}},
@@ -328,8 +328,8 @@ func TestGenerate_InputMediaSlice(t *testing.T) {
 		require.NoError(t, err)
 
 		output := buf.String()
-		assert.Contains(t, output, "media ...InputMediaClass")
-		assert.Contains(t, output, "InputMediaSlice(\"media\", InputMediaOf(media...))")
+		assert.Contains(t, output, "media []InputMedia")
+		assert.Contains(t, output, "InputMediaSlice(\"media\", media)")
 	})
 
 	t.Run("UnionSubtypes", func(t *testing.T) {
@@ -556,14 +556,14 @@ func TestGenerate_FullAPI(t *testing.T) {
 	assert.Contains(t, output, "SendPhotoCall")
 
 	// Verify InputMedia methods use correct request methods
-	assert.Contains(t, output, "InputMediaSlice(\"media\", InputMediaOf(media...))")
+	assert.Contains(t, output, "InputMediaSlice(\"media\", media)")
 	assert.Contains(t, output, `InputMedia("media", media.AsInputMedia())`)
-	assert.Contains(t, output, "InputPaidMediaSlice(\"media\", InputPaidMediaOf(media...))")
+	assert.Contains(t, output, "InputPaidMediaSlice(\"media\", media)")
 
 	// Scalar discriminator union params use Class interfaces
 	assert.Contains(t, output, "media InputMediaClass")
-	// Slice discriminator union params become variadic Class params
-	assert.Contains(t, output, "media ...InputMediaClass")
+	// Slice discriminator union params stay as concrete slices
+	assert.Contains(t, output, "media []InputMedia")
 }
 
 func TestGenerate_PackageOption(t *testing.T) {
