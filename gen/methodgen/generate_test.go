@@ -271,7 +271,8 @@ func TestGenerate_InputFile(t *testing.T) {
 }
 
 func TestGenerate_InputMediaSlice(t *testing.T) {
-	t.Run("DirectType", func(t *testing.T) {
+	t.Run("DirectType_NoDiscriminator", func(t *testing.T) {
+		// Without discriminator union type definition, []InputMedia stays as-is
 		api := &ir.API{
 			Methods: []ir.Method{
 				{
@@ -293,6 +294,42 @@ func TestGenerate_InputMediaSlice(t *testing.T) {
 		output := buf.String()
 		assert.Contains(t, output, "media []InputMedia")
 		assert.Contains(t, output, "InputMediaSlice(\"media\", media)")
+	})
+
+	t.Run("DirectType_WithDiscriminator", func(t *testing.T) {
+		// With discriminator union, []InputMedia becomes variadic ...InputMediaClass
+		api := &ir.API{
+			Types: []ir.Type{
+				{Name: "InputMedia", Subtypes: []string{"InputMediaPhoto", "InputMediaVideo"}},
+				{Name: "InputMediaPhoto", Fields: []ir.Field{
+					{Name: "type", Const: "photo", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}},
+					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}},
+				}},
+				{Name: "InputMediaVideo", Fields: []ir.Field{
+					{Name: "type", Const: "video", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}},
+					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}},
+				}},
+			},
+			Methods: []ir.Method{
+				{
+					Name: "sendMediaGroup",
+					Params: []ir.Param{
+						{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
+						{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMedia"}}, Array: 1}, Required: true},
+					},
+					Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}, Array: 1},
+				},
+			},
+		}
+
+		cfg := loadTestConfig(t)
+		var buf bytes.Buffer
+		err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
+		require.NoError(t, err)
+
+		output := buf.String()
+		assert.Contains(t, output, "media ...InputMediaClass")
+		assert.Contains(t, output, "InputMediaSlice(\"media\", InputMediaOf(media...))")
 	})
 
 	t.Run("UnionSubtypes", func(t *testing.T) {
@@ -364,30 +401,70 @@ func TestGenerate_InputMediaSlice_HeterogeneousUnions(t *testing.T) {
 }
 
 func TestGenerate_InputMedia(t *testing.T) {
-	api := &ir.API{
-		Methods: []ir.Method{
-			{
-				Name: "editMessageMedia",
-				Params: []ir.Param{
-					{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
-					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMedia"}}}, Required: true},
+	t.Run("ScalarWithoutUnionType", func(t *testing.T) {
+		// Without union type definition, InputMedia is treated as plain type
+		api := &ir.API{
+			Methods: []ir.Method{
+				{
+					Name: "editMessageMedia",
+					Params: []ir.Param{
+						{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
+						{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMedia"}}}, Required: true},
+					},
+					Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}},
 				},
-				Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}},
 			},
-		},
-	}
+		}
 
-	cfg := loadTestConfig(t)
-	var buf bytes.Buffer
-	err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
-	require.NoError(t, err)
+		cfg := loadTestConfig(t)
+		var buf bytes.Buffer
+		err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
+		require.NoError(t, err)
 
-	output := buf.String()
-	assert.Contains(t, output, "media InputMedia")
-	assert.Contains(t, output, "InputMedia(\"media\", media)")
+		output := buf.String()
+		assert.Contains(t, output, "media InputMedia")
+		assert.Contains(t, output, "InputMedia(\"media\", media)")
+	})
+
+	t.Run("ScalarWithDiscriminatorUnion", func(t *testing.T) {
+		// With discriminator union type, scalar param uses Class interface
+		api := &ir.API{
+			Types: []ir.Type{
+				{Name: "InputMedia", Subtypes: []string{"InputMediaPhoto", "InputMediaVideo"}},
+				{Name: "InputMediaPhoto", Fields: []ir.Field{
+					{Name: "type", Const: "photo", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}},
+					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}},
+				}},
+				{Name: "InputMediaVideo", Fields: []ir.Field{
+					{Name: "type", Const: "video", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}},
+					{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}},
+				}},
+			},
+			Methods: []ir.Method{
+				{
+					Name: "editMessageMedia",
+					Params: []ir.Param{
+						{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true},
+						{Name: "media", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMedia"}}}, Required: true},
+					},
+					Returns: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}},
+				},
+			},
+		}
+
+		cfg := loadTestConfig(t)
+		var buf bytes.Buffer
+		err := Generate(api, &buf, cfg, testLog, Options{Package: "tg"})
+		require.NoError(t, err)
+
+		output := buf.String()
+		assert.Contains(t, output, "media InputMediaClass")
+		assert.Contains(t, output, `InputMedia("media", media.AsInputMedia())`)
+	})
 }
 
 func TestGenerate_InputPaidMediaSlice(t *testing.T) {
+	// Without discriminator union, stays as plain slice
 	api := &ir.API{
 		Methods: []ir.Method{
 			{
@@ -479,9 +556,14 @@ func TestGenerate_FullAPI(t *testing.T) {
 	assert.Contains(t, output, "SendPhotoCall")
 
 	// Verify InputMedia methods use correct request methods
-	assert.Contains(t, output, "InputMediaSlice(\"media\", media)")
-	assert.Contains(t, output, "InputMedia(\"media\", media)")
-	assert.Contains(t, output, "InputPaidMediaSlice(\"media\", media)")
+	assert.Contains(t, output, "InputMediaSlice(\"media\", InputMediaOf(media...))")
+	assert.Contains(t, output, `InputMedia("media", media.AsInputMedia())`)
+	assert.Contains(t, output, "InputPaidMediaSlice(\"media\", InputPaidMediaOf(media...))")
+
+	// Scalar discriminator union params use Class interfaces
+	assert.Contains(t, output, "media InputMediaClass")
+	// Slice discriminator union params become variadic Class params
+	assert.Contains(t, output, "media ...InputMediaClass")
 }
 
 func TestGenerate_PackageOption(t *testing.T) {

@@ -26,6 +26,8 @@ type GoParam struct {
 	GoArgName     string // camelCase arg name ("chatID")
 	GoType        string // resolved type ("PeerID")
 	RequestMethod string // request builder method ("PeerID")
+	ClassConvert  string // scalar: "AsInputMedia" (method); variadic: "InputMediaOf" (function)
+	Variadic      bool   // true → renders as ...XClass, ClassConvert is a function name
 	Description   string
 	Required      bool
 }
@@ -175,11 +177,14 @@ func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamT
 		knownMethods[m.Name] = "Client." + naming.MethodName(m.Name)
 	}
 
+	// Compute discriminator union types that have Class interfaces.
+	classTypes := collectClassTypes(api)
+
 	usedParamOverrides := make(map[string]bool)
 	usedReturnOverrides := make(map[string]bool)
 
 	for _, m := range api.Methods {
-		goMethod := resolveMethod(m, cfg, rules, stringerTypes, subtypeToUnion, usedParamOverrides, usedReturnOverrides, knownTypes, knownMethods)
+		goMethod := resolveMethod(m, cfg, rules, stringerTypes, subtypeToUnion, classTypes, usedParamOverrides, usedReturnOverrides, knownTypes, knownMethods)
 		data.Methods = append(data.Methods, goMethod)
 	}
 
@@ -201,14 +206,14 @@ func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamT
 	return data
 }
 
-func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, subtypeToUnion map[string]string, usedParamOverrides, usedReturnOverrides, knownTypes map[string]bool, knownMethods map[string]string) GoMethod {
+func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, subtypeToUnion map[string]string, classTypes, usedParamOverrides, usedReturnOverrides, knownTypes map[string]bool, knownMethods map[string]string) GoMethod {
 	goName := naming.MethodName(m.Name)
 	callTypeName := goName + "Call"
 
 	// Resolve params.
 	params := make([]GoParam, 0, len(m.Params))
 	for _, p := range m.Params {
-		goParam := resolveParam(m.Name, p, cfg, rules, stringerTypes, subtypeToUnion, usedParamOverrides)
+		goParam := resolveParam(m.Name, p, cfg, rules, stringerTypes, subtypeToUnion, classTypes, usedParamOverrides)
 		params = append(params, goParam)
 	}
 
@@ -319,7 +324,7 @@ func resolveReturnType(m ir.Method, overrides map[string]string, usedOverrides m
 	return "Call[" + returnType + "]", false
 }
 
-func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, subtypeToUnion map[string]string, usedOverrides map[string]bool) GoParam {
+func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, subtypeToUnion map[string]string, classTypes, usedOverrides map[string]bool) GoParam {
 	// Resolve names.
 	goName := naming.SnakeToPascal(p.Name)
 	goArgName := naming.EscapeReserved(naming.SnakeToCamel(p.Name))
@@ -327,8 +332,25 @@ func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *C
 	// Resolve type.
 	goType := resolveParamType(methodName, p, cfg, rules, subtypeToUnion, usedOverrides)
 
-	// Determine request method.
+	// Determine request method from the concrete type (before Class interface conversion).
 	requestMethod := resolveRequestMethod(goType, stringerTypes)
+
+	// Check for class type conversion.
+	var classConvert string
+	var variadic bool
+	if classTypes[goType] {
+		// Scalar union param → XClass interface with .AsX() method call
+		classConvert = "As" + goType
+		goType += "Class"
+	} else if strings.HasPrefix(goType, "[]") {
+		baseType := goType[2:]
+		if classTypes[baseType] {
+			// Slice union param → variadic ...XClass with XOf() conversion
+			classConvert = baseType + "Of"
+			goType = baseType + "Class"
+			variadic = true
+		}
+	}
 
 	return GoParam{
 		Name:          p.Name,
@@ -336,6 +358,8 @@ func resolveParam(methodName string, p ir.Param, cfg *config.MethodGen, rules *C
 		GoArgName:     goArgName,
 		GoType:        goType,
 		RequestMethod: requestMethod,
+		ClassConvert:  classConvert,
+		Variadic:      variadic,
 		Description:   p.Description,
 		Required:      p.Required,
 	}
@@ -467,4 +491,84 @@ func convertParamLinks(params []GoParam, knownTypes map[string]bool, knownMethod
 		}
 	}
 	return result, allLinkDefs
+}
+
+// collectClassTypes returns the set of type names that are discriminator unions
+// with constructors (i.e., used in method parameters). These types have
+// corresponding XClass interfaces generated in types_gen.go.
+func collectClassTypes(api *ir.API) map[string]bool {
+	typeMap := make(map[string]*ir.Type, len(api.Types))
+	for i := range api.Types {
+		typeMap[api.Types[i].Name] = &api.Types[i]
+	}
+
+	inputTypes := collectInputTypes(api, typeMap)
+
+	// Filter to discriminator unions: has subtypes, no own fields,
+	// subtypes have a Const field (discriminator).
+	result := make(map[string]bool)
+	for _, t := range api.Types {
+		if len(t.Subtypes) == 0 || len(t.Fields) > 0 || !inputTypes[t.Name] {
+			continue
+		}
+		if isDiscriminatorUnion(t, typeMap) {
+			result[t.Name] = true
+		}
+	}
+	return result
+}
+
+// collectInputTypes returns the set of type names reachable from method parameters.
+func collectInputTypes(api *ir.API, typeMap map[string]*ir.Type) map[string]bool {
+	inputTypes := make(map[string]bool)
+	var queue []string
+	for _, m := range api.Methods {
+		for _, p := range m.Params {
+			for _, tr := range p.TypeExpr.Types {
+				if !ir.IsPrimitive(tr.Type) && !inputTypes[tr.Type] {
+					inputTypes[tr.Type] = true
+					queue = append(queue, tr.Type)
+				}
+			}
+		}
+	}
+	for len(queue) > 0 {
+		typeName := queue[0]
+		queue = queue[1:]
+		t := typeMap[typeName]
+		if t == nil {
+			continue
+		}
+		for _, st := range t.Subtypes {
+			if !inputTypes[st] {
+				inputTypes[st] = true
+				queue = append(queue, st)
+			}
+		}
+		for _, f := range t.Fields {
+			for _, tr := range f.TypeExpr.Types {
+				if !ir.IsPrimitive(tr.Type) && !inputTypes[tr.Type] {
+					inputTypes[tr.Type] = true
+					queue = append(queue, tr.Type)
+				}
+			}
+		}
+	}
+	return inputTypes
+}
+
+// isDiscriminatorUnion checks if a union type has a discriminator field (Const) in any subtype.
+func isDiscriminatorUnion(t ir.Type, typeMap map[string]*ir.Type) bool {
+	for _, stName := range t.Subtypes {
+		st := typeMap[stName]
+		if st == nil {
+			continue
+		}
+		for _, f := range st.Fields {
+			if f.Const != "" {
+				return true
+			}
+		}
+	}
+	return false
 }

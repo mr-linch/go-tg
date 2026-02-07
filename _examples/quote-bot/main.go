@@ -59,37 +59,36 @@ func main() {
 			}
 		}
 
-		result := make([]tg.InlineQueryResult, len(quotes))
+		result := make([]tg.InlineQueryResultClass, len(quotes))
 
 		for i, quote := range quotes {
 
 			messageText := tg.HTML.Text(
-				tg.HTML.Italic("„"+quote.Text+"“"),
+				tg.HTML.Italic("\u201e"+quote.Text+"\u201c"),
 				"",
 				tg.HTML.Line("by", tg.HTML.Bold(quote.Author.Name)),
 			)
 
-			article := tg.NewInlineQueryResultArticle(
+			result[i] = tg.NewInlineQueryResultArticle(
 				quote.ID,
 				quote.Author.Name,
 				tg.InputTextMessageContent{
 					MessageText: messageText,
 					ParseMode:   tg.HTML,
 				},
-			)
-			article.Article.Description = quoteText(quote.Text)
-			article.Article.ReplyMarkup = tg.NewInlineKeyboardMarkup(
-				tg.NewButtonRow(
-					tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(
-						fmt.Sprintf("More by %s", quote.Author.Name),
-						fmt.Sprintf("author:%s ", quote.Author.ID),
+			).
+				WithDescription(quoteText(quote.Text)).
+				WithReplyMarkup(tg.NewInlineKeyboardMarkup(
+					tg.NewButtonRow(
+						tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(
+							fmt.Sprintf("More by %s", quote.Author.Name),
+							fmt.Sprintf("author:%s ", quote.Author.ID),
+						),
 					),
-				),
-			).Ptr()
-			result[i] = article
+				))
 		}
 
-		return iq.Answer(result).CacheTime(0).DoVoid(ctx)
+		return iq.Answer(result...).CacheTime(0).DoVoid(ctx)
 	})
 
 	runner.Run(r)

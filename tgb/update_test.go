@@ -344,11 +344,11 @@ func TestMessageUpdateHelpers(t *testing.T) {
 		},
 		{
 			Name: "AnswerMediaGroup",
-			Request: msg.AnswerMediaGroup([]tg.InputMedia{
+			Request: msg.AnswerMediaGroup(
 				tg.NewInputMediaPhoto(tg.FileArg{
 					FileID: "file_id",
 				}),
-			}).Request(),
+			).Request(),
 			ExceptedMethod: "sendMediaGroup",
 			ExpectedArgs: map[string]string{
 				"chat_id": "123",
@@ -454,7 +454,7 @@ func TestInlineQueryUpdateHelpers(t *testing.T) {
 	}{
 		{
 			Name:           "Answer",
-			Request:        iq.Answer([]tg.InlineQueryResult{}).Request(),
+			Request:        iq.Answer().Request(),
 			ExceptedMethod: "answerInlineQuery",
 			ExpectedArgs: map[string]string{
 				"inline_query_id": iq.ID,

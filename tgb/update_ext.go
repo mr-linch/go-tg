@@ -78,8 +78,8 @@ func (msg *MessageUpdate) AnswerChatAction(action tg.ChatAction) *tg.SendChatAct
 }
 
 // AnswerMediaGroup calls sendMediaGroup with pre-defined chatID to incoming message chat.
-func (msg *MessageUpdate) AnswerMediaGroup(media []tg.InputMedia) *tg.SendMediaGroupCall {
-	return msg.Client.SendMediaGroup(msg.Chat, media)
+func (msg *MessageUpdate) AnswerMediaGroup(media ...tg.InputMediaClass) *tg.SendMediaGroupCall {
+	return msg.Client.SendMediaGroup(msg.Chat, media...)
 }
 
 // Forward incoming message to another chat.
@@ -109,9 +109,9 @@ func (msg *MessageUpdate) EditReplyMarkup(markup tg.InlineKeyboardMarkup) *tg.Ed
 
 // React to incoming message.
 // No arguments means remove all reactions from the message.
-func (msg *MessageUpdate) React(reactions ...tg.ReactionType) *tg.SetMessageReactionCall {
+func (msg *MessageUpdate) React(reactions ...tg.ReactionTypeClass) *tg.SetMessageReactionCall {
 	return msg.Client.SetMessageReaction(msg.Chat, msg.ID).
-		Reaction(reactions)
+		Reaction(reactions...)
 }
 
 // Answer without response (just hide loading icon)
@@ -131,8 +131,8 @@ func (cbq *CallbackQueryUpdate) AnswerURL(url string) *tg.AnswerCallbackQueryCal
 }
 
 // Answer to inline query.
-func (iq *InlineQueryUpdate) Answer(results []tg.InlineQueryResult) *tg.AnswerInlineQueryCall {
-	return iq.Client.AnswerInlineQuery(iq.ID, results)
+func (iq *InlineQueryUpdate) Answer(results ...tg.InlineQueryResultClass) *tg.AnswerInlineQueryCall {
+	return iq.Client.AnswerInlineQuery(iq.ID, results...)
 }
 
 // Answer to shipping query.

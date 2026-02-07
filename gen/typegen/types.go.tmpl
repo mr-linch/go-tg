@@ -135,25 +135,60 @@ func (u *{{$u.Name}}) IsUnknown() bool {
 }
 {{- if $u.HasConstructors}}
 {{range $v := $u.Variants}}
-// New{{$v.TypeName}} creates a {{$u.Name}} containing a {{$v.TypeName}}.
+// New{{$v.TypeName}} creates a new {{$v.TypeName}}.
 {{- if $v.RequiredFields}}
-func New{{$v.TypeName}}({{range $i, $f := $v.RequiredFields}}{{if $i}}, {{end}}{{$f.ParamName}} {{$f.GoType}}{{end}}) {{$u.Name}} {
-	return {{$u.Name}}{{"{"}}{{$v.FieldName}}: &{{$v.TypeName}}{
+func New{{$v.TypeName}}({{range $i, $f := $v.RequiredFields}}{{if $i}}, {{end}}{{$f.ParamName}} {{$f.GoType}}{{end}}) *{{$v.TypeName}} {
+	return &{{$v.TypeName}}{
 {{- range $v.RequiredFields}}
 		{{.GoField}}: {{.ParamName}},
 {{- end}}
-	}{{"}"}}
+	}
 }
 {{- else}}
-func New{{$v.TypeName}}() {{$u.Name}} {
-	return {{$u.Name}}{{"{"}}{{$v.FieldName}}: &{{$v.TypeName}}{}{{"}"}}
+func New{{$v.TypeName}}() *{{$v.TypeName}} {
+	return &{{$v.TypeName}}{}
 }
 {{- end}}
+
+// As{{$u.Name}} wraps the variant into a {{$u.Name}} union.
+func (v *{{$v.TypeName}}) As{{$u.Name}}() {{$u.Name}} {
+	return {{$u.Name}}{{"{"}}{{$v.FieldName}}: v{{"}"}}
+}
 {{end}}
+
+// {{$u.Name}}Class is an interface for types that can be used as [{{$u.Name}}].
+//
+// Known implementations:
+{{- range $u.Variants}}
+//   - [*{{.TypeName}}]
+{{- end}}
+//   - [{{$u.Name}}]
+type {{$u.Name}}Class interface {
+	As{{$u.Name}}() {{$u.Name}}
+}
+
+// As{{$u.Name}} returns the union as-is, implementing {{$u.Name}}Class.
+func (u {{$u.Name}}) As{{$u.Name}}() {{$u.Name}} {
+	return u
+}
+
+// {{$u.Name}}Of converts {{$u.Name}}Class arguments to a slice of {{$u.Name}}.
+func {{$u.Name}}Of(values ...{{$u.Name}}Class) []{{$u.Name}} {
+	result := make([]{{$u.Name}}, len(values))
+	for i, v := range values {
+		result[i] = v.As{{$u.Name}}()
+	}
+	return result
+}
 {{- end}}
 {{- end}}
 {{- range $u := .InterfaceUnions}}
 // {{$u.Comment}}
+//
+// Known implementations:
+{{- range $u.Variants}}
+//   - [{{.TypeName}}]
+{{- end}}
 type {{$u.Name}} interface {
 	{{$u.MarkerMethod}}()
 }
