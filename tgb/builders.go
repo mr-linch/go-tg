@@ -14,12 +14,13 @@ import tg "github.com/mr-linch/go-tg"
 //
 //	msg.Update.Reply(ctx, newMenuBuilder(...).AsEditTextFromCBQ(cbq.CallbackQuery))
 type TextMessageCallBuilder struct {
-	text               string
-	replyMarkup        tg.ReplyMarkup
-	linkPreviewOptions *tg.LinkPreviewOptions
-	entities           []tg.MessageEntity
-	parseMode          tg.ParseMode
-	client             *tg.Client
+	text                 string
+	replyMarkup          tg.ReplyMarkup
+	linkPreviewOptions   *tg.LinkPreviewOptions
+	entities             []tg.MessageEntity
+	parseMode            tg.ParseMode
+	client               *tg.Client
+	businessConnectionID string
 }
 
 // NewTextMessageCallBuilder creates new TextMessageCallBuilder with specified text.
@@ -65,6 +66,12 @@ func (b *TextMessageCallBuilder) ParseMode(mode tg.ParseMode) *TextMessageCallBu
 	return b
 }
 
+// BusinessConnectionID sets business connection ID for the message.
+func (b *TextMessageCallBuilder) BusinessConnectionID(id string) *TextMessageCallBuilder {
+	b.businessConnectionID = id
+	return b
+}
+
 // AsSend returns call sendMessage with specified peer.
 func (b *TextMessageCallBuilder) AsSend(peer tg.PeerID) *tg.SendMessageCall {
 	call := tg.NewSendMessageCall(peer, b.text)
@@ -83,6 +90,10 @@ func (b *TextMessageCallBuilder) AsSend(peer tg.PeerID) *tg.SendMessageCall {
 
 	if b.parseMode != nil {
 		call.ParseMode(b.parseMode)
+	}
+
+	if b.businessConnectionID != "" {
+		call.BusinessConnectionID(b.businessConnectionID)
 	}
 
 	if b.client != nil {
@@ -112,6 +123,10 @@ func (b *TextMessageCallBuilder) AsEditText(peer tg.PeerID, id int) *tg.EditMess
 
 	if b.parseMode != nil {
 		call.ParseMode(b.parseMode)
+	}
+
+	if b.businessConnectionID != "" {
+		call.BusinessConnectionID(b.businessConnectionID)
 	}
 
 	if b.client != nil {
@@ -155,6 +170,10 @@ func (b *TextMessageCallBuilder) AsEditTextInline(id string) *tg.EditMessageText
 		call.ParseMode(b.parseMode)
 	}
 
+	if b.businessConnectionID != "" {
+		call.BusinessConnectionID(b.businessConnectionID)
+	}
+
 	if b.client != nil {
 		call.Bind(b.client)
 	}
@@ -168,6 +187,10 @@ func (b *TextMessageCallBuilder) AsEditReplyMarkup(peer tg.PeerID, id int) *tg.E
 
 	if v, ok := b.replyMarkup.(tg.InlineKeyboardMarkup); ok {
 		call.ReplyMarkup(v)
+	}
+
+	if b.businessConnectionID != "" {
+		call.BusinessConnectionID(b.businessConnectionID)
 	}
 
 	if b.client != nil {
@@ -195,6 +218,10 @@ func (b *TextMessageCallBuilder) AsEditReplyMarkupInline(id string) *tg.EditMess
 
 	if v, ok := b.replyMarkup.(tg.InlineKeyboardMarkup); ok {
 		call.ReplyMarkup(v)
+	}
+
+	if b.businessConnectionID != "" {
+		call.BusinessConnectionID(b.businessConnectionID)
 	}
 
 	if b.client != nil {

@@ -23,6 +23,7 @@ func TestTextMessageBuilder(t *testing.T) {
 			Entities(entities).
 			ReplyMarkup(replyMarkup).
 			ParseMode(pm).
+			BusinessConnectionID("biz123").
 			AsSend(tg.ChatID(1))
 
 		assert.Equal(t, "sendMessage", call.Request().Method)
@@ -50,6 +51,10 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok = call.Request().GetArg("parse_mode")
 		require.True(t, ok)
 		assert.Equal(t, "HTML", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 
 	t.Run("AsEditText", func(t *testing.T) {
@@ -65,6 +70,7 @@ func TestTextMessageBuilder(t *testing.T) {
 			Entities(entities).
 			ReplyMarkup(replyMarkup).
 			ParseMode(pm).
+			BusinessConnectionID("biz123").
 			AsEditText(tg.ChatID(1), 2)
 
 		assert.Equal(t, "editMessageText", call.Request().Method)
@@ -96,6 +102,10 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok = call.Request().GetArg("parse_mode")
 		require.True(t, ok)
 		assert.Equal(t, "HTML", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 
 	t.Run("AsEditTextFromCBQ", func(t *testing.T) {
@@ -111,6 +121,7 @@ func TestTextMessageBuilder(t *testing.T) {
 			Entities(entities).
 			ReplyMarkup(replyMarkup).
 			ParseMode(pm).
+			BusinessConnectionID("biz123").
 			AsEditTextFromCBQ(
 				&tg.CallbackQuery{
 					Message: &tg.MaybeInaccessibleMessage{
@@ -151,6 +162,10 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok = call.Request().GetArg("parse_mode")
 		require.True(t, ok)
 		assert.Equal(t, "HTML", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 
 	t.Run("AsEditTextFromMsg", func(t *testing.T) {
@@ -166,6 +181,7 @@ func TestTextMessageBuilder(t *testing.T) {
 			Entities(entities).
 			ReplyMarkup(replyMarkup).
 			ParseMode(pm).
+			BusinessConnectionID("biz123").
 			AsEditTextFromMsg(&tg.Message{
 				Chat: tg.Chat{ID: 1},
 				ID:   2,
@@ -200,6 +216,10 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok = call.Request().GetArg("parse_mode")
 		require.True(t, ok)
 		assert.Equal(t, "HTML", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 
 	t.Run("AsEditTextInline", func(t *testing.T) {
@@ -215,6 +235,7 @@ func TestTextMessageBuilder(t *testing.T) {
 			Entities(entities).
 			ReplyMarkup(replyMarkup).
 			ParseMode(pm).
+			BusinessConnectionID("biz123").
 			AsEditTextInline("inline")
 
 		assert.Equal(t, "editMessageText", call.Request().Method)
@@ -242,6 +263,10 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok = call.Request().GetArg("parse_mode")
 		require.True(t, ok)
 		assert.Equal(t, "HTML", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 
 	t.Run("AsEditTextReplyMarkup", func(t *testing.T) {
@@ -251,6 +276,7 @@ func TestTextMessageBuilder(t *testing.T) {
 		call := NewTextMessageCallBuilder("text").
 			Client(client).
 			ReplyMarkup(replyMarkup).
+			BusinessConnectionID("biz123").
 			AsEditReplyMarkup(tg.ChatID(1), 2)
 
 		assert.Equal(t, "editMessageReplyMarkup", call.Request().Method)
@@ -266,6 +292,10 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok = call.Request().GetArg("message_id")
 		require.True(t, ok)
 		assert.Equal(t, "2", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 
 	t.Run("AsEditTextReplyMarkupFromCBQ", func(t *testing.T) {
@@ -275,6 +305,7 @@ func TestTextMessageBuilder(t *testing.T) {
 		call := NewTextMessageCallBuilder("text").
 			Client(client).
 			ReplyMarkup(replyMarkup).
+			BusinessConnectionID("biz123").
 			AsEditReplyMarkupFromCBQ(
 				&tg.CallbackQuery{
 					Message: &tg.MaybeInaccessibleMessage{
@@ -299,6 +330,10 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok = call.Request().GetArg("message_id")
 		require.True(t, ok)
 		assert.Equal(t, "2", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 
 	t.Run("AsEditTextReplyMarkupFromMsg", func(t *testing.T) {
@@ -308,6 +343,7 @@ func TestTextMessageBuilder(t *testing.T) {
 		call := NewTextMessageCallBuilder("text").
 			Client(client).
 			ReplyMarkup(replyMarkup).
+			BusinessConnectionID("biz123").
 			AsEditReplyMarkupFromMsg(tg.Message{
 				Chat: tg.Chat{ID: 1},
 				ID:   2,
@@ -326,6 +362,10 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok = call.Request().GetArg("message_id")
 		require.True(t, ok)
 		assert.Equal(t, "2", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 
 	t.Run("AsEditReplyMarkupInline", func(t *testing.T) {
@@ -335,6 +375,7 @@ func TestTextMessageBuilder(t *testing.T) {
 		call := NewTextMessageCallBuilder("text").
 			Client(client).
 			ReplyMarkup(replyMarkup).
+			BusinessConnectionID("biz123").
 			AsEditReplyMarkupInline("inline")
 
 		assert.Equal(t, "editMessageReplyMarkup", call.Request().Method)
@@ -346,5 +387,9 @@ func TestTextMessageBuilder(t *testing.T) {
 		arg, ok := call.Request().GetArg("inline_message_id")
 		require.True(t, ok)
 		assert.Equal(t, "inline", arg)
+
+		arg, ok = call.Request().GetArg("business_connection_id")
+		require.True(t, ok)
+		assert.Equal(t, "biz123", arg)
 	})
 }
