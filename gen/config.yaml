@@ -126,7 +126,16 @@ typegen:
     - InputFile
     # Union types without const discriminator (manual unmarshal logic)
     - MaybeInaccessibleMessage
-    - InputMessageContent
+
+  # Interface unions: marker interface pattern for union types without a JSON discriminator.
+  # Spec-derived unions (e.g., InputMessageContent) are auto-detected; config-defined ones are listed here.
+  interface_unions:
+    - name: ReplyMarkup
+      variants:
+        - InlineKeyboardMarkup
+        - ReplyKeyboardMarkup
+        - ReplyKeyboardRemove
+        - ForceReply
 
   field_type_rules:
     - expr: 'TypeExpr.Types[0].Type in ["Integer", "Integer64"] && (Description contains "Unix time" || Description contains "Unix timestamp")'

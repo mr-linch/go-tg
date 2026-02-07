@@ -152,6 +152,31 @@ func New{{$v.TypeName}}() {{$u.Name}} {
 {{end}}
 {{- end}}
 {{- end}}
+{{- range $u := .InterfaceUnions}}
+// {{$u.Comment}}
+type {{$u.Name}} interface {
+	{{$u.MarkerMethod}}()
+}
+{{range $v := $u.Variants}}
+func (v {{$v.TypeName}}) {{$u.MarkerMethod}}() {}
+{{- end}}
+{{- range $v := $u.Variants}}
+{{- if $v.Constructor}}
+
+// {{$v.Constructor.FuncName}} creates a new {{$v.Constructor.TypeName}}.
+func {{$v.Constructor.FuncName}}({{range $i, $p := $v.Constructor.Params}}{{if $i}}, {{end}}{{$p.Name}} {{$p.Type}}{{end}}) {{if $v.Constructor.ReturnPtr}}*{{end}}{{$v.Constructor.TypeName}} {
+	return {{if $v.Constructor.ReturnPtr}}&{{end}}{{$v.Constructor.TypeName}}{
+{{- range $v.Constructor.Sentinels}}
+		{{.GoField}}: {{.Value}},
+{{- end}}
+{{- range $v.Constructor.Params}}
+		{{.GoField}}: {{.Name}},
+{{- end}}
+	}
+}
+{{- end}}
+{{- end}}
+{{- end}}
 {{- range $e := .Enums}}
 // {{$e.Name}} represents an enum type.
 type {{$e.Name}} {{$e.Underlying}}
@@ -251,4 +276,23 @@ func New{{$vc.TypeName}}{{$v.Name}}({{$vc.BaseParam}}{{if and $v.Param (not $v.H
 	}
 }
 {{end}}
+{{- end}}
+{{- range $bt := .BuilderTypes}}
+{{- range $b := $bt.Methods}}
+{{- if $b.IsBool}}
+
+// With{{$b.FieldName}} sets the {{$b.FieldName}} field.
+func (v *{{$bt.TypeName}}) With{{$b.FieldName}}() *{{$bt.TypeName}} {
+	v.{{$b.FieldName}} = true
+	return v
+}
+{{- else}}
+
+// With{{$b.FieldName}} sets the {{$b.FieldName}} field.
+func (v *{{$bt.TypeName}}) With{{$b.FieldName}}({{$b.ParamName}} {{$b.GoType}}) *{{$bt.TypeName}} {
+	v.{{$b.FieldName}} = {{if $b.IsPtr}}&{{end}}{{$b.ParamName}}
+	return v
+}
+{{- end}}
+{{- end}}
 {{- end}}

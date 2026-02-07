@@ -96,7 +96,7 @@ func main() {
 			return msg.Update.Reply(ctx, msg.Answer("What is your gender?").ReplyMarkup(
 				tg.NewReplyKeyboardMarkup(
 					buttonLayout.Keyboard()...,
-				).WithResizeKeyboardMarkup(),
+				).WithResizeKeyboard(),
 			))
 		}, isSessionStep(SessionStepAge), isDigit).
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {

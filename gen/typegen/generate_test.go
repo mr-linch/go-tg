@@ -294,6 +294,132 @@ var testAPI = &ir.API{
 			Description: "This object describes a message that can be inaccessible.",
 			Subtypes:    []string{"Message", "InaccessibleMessage"},
 		},
+		// Interface union: union without discriminator (not excluded)
+		{
+			Name:        "InputMessageContent",
+			Description: "This object represents the content of a message to be sent as a result of an inline query.",
+			Subtypes:    []string{"InputTextMessageContent", "InputLocationMessageContent"},
+		},
+		{
+			Name:        "InputTextMessageContent",
+			Description: "Represents the content of a text message.",
+			Fields: []ir.Field{
+				{
+					Name:        "message_text",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}},
+					Description: "Text of the message to be sent.",
+				},
+				{
+					Name:        "parse_mode",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}},
+					Optional:    true,
+					Description: "Optional. Mode for parsing entities.",
+				},
+			},
+		},
+		{
+			Name:        "InputLocationMessageContent",
+			Description: "Represents the content of a location message.",
+			Fields: []ir.Field{
+				{
+					Name:        "latitude",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Float"}}},
+					Description: "Latitude of the location.",
+				},
+				{
+					Name:        "longitude",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Float"}}},
+					Description: "Longitude of the location.",
+				},
+			},
+		},
+		// Config-defined interface union variant types (ReplyMarkup)
+		{
+			Name:        "InlineKeyboardMarkup",
+			Description: "An inline keyboard that appears right next to the message it belongs to.",
+			Fields: []ir.Field{
+				{
+					Name:        "inline_keyboard",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "InlineKeyboardButton"}}, Array: 2},
+					Description: "Array of button rows.",
+				},
+			},
+		},
+		{
+			Name:        "ReplyKeyboardMarkup",
+			Description: "A custom keyboard with reply options.",
+			Fields: []ir.Field{
+				{
+					Name:        "keyboard",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "KeyboardButton"}}, Array: 2},
+					Description: "Array of button rows.",
+				},
+				{
+					Name:        "resize_keyboard",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Boolean"}}},
+					Optional:    true,
+					Description: "Optional. Resize the keyboard vertically.",
+				},
+				{
+					Name:        "one_time_keyboard",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Boolean"}}},
+					Optional:    true,
+					Description: "Optional. Hide keyboard after use.",
+				},
+				{
+					Name:        "input_field_placeholder",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}},
+					Optional:    true,
+					Description: "Optional. Placeholder text.",
+				},
+				{
+					Name:        "selective",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Boolean"}}},
+					Optional:    true,
+					Description: "Optional. Show to specific users only.",
+				},
+			},
+		},
+		{
+			Name:        "ReplyKeyboardRemove",
+			Description: "Removes the custom keyboard.",
+			Fields: []ir.Field{
+				{
+					Name:        "remove_keyboard",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "True"}}},
+					Description: "Requests removal of the keyboard.",
+				},
+				{
+					Name:        "selective",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Boolean"}}},
+					Optional:    true,
+					Description: "Optional. Show to specific users only.",
+				},
+			},
+		},
+		{
+			Name:        "ForceReply",
+			Description: "Display a reply interface to the user.",
+			Fields: []ir.Field{
+				{
+					Name:        "force_reply",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "True"}}},
+					Description: "Shows reply interface.",
+				},
+				{
+					Name:        "input_field_placeholder",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}},
+					Optional:    true,
+					Description: "Optional. Placeholder text.",
+				},
+				{
+					Name:        "selective",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Boolean"}}},
+					Optional:    true,
+					Description: "Optional. Show to specific users only.",
+				},
+			},
+		},
 	},
 }
 
@@ -329,6 +455,68 @@ func TestGenerate_ExcludesTypes(t *testing.T) {
 	got := buf.String()
 	assert.NotContains(t, got, "type MessageOrigin struct")
 	assert.NotContains(t, got, "type MaybeInaccessibleMessage struct")
+}
+
+func TestGenerate_InterfaceUnions(t *testing.T) {
+	cfg := loadTestConfig(t)
+
+	var buf bytes.Buffer
+	err := Generate(testAPI, &buf, cfg, testLog, Options{})
+	require.NoError(t, err)
+
+	got := buf.String()
+
+	// Spec-derived interface union: InputMessageContent (no discriminator)
+	assert.Contains(t, got, "type InputMessageContent interface")
+	assert.Contains(t, got, "isInputMessageContent()")
+	assert.Contains(t, got, "func (v InputTextMessageContent) isInputMessageContent()")
+	assert.Contains(t, got, "func (v InputLocationMessageContent) isInputMessageContent()")
+
+	// Spec-derived interface union constructors
+	assert.Contains(t, got, "func NewInputTextMessageContent(messageText string) *InputTextMessageContent")
+	assert.Contains(t, got, "func NewInputLocationMessageContent(latitude float64, longitude float64) InputLocationMessageContent")
+
+	// Config-defined interface union: ReplyMarkup
+	assert.Contains(t, got, "type ReplyMarkup interface")
+	assert.Contains(t, got, "isReplyMarkup()")
+	assert.Contains(t, got, "func (v InlineKeyboardMarkup) isReplyMarkup()")
+	assert.Contains(t, got, "func (v ReplyKeyboardMarkup) isReplyMarkup()")
+	assert.Contains(t, got, "func (v ReplyKeyboardRemove) isReplyMarkup()")
+	assert.Contains(t, got, "func (v ForceReply) isReplyMarkup()")
+
+	// Config-defined interface union constructors
+	assert.Contains(t, got, "func NewInlineKeyboardMarkup(inlineKeyboard ...[]InlineKeyboardButton) InlineKeyboardMarkup")
+	assert.Contains(t, got, "func NewReplyKeyboardMarkup(keyboard ...[]KeyboardButton) *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func NewReplyKeyboardRemove() *ReplyKeyboardRemove")
+	assert.Contains(t, got, "func NewForceReply() *ForceReply")
+
+	// Must NOT be generated as struct unions
+	assert.NotContains(t, got, "type InputMessageContent struct")
+	assert.NotContains(t, got, "type ReplyMarkup struct")
+}
+
+func TestGenerate_BuilderTypes(t *testing.T) {
+	cfg := loadTestConfig(t)
+
+	var buf bytes.Buffer
+	err := Generate(testAPI, &buf, cfg, testLog, Options{})
+	require.NoError(t, err)
+
+	got := buf.String()
+
+	// Bool builder methods (no param, sets to true)
+	assert.Contains(t, got, "func (v *ReplyKeyboardMarkup) WithResizeKeyboard() *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func (v *ReplyKeyboardMarkup) WithOneTimeKeyboard() *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func (v *ReplyKeyboardMarkup) WithSelective() *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func (v *ReplyKeyboardRemove) WithSelective() *ReplyKeyboardRemove")
+	assert.Contains(t, got, "func (v *ForceReply) WithSelective() *ForceReply")
+
+	// Non-bool builder methods (with param)
+	assert.Contains(t, got, "func (v *ReplyKeyboardMarkup) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func (v *ForceReply) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ForceReply")
+
+	// Spec-derived interface union variant builders
+	assert.Contains(t, got, "func (v *InputTextMessageContent) WithParseMode(parseMode ParseMode) *InputTextMessageContent")
 }
 
 func TestGenerate_UnionTypes(t *testing.T) {
@@ -491,6 +679,16 @@ func TestGenerate_FullAPI(t *testing.T) {
 	// Excluded types are absent
 	assert.NotContains(t, got, "type MaybeInaccessibleMessage struct")
 
+	// Interface unions: spec-derived (no discriminator)
+	assert.Contains(t, got, "type InputMessageContent interface")
+	assert.Contains(t, got, "isInputMessageContent()")
+	assert.Contains(t, got, "func (v InputTextMessageContent) isInputMessageContent()")
+
+	// Interface unions: config-defined
+	assert.Contains(t, got, "type ReplyMarkup interface")
+	assert.Contains(t, got, "isReplyMarkup()")
+	assert.Contains(t, got, "func (v InlineKeyboardMarkup) isReplyMarkup()")
+
 	// Empty structs are generated
 	assert.Contains(t, got, "type ForumTopicClosed struct")
 
@@ -549,4 +747,24 @@ func TestGenerate_FullAPI(t *testing.T) {
 
 	// Go keyword escaping in constructor params
 	assert.Contains(t, got, "func NewPassportElementErrorDataField(type_ string")
+
+	// Interface union constructors: config-defined (ReplyMarkup)
+	assert.Contains(t, got, "func NewInlineKeyboardMarkup(inlineKeyboard ...[]InlineKeyboardButton) InlineKeyboardMarkup")
+	assert.Contains(t, got, "func NewReplyKeyboardMarkup(keyboard ...[]KeyboardButton) *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func NewReplyKeyboardRemove() *ReplyKeyboardRemove")
+	assert.Contains(t, got, "func NewForceReply() *ForceReply")
+
+	// Interface union constructors: spec-derived (InputMessageContent)
+	assert.Contains(t, got, "func NewInputTextMessageContent(messageText string) *InputTextMessageContent")
+	assert.Contains(t, got, "func NewInputLocationMessageContent(latitude float64, longitude float64) *InputLocationMessageContent")
+
+	// Builders: ReplyKeyboardMarkup With* methods
+	assert.Contains(t, got, "func (v *ReplyKeyboardMarkup) WithResizeKeyboard() *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func (v *ReplyKeyboardMarkup) WithOneTimeKeyboard() *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func (v *ReplyKeyboardMarkup) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ReplyKeyboardMarkup")
+	assert.Contains(t, got, "func (v *ReplyKeyboardMarkup) WithSelective() *ReplyKeyboardMarkup")
+
+	// Builders: ForceReply With* methods
+	assert.Contains(t, got, "func (v *ForceReply) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ForceReply")
+	assert.Contains(t, got, "func (v *ForceReply) WithSelective() *ForceReply")
 }

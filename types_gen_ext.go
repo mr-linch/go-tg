@@ -147,26 +147,6 @@ func (user User) PeerID() string {
 	return user.ID.PeerID()
 }
 
-// ReplyMarkup generic for keyboards.
-//
-// Known implementations:
-//   - [ReplyKeyboardMarkup]
-//   - [InlineKeyboardMarkup]
-//   - [ReplyKeyboardRemove]
-//   - [ForceReply]
-type ReplyMarkup interface {
-	isReplyMarkup()
-}
-
-var _ ReplyMarkup = (*InlineKeyboardMarkup)(nil)
-
-// NewInlineKeyboardMarkup creates a new InlineKeyboardMarkup.
-func NewInlineKeyboardMarkup(rows ...[]InlineKeyboardButton) InlineKeyboardMarkup {
-	return InlineKeyboardMarkup{
-		InlineKeyboard: rows,
-	}
-}
-
 func (markup InlineKeyboardMarkup) Ptr() *InlineKeyboardMarkup {
 	return &markup
 }
@@ -174,90 +154,6 @@ func (markup InlineKeyboardMarkup) Ptr() *InlineKeyboardMarkup {
 type CallbackDataEncoder[T any] interface {
 	Encode(data T) (string, error)
 }
-
-func (markup InlineKeyboardMarkup) isReplyMarkup() {}
-
-// NewReplyKeyboardMarkup creates a new ReplyKeyboardMarkup.
-func NewReplyKeyboardMarkup(rows ...[]KeyboardButton) *ReplyKeyboardMarkup {
-	return &ReplyKeyboardMarkup{
-		Keyboard: rows,
-	}
-}
-
-var _ ReplyMarkup = (*ReplyKeyboardMarkup)(nil)
-
-// WithResizeKeyboard requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons).
-// Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.
-func (markup *ReplyKeyboardMarkup) WithResizeKeyboardMarkup() *ReplyKeyboardMarkup {
-	markup.ResizeKeyboard = true
-	return markup
-}
-
-// WithOneTimeKeyboard  requests clients to hide the keyboard as soon as it's been used.
-// The keyboard will still be available, but clients will automatically display the
-// usual letter-keyboard in the chat - the user can press a special button in
-// the input field to see the custom keyboard again.
-// Defaults to false.
-func (markup *ReplyKeyboardMarkup) WithOneTimeKeyboardMarkup() *ReplyKeyboardMarkup {
-	markup.OneTimeKeyboard = true
-	return markup
-}
-
-// WithInputFieldPlaceholder sets the placeholder to be shown in the input field when the keyboard is active;
-// 1-64 characters
-func (markup *ReplyKeyboardMarkup) WithInputFieldPlaceholder(placeholder string) *ReplyKeyboardMarkup {
-	markup.InputFieldPlaceholder = placeholder
-	return markup
-}
-
-// Use this parameter if you want to show the keyboard to specific users only.
-func (markup *ReplyKeyboardMarkup) WithSelective() *ReplyKeyboardMarkup {
-	markup.Selective = true
-	return markup
-}
-
-func (markup ReplyKeyboardMarkup) isReplyMarkup() {}
-
-var _ ReplyMarkup = (*ReplyKeyboardRemove)(nil)
-
-// NewReplyKeyboardRemove creates a new ReplyKeyboardRemove.
-func NewReplyKeyboardRemove() *ReplyKeyboardRemove {
-	return &ReplyKeyboardRemove{
-		RemoveKeyboard: true,
-	}
-}
-
-// WithSelective set it if you want to remove the keyboard for specific users only.
-func (markup *ReplyKeyboardRemove) WithSelective() *ReplyKeyboardRemove {
-	markup.Selective = true
-	return markup
-}
-
-func (markup ReplyKeyboardRemove) isReplyMarkup() {}
-
-var _ ReplyMarkup = (*ForceReply)(nil)
-
-// NewForceReply creates a new ForceReply.
-func NewForceReply() *ForceReply {
-	return &ForceReply{
-		ForceReply: true,
-	}
-}
-
-// WithSelective set it if you want to force reply for specific users only.
-func (markup *ForceReply) WithSelective() *ForceReply {
-	markup.Selective = true
-	return markup
-}
-
-// WithInputFieldPlaceholder sets the placeholder to be shown in the input field when the reply is active;
-// 1-64 characters
-func (markup *ForceReply) WithInputFieldPlaceholder(placeholder string) *ForceReply {
-	markup.InputFieldPlaceholder = placeholder
-	return markup
-}
-
-func (markup ForceReply) isReplyMarkup() {}
 
 // NewButtonRow it's generic helper for create keyboards in functional way.
 func NewButtonRow[T Button](buttons ...T) []T {
@@ -347,24 +243,6 @@ func (layout *ButtonLayout[T]) Row(buttons ...T) *ButtonLayout[T] {
 	layout.buttons = append(layout.buttons, buttons)
 	return layout
 }
-
-// InputMessageContent it's generic interface for all types of input message content.
-//
-// Known implementations:
-//   - [InputTextMessageContent]
-//   - [InputLocationMessageContent]
-//   - [InputVenueMessageContent]
-//   - [InputContactMessageContent]
-//   - [InputInvoiceMessageContent]
-type InputMessageContent interface {
-	isInputMessageContent()
-}
-
-func (content InputTextMessageContent) isInputMessageContent()     {}
-func (content InputLocationMessageContent) isInputMessageContent() {}
-func (content InputVenueMessageContent) isInputMessageContent()    {}
-func (content InputContactMessageContent) isInputMessageContent()  {}
-func (content InputInvoiceMessageContent) isInputMessageContent()  {}
 
 // getMedia returns the media and thumbnail from an InputMedia union.
 func (u *InputMedia) getMedia() (media *FileArg, thumb *InputFile) {

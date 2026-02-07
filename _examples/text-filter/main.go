@@ -27,7 +27,7 @@ func main() {
 					tg.NewKeyboardButton(menu.Settings),
 					tg.NewKeyboardButton(menu.About),
 				)...,
-			).WithResizeKeyboardMarkup()
+			).WithResizeKeyboard()
 
 			return mu.Answer("Hey, please click a button above to see how text filter works").
 				ReplyMarkup(kb).

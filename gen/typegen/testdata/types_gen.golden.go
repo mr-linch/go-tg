@@ -134,6 +134,69 @@ type BackgroundFillGradient struct {
 	TopColor int `json:"top_color"`
 }
 
+// InputTextMessageContent represents the content of a text message.
+type InputTextMessageContent struct {
+	// Text of the message to be sent.
+	MessageText string `json:"message_text"`
+
+	// Optional. Mode for parsing entities.
+	ParseMode ParseMode `json:"parse_mode,omitempty"`
+}
+
+// InputLocationMessageContent represents the content of a location message.
+type InputLocationMessageContent struct {
+	// Latitude of the location.
+	Latitude float64 `json:"latitude"`
+
+	// Longitude of the location.
+	Longitude float64 `json:"longitude"`
+}
+
+// InlineKeyboardMarkup an inline keyboard that appears right next to the message it belongs to.
+type InlineKeyboardMarkup struct {
+	// Array of button rows.
+	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard"`
+}
+
+// ReplyKeyboardMarkup a custom keyboard with reply options.
+type ReplyKeyboardMarkup struct {
+	// Array of button rows.
+	Keyboard [][]KeyboardButton `json:"keyboard"`
+
+	// Optional. Resize the keyboard vertically.
+	ResizeKeyboard bool `json:"resize_keyboard,omitempty"`
+
+	// Optional. Hide keyboard after use.
+	OneTimeKeyboard bool `json:"one_time_keyboard,omitempty"`
+
+	// Optional. Placeholder text.
+	InputFieldPlaceholder string `json:"input_field_placeholder,omitempty"`
+
+	// Optional. Show to specific users only.
+	Selective bool `json:"selective,omitempty"`
+}
+
+// ReplyKeyboardRemove removes the custom keyboard.
+type ReplyKeyboardRemove struct {
+	// Requests removal of the keyboard.
+	RemoveKeyboard bool `json:"remove_keyboard"`
+
+	// Optional. Show to specific users only.
+	Selective bool `json:"selective,omitempty"`
+}
+
+// ForceReply display a reply interface to the user.
+type ForceReply struct {
+	// Shows reply interface.
+	ForceReply bool `json:"force_reply"`
+
+	// Optional. Placeholder text.
+	InputFieldPlaceholder string `json:"input_field_placeholder,omitempty"`
+
+	// Optional. Show to specific users only.
+	Selective bool `json:"selective,omitempty"`
+}
+
 // UnknownVariant stores data for unknown union variants.
 // This provides forward compatibility when new variants are added to the API.
 type UnknownVariant struct {
@@ -240,4 +303,121 @@ func (u *BackgroundFill) Type() BackgroundFillType {
 // This can happen when the API returns a new variant not yet supported by this library.
 func (u *BackgroundFill) IsUnknown() bool {
 	return u.Unknown != nil
+}
+
+// MessageOrigin this object describes the origin of a message.
+type MessageOrigin interface {
+	isMessageOrigin()
+}
+
+func (v MessageOriginUser) isMessageOrigin() {}
+func (v MessageOriginChat) isMessageOrigin() {}
+
+// InputMessageContent this object represents the content of a message to be sent as a result of an inline query.
+type InputMessageContent interface {
+	isInputMessageContent()
+}
+
+func (v InputTextMessageContent) isInputMessageContent()     {}
+func (v InputLocationMessageContent) isInputMessageContent() {}
+
+// NewInputTextMessageContent creates a new InputTextMessageContent.
+func NewInputTextMessageContent(messageText string) *InputTextMessageContent {
+	return &InputTextMessageContent{
+		MessageText: messageText,
+	}
+}
+
+// NewInputLocationMessageContent creates a new InputLocationMessageContent.
+func NewInputLocationMessageContent(latitude float64, longitude float64) InputLocationMessageContent {
+	return InputLocationMessageContent{
+		Latitude:  latitude,
+		Longitude: longitude,
+	}
+}
+
+// ReplyMarkup is a marker interface for ReplyMarkup variants.
+type ReplyMarkup interface {
+	isReplyMarkup()
+}
+
+func (v InlineKeyboardMarkup) isReplyMarkup() {}
+func (v ReplyKeyboardMarkup) isReplyMarkup()  {}
+func (v ReplyKeyboardRemove) isReplyMarkup()  {}
+func (v ForceReply) isReplyMarkup()           {}
+
+// NewInlineKeyboardMarkup creates a new InlineKeyboardMarkup.
+func NewInlineKeyboardMarkup(inlineKeyboard ...[]InlineKeyboardButton) InlineKeyboardMarkup {
+	return InlineKeyboardMarkup{
+		InlineKeyboard: inlineKeyboard,
+	}
+}
+
+// NewReplyKeyboardMarkup creates a new ReplyKeyboardMarkup.
+func NewReplyKeyboardMarkup(keyboard ...[]KeyboardButton) *ReplyKeyboardMarkup {
+	return &ReplyKeyboardMarkup{
+		Keyboard: keyboard,
+	}
+}
+
+// NewReplyKeyboardRemove creates a new ReplyKeyboardRemove.
+func NewReplyKeyboardRemove() *ReplyKeyboardRemove {
+	return &ReplyKeyboardRemove{
+		RemoveKeyboard: true,
+	}
+}
+
+// NewForceReply creates a new ForceReply.
+func NewForceReply() *ForceReply {
+	return &ForceReply{
+		ForceReply: true,
+	}
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InputTextMessageContent) WithParseMode(parseMode ParseMode) *InputTextMessageContent {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithResizeKeyboard sets the ResizeKeyboard field.
+func (v *ReplyKeyboardMarkup) WithResizeKeyboard() *ReplyKeyboardMarkup {
+	v.ResizeKeyboard = true
+	return v
+}
+
+// WithOneTimeKeyboard sets the OneTimeKeyboard field.
+func (v *ReplyKeyboardMarkup) WithOneTimeKeyboard() *ReplyKeyboardMarkup {
+	v.OneTimeKeyboard = true
+	return v
+}
+
+// WithInputFieldPlaceholder sets the InputFieldPlaceholder field.
+func (v *ReplyKeyboardMarkup) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ReplyKeyboardMarkup {
+	v.InputFieldPlaceholder = inputFieldPlaceholder
+	return v
+}
+
+// WithSelective sets the Selective field.
+func (v *ReplyKeyboardMarkup) WithSelective() *ReplyKeyboardMarkup {
+	v.Selective = true
+	return v
+}
+
+// WithSelective sets the Selective field.
+func (v *ReplyKeyboardRemove) WithSelective() *ReplyKeyboardRemove {
+	v.Selective = true
+	return v
+}
+
+// WithInputFieldPlaceholder sets the InputFieldPlaceholder field.
+func (v *ForceReply) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ForceReply {
+	v.InputFieldPlaceholder = inputFieldPlaceholder
+	return v
+}
+
+// WithSelective sets the Selective field.
+func (v *ForceReply) WithSelective() *ForceReply {
+	v.Selective = true
+	return v
 }

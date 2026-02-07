@@ -209,8 +209,9 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 			NewKeyboardButtonRequestChat("test", KeyboardButtonRequestChat{RequestID: 1}),
 			NewKeyboardButtonRequestUsers("text", KeyboardButtonRequestUsers{RequestID: 1}),
 		),
-	).WithResizeKeyboardMarkup().
-		WithOneTimeKeyboardMarkup().
+	).WithIsPersistent().
+		WithResizeKeyboard().
+		WithOneTimeKeyboard().
 		WithInputFieldPlaceholder("text").
 		WithSelective()
 
@@ -228,6 +229,7 @@ func TestReplyKeyboardMarkup(t *testing.T) {
 				{Text: "text", RequestUsers: &KeyboardButtonRequestUsers{RequestID: 1}},
 			},
 		},
+		IsPersistent:          true,
 		ResizeKeyboard:        true,
 		OneTimeKeyboard:       true,
 		InputFieldPlaceholder: "text",
@@ -460,6 +462,96 @@ func TestInputMessageContent(t *testing.T) {
 		assert.Implements(t, (*InputMessageContent)(nil), test)
 		test.isInputMessageContent()
 	}
+}
+
+func TestInputMessageContentConstructors(t *testing.T) {
+	t.Run("InputTextMessageContent", func(t *testing.T) {
+		actual := NewInputTextMessageContent("hello").
+			WithParseMode(HTML).
+			WithEntities([]MessageEntity{{Type: MessageEntityTypeBold, Offset: 0, Length: 5}}).
+			WithLinkPreviewOptions(LinkPreviewOptions{IsDisabled: true})
+
+		assert.Equal(t, "hello", actual.MessageText)
+		assert.Equal(t, "HTML", actual.ParseMode.String())
+		assert.Equal(t, []MessageEntity{{Type: MessageEntityTypeBold, Offset: 0, Length: 5}}, actual.Entities)
+		require.NotNil(t, actual.LinkPreviewOptions)
+		assert.Equal(t, LinkPreviewOptions{IsDisabled: true}, *actual.LinkPreviewOptions)
+	})
+
+	t.Run("InputLocationMessageContent", func(t *testing.T) {
+		actual := NewInputLocationMessageContent(55.7558, 37.6173).
+			WithHorizontalAccuracy(100).
+			WithLivePeriod(3600).
+			WithHeading(90).
+			WithProximityAlertRadius(500)
+
+		assert.Equal(t, &InputLocationMessageContent{
+			Latitude:             55.7558,
+			Longitude:            37.6173,
+			HorizontalAccuracy:   100,
+			LivePeriod:           3600,
+			Heading:              90,
+			ProximityAlertRadius: 500,
+		}, actual)
+	})
+
+	t.Run("InputVenueMessageContent", func(t *testing.T) {
+		actual := NewInputVenueMessageContent(55.7558, 37.6173, "Red Square", "Moscow").
+			WithFoursquareID("4bf58dd8d48988d1e2931735").
+			WithFoursquareType("outdoors").
+			WithGooglePlaceID("ChIJ-yRniZpYj0AR0JQykEq9FAQ").
+			WithGooglePlaceType("tourist_attraction")
+
+		assert.Equal(t, &InputVenueMessageContent{
+			Latitude:        55.7558,
+			Longitude:       37.6173,
+			Title:           "Red Square",
+			Address:         "Moscow",
+			FoursquareID:    "4bf58dd8d48988d1e2931735",
+			FoursquareType:  "outdoors",
+			GooglePlaceID:   "ChIJ-yRniZpYj0AR0JQykEq9FAQ",
+			GooglePlaceType: "tourist_attraction",
+		}, actual)
+	})
+
+	t.Run("InputContactMessageContent", func(t *testing.T) {
+		actual := NewInputContactMessageContent("+1234567890", "John").
+			WithLastName("Doe").
+			WithVCard("BEGIN:VCARD")
+
+		assert.Equal(t, &InputContactMessageContent{
+			PhoneNumber: "+1234567890",
+			FirstName:   "John",
+			LastName:    "Doe",
+			VCard:       "BEGIN:VCARD",
+		}, actual)
+	})
+
+	t.Run("InputInvoiceMessageContent", func(t *testing.T) {
+		actual := NewInputInvoiceMessageContent(
+			"Product", "Description", "payload", "USD",
+			[]LabeledPrice{{Label: "Price", Amount: 1000}},
+		).WithNeedName().
+			WithNeedEmail().
+			WithIsFlexible().
+			WithPhotoURL("https://example.com/photo.jpg").
+			WithPhotoWidth(100).
+			WithPhotoHeight(100)
+
+		assert.Equal(t, &InputInvoiceMessageContent{
+			Title:       "Product",
+			Description: "Description",
+			Payload:     "payload",
+			Currency:    "USD",
+			Prices:      []LabeledPrice{{Label: "Price", Amount: 1000}},
+			NeedName:    true,
+			NeedEmail:   true,
+			IsFlexible:  true,
+			PhotoURL:    "https://example.com/photo.jpg",
+			PhotoWidth:  100,
+			PhotoHeight: 100,
+		}, actual)
+	})
 }
 
 func TestInputMedia_getMedia(t *testing.T) {

@@ -7989,6 +7989,99 @@ func NewPassportElementErrorUnspecified(type_ string, elementHash string, messag
 	}}
 }
 
+// InputMessageContent this object represents the content of a message to be sent as a result of an inline query. Telegram clients currently support the following 5 types:
+type InputMessageContent interface {
+	isInputMessageContent()
+}
+
+func (v InputTextMessageContent) isInputMessageContent()     {}
+func (v InputLocationMessageContent) isInputMessageContent() {}
+func (v InputVenueMessageContent) isInputMessageContent()    {}
+func (v InputContactMessageContent) isInputMessageContent()  {}
+func (v InputInvoiceMessageContent) isInputMessageContent()  {}
+
+// NewInputTextMessageContent creates a new InputTextMessageContent.
+func NewInputTextMessageContent(messageText string) *InputTextMessageContent {
+	return &InputTextMessageContent{
+		MessageText: messageText,
+	}
+}
+
+// NewInputLocationMessageContent creates a new InputLocationMessageContent.
+func NewInputLocationMessageContent(latitude float64, longitude float64) *InputLocationMessageContent {
+	return &InputLocationMessageContent{
+		Latitude:  latitude,
+		Longitude: longitude,
+	}
+}
+
+// NewInputVenueMessageContent creates a new InputVenueMessageContent.
+func NewInputVenueMessageContent(latitude float64, longitude float64, title string, address string) *InputVenueMessageContent {
+	return &InputVenueMessageContent{
+		Latitude:  latitude,
+		Longitude: longitude,
+		Title:     title,
+		Address:   address,
+	}
+}
+
+// NewInputContactMessageContent creates a new InputContactMessageContent.
+func NewInputContactMessageContent(phoneNumber string, firstName string) *InputContactMessageContent {
+	return &InputContactMessageContent{
+		PhoneNumber: phoneNumber,
+		FirstName:   firstName,
+	}
+}
+
+// NewInputInvoiceMessageContent creates a new InputInvoiceMessageContent.
+func NewInputInvoiceMessageContent(title string, description string, payload string, currency string, prices []LabeledPrice) *InputInvoiceMessageContent {
+	return &InputInvoiceMessageContent{
+		Title:       title,
+		Description: description,
+		Payload:     payload,
+		Currency:    currency,
+		Prices:      prices,
+	}
+}
+
+// ReplyMarkup is a marker interface for ReplyMarkup variants.
+type ReplyMarkup interface {
+	isReplyMarkup()
+}
+
+func (v InlineKeyboardMarkup) isReplyMarkup() {}
+func (v ReplyKeyboardMarkup) isReplyMarkup()  {}
+func (v ReplyKeyboardRemove) isReplyMarkup()  {}
+func (v ForceReply) isReplyMarkup()           {}
+
+// NewInlineKeyboardMarkup creates a new InlineKeyboardMarkup.
+func NewInlineKeyboardMarkup(inlineKeyboard ...[]InlineKeyboardButton) InlineKeyboardMarkup {
+	return InlineKeyboardMarkup{
+		InlineKeyboard: inlineKeyboard,
+	}
+}
+
+// NewReplyKeyboardMarkup creates a new ReplyKeyboardMarkup.
+func NewReplyKeyboardMarkup(keyboard ...[]KeyboardButton) *ReplyKeyboardMarkup {
+	return &ReplyKeyboardMarkup{
+		Keyboard: keyboard,
+	}
+}
+
+// NewReplyKeyboardRemove creates a new ReplyKeyboardRemove.
+func NewReplyKeyboardRemove() *ReplyKeyboardRemove {
+	return &ReplyKeyboardRemove{
+		RemoveKeyboard: true,
+	}
+}
+
+// NewForceReply creates a new ForceReply.
+func NewForceReply() *ForceReply {
+	return &ForceReply{
+		ForceReply: true,
+	}
+}
+
 // ChatType represents an enum type.
 type ChatType int8
 
@@ -10040,4 +10133,220 @@ func NewInlineQueryResultsButtonStartParameter(text string, startParameter strin
 		Text:           text,
 		StartParameter: startParameter,
 	}
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InputTextMessageContent) WithParseMode(parseMode ParseMode) *InputTextMessageContent {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithEntities sets the Entities field.
+func (v *InputTextMessageContent) WithEntities(entities []MessageEntity) *InputTextMessageContent {
+	v.Entities = entities
+	return v
+}
+
+// WithLinkPreviewOptions sets the LinkPreviewOptions field.
+func (v *InputTextMessageContent) WithLinkPreviewOptions(linkPreviewOptions LinkPreviewOptions) *InputTextMessageContent {
+	v.LinkPreviewOptions = &linkPreviewOptions
+	return v
+}
+
+// WithHorizontalAccuracy sets the HorizontalAccuracy field.
+func (v *InputLocationMessageContent) WithHorizontalAccuracy(horizontalAccuracy float64) *InputLocationMessageContent {
+	v.HorizontalAccuracy = horizontalAccuracy
+	return v
+}
+
+// WithLivePeriod sets the LivePeriod field.
+func (v *InputLocationMessageContent) WithLivePeriod(livePeriod int) *InputLocationMessageContent {
+	v.LivePeriod = livePeriod
+	return v
+}
+
+// WithHeading sets the Heading field.
+func (v *InputLocationMessageContent) WithHeading(heading int) *InputLocationMessageContent {
+	v.Heading = heading
+	return v
+}
+
+// WithProximityAlertRadius sets the ProximityAlertRadius field.
+func (v *InputLocationMessageContent) WithProximityAlertRadius(proximityAlertRadius int) *InputLocationMessageContent {
+	v.ProximityAlertRadius = proximityAlertRadius
+	return v
+}
+
+// WithFoursquareID sets the FoursquareID field.
+func (v *InputVenueMessageContent) WithFoursquareID(foursquareID string) *InputVenueMessageContent {
+	v.FoursquareID = foursquareID
+	return v
+}
+
+// WithFoursquareType sets the FoursquareType field.
+func (v *InputVenueMessageContent) WithFoursquareType(foursquareType string) *InputVenueMessageContent {
+	v.FoursquareType = foursquareType
+	return v
+}
+
+// WithGooglePlaceID sets the GooglePlaceID field.
+func (v *InputVenueMessageContent) WithGooglePlaceID(googlePlaceID string) *InputVenueMessageContent {
+	v.GooglePlaceID = googlePlaceID
+	return v
+}
+
+// WithGooglePlaceType sets the GooglePlaceType field.
+func (v *InputVenueMessageContent) WithGooglePlaceType(googlePlaceType string) *InputVenueMessageContent {
+	v.GooglePlaceType = googlePlaceType
+	return v
+}
+
+// WithLastName sets the LastName field.
+func (v *InputContactMessageContent) WithLastName(lastName string) *InputContactMessageContent {
+	v.LastName = lastName
+	return v
+}
+
+// WithVCard sets the VCard field.
+func (v *InputContactMessageContent) WithVCard(vcard string) *InputContactMessageContent {
+	v.VCard = vcard
+	return v
+}
+
+// WithProviderToken sets the ProviderToken field.
+func (v *InputInvoiceMessageContent) WithProviderToken(providerToken string) *InputInvoiceMessageContent {
+	v.ProviderToken = providerToken
+	return v
+}
+
+// WithMaxTipAmount sets the MaxTipAmount field.
+func (v *InputInvoiceMessageContent) WithMaxTipAmount(maxTipAmount int) *InputInvoiceMessageContent {
+	v.MaxTipAmount = maxTipAmount
+	return v
+}
+
+// WithSuggestedTipAmounts sets the SuggestedTipAmounts field.
+func (v *InputInvoiceMessageContent) WithSuggestedTipAmounts(suggestedTipAmounts []int) *InputInvoiceMessageContent {
+	v.SuggestedTipAmounts = suggestedTipAmounts
+	return v
+}
+
+// WithProviderData sets the ProviderData field.
+func (v *InputInvoiceMessageContent) WithProviderData(providerData string) *InputInvoiceMessageContent {
+	v.ProviderData = providerData
+	return v
+}
+
+// WithPhotoURL sets the PhotoURL field.
+func (v *InputInvoiceMessageContent) WithPhotoURL(photoURL string) *InputInvoiceMessageContent {
+	v.PhotoURL = photoURL
+	return v
+}
+
+// WithPhotoSize sets the PhotoSize field.
+func (v *InputInvoiceMessageContent) WithPhotoSize(photoSize int) *InputInvoiceMessageContent {
+	v.PhotoSize = photoSize
+	return v
+}
+
+// WithPhotoWidth sets the PhotoWidth field.
+func (v *InputInvoiceMessageContent) WithPhotoWidth(photoWidth int) *InputInvoiceMessageContent {
+	v.PhotoWidth = photoWidth
+	return v
+}
+
+// WithPhotoHeight sets the PhotoHeight field.
+func (v *InputInvoiceMessageContent) WithPhotoHeight(photoHeight int) *InputInvoiceMessageContent {
+	v.PhotoHeight = photoHeight
+	return v
+}
+
+// WithNeedName sets the NeedName field.
+func (v *InputInvoiceMessageContent) WithNeedName() *InputInvoiceMessageContent {
+	v.NeedName = true
+	return v
+}
+
+// WithNeedPhoneNumber sets the NeedPhoneNumber field.
+func (v *InputInvoiceMessageContent) WithNeedPhoneNumber() *InputInvoiceMessageContent {
+	v.NeedPhoneNumber = true
+	return v
+}
+
+// WithNeedEmail sets the NeedEmail field.
+func (v *InputInvoiceMessageContent) WithNeedEmail() *InputInvoiceMessageContent {
+	v.NeedEmail = true
+	return v
+}
+
+// WithNeedShippingAddress sets the NeedShippingAddress field.
+func (v *InputInvoiceMessageContent) WithNeedShippingAddress() *InputInvoiceMessageContent {
+	v.NeedShippingAddress = true
+	return v
+}
+
+// WithSendPhoneNumberToProvider sets the SendPhoneNumberToProvider field.
+func (v *InputInvoiceMessageContent) WithSendPhoneNumberToProvider() *InputInvoiceMessageContent {
+	v.SendPhoneNumberToProvider = true
+	return v
+}
+
+// WithSendEmailToProvider sets the SendEmailToProvider field.
+func (v *InputInvoiceMessageContent) WithSendEmailToProvider() *InputInvoiceMessageContent {
+	v.SendEmailToProvider = true
+	return v
+}
+
+// WithIsFlexible sets the IsFlexible field.
+func (v *InputInvoiceMessageContent) WithIsFlexible() *InputInvoiceMessageContent {
+	v.IsFlexible = true
+	return v
+}
+
+// WithIsPersistent sets the IsPersistent field.
+func (v *ReplyKeyboardMarkup) WithIsPersistent() *ReplyKeyboardMarkup {
+	v.IsPersistent = true
+	return v
+}
+
+// WithResizeKeyboard sets the ResizeKeyboard field.
+func (v *ReplyKeyboardMarkup) WithResizeKeyboard() *ReplyKeyboardMarkup {
+	v.ResizeKeyboard = true
+	return v
+}
+
+// WithOneTimeKeyboard sets the OneTimeKeyboard field.
+func (v *ReplyKeyboardMarkup) WithOneTimeKeyboard() *ReplyKeyboardMarkup {
+	v.OneTimeKeyboard = true
+	return v
+}
+
+// WithInputFieldPlaceholder sets the InputFieldPlaceholder field.
+func (v *ReplyKeyboardMarkup) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ReplyKeyboardMarkup {
+	v.InputFieldPlaceholder = inputFieldPlaceholder
+	return v
+}
+
+// WithSelective sets the Selective field.
+func (v *ReplyKeyboardMarkup) WithSelective() *ReplyKeyboardMarkup {
+	v.Selective = true
+	return v
+}
+
+// WithSelective sets the Selective field.
+func (v *ReplyKeyboardRemove) WithSelective() *ReplyKeyboardRemove {
+	v.Selective = true
+	return v
+}
+
+// WithInputFieldPlaceholder sets the InputFieldPlaceholder field.
+func (v *ForceReply) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ForceReply {
+	v.InputFieldPlaceholder = inputFieldPlaceholder
+	return v
+}
+
+// WithSelective sets the Selective field.
+func (v *ForceReply) WithSelective() *ForceReply {
+	v.Selective = true
+	return v
 }

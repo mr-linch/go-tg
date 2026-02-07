@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -60,6 +61,57 @@ type GoConstructorParam struct {
 	GoField   string // Go field name, e.g. "ChatID"
 	GoType    string // Go type string, e.g. "ChatID"
 	ParamName string // camelCase parameter name, e.g. "chatID"
+}
+
+// GoInterfaceUnion represents a union type without a discriminator (marker interface pattern).
+type GoInterfaceUnion struct {
+	Comment      string
+	Name         string
+	MarkerMethod string // unexported marker method, e.g. "isReplyMarkup"
+	Variants     []GoInterfaceUnionVariant
+}
+
+// GoInterfaceUnionVariant represents one arm of an interface union.
+type GoInterfaceUnionVariant struct {
+	TypeName    string                  // Go type name, e.g. "InlineKeyboardMarkup"
+	Constructor *GoInterfaceConstructor // constructor for this variant (nil if no constructor)
+}
+
+// GoInterfaceConstructor holds data for generating a constructor function for an interface union variant.
+type GoInterfaceConstructor struct {
+	FuncName  string                           // e.g. "NewReplyKeyboardMarkup"
+	TypeName  string                           // e.g. "ReplyKeyboardMarkup"
+	ReturnPtr bool                             // true if type has optional fields (return *T for chaining)
+	Params    []GoInterfaceConstructorParam    // required fields as params
+	Sentinels []GoInterfaceConstructorSentinel // required bool fields auto-set to true
+}
+
+// GoInterfaceConstructorParam represents a required parameter for an interface union constructor.
+type GoInterfaceConstructorParam struct {
+	GoField string // Go field name, e.g. "Keyboard"
+	Name    string // param name, e.g. "keyboard"
+	Type    string // Go type, e.g. "...[]KeyboardButton" (variadic for ArrayDepth >= 2)
+}
+
+// GoInterfaceConstructorSentinel represents a required bool field that is auto-set to true.
+type GoInterfaceConstructorSentinel struct {
+	GoField string // Go field name, e.g. "RemoveKeyboard"
+	Value   string // e.g. "true"
+}
+
+// GoBuilderType holds With* methods for a single type.
+type GoBuilderType struct {
+	TypeName string
+	Methods  []GoBuilderMethod
+}
+
+// GoBuilderMethod represents a single With* method on a type.
+type GoBuilderMethod struct {
+	FieldName string // "Caption"
+	ParamName string // "caption" (empty for bool)
+	GoType    string // "string" (empty for bool)
+	IsBool    bool   // no param, sets to true
+	IsPtr     bool   // true if field is a pointer type (accept value, assign &param)
 }
 
 // GoEnum represents a standalone enum type for template rendering.
@@ -120,9 +172,11 @@ type TemplateData struct {
 	ir.Metadata
 	Types               []GoType
 	UnionTypes          []GoUnionType
+	InterfaceUnions     []GoInterfaceUnion
 	Enums               []GoEnum
 	TypeMethods         []GoTypeMethod
 	VariantConstructors []GoVariantConstructorType
+	BuilderTypes        []GoBuilderType
 	NeedJSON            bool
 	NeedFmt             bool
 }
@@ -194,6 +248,11 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 	// Collect types used in method parameters (need constructors).
 	inputTypes := collectInputTypes(api)
 
+	typeMap := make(map[string]*ir.Type)
+	for i := range api.Types {
+		typeMap[api.Types[i].Name] = &api.Types[i]
+	}
+
 	for _, t := range api.Types {
 		if cfg.IsExcluded(t.Name) {
 			log.Debug("excluding type", "name", t.Name)
@@ -202,12 +261,7 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 		}
 
 		if len(t.Subtypes) > 0 && len(t.Fields) == 0 {
-			if u := resolveUnionType(t, api.Types, inputTypes, cfg, rules, usedNameOverrides, usedTypeOverrides); u != nil {
-				log.Debug("generating union", "name", t.Name, "variants", len(u.Variants), "hasConstructors", u.HasConstructors)
-				data.UnionTypes = append(data.UnionTypes, *u)
-				data.NeedJSON = true
-				data.NeedFmt = true
-			}
+			resolveUnionOrInterface(t, data, api.Types, inputTypes, cfg, rules, usedNameOverrides, usedTypeOverrides, typeMap, log)
 			continue
 		}
 
@@ -261,6 +315,11 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 			data.VariantConstructors = append(data.VariantConstructors, *vc)
 			log.Debug("generating variant constructors", "type", vcCfg.Type, "variants", len(vc.Variants))
 		}
+	}
+
+	// Resolve config-defined interface unions (synthetic unions not in spec, e.g. ReplyMarkup).
+	for _, iuCfg := range cfg.InterfaceUnions {
+		resolveConfigInterfaceUnion(&iuCfg, data, cfg, rules, usedNameOverrides, usedTypeOverrides, typeMap, log)
 	}
 
 	warnUnusedConfig(cfg, rules, usedExcludes, usedNameOverrides, usedTypeOverrides, log)
@@ -451,6 +510,87 @@ func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool,
 	union.CanUnmarshal = !hasDuplicates
 
 	return union
+}
+
+// resolveUnionOrInterface handles a type with subtypes but no fields, resolving it as either a
+// discriminator union (struct-based) or an interface union (marker interface).
+func resolveUnionOrInterface(t ir.Type, data *TemplateData, allTypes []ir.Type, inputTypes map[string]bool, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, typeMap map[string]*ir.Type, log *slog.Logger) {
+	if u := resolveUnionType(t, allTypes, inputTypes, cfg, rules, usedNames, usedTypes); u != nil {
+		log.Debug("generating union", "name", t.Name, "variants", len(u.Variants), "hasConstructors", u.HasConstructors)
+		data.UnionTypes = append(data.UnionTypes, *u)
+		data.NeedJSON = true
+		data.NeedFmt = true
+		return
+	}
+
+	iu := resolveInterfaceUnion(t, cfg, rules, usedNames, usedTypes, typeMap)
+	if iu == nil {
+		return
+	}
+	log.Debug("generating interface union", "name", t.Name, "variants", len(iu.Variants))
+	data.InterfaceUnions = append(data.InterfaceUnions, *iu)
+
+	// Generate builders for interface union variants.
+	for _, stName := range t.Subtypes {
+		st := typeMap[stName]
+		if st == nil {
+			continue
+		}
+		if bt := resolveBuilderType(st, cfg, rules, usedNames, usedTypes); bt != nil {
+			data.BuilderTypes = append(data.BuilderTypes, *bt)
+			log.Debug("generating builder", "type", bt.TypeName, "methods", len(bt.Methods))
+		}
+	}
+}
+
+// resolveConfigInterfaceUnion resolves a config-defined interface union and its variant constructors/builders.
+func resolveConfigInterfaceUnion(iuCfg *config.InterfaceUnionDef, data *TemplateData, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, typeMap map[string]*ir.Type, log *slog.Logger) {
+	name := naming.NormalizeTypeName(iuCfg.Name)
+	iu := GoInterfaceUnion{
+		Comment:      name + " is a marker interface for " + iuCfg.Name + " variants.",
+		Name:         name,
+		MarkerMethod: "is" + name,
+	}
+	for _, v := range iuCfg.Variants {
+		variant := GoInterfaceUnionVariant{
+			TypeName: naming.NormalizeTypeName(v),
+		}
+		// Add constructor and builder if the variant type exists in the API.
+		if vt := typeMap[v]; vt != nil {
+			variant.Constructor = resolveInterfaceConstructor(vt, cfg, rules, usedNames, usedTypes)
+			if bt := resolveBuilderType(vt, cfg, rules, usedNames, usedTypes); bt != nil {
+				data.BuilderTypes = append(data.BuilderTypes, *bt)
+				log.Debug("generating builder", "type", bt.TypeName, "methods", len(bt.Methods))
+			}
+		}
+		iu.Variants = append(iu.Variants, variant)
+	}
+	data.InterfaceUnions = append(data.InterfaceUnions, iu)
+	log.Debug("generating config interface union", "name", name, "variants", len(iu.Variants))
+}
+
+// resolveInterfaceUnion creates a GoInterfaceUnion for union types without a discriminator field.
+// These are spec types with subtypes but no Const fields (e.g., InputMessageContent).
+func resolveInterfaceUnion(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, typeMap map[string]*ir.Type) *GoInterfaceUnion {
+	name := naming.NormalizeTypeName(t.Name)
+	iu := &GoInterfaceUnion{
+		Comment:      formatTypeComment(name, t.Description),
+		Name:         name,
+		MarkerMethod: "is" + name,
+	}
+
+	for _, stName := range t.Subtypes {
+		variant := GoInterfaceUnionVariant{
+			TypeName: naming.NormalizeTypeName(stName),
+		}
+		// Add constructor if the variant type exists in the API.
+		if vt := typeMap[stName]; vt != nil {
+			variant.Constructor = resolveInterfaceConstructor(vt, cfg, rules, usedNames, usedTypes)
+		}
+		iu.Variants = append(iu.Variants, variant)
+	}
+
+	return iu
 }
 
 func findType(types []ir.Type, name string) *ir.Type {
@@ -664,12 +804,7 @@ func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, c
 
 	// Check if field should be excluded.
 	isExcluded := func(fieldName string) bool {
-		for _, ex := range vcCfg.Exclude {
-			if ex == fieldName {
-				return true
-			}
-		}
-		return false
+		return slices.Contains(vcCfg.Exclude, fieldName)
 	}
 
 	// Generate base constructor if requested (e.g., NewKeyboardButton).
@@ -717,4 +852,104 @@ func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, c
 	}
 
 	return vc
+}
+
+// resolveBuilderType creates a GoBuilderType with With* methods for all optional fields of a type.
+// Returns nil if the type has no optional fields.
+func resolveBuilderType(t *ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) *GoBuilderType {
+	typeName := naming.NormalizeTypeName(t.Name)
+	var methods []GoBuilderMethod
+
+	for _, f := range t.Fields {
+		if f.Const != "" || !f.Optional {
+			continue
+		}
+		goFieldName := resolveFieldName(t.Name, f.Name, cfg, usedNames)
+		goType := resolveGoType(t.Name, f, cfg, rules, usedTypes)
+
+		m := GoBuilderMethod{
+			FieldName: goFieldName,
+		}
+		if goType == "bool" {
+			m.IsBool = true
+		} else {
+			paramName := naming.EscapeReserved(naming.SnakeToCamel(f.Name))
+			// For pointer types, accept value and take address internally.
+			if strings.HasPrefix(goType, "*") {
+				m.GoType = goType[1:]
+				m.IsPtr = true
+			} else {
+				m.GoType = goType
+			}
+			m.ParamName = paramName
+		}
+		methods = append(methods, m)
+	}
+
+	if len(methods) == 0 {
+		return nil
+	}
+
+	return &GoBuilderType{
+		TypeName: typeName,
+		Methods:  methods,
+	}
+}
+
+// resolveInterfaceConstructor creates a GoInterfaceConstructor for an interface union variant type.
+// Required bool/True fields become sentinels (auto-set to true).
+// Required fields with ArrayDepth >= 2 become variadic params.
+// Other required fields become regular params.
+// ReturnPtr is true if the type has any optional fields (for builder chaining).
+func resolveInterfaceConstructor(t *ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) *GoInterfaceConstructor {
+	typeName := naming.NormalizeTypeName(t.Name)
+	ctor := &GoInterfaceConstructor{
+		FuncName: "New" + typeName,
+		TypeName: typeName,
+	}
+
+	hasOptional := false
+	for _, f := range t.Fields {
+		if f.Const != "" {
+			continue
+		}
+		if f.Optional {
+			hasOptional = true
+			continue
+		}
+		goFieldName := resolveFieldName(t.Name, f.Name, cfg, usedNames)
+		goType := resolveGoType(t.Name, f, cfg, rules, usedTypes)
+
+		// Required bool/True fields are sentinels.
+		if goType == "bool" {
+			ctor.Sentinels = append(ctor.Sentinels, GoInterfaceConstructorSentinel{
+				GoField: goFieldName,
+				Value:   "true",
+			})
+			continue
+		}
+
+		paramName := naming.EscapeReserved(naming.SnakeToCamel(f.Name))
+
+		// Array depth >= 2 → variadic param (e.g. [][]KeyboardButton → ...[]KeyboardButton)
+		if f.TypeExpr.Array >= 2 {
+			// Variadic: strip one level of []
+			variadicType := goType[2:] // "[][]X" → "[]X"
+			ctor.Params = append(ctor.Params, GoInterfaceConstructorParam{
+				GoField: goFieldName,
+				Name:    paramName,
+				Type:    "..." + variadicType,
+			})
+			continue
+		}
+
+		ctor.Params = append(ctor.Params, GoInterfaceConstructorParam{
+			GoField: goFieldName,
+			Name:    paramName,
+			Type:    goType,
+		})
+	}
+
+	ctor.ReturnPtr = hasOptional
+	return ctor
 }

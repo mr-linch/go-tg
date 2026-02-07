@@ -56,6 +56,13 @@ type VariantConstructorDef struct {
 	Defaults    map[string]string `yaml:"defaults,omitempty"`     // Default values for bool/pointer fields (field_name -> "true" or "&Type{}")
 }
 
+// InterfaceUnionDef defines a marker interface union for types without a JSON discriminator.
+// These are union types where variants implement a marker interface (e.g., ReplyMarkup, InputMessageContent).
+type InterfaceUnionDef struct {
+	Name     string   `yaml:"name"`     // Interface name (e.g., "ReplyMarkup")
+	Variants []string `yaml:"variants"` // Variant type names (e.g., ["InlineKeyboardMarkup", ...])
+}
+
 // TypeGen holds type generation configuration.
 type TypeGen struct {
 	Exclude             []string                `yaml:"exclude"`
@@ -65,6 +72,7 @@ type TypeGen struct {
 	Enums               []EnumGenDef            `yaml:"enums,omitempty"`
 	TypeMethods         []TypeMethodDef         `yaml:"type_methods,omitempty"`
 	VariantConstructors []VariantConstructorDef `yaml:"variant_constructors,omitempty"`
+	InterfaceUnions     []InterfaceUnionDef     `yaml:"interface_unions,omitempty"`
 }
 
 // IsExcluded reports whether typeName should be skipped.
