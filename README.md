@@ -24,12 +24,18 @@
   - [Sending files](#sending-files)
   - [Downloading files](#downloading-files)
   - [Interceptors](#interceptors)
+- [Parse Mode Formatters](#parse-mode-formatters)
+- [Button Layout](#button-layout)
 - [Updates](#updates)
   - [Handlers](#handlers)
   - [Typed Handlers](#typed-handlers)
   - [Receive updates via Polling](#receive-updates-via-polling)
   - [Receive updates via Webhook](#receive-updates-via-webhook)
   - [Routing updates](#routing-updates)
+- [Message Builders](#message-builders)
+  - [TextMessageCallBuilder](#textmessagecallbuilder)
+  - [MediaMessageCallBuilder](#mediamessagecallbuilder)
+- [Structured Callback Data](#structured-callback-data)
 - [Extensions](#extensions)
   - [Sessions](#sessions)
 - [Related Projects](#related-projects)
@@ -38,7 +44,7 @@
 
 go-tg is a Go client library for accessing [Telegram Bot API](https://core.telegram.org/bots/api), with batteries for building complex bots included.
 
-> ⚠️ Although the API definitions are considered stable package is well tested and used in production, please keep in mind that go-tg is still under active development and therefore full backward compatibility is not guaranteed before reaching v1.0.0.
+> ⚠️ The API definitions are stable and the package is well tested and used in production. However, go-tg is still under active development and full backward compatibility is not guaranteed before reaching v1.0.0.
 
 ## Features
 
@@ -56,7 +62,7 @@ go-tg is a Go client library for accessing [Telegram Bot API](https://core.teleg
 ## Install
 
 ```bash
-# go 1.18+
+# go 1.21+
 go get -u github.com/mr-linch/go-tg
 ```
 
@@ -139,13 +145,13 @@ func run(ctx context.Context) error {
 }
 ```
 
-More examples can be found in [examples](https://github.com/mr-linch/go-tg/tree/main/examples).
+More examples can be found in [examples](https://github.com/mr-linch/go-tg/tree/main/_examples).
 
 ## API Client
 
 ### Creating
 
-The simplest way for create client it's call `tg.New` with token. That constructor use `http.DefaultClient` as default client and `api.telegram.org` as server URL:
+The simplest way to create a client is to call `tg.New` with a token. It uses `http.DefaultClient` and `api.telegram.org` by default:
 
 ```go
 client := tg.New("<TOKEN>") // from @BotFather
@@ -207,12 +213,12 @@ if err != nil {
   return err
 }
 
-log.Printf("sended message id %d", msg.ID)
+log.Printf("sent message id %d", msg.ID)
 ```
 
 Some Bot API methods do not return the object and just say `True`. So, you should use the `DoVoid` method to execute calls like that.
 
-All calls with the returned object also have the `DoVoid` method. Use it when you do not care about the result, just ensure it's not an error (unmarshaling also be skipped).
+All calls with the returned object also have the `DoVoid` method. Use it when you do not care about the result, just ensure it's not an error (unmarshaling will also be skipped).
 
 ```go
 peer := tg.Username("MrLinch")
@@ -329,7 +335,7 @@ if err := client.SendPhoto(
 }
 ```
 
-Please checkout [examples](https://github.com/mr-linch/go-tg/tree/main/examples) with "File Upload" features for more usecases.
+Please checkout [examples](https://github.com/mr-linch/go-tg/tree/main/_examples) with "File Upload" features for more usecases.
 
 ### Downloading files
 
@@ -357,7 +363,7 @@ defer f.Close()
 
 ### Interceptors
 
-Interceptors are used to modify or process the request before it is sent to the server and the response before it is returned to the caller. It's like a [[tgb.Middleware](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Middleware)], but for outgoing requests.
+Interceptors are used to modify or process the request before it is sent to the server and the response before it is returned to the caller. It's like a [tgb.Middleware](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Middleware), but for outgoing requests.
 
 All interceptors should be registered on the client before the request is made.
 
@@ -371,7 +377,7 @@ client := tg.New("<TOKEN>",
       err := invoker(ctx, req, dst)
       // after request
 
-      log.Print("call %s took %s", req.Method, time.Since(started))
+      log.Printf("call %s took %s", req.Method, time.Since(started))
 
       return err
     }),
@@ -395,7 +401,74 @@ Contrib package has some useful interceptors:
 
 Interceptors are called in the order they are registered.
 
-Example of using retry flood interceptor: [examples/retry-flood](https://github.com/mr-linch/go-tg/blob/main/examples/retry-flood/main.go)
+Example of using retry flood interceptor: [examples/retry-flood](https://github.com/mr-linch/go-tg/blob/main/_examples/retry-flood/main.go)
+
+## Parse Mode Formatters
+
+The [`tg.ParseMode`](https://pkg.go.dev/github.com/mr-linch/go-tg#ParseMode) interface provides a fluent API for formatting message text. Three modes are available: `tg.HTML`, `tg.MD2` (MarkdownV2), and `tg.MD` (legacy Markdown).
+
+```go
+pm := tg.HTML
+
+text := pm.Text(
+  pm.Bold("Order confirmed"),
+  "",
+  pm.Line("Item:", pm.Code("SKU-42")),
+  pm.Line("Price:", pm.Bold("$9.99")),
+  "",
+  pm.Italic("Thank you for your purchase!"),
+)
+
+// sends:
+// <b>Order confirmed</b>
+//
+// Item: <code>SKU-42</code>
+// Price: <b>$9.99</b>
+//
+// <i>Thank you for your purchase!</i>
+```
+
+`Text(parts...)` joins with newlines, `Line(parts...)` joins with spaces.
+
+**Formatting methods:** `Bold`, `Italic`, `Underline`, `Strike`, `Spoiler`, `Code`, `Pre`, `PreLanguage`, `Blockquote`, `ExpandableBlockquote`.
+
+**Links and mentions:** `Link(title, url)`, `Mention(name, userID)`, `CustomEmoji(emoji, emojiID)`.
+
+**Escaping:** `Escape(v)` escapes special characters for the current mode. `Escapef(format, args...)` escapes the format string while passing args through unchanged — useful for MarkdownV2 where characters like `.` `!` `|` need escaping:
+
+```go
+pm := tg.MD2
+
+pm.Escapef("Total: %s for %s", pm.Bold("$9.99"), pm.Code("SKU-42"))
+// escapes "Total:" and "for" but leaves Bold/Code output intact
+```
+
+See full example: [examples/parse-mode](https://github.com/mr-linch/go-tg/tree/main/_examples/parse-mode).
+
+## Button Layout
+
+[`tg.NewButtonLayout`](https://pkg.go.dev/github.com/mr-linch/go-tg#NewButtonLayout) arranges buttons into rows with a fixed width. Useful when the number of buttons is dynamic.
+
+```go
+buttons := make([]tg.InlineKeyboardButton, 0, len(items))
+for _, item := range items {
+  buttons = append(buttons, tg.NewInlineKeyboardButtonCallback(item.Name, item.ID))
+}
+
+// 3 buttons per row
+keyboard := tg.NewInlineKeyboardMarkup(
+  tg.NewButtonLayout(3, buttons...).Keyboard()...,
+)
+```
+
+**Methods:**
+
+- `Add(buttons...)` — appends buttons, wrapping to a new row when the current row reaches the specified width
+- `Row(buttons...)` — adds buttons as an explicit new row regardless of width
+- `Insert(buttons...)` — adds buttons to the last row first, then wraps
+- `Keyboard()` — returns `[][]T` ready for `NewInlineKeyboardMarkup` or `NewReplyKeyboardMarkup`
+
+For a single-column layout, use `tg.NewButtonColumn(buttons...)`.
 
 ## Updates
 
@@ -411,7 +484,7 @@ You can create an update handler in three ways:
 type MyHandler struct {}
 
 func (h *MyHandler) Handle(ctx context.Context, update *tgb.Update) error {
-  if update.Message != nil {
+  if update.Message == nil {
     return nil
   }
 
@@ -457,8 +530,8 @@ These handlers will only be called for updates of a certain type, the rest will 
 List of typed handlers:
 
 - [`tgb.MessageHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageHandler) with [`tgb.MessageUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageUpdate) for `message`, `edited_message`, `channel_post`, `edited_channel_post`, `business_message`, `edited_business_message`;
-- [`tgb.InlineQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryHandler) with [`tgb.InlineQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryUpdate) for `inline_query`
-- [`tgb.ChosenInlineResult`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResult) with [`tgb.ChosenInlineResultUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultUpdate) for `chosen_inline_result`;
+- [`tgb.InlineQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryHandler) with [`tgb.InlineQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#InlineQueryUpdate) for `inline_query`;
+- [`tgb.ChosenInlineResultHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultHandler) with [`tgb.ChosenInlineResultUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChosenInlineResultUpdate) for `chosen_inline_result`;
 - [`tgb.CallbackQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryHandler) with [`tgb.CallbackQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackQueryUpdate) for `callback_query`;
 - [`tgb.ShippingQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryHandler) with [`tgb.ShippingQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ShippingQueryUpdate) for `shipping_query`;
 - [`tgb.PreCheckoutQueryHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryHandler) with [`tgb.PreCheckoutQueryUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PreCheckoutQueryUpdate) for `pre_checkout_query`;
@@ -466,6 +539,13 @@ List of typed handlers:
 - [`tgb.PollAnswerHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerHandler) with [`tgb.PollAnswerUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PollAnswerUpdate) for `poll_answer`;
 - [`tgb.ChatMemberUpdatedHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedHandler) with [`tgb.ChatMemberUpdatedUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatMemberUpdatedUpdate) for `my_chat_member`, `chat_member`;
 - [`tgb.ChatJoinRequestHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestHandler) with [`tgb.ChatJoinRequestUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatJoinRequestUpdate) for `chat_join_request`;
+- [`tgb.MessageReactionHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageReactionHandler) with [`tgb.MessageReactionUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageReactionUpdate) for `message_reaction`;
+- [`tgb.MessageReactionCountHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageReactionCountHandler) with [`tgb.MessageReactionCountUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MessageReactionCountUpdate) for `message_reaction_count`;
+- [`tgb.ChatBoostHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatBoostHandler) with [`tgb.ChatBoostUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#ChatBoostUpdate) for `chat_boost`;
+- [`tgb.RemovedChatBoostHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#RemovedChatBoostHandler) with [`tgb.RemovedChatBoostUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#RemovedChatBoostUpdate) for `removed_chat_boost`;
+- [`tgb.BusinessConnectionHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#BusinessConnectionHandler) with [`tgb.BusinessConnectionUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#BusinessConnectionUpdate) for `business_connection`;
+- [`tgb.DeletedBusinessMessagesHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#DeletedBusinessMessagesHandler) with [`tgb.DeletedBusinessMessagesUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#DeletedBusinessMessagesUpdate) for `deleted_business_messages`;
+- [`tgb.PurchasedPaidMediaHandler`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PurchasedPaidMediaHandler) with [`tgb.PurchasedPaidMediaUpdate`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#PurchasedPaidMediaUpdate) for `purchased_paid_media`;
 
 `tgb.*Updates` has many useful methods for "answer" the update, please checkout godoc by links above.
 
@@ -479,7 +559,7 @@ handler := tgb.HandlerFunc(func(ctx context.Context, update *tgb.Update) error {
 })
 
 poller := tgb.NewPoller(handler, client,
-  // recieve max 100 updates in a batch
+  // receive max 100 updates in a batch
   tgb.WithPollerLimit(100),
 )
 
@@ -505,7 +585,7 @@ Webhook has several security checks that are enabled by default:
 - Check if the IP of the sender is in the [allowed ranges](https://core.telegram.org/bots/webhooks#the-short-version).
 - Check if the request has a valid security token [header](https://core.telegram.org/bots/api#setwebhook). By default, the token is the SHA256 hash of the Telegram Bot API token.
 
-> ℹ️ That checks can be disabled by passing `tgb.WithWebhookSecurityToken(""), tgb.WithWebhookSecuritySubnets()` when creating the webhook.
+> ℹ️ These checks can be disabled by passing `tgb.WithWebhookSecurityToken(""), tgb.WithWebhookSecuritySubnets()` when creating the webhook.
 
 > ⚠️ At the moment, the webhook does not integrate custom certificate. So, you should handle HTTPS requests on load balancer.
 
@@ -546,7 +626,7 @@ if err := webhook.Setup(ctx); err != nil {
 
 r := chi.NewRouter()
 
-r.Get("/webhook", webhook)
+r.Post("/webhook", webhook)
 
 http.ListenAndServe(":8080", r)
 
@@ -577,7 +657,7 @@ router.CallbackQuery(func(ctx context.Context, update *tgb.CallbackQueryUpdate) 
   // will be called for every Update with not nil `CallbackQuery` field
 })
 
-client := tg.NewClient(...)
+client := tg.New(...)
 
 // e.g. run in long polling mode
 if err := tgb.NewPoller(router, client).Run(ctx); err != nil {
@@ -600,7 +680,7 @@ e.g. [command filter](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Command) 
 ```go
 router.Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
   // will be called for every Update with not nil `Message` field and if the message text contains "/start"
-}, tgb.Command("start", ))
+}, tgb.Command("start"))
 ```
 
 The handler registration function accepts any number of filters.
@@ -670,14 +750,14 @@ router.Use(func(next tgb.Handler) tgb.Handler {
       log.Printf("%#v [%s]", update, time.Since(started))
     }(time.Now())
 
-    return next(ctx, update)
+    return next.Handle(ctx, update)
   })
 })
 ```
 
 #### Error Handler
 
-As you all handlers returns an `error`. If any error occurs in the chain, it will be passed to that handler. By default, errors are returned back by handler method. You can customize this behavior by passing a custom error handler.
+All handlers return an `error`. If any error occurs in the chain, it will be passed to the error handler. By default, errors are returned as-is. You can customize this behavior by registering a custom error handler.
 
 e.g. log all errors
 
@@ -690,6 +770,189 @@ router.Error(func(ctx context.Context, update *tgb.Update, err error) error {
 
 That example is not useful and just demonstrates the error handler.
 The better way to achieve this is simply to enable logging in [`Webhook`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Webhook) or [`Poller`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#Poller).
+
+### Message Builders
+
+When building bots with inline keyboards, you often need to send the same message as a new message in one handler and edit an existing message in another (e.g., responding to a `/start` command vs. updating on a callback button press). Message builders let you define the message content once and convert it to different API calls as needed.
+
+#### [`tgb.TextMessageCallBuilder`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#TextMessageCallBuilder)
+
+Builds text messages that can be sent, edited, or have their reply markup updated.
+
+```go
+builder := tgb.NewTextMessageCallBuilder(
+  tg.HTML.Text(
+    tg.HTML.Bold("Hello!"),
+    "",
+    tg.HTML.Italic("Select an option:"),
+  ),
+).
+  ParseMode(tg.HTML).
+  ReplyMarkup(tg.NewInlineKeyboardMarkup(
+    tg.NewButtonRow(
+      tg.NewInlineKeyboardButtonCallback("Option 1", "opt:1"),
+      tg.NewInlineKeyboardButtonCallback("Option 2", "opt:2"),
+    ),
+  ))
+```
+
+Fluent setters: `Text`, `ParseMode`, `ReplyMarkup`, `LinkPreviewOptions`, `Entities`, `BusinessConnectionID`, `Client`.
+
+**Conversion methods:**
+
+- `AsSend(peer)` → `sendMessage`
+- `AsEditText(peer, id)` / `FromCBQ` / `FromMsg` / `Inline` → `editMessageText`
+- `AsEditReplyMarkup(peer, id)` / `FromCBQ` / `FromMsg` / `Inline` → `editMessageReplyMarkup`
+
+**Example:** reusable menu message used for both initial send and callback edits:
+
+```go
+func newMenuMessage(items []Item) *tgb.TextMessageCallBuilder {
+  pm := tg.HTML
+  buttons := make([]tg.InlineKeyboardButton, 0, len(items))
+  for _, item := range items {
+    buttons = append(buttons, itemFilter.MustButton(item.Name, itemData{ID: item.ID}))
+  }
+
+  return tgb.NewTextMessageCallBuilder(
+    pm.Text(pm.Bold("Menu"), "", pm.Italic("Select an item:")),
+  ).
+    ParseMode(pm).
+    ReplyMarkup(tg.NewInlineKeyboardMarkup(
+      tg.NewButtonLayout(2, buttons...).Keyboard()...,
+    ))
+}
+
+router.
+  // send menu as new message on /start
+  Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+    return msg.Update.Reply(ctx, newMenuMessage(items).AsSend(msg.Chat))
+  }, tgb.Command("start")).
+  // edit existing message on "back" callback
+  CallbackQuery(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate) error {
+    return cbq.Update.Reply(ctx, newMenuMessage(items).AsEditTextFromCBQ(cbq.CallbackQuery))
+  }, backFilter.Filter())
+```
+
+See full example: [examples/menu](https://github.com/mr-linch/go-tg/tree/main/_examples/menu).
+
+#### [`tgb.MediaMessageCallBuilder`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#MediaMessageCallBuilder)
+
+Builds caption-based media messages that can be sent as different media types, or used to edit captions and media.
+
+```go
+builder := tgb.NewMediaMessageCallBuilder(
+  tg.HTML.Text(tg.HTML.Bold("Mountain Lake"), "", "A serene mountain lake."),
+).
+  ParseMode(tg.HTML).
+  ShowCaptionAboveMedia(true).
+  ReplyMarkup(keyboard)
+```
+
+Fluent setters: `Caption`, `ParseMode`, `ReplyMarkup`, `CaptionEntities`, `ShowCaptionAboveMedia`, `BusinessConnectionID`, `Client`.
+
+**Conversion methods** — each send method takes a `tg.PeerID` and a `tg.FileArg`:
+
+- `AsSendPhoto` / `AsSendVideo` / `AsSendAudio` / `AsSendDocument` / `AsSendAnimation` / `AsSendVoice` → corresponding `send*` method
+- `AsEditCaption(peer, id)` / `FromCBQ` / `FromMsg` / `Inline` → `editMessageCaption`
+- `AsEditMedia(peer, id, media)` / `FromCBQ` / `FromMsg` / `Inline` → `editMessageMedia`
+
+**InputMedia helpers** — create `tg.InputMedia` with the builder's caption settings pre-filled:
+
+`NewInputMediaPhoto`, `NewInputMediaVideo`, `NewInputMediaAnimation`, `NewInputMediaAudio`, `NewInputMediaDocument`.
+
+**Example:** photo gallery with navigation buttons:
+
+```go
+func newGalleryMessage(index int) *tgb.MediaMessageCallBuilder {
+  item := gallery[index]
+  pm := tg.HTML
+
+  prev := (index - 1 + len(gallery)) % len(gallery)
+  next := (index + 1) % len(gallery)
+
+  return tgb.NewMediaMessageCallBuilder(
+    pm.Text(pm.Bold(item.Title), "", pm.Escape(item.Description)),
+  ).
+    ParseMode(pm).
+    ShowCaptionAboveMedia(true).
+    ReplyMarkup(tg.NewInlineKeyboardMarkup(
+      tg.NewButtonRow(
+        navFilter.MustButton("< Prev", nav{Index: prev}),
+        navFilter.MustButton("Next >", nav{Index: next}),
+      ),
+    ))
+}
+
+router.
+  // send photo on /start
+  Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
+    b := newGalleryMessage(0)
+    return msg.Update.Reply(ctx, b.AsSendPhoto(msg.Chat, tg.NewFileArgURL(gallery[0].PhotoURL)))
+  }, tgb.Command("start")).
+  // navigate gallery on button press
+  CallbackQuery(navFilter.Handler(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate, n nav) error {
+    b := newGalleryMessage(n.Index)
+    photo := b.NewInputMediaPhoto(tg.NewFileArgURL(gallery[n.Index].PhotoURL))
+    return cbq.Update.Reply(ctx, b.AsEditMediaFromCBQ(cbq.CallbackQuery, photo))
+  }), navFilter.Filter())
+```
+
+See full example: [examples/media-gallery](https://github.com/mr-linch/go-tg/tree/main/_examples/media-gallery).
+
+### Structured Callback Data
+
+[`tgb.CallbackDataFilter[T]`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb#CallbackDataFilter) provides type-safe, declarative routing for inline keyboards. Instead of manually parsing `callback_data` strings, you define Go structs for each action — the filter handles encoding (compact enough for the 64-byte Telegram limit), prefix-based routing, and automatic decoding in handlers.
+
+**1. Define a struct and create a filter:**
+
+```go
+type PageNav struct {
+  Page int
+}
+
+var pageFilter = tgb.NewCallbackDataFilter[PageNav]("page")
+```
+
+The filter encodes structs as `"page:1"` (integers use base-36 by default for compactness). Supported field types: `bool`, `int*`, `uint*`, `float*`, `string`.
+
+**2. Create buttons with encoded data:**
+
+```go
+tg.NewButtonRow(
+  pageFilter.MustButton("< Prev", PageNav{Page: page - 1}),
+  pageFilter.MustButton("Next >", PageNav{Page: page + 1}),
+)
+```
+
+`MustButton(text, value)` encodes the struct into `callback_data` and returns an `InlineKeyboardButton`. Use `Button(text, value)` if you need error handling.
+
+**3. Route and handle with automatic decoding:**
+
+```go
+router.CallbackQuery(
+  pageFilter.Handler(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate, nav PageNav) error {
+    // nav.Page is already decoded
+    return cbq.Update.Reply(ctx, newPageMessage(nav.Page).AsEditTextFromCBQ(cbq.CallbackQuery))
+  }),
+  pageFilter.Filter(), // matches callbacks with "page:" prefix
+)
+```
+
+`Filter()` matches callback queries by prefix. `Handler()` wraps your handler and passes the decoded struct as a third argument.
+
+**Codec options** can be passed to `NewCallbackDataFilter` to customize encoding:
+
+```go
+var filter = tgb.NewCallbackDataFilter[MyData]("prefix",
+  tgb.WithCallbackDataCodecDelimiter(';'),  // field separator (default: ':')
+  tgb.WithCallbackDataCodecIntBase(10),     // decimal integers (default: 36)
+)
+```
+
+Per-field overrides are available via struct tags: `` `tgbase:"16"` ``, `` `tgfmt:"e"` ``, `` `tgprec:"2"` ``.
+
+See full example: [examples/menu](https://github.com/mr-linch/go-tg/tree/main/_examples/menu).
 
 ## Extensions
 
@@ -749,7 +1012,7 @@ Also package has [`StoreFile`](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/
     })
    ```
 
-See [session](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session) package and [examples](https://github.com/mr-linch/go-tg/tree/main/examples) with `Session Manager` feature for more information.
+See [session](https://pkg.go.dev/github.com/mr-linch/go-tg/tgb/session) package and [examples](https://github.com/mr-linch/go-tg/tree/main/_examples) with `Session Manager` feature for more information.
 
 ## Related Projects
 
