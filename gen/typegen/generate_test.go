@@ -420,9 +420,58 @@ var testAPI = &ir.API{
 				},
 			},
 		},
+		// Type with interface union fields (InputMessageContent, ReplyMarkup)
+		{
+			Name:        "InlineQueryResultArticle",
+			Description: "Represents a link to an article.",
+			Fields: []ir.Field{
+				{
+					Name:        "id",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}},
+					Description: "Unique identifier.",
+				},
+				{
+					Name:        "title",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}},
+					Description: "Title of the result.",
+				},
+				{
+					Name:        "input_message_content",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMessageContent"}}},
+					Description: "Content of the message to be sent.",
+				},
+				{
+					Name:        "reply_markup",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "InlineKeyboardMarkup"}}},
+					Optional:    true,
+					Description: "Optional. Inline keyboard attached to the message.",
+				},
+			},
+		},
+		// Type with optional interface union field
+		{
+			Name:        "InlineQueryResultPhoto",
+			Description: "Represents a link to a photo.",
+			Fields: []ir.Field{
+				{
+					Name:        "id",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}},
+					Description: "Unique identifier.",
+				},
+				{
+					Name:        "input_message_content",
+					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "InputMessageContent"}}},
+					Optional:    true,
+					Description: "Optional. Content of the message to be sent.",
+				},
+			},
+		},
 	},
 	Methods: []ir.Method{
 		{Name: "setWebhook"},
+		{Name: "setBackground", Params: []ir.Param{
+			{Name: "fill", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "BackgroundFill"}}}},
+		}},
 	},
 }
 
@@ -475,6 +524,10 @@ func TestGenerate_InterfaceUnions(t *testing.T) {
 	assert.Contains(t, got, "func (v InputTextMessageContent) isInputMessageContent()")
 	assert.Contains(t, got, "func (v InputLocationMessageContent) isInputMessageContent()")
 
+	// Known implementations in interface union doc (with Go doc links)
+	assert.Contains(t, got, "//   - [InputTextMessageContent]")
+	assert.Contains(t, got, "//   - [InputLocationMessageContent]")
+
 	// Spec-derived interface union constructors
 	assert.Contains(t, got, "func NewInputTextMessageContent(messageText string) *InputTextMessageContent")
 	assert.Contains(t, got, "func NewInputLocationMessageContent(latitude float64, longitude float64) InputLocationMessageContent")
@@ -487,6 +540,12 @@ func TestGenerate_InterfaceUnions(t *testing.T) {
 	assert.Contains(t, got, "func (v ReplyKeyboardRemove) isReplyMarkup()")
 	assert.Contains(t, got, "func (v ForceReply) isReplyMarkup()")
 
+	// Known implementations in config-defined interface union doc (with Go doc links)
+	assert.Contains(t, got, "//   - [InlineKeyboardMarkup]")
+	assert.Contains(t, got, "//   - [ReplyKeyboardMarkup]")
+	assert.Contains(t, got, "//   - [ReplyKeyboardRemove]")
+	assert.Contains(t, got, "//   - [ForceReply]")
+
 	// Config-defined interface union constructors
 	assert.Contains(t, got, "func NewInlineKeyboardMarkup(inlineKeyboard ...[]InlineKeyboardButton) InlineKeyboardMarkup")
 	assert.Contains(t, got, "func NewReplyKeyboardMarkup(keyboard ...[]KeyboardButton) *ReplyKeyboardMarkup")
@@ -496,6 +555,10 @@ func TestGenerate_InterfaceUnions(t *testing.T) {
 	// Must NOT be generated as struct unions
 	assert.NotContains(t, got, "type InputMessageContent struct")
 	assert.NotContains(t, got, "type ReplyMarkup struct")
+
+	// Interface union fields must NOT have pointer (interfaces are already nilable)
+	assert.Contains(t, got, "InputMessageContent InputMessageContent")
+	assert.NotContains(t, got, "*InputMessageContent")
 }
 
 func TestGenerate_BuilderTypes(t *testing.T) {
@@ -547,6 +610,24 @@ func TestGenerate_UnionTypes(t *testing.T) {
 	assert.NotContains(t, got, `.Type = "gradient"`)
 	assert.Contains(t, got, `D: "solid"`)
 	assert.Contains(t, got, `D: "gradient"`)
+
+	// Constructors return *Variant (not union)
+	assert.Contains(t, got, "func NewBackgroundFillSolid(color int) *BackgroundFillSolid")
+	assert.Contains(t, got, "func NewBackgroundFillGradient(topColor int) *BackgroundFillGradient")
+
+	// As<Union>() conversion methods
+	assert.Contains(t, got, "func (v *BackgroundFillSolid) AsBackgroundFill() BackgroundFill")
+	assert.Contains(t, got, "func (v *BackgroundFillGradient) AsBackgroundFill() BackgroundFill")
+
+	// Class interface, identity method, and Of helper
+	assert.Contains(t, got, "type BackgroundFillClass interface")
+	assert.Contains(t, got, "func (u BackgroundFill) AsBackgroundFill() BackgroundFill")
+	assert.Contains(t, got, "func BackgroundFillOf(values ...BackgroundFillClass) []BackgroundFill")
+
+	// Known implementations in Class interface doc (with Go doc links)
+	assert.Contains(t, got, "//   - [*BackgroundFillSolid]")
+	assert.Contains(t, got, "//   - [*BackgroundFillGradient]")
+	assert.Contains(t, got, "//   - [BackgroundFill]")
 }
 
 func TestGenerate_UnixTimeFields(t *testing.T) {
@@ -736,17 +817,23 @@ func TestGenerate_FullAPI(t *testing.T) {
 	assert.NotContains(t, got, "MenuButtonCommands struct {\n\tType")
 	assert.NotContains(t, got, "ReactionTypePaid struct {\n\tType")
 
-	// Zero-arg constructors: variants with no required fields take no params
-	assert.Contains(t, got, "func NewBotCommandScopeDefault() BotCommandScope")
-	assert.Contains(t, got, "func NewMenuButtonCommands() MenuButton")
-	assert.Contains(t, got, "func NewReactionTypePaid() ReactionType")
+	// Zero-arg constructors: variants with no required fields return *Variant
+	assert.Contains(t, got, "func NewBotCommandScopeDefault() *BotCommandScopeDefault")
+	assert.Contains(t, got, "func NewMenuButtonCommands() *MenuButtonCommands")
+	assert.Contains(t, got, "func NewReactionTypePaid() *ReactionTypePaid")
 
-	// Constructors with required fields take those fields as params
-	assert.Contains(t, got, "func NewBotCommandScopeChat(chatID ChatID) BotCommandScope")
-	assert.Contains(t, got, "func NewBotCommandScopeChatMember(chatID ChatID, userID UserID) BotCommandScope")
-	assert.Contains(t, got, "func NewMenuButtonWebApp(text string, webApp WebAppInfo) MenuButton")
-	assert.Contains(t, got, "func NewReactionTypeEmoji(emoji ReactionEmoji) ReactionType")
-	assert.Contains(t, got, "func NewInputMediaPhoto(media FileArg) InputMedia")
+	// Constructors with required fields return *Variant
+	assert.Contains(t, got, "func NewBotCommandScopeChat(chatID ChatID) *BotCommandScopeChat")
+	assert.Contains(t, got, "func NewBotCommandScopeChatMember(chatID ChatID, userID UserID) *BotCommandScopeChatMember")
+	assert.Contains(t, got, "func NewMenuButtonWebApp(text string, webApp WebAppInfo) *MenuButtonWebApp")
+	assert.Contains(t, got, "func NewReactionTypeEmoji(emoji ReactionEmoji) *ReactionTypeEmoji")
+	assert.Contains(t, got, "func NewInputMediaPhoto(media FileArg) *InputMediaPhoto")
+
+	// As<Union>() conversion methods
+	assert.Contains(t, got, "func (v *BotCommandScopeDefault) AsBotCommandScope() BotCommandScope")
+	assert.Contains(t, got, "func (v *MenuButtonCommands) AsMenuButton() MenuButton")
+	assert.Contains(t, got, "func (v *ReactionTypeEmoji) AsReactionType() ReactionType")
+	assert.Contains(t, got, "func (v *InputMediaPhoto) AsInputMedia() InputMedia")
 
 	// Go keyword escaping in constructor params
 	assert.Contains(t, got, "func NewPassportElementErrorDataField(type_ string")
@@ -770,4 +857,24 @@ func TestGenerate_FullAPI(t *testing.T) {
 	// Builders: ForceReply With* methods
 	assert.Contains(t, got, "func (v *ForceReply) WithInputFieldPlaceholder(inputFieldPlaceholder string) *ForceReply")
 	assert.Contains(t, got, "func (v *ForceReply) WithSelective() *ForceReply")
+
+	// Class interfaces for discriminator unions with constructors
+	assert.Contains(t, got, "type BotCommandScopeClass interface")
+	assert.Contains(t, got, "func (u BotCommandScope) AsBotCommandScope() BotCommandScope")
+	assert.Contains(t, got, "func BotCommandScopeOf(values ...BotCommandScopeClass) []BotCommandScope")
+	assert.Contains(t, got, "type MenuButtonClass interface")
+	assert.Contains(t, got, "func (u MenuButton) AsMenuButton() MenuButton")
+	assert.Contains(t, got, "func MenuButtonOf(values ...MenuButtonClass) []MenuButton")
+	assert.Contains(t, got, "type InputMediaClass interface")
+	assert.Contains(t, got, "func (u InputMedia) AsInputMedia() InputMedia")
+	assert.Contains(t, got, "func InputMediaOf(values ...InputMediaClass) []InputMedia")
+	assert.Contains(t, got, "type ReactionTypeClass interface")
+	assert.Contains(t, got, "func (u ReactionType) AsReactionType() ReactionType")
+	assert.Contains(t, got, "func ReactionTypeOf(values ...ReactionTypeClass) []ReactionType")
+	assert.Contains(t, got, "type InlineQueryResultClass interface")
+	assert.Contains(t, got, "func (u InlineQueryResult) AsInlineQueryResult() InlineQueryResult")
+	assert.Contains(t, got, "func InlineQueryResultOf(values ...InlineQueryResultClass) []InlineQueryResult")
+
+	// Non-input unions should NOT have Class interfaces (ChatMember is response-only)
+	assert.NotContains(t, got, "type ChatMemberClass interface")
 }

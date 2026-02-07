@@ -414,26 +414,26 @@ func TestInlineQueryResultMarshalJSON(t *testing.T) {
 		Type   string
 		Result InlineQueryResult
 	}{
-		{"audio", NewInlineQueryResultCachedAudio("", "")},
-		{"document", NewInlineQueryResultCachedDocument("", "", "")},
-		{"gif", NewInlineQueryResultCachedGIF("", "")},
-		{"mpeg4_gif", NewInlineQueryResultCachedMPEG4GIF("", "")},
-		{"photo", NewInlineQueryResultCachedPhoto("", "")},
-		{"sticker", NewInlineQueryResultCachedSticker("", "")},
-		{"video", NewInlineQueryResultCachedVideo("", "", "")},
-		{"voice", NewInlineQueryResultCachedVoice("", "", "")},
-		{"audio", NewInlineQueryResultAudio("", "", "")},
-		{"document", NewInlineQueryResultDocument("", "", "", "")},
-		{"gif", NewInlineQueryResultGIF("", "", "")},
-		{"mpeg4_gif", NewInlineQueryResultMPEG4GIF("", "", "")},
-		{"photo", NewInlineQueryResultPhoto("", "", "")},
-		{"video", NewInlineQueryResultVideo("", "", "", "", "")},
-		{"voice", NewInlineQueryResultVoice("", "", "")},
-		{"article", NewInlineQueryResultArticle("", "", InputTextMessageContent{})},
-		{"contact", NewInlineQueryResultContact("", "", "")},
-		{"game", NewInlineQueryResultGame("", "")},
-		{"location", NewInlineQueryResultLocation("", 0, 0, "")},
-		{"venue", NewInlineQueryResultVenue("", 0, 0, "", "")},
+		{"audio", NewInlineQueryResultCachedAudio("", "").AsInlineQueryResult()},
+		{"document", NewInlineQueryResultCachedDocument("", "", "").AsInlineQueryResult()},
+		{"gif", NewInlineQueryResultCachedGIF("", "").AsInlineQueryResult()},
+		{"mpeg4_gif", NewInlineQueryResultCachedMPEG4GIF("", "").AsInlineQueryResult()},
+		{"photo", NewInlineQueryResultCachedPhoto("", "").AsInlineQueryResult()},
+		{"sticker", NewInlineQueryResultCachedSticker("", "").AsInlineQueryResult()},
+		{"video", NewInlineQueryResultCachedVideo("", "", "").AsInlineQueryResult()},
+		{"voice", NewInlineQueryResultCachedVoice("", "", "").AsInlineQueryResult()},
+		{"audio", NewInlineQueryResultAudio("", "", "").AsInlineQueryResult()},
+		{"document", NewInlineQueryResultDocument("", "", "", "").AsInlineQueryResult()},
+		{"gif", NewInlineQueryResultGIF("", "", "").AsInlineQueryResult()},
+		{"mpeg4_gif", NewInlineQueryResultMPEG4GIF("", "", "").AsInlineQueryResult()},
+		{"photo", NewInlineQueryResultPhoto("", "", "").AsInlineQueryResult()},
+		{"video", NewInlineQueryResultVideo("", "", "", "", "").AsInlineQueryResult()},
+		{"voice", NewInlineQueryResultVoice("", "", "").AsInlineQueryResult()},
+		{"article", NewInlineQueryResultArticle("", "", InputTextMessageContent{}).AsInlineQueryResult()},
+		{"contact", NewInlineQueryResultContact("", "", "").AsInlineQueryResult()},
+		{"game", NewInlineQueryResultGame("", "").AsInlineQueryResult()},
+		{"location", NewInlineQueryResultLocation("", 0, 0, "").AsInlineQueryResult()},
+		{"venue", NewInlineQueryResultVenue("", 0, 0, "", "").AsInlineQueryResult()},
 	} {
 		t.Run(test.Type, func(t *testing.T) {
 			body, err := json.Marshal(test.Result)
@@ -556,11 +556,11 @@ func TestInputMessageContentConstructors(t *testing.T) {
 
 func TestInputMedia_getMedia(t *testing.T) {
 	for _, test := range []InputMedia{
-		NewInputMediaPhoto(FileArg{}),
-		NewInputMediaVideo(FileArg{}),
-		NewInputMediaAudio(FileArg{}),
-		NewInputMediaAnimation(FileArg{}),
-		NewInputMediaDocument(FileArg{}),
+		NewInputMediaPhoto(FileArg{}).AsInputMedia(),
+		NewInputMediaVideo(FileArg{}).AsInputMedia(),
+		NewInputMediaAudio(FileArg{}).AsInputMedia(),
+		NewInputMediaAnimation(FileArg{}).AsInputMedia(),
+		NewInputMediaDocument(FileArg{}).AsInputMedia(),
 	} {
 		media, _ := test.getMedia()
 		assert.NotNil(t, media)
@@ -573,23 +573,23 @@ func TestInputMedia_MarshalJSON(t *testing.T) {
 		Want       string
 	}{
 		{
-			InputMedia: NewInputMediaPhoto(FileArg{FileID: "file_id"}),
+			InputMedia: NewInputMediaPhoto(FileArg{FileID: "file_id"}).AsInputMedia(),
 			Want:       `{"type":"photo","media":"file_id"}`,
 		},
 		{
-			InputMedia: NewInputMediaVideo(FileArg{FileID: "file_id"}),
+			InputMedia: NewInputMediaVideo(FileArg{FileID: "file_id"}).AsInputMedia(),
 			Want:       `{"type":"video","media":"file_id"}`,
 		},
 		{
-			InputMedia: NewInputMediaAudio(FileArg{FileID: "file_id"}),
+			InputMedia: NewInputMediaAudio(FileArg{FileID: "file_id"}).AsInputMedia(),
 			Want:       `{"type":"audio","media":"file_id"}`,
 		},
 		{
-			InputMedia: NewInputMediaAnimation(FileArg{FileID: "file_id"}),
+			InputMedia: NewInputMediaAnimation(FileArg{FileID: "file_id"}).AsInputMedia(),
 			Want:       `{"type":"animation","media":"file_id"}`,
 		},
 		{
-			InputMedia: NewInputMediaDocument(FileArg{FileID: "file_id"}),
+			InputMedia: NewInputMediaDocument(FileArg{FileID: "file_id"}).AsInputMedia(),
 			Want:       `{"type":"document","media":"file_id"}`,
 		},
 	} {
@@ -684,13 +684,13 @@ func TestBotCommandScope(t *testing.T) {
 		Scope BotCommandScope
 		Want  string
 	}{
-		{NewBotCommandScopeDefault(), `{"type":"default"}`},
-		{NewBotCommandScopeAllPrivateChats(), `{"type":"all_private_chats"}`},
-		{NewBotCommandScopeAllGroupChats(), `{"type":"all_group_chats"}`},
-		{NewBotCommandScopeAllChatAdministrators(), `{"type":"all_chat_administrators"}`},
-		{NewBotCommandScopeChat(0), `{"type":"chat","chat_id":0}`},
-		{NewBotCommandScopeChatAdministrators(0), `{"type":"chat_administrators","chat_id":0}`},
-		{NewBotCommandScopeChatMember(0, 0), `{"type":"chat_member","chat_id":0,"user_id":0}`},
+		{NewBotCommandScopeDefault().AsBotCommandScope(), `{"type":"default"}`},
+		{NewBotCommandScopeAllPrivateChats().AsBotCommandScope(), `{"type":"all_private_chats"}`},
+		{NewBotCommandScopeAllGroupChats().AsBotCommandScope(), `{"type":"all_group_chats"}`},
+		{NewBotCommandScopeAllChatAdministrators().AsBotCommandScope(), `{"type":"all_chat_administrators"}`},
+		{NewBotCommandScopeChat(0).AsBotCommandScope(), `{"type":"chat","chat_id":0}`},
+		{NewBotCommandScopeChatAdministrators(0).AsBotCommandScope(), `{"type":"chat_administrators","chat_id":0}`},
+		{NewBotCommandScopeChatMember(0, 0).AsBotCommandScope(), `{"type":"chat_member","chat_id":0,"user_id":0}`},
 	} {
 		v, err := json.Marshal(test.Scope)
 		require.NoError(t, err, "marshal json")
@@ -703,9 +703,9 @@ func TestMenuButton(t *testing.T) {
 		Button MenuButton
 		Want   string
 	}{
-		{NewMenuButtonDefault(), `{"type":"default"}`},
-		{NewMenuButtonCommands(), `{"type":"commands"}`},
-		{NewMenuButtonWebApp("", WebAppInfo{}), `{"type":"web_app","text":"","web_app":{"url":""}}`},
+		{NewMenuButtonDefault().AsMenuButton(), `{"type":"default"}`},
+		{NewMenuButtonCommands().AsMenuButton(), `{"type":"commands"}`},
+		{NewMenuButtonWebApp("", WebAppInfo{}).AsMenuButton(), `{"type":"web_app","text":"","web_app":{"url":""}}`},
 	} {
 		v, err := json.Marshal(test.Button)
 		require.NoError(t, err, "marshal json")
@@ -715,45 +715,45 @@ func TestMenuButton(t *testing.T) {
 
 func TestUnionConstructorSignatures(t *testing.T) {
 	t.Run("ZeroArg", func(t *testing.T) {
-		// Zero-arg constructors produce correct union with non-nil variant
+		// Zero-arg constructors return *Variant
 		scope := NewBotCommandScopeDefault()
-		assert.NotNil(t, scope.Default)
+		assert.NotNil(t, scope)
 
 		menu := NewMenuButtonCommands()
-		assert.NotNil(t, menu.Commands)
+		assert.NotNil(t, menu)
 
 		reaction := NewReactionTypePaid()
-		assert.NotNil(t, reaction.Paid)
+		assert.NotNil(t, reaction)
 	})
 
 	t.Run("WithArgs", func(t *testing.T) {
-		// Constructors with required fields set those fields on the variant
+		// Constructors with required fields return *Variant with fields set
 		scope := NewBotCommandScopeChat(ChatID(123))
-		require.NotNil(t, scope.Chat)
-		assert.Equal(t, ChatID(123), scope.Chat.ChatID)
+		require.NotNil(t, scope)
+		assert.Equal(t, ChatID(123), scope.ChatID)
 
 		scope2 := NewBotCommandScopeChatMember(ChatID(1), UserID(2))
-		require.NotNil(t, scope2.ChatMember)
-		assert.Equal(t, ChatID(1), scope2.ChatMember.ChatID)
-		assert.Equal(t, UserID(2), scope2.ChatMember.UserID)
+		require.NotNil(t, scope2)
+		assert.Equal(t, ChatID(1), scope2.ChatID)
+		assert.Equal(t, UserID(2), scope2.UserID)
 
 		menu := NewMenuButtonWebApp("App", WebAppInfo{URL: "https://example.com"})
-		require.NotNil(t, menu.WebApp)
-		assert.Equal(t, "App", menu.WebApp.Text)
-		assert.Equal(t, "https://example.com", menu.WebApp.WebApp.URL)
+		require.NotNil(t, menu)
+		assert.Equal(t, "App", menu.Text)
+		assert.Equal(t, "https://example.com", menu.WebApp.URL)
 
 		reaction := NewReactionTypeEmoji(ReactionEmojiThumbsUp)
-		require.NotNil(t, reaction.Emoji)
-		assert.Equal(t, ReactionEmojiThumbsUp, reaction.Emoji.Emoji)
+		require.NotNil(t, reaction)
+		assert.Equal(t, ReactionEmojiThumbsUp, reaction.Emoji)
 
 		media := NewInputMediaPhoto(FileArg{FileID: "test"})
-		require.NotNil(t, media.Photo)
-		assert.Equal(t, FileID("test"), media.Photo.Media.FileID)
+		require.NotNil(t, media)
+		assert.Equal(t, FileID("test"), media.Media.FileID)
 	})
 
 	t.Run("MarshalRoundTrip", func(t *testing.T) {
-		// Marshal then unmarshal and verify variant fields are preserved
-		original := NewBotCommandScopeChat(ChatID(42))
+		// Marshal via As<Union>(), then unmarshal and verify variant fields are preserved
+		original := NewBotCommandScopeChat(ChatID(42)).AsBotCommandScope()
 		data, err := json.Marshal(original)
 		require.NoError(t, err)
 		assert.JSONEq(t, `{"type":"chat","chat_id":42}`, string(data))

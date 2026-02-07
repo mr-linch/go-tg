@@ -93,7 +93,8 @@ func (c *CompiledFieldTypeRules) Unmatched() []string {
 }
 
 // resolveGoType resolves a field's TypeExpr to a Go type string.
-func resolveGoType(typeName string, f ir.Field, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedTypeOverrides map[string]bool) string {
+// interfaceTypes contains Go type names that are interfaces (already nilable, no pointer needed).
+func resolveGoType(typeName string, f ir.Field, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedTypeOverrides, interfaceTypes map[string]bool) string {
 	key := typeName + "." + f.Name
 	if override, ok := cfg.TypeOverrides[key]; ok {
 		usedTypeOverrides[key] = true
@@ -112,7 +113,7 @@ func resolveGoType(typeName string, f ir.Field, cfg *config.TypeGen, rules *Comp
 	}
 
 	baseType := resolveBaseType(f.TypeExpr.Types[0].Type)
-	scalar := isScalar(baseType)
+	scalar := isScalar(baseType) || interfaceTypes[baseType]
 
 	return applyOptionalAndArray(baseType, f.TypeExpr.Array, f.Optional, scalar)
 }

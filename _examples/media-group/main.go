@@ -41,7 +41,7 @@ func main() {
 				return msg.Answer("stars should be between 1 and 25000").DoVoid(ctx)
 			}
 
-			media := make([]tg.InputPaidMedia, count)
+			media := make([]tg.InputPaidMediaClass, count)
 			for i := range media {
 				media[i] = tg.NewInputPaidMediaPhoto(
 					tg.NewFileArgUpload(
@@ -50,7 +50,7 @@ func main() {
 				)
 			}
 
-			return msg.Client.SendPaidMedia(msg.Chat, stars, media).DoVoid(ctx)
+			return msg.Client.SendPaidMedia(msg.Chat, stars, media...).DoVoid(ctx)
 		}, tgb.Command("paid")).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle messages matched integer regexp
@@ -63,7 +63,7 @@ func main() {
 				return msg.Answer("count should be between 1 and 10").DoVoid(ctx)
 			}
 
-			media := make([]tg.InputMedia, count)
+			media := make([]tg.InputMediaClass, count)
 			for i := range media {
 				media[i] = tg.NewInputMediaPhoto(
 					tg.NewFileArgUpload(
@@ -72,7 +72,7 @@ func main() {
 				)
 			}
 
-			return msg.AnswerMediaGroup(media).DoVoid(ctx)
+			return msg.AnswerMediaGroup(media...).DoVoid(ctx)
 		}, tgb.Regexp(regexp.MustCompile(`^(\d+)$`))).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			return msg.Answer("send a number (1-10) or use /paid <count> <stars>").DoVoid(ctx)

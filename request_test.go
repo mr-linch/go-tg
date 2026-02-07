@@ -44,13 +44,11 @@ func TestRequest_Setters(t *testing.T) {
 	r.FileID("file_id", FileID("file_id"))
 
 	r.InputMediaSlice("media", []InputMedia{
-		func() InputMedia {
-			m := NewInputMediaDocument(FileArg{
-				Upload: NewInputFileBytes("file_name", []byte("file_content")),
-			})
-			m.Document.Thumbnail = NewInputFileBytes("thumb.jpg", []byte("")).Ptr()
-			return m
-		}(),
+		NewInputMediaDocument(FileArg{
+			Upload: NewInputFileBytes("file_name", []byte("file_content")),
+		}).
+			WithThumbnail(NewInputFileBytes("thumb.jpg", []byte(""))).
+			AsInputMedia(),
 	})
 
 	encoder := &testEncoder{}
@@ -188,7 +186,7 @@ func TestRequest_InputMediaUpload(t *testing.T) {
 		return []InputMedia{
 			NewInputMediaPhoto(FileArg{
 				Upload: NewInputFileBytes("photo.jpg", []byte("photo_content")),
-			}),
+			}).AsInputMedia(),
 		}
 	}
 
@@ -221,12 +219,13 @@ func TestRequest_InputMediaUpload(t *testing.T) {
 
 		photo := NewInputMediaPhoto(FileArg{
 			Upload: NewInputFileBytes("photo.jpg", []byte("photo")),
-		})
+		}).AsInputMedia()
 
 		doc := NewInputMediaDocument(FileArg{
 			Upload: NewInputFileBytes("doc.pdf", []byte("doc")),
-		})
-		doc.Document.Thumbnail = NewInputFileBytes("thumb.jpg", []byte("thumb")).Ptr()
+		}).
+			WithThumbnail(NewInputFileBytes("thumb.jpg", []byte("thumb"))).
+			AsInputMedia()
 
 		r.InputMediaSlice("media", []InputMedia{photo, doc})
 
@@ -274,7 +273,7 @@ func TestRequest_InputMediaByRef(t *testing.T) {
 	t.Run("InputMediaSlice", func(t *testing.T) {
 		r := NewRequest("sendMediaGroup")
 		r.InputMediaSlice("media", []InputMedia{
-			NewInputMediaPhoto(FileArg{FileID: "existing_file_id"}),
+			NewInputMediaPhoto(FileArg{FileID: "existing_file_id"}).AsInputMedia(),
 		})
 
 		encoder := &testEncoder{}
@@ -287,7 +286,7 @@ func TestRequest_InputMediaByRef(t *testing.T) {
 
 	t.Run("InputMedia", func(t *testing.T) {
 		r := NewRequest("editMessageMedia")
-		r.InputMedia("media", NewInputMediaPhoto(FileArg{URL: "https://example.com/photo.jpg"}))
+		r.InputMedia("media", NewInputMediaPhoto(FileArg{URL: "https://example.com/photo.jpg"}).AsInputMedia())
 
 		encoder := &testEncoder{}
 		err := r.Encode(encoder)
@@ -304,7 +303,7 @@ func TestRequest_InputPaidMediaSlice(t *testing.T) {
 		r.InputPaidMediaSlice("media", []InputPaidMedia{
 			NewInputPaidMediaPhoto(FileArg{
 				Upload: NewInputFileBytes("photo.jpg", []byte("photo")),
-			}),
+			}).AsInputPaidMedia(),
 		})
 
 		encoder := &testEncoder{}
@@ -318,7 +317,7 @@ func TestRequest_InputPaidMediaSlice(t *testing.T) {
 	t.Run("ByRef", func(t *testing.T) {
 		r := NewRequest("sendPaidMedia")
 		r.InputPaidMediaSlice("media", []InputPaidMedia{
-			NewInputPaidMediaPhoto(FileArg{FileID: "existing_file_id"}),
+			NewInputPaidMediaPhoto(FileArg{FileID: "existing_file_id"}).AsInputPaidMedia(),
 		})
 
 		encoder := &testEncoder{}
@@ -332,11 +331,12 @@ func TestRequest_InputPaidMediaSlice(t *testing.T) {
 	t.Run("VideoWithThumbAndCover", func(t *testing.T) {
 		media := NewInputPaidMediaVideo(FileArg{
 			Upload: NewInputFileBytes("video.mp4", []byte("video")),
-		})
-		media.Video.Thumbnail = NewInputFileBytes("thumb.jpg", []byte("thumb")).Ptr()
-		media.Video.Cover = &FileArg{
-			Upload: NewInputFileBytes("cover.jpg", []byte("cover")),
-		}
+		}).
+			WithThumbnail(NewInputFileBytes("thumb.jpg", []byte("thumb"))).
+			WithCover(FileArg{
+				Upload: NewInputFileBytes("cover.jpg", []byte("cover")),
+			}).
+			AsInputPaidMedia()
 
 		r := NewRequest("sendPaidMedia")
 		r.InputPaidMediaSlice("media", []InputPaidMedia{media})
@@ -356,8 +356,9 @@ func TestRequest_InputPaidMediaSlice(t *testing.T) {
 	t.Run("CoverByRef", func(t *testing.T) {
 		media := NewInputPaidMediaVideo(FileArg{
 			Upload: NewInputFileBytes("video.mp4", []byte("video")),
-		})
-		media.Video.Cover = &FileArg{FileID: "cover_file_id"}
+		}).
+			WithCover(FileArg{FileID: "cover_file_id"}).
+			AsInputPaidMedia()
 
 		r := NewRequest("sendPaidMedia")
 		r.InputPaidMediaSlice("media", []InputPaidMedia{media})

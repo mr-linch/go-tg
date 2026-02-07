@@ -199,6 +199,30 @@ type ForceReply struct {
 	Selective bool `json:"selective,omitempty"`
 }
 
+// InlineQueryResultArticle represents a link to an article.
+type InlineQueryResultArticle struct {
+	// Unique identifier.
+	ID string `json:"id"`
+
+	// Title of the result.
+	Title string `json:"title"`
+
+	// Content of the message to be sent.
+	InputMessageContent InputMessageContent `json:"input_message_content"`
+
+	// Optional. Inline keyboard attached to the message.
+	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
+}
+
+// InlineQueryResultPhoto represents a link to a photo.
+type InlineQueryResultPhoto struct {
+	// Unique identifier.
+	ID string `json:"id"`
+
+	// Optional. Content of the message to be sent.
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
+}
+
 // UnknownVariant stores data for unknown union variants.
 // This provides forward compatibility when new variants are added to the API.
 type UnknownVariant struct {
@@ -307,7 +331,59 @@ func (u *BackgroundFill) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
+// NewBackgroundFillSolid creates a new BackgroundFillSolid.
+func NewBackgroundFillSolid(color int) *BackgroundFillSolid {
+	return &BackgroundFillSolid{
+		Color: color,
+	}
+}
+
+// AsBackgroundFill wraps the variant into a BackgroundFill union.
+func (v *BackgroundFillSolid) AsBackgroundFill() BackgroundFill {
+	return BackgroundFill{Solid: v}
+}
+
+// NewBackgroundFillGradient creates a new BackgroundFillGradient.
+func NewBackgroundFillGradient(topColor int) *BackgroundFillGradient {
+	return &BackgroundFillGradient{
+		TopColor: topColor,
+	}
+}
+
+// AsBackgroundFill wraps the variant into a BackgroundFill union.
+func (v *BackgroundFillGradient) AsBackgroundFill() BackgroundFill {
+	return BackgroundFill{Gradient: v}
+}
+
+// BackgroundFillClass is an interface for types that can be used as [BackgroundFill].
+//
+// Known implementations:
+//   - [*BackgroundFillSolid]
+//   - [*BackgroundFillGradient]
+//   - [BackgroundFill]
+type BackgroundFillClass interface {
+	AsBackgroundFill() BackgroundFill
+}
+
+// AsBackgroundFill returns the union as-is, implementing BackgroundFillClass.
+func (u BackgroundFill) AsBackgroundFill() BackgroundFill {
+	return u
+}
+
+// BackgroundFillOf converts BackgroundFillClass arguments to a slice of BackgroundFill.
+func BackgroundFillOf(values ...BackgroundFillClass) []BackgroundFill {
+	result := make([]BackgroundFill, len(values))
+	for i, v := range values {
+		result[i] = v.AsBackgroundFill()
+	}
+	return result
+}
+
 // MessageOrigin this object describes the origin of a message.
+//
+// Known implementations:
+//   - [MessageOriginUser]
+//   - [MessageOriginChat]
 type MessageOrigin interface {
 	isMessageOrigin()
 }
@@ -316,6 +392,10 @@ func (v MessageOriginUser) isMessageOrigin() {}
 func (v MessageOriginChat) isMessageOrigin() {}
 
 // InputMessageContent this object represents the content of a message to be sent as a result of an inline query.
+//
+// Known implementations:
+//   - [InputTextMessageContent]
+//   - [InputLocationMessageContent]
 type InputMessageContent interface {
 	isInputMessageContent()
 }
@@ -339,6 +419,12 @@ func NewInputLocationMessageContent(latitude float64, longitude float64) InputLo
 }
 
 // ReplyMarkup is a marker interface for ReplyMarkup variants.
+//
+// Known implementations:
+//   - [InlineKeyboardMarkup]
+//   - [ReplyKeyboardMarkup]
+//   - [ReplyKeyboardRemove]
+//   - [ForceReply]
 type ReplyMarkup interface {
 	isReplyMarkup()
 }

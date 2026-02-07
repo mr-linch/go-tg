@@ -3792,7 +3792,7 @@ type InlineQueryResultPhoto struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the photo
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultGIF represents a link to an animated GIF file. By default, this animated GIF file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
@@ -3841,7 +3841,7 @@ type InlineQueryResultGIF struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the GIF animation
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultMPEG4GIF represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
@@ -3890,7 +3890,7 @@ type InlineQueryResultMPEG4GIF struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the video animation
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultVideo represents a link to a page containing an embedded video player or a video file. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
@@ -3942,7 +3942,7 @@ type InlineQueryResultVideo struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the video. This field is required if InlineQueryResultVideo is used to send an HTML-page as a result (e.g., a YouTube video).
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultAudio represents a link to an MP3 audio file. By default, this audio file will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
@@ -3979,7 +3979,7 @@ type InlineQueryResultAudio struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the audio
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultVoice represents a link to a voice recording in an .OGG container encoded with OPUS. By default, this voice recording will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the the voice message.
@@ -4013,7 +4013,7 @@ type InlineQueryResultVoice struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the voice recording
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultDocument represents a link to a file. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file. Currently, only .PDF and .ZIP files can be sent using this method.
@@ -4048,7 +4048,7 @@ type InlineQueryResultDocument struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the file
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 
 	// Optional. URL of the thumbnail (JPEG only) for the file
 	ThumbnailURL string `json:"thumbnail_url,omitempty"`
@@ -4092,7 +4092,7 @@ type InlineQueryResultLocation struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the location
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 
 	// Optional. Url of the thumbnail for the result
 	ThumbnailURL string `json:"thumbnail_url,omitempty"`
@@ -4141,7 +4141,7 @@ type InlineQueryResultVenue struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the venue
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 
 	// Optional. Url of the thumbnail for the result
 	ThumbnailURL string `json:"thumbnail_url,omitempty"`
@@ -4178,7 +4178,7 @@ type InlineQueryResultContact struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the contact
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 
 	// Optional. Url of the thumbnail for the result
 	ThumbnailURL string `json:"thumbnail_url,omitempty"`
@@ -4238,7 +4238,7 @@ type InlineQueryResultCachedPhoto struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the photo
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultCachedGIF represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
@@ -4272,7 +4272,7 @@ type InlineQueryResultCachedGIF struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the GIF animation
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultCachedMPEG4GIF represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
@@ -4306,7 +4306,7 @@ type InlineQueryResultCachedMPEG4GIF struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the video animation
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultCachedSticker represents a link to a sticker stored on the Telegram servers. By default, this sticker will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the sticker.
@@ -4323,7 +4323,7 @@ type InlineQueryResultCachedSticker struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the sticker
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultCachedDocument represents a link to a file stored on the Telegram servers. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file.
@@ -4357,7 +4357,7 @@ type InlineQueryResultCachedDocument struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the file
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultCachedVideo represents a link to a video file stored on the Telegram servers. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
@@ -4394,7 +4394,7 @@ type InlineQueryResultCachedVideo struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the video
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultCachedVoice represents a link to a voice message stored on the Telegram servers. By default, this voice message will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the voice message.
@@ -4425,7 +4425,7 @@ type InlineQueryResultCachedVoice struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the voice message
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InlineQueryResultCachedAudio represents a link to an MP3 audio file stored on the Telegram servers. By default, this audio file will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
@@ -4453,7 +4453,7 @@ type InlineQueryResultCachedAudio struct {
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the audio
-	InputMessageContent *InputMessageContent `json:"input_message_content,omitempty"`
+	InputMessageContent InputMessageContent `json:"input_message_content,omitempty"`
 }
 
 // InputTextMessageContent represents the [InputMessageContent] of a text message to be sent as the result of an inline query.
@@ -6023,42 +6023,94 @@ func (u *StoryAreaType) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewStoryAreaTypeLocation creates a StoryAreaType containing a StoryAreaTypeLocation.
-func NewStoryAreaTypeLocation(latitude float64, longitude float64) StoryAreaType {
-	return StoryAreaType{Location: &StoryAreaTypeLocation{
+// NewStoryAreaTypeLocation creates a new StoryAreaTypeLocation.
+func NewStoryAreaTypeLocation(latitude float64, longitude float64) *StoryAreaTypeLocation {
+	return &StoryAreaTypeLocation{
 		Latitude:  latitude,
 		Longitude: longitude,
-	}}
+	}
 }
 
-// NewStoryAreaTypeSuggestedReaction creates a StoryAreaType containing a StoryAreaTypeSuggestedReaction.
-func NewStoryAreaTypeSuggestedReaction(reactionType ReactionType) StoryAreaType {
-	return StoryAreaType{SuggestedReaction: &StoryAreaTypeSuggestedReaction{
+// AsStoryAreaType wraps the variant into a StoryAreaType union.
+func (v *StoryAreaTypeLocation) AsStoryAreaType() StoryAreaType {
+	return StoryAreaType{Location: v}
+}
+
+// NewStoryAreaTypeSuggestedReaction creates a new StoryAreaTypeSuggestedReaction.
+func NewStoryAreaTypeSuggestedReaction(reactionType ReactionType) *StoryAreaTypeSuggestedReaction {
+	return &StoryAreaTypeSuggestedReaction{
 		ReactionType: reactionType,
-	}}
+	}
 }
 
-// NewStoryAreaTypeLink creates a StoryAreaType containing a StoryAreaTypeLink.
-func NewStoryAreaTypeLink(url string) StoryAreaType {
-	return StoryAreaType{Link: &StoryAreaTypeLink{
+// AsStoryAreaType wraps the variant into a StoryAreaType union.
+func (v *StoryAreaTypeSuggestedReaction) AsStoryAreaType() StoryAreaType {
+	return StoryAreaType{SuggestedReaction: v}
+}
+
+// NewStoryAreaTypeLink creates a new StoryAreaTypeLink.
+func NewStoryAreaTypeLink(url string) *StoryAreaTypeLink {
+	return &StoryAreaTypeLink{
 		URL: url,
-	}}
+	}
 }
 
-// NewStoryAreaTypeWeather creates a StoryAreaType containing a StoryAreaTypeWeather.
-func NewStoryAreaTypeWeather(temperature float64, emoji string, backgroundColor int) StoryAreaType {
-	return StoryAreaType{Weather: &StoryAreaTypeWeather{
+// AsStoryAreaType wraps the variant into a StoryAreaType union.
+func (v *StoryAreaTypeLink) AsStoryAreaType() StoryAreaType {
+	return StoryAreaType{Link: v}
+}
+
+// NewStoryAreaTypeWeather creates a new StoryAreaTypeWeather.
+func NewStoryAreaTypeWeather(temperature float64, emoji string, backgroundColor int) *StoryAreaTypeWeather {
+	return &StoryAreaTypeWeather{
 		Temperature:     temperature,
 		Emoji:           emoji,
 		BackgroundColor: backgroundColor,
-	}}
+	}
 }
 
-// NewStoryAreaTypeUniqueGift creates a StoryAreaType containing a StoryAreaTypeUniqueGift.
-func NewStoryAreaTypeUniqueGift(name string) StoryAreaType {
-	return StoryAreaType{UniqueGift: &StoryAreaTypeUniqueGift{
+// AsStoryAreaType wraps the variant into a StoryAreaType union.
+func (v *StoryAreaTypeWeather) AsStoryAreaType() StoryAreaType {
+	return StoryAreaType{Weather: v}
+}
+
+// NewStoryAreaTypeUniqueGift creates a new StoryAreaTypeUniqueGift.
+func NewStoryAreaTypeUniqueGift(name string) *StoryAreaTypeUniqueGift {
+	return &StoryAreaTypeUniqueGift{
 		Name: name,
-	}}
+	}
+}
+
+// AsStoryAreaType wraps the variant into a StoryAreaType union.
+func (v *StoryAreaTypeUniqueGift) AsStoryAreaType() StoryAreaType {
+	return StoryAreaType{UniqueGift: v}
+}
+
+// StoryAreaTypeClass is an interface for types that can be used as [StoryAreaType].
+//
+// Known implementations:
+//   - [*StoryAreaTypeLocation]
+//   - [*StoryAreaTypeSuggestedReaction]
+//   - [*StoryAreaTypeLink]
+//   - [*StoryAreaTypeWeather]
+//   - [*StoryAreaTypeUniqueGift]
+//   - [StoryAreaType]
+type StoryAreaTypeClass interface {
+	AsStoryAreaType() StoryAreaType
+}
+
+// AsStoryAreaType returns the union as-is, implementing StoryAreaTypeClass.
+func (u StoryAreaType) AsStoryAreaType() StoryAreaType {
+	return u
+}
+
+// StoryAreaTypeOf converts StoryAreaTypeClass arguments to a slice of StoryAreaType.
+func StoryAreaTypeOf(values ...StoryAreaTypeClass) []StoryAreaType {
+	result := make([]StoryAreaType, len(values))
+	for i, v := range values {
+		result[i] = v.AsStoryAreaType()
+	}
+	return result
 }
 
 // ReactionTypeType represents the type of ReactionType.
@@ -6177,23 +6229,63 @@ func (u *ReactionType) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewReactionTypeEmoji creates a ReactionType containing a ReactionTypeEmoji.
-func NewReactionTypeEmoji(emoji ReactionEmoji) ReactionType {
-	return ReactionType{Emoji: &ReactionTypeEmoji{
+// NewReactionTypeEmoji creates a new ReactionTypeEmoji.
+func NewReactionTypeEmoji(emoji ReactionEmoji) *ReactionTypeEmoji {
+	return &ReactionTypeEmoji{
 		Emoji: emoji,
-	}}
+	}
 }
 
-// NewReactionTypeCustomEmoji creates a ReactionType containing a ReactionTypeCustomEmoji.
-func NewReactionTypeCustomEmoji(customEmojiID string) ReactionType {
-	return ReactionType{CustomEmoji: &ReactionTypeCustomEmoji{
+// AsReactionType wraps the variant into a ReactionType union.
+func (v *ReactionTypeEmoji) AsReactionType() ReactionType {
+	return ReactionType{Emoji: v}
+}
+
+// NewReactionTypeCustomEmoji creates a new ReactionTypeCustomEmoji.
+func NewReactionTypeCustomEmoji(customEmojiID string) *ReactionTypeCustomEmoji {
+	return &ReactionTypeCustomEmoji{
 		CustomEmojiID: customEmojiID,
-	}}
+	}
 }
 
-// NewReactionTypePaid creates a ReactionType containing a ReactionTypePaid.
-func NewReactionTypePaid() ReactionType {
-	return ReactionType{Paid: &ReactionTypePaid{}}
+// AsReactionType wraps the variant into a ReactionType union.
+func (v *ReactionTypeCustomEmoji) AsReactionType() ReactionType {
+	return ReactionType{CustomEmoji: v}
+}
+
+// NewReactionTypePaid creates a new ReactionTypePaid.
+func NewReactionTypePaid() *ReactionTypePaid {
+	return &ReactionTypePaid{}
+}
+
+// AsReactionType wraps the variant into a ReactionType union.
+func (v *ReactionTypePaid) AsReactionType() ReactionType {
+	return ReactionType{Paid: v}
+}
+
+// ReactionTypeClass is an interface for types that can be used as [ReactionType].
+//
+// Known implementations:
+//   - [*ReactionTypeEmoji]
+//   - [*ReactionTypeCustomEmoji]
+//   - [*ReactionTypePaid]
+//   - [ReactionType]
+type ReactionTypeClass interface {
+	AsReactionType() ReactionType
+}
+
+// AsReactionType returns the union as-is, implementing ReactionTypeClass.
+func (u ReactionType) AsReactionType() ReactionType {
+	return u
+}
+
+// ReactionTypeOf converts ReactionTypeClass arguments to a slice of ReactionType.
+func ReactionTypeOf(values ...ReactionTypeClass) []ReactionType {
+	result := make([]ReactionType, len(values))
+	for i, v := range values {
+		result[i] = v.AsReactionType()
+	}
+	return result
 }
 
 // OwnedGiftType represents the type of OwnedGift.
@@ -6473,46 +6565,110 @@ func (u *BotCommandScope) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewBotCommandScopeDefault creates a BotCommandScope containing a BotCommandScopeDefault.
-func NewBotCommandScopeDefault() BotCommandScope {
-	return BotCommandScope{Default: &BotCommandScopeDefault{}}
+// NewBotCommandScopeDefault creates a new BotCommandScopeDefault.
+func NewBotCommandScopeDefault() *BotCommandScopeDefault {
+	return &BotCommandScopeDefault{}
 }
 
-// NewBotCommandScopeAllPrivateChats creates a BotCommandScope containing a BotCommandScopeAllPrivateChats.
-func NewBotCommandScopeAllPrivateChats() BotCommandScope {
-	return BotCommandScope{AllPrivateChats: &BotCommandScopeAllPrivateChats{}}
+// AsBotCommandScope wraps the variant into a BotCommandScope union.
+func (v *BotCommandScopeDefault) AsBotCommandScope() BotCommandScope {
+	return BotCommandScope{Default: v}
 }
 
-// NewBotCommandScopeAllGroupChats creates a BotCommandScope containing a BotCommandScopeAllGroupChats.
-func NewBotCommandScopeAllGroupChats() BotCommandScope {
-	return BotCommandScope{AllGroupChats: &BotCommandScopeAllGroupChats{}}
+// NewBotCommandScopeAllPrivateChats creates a new BotCommandScopeAllPrivateChats.
+func NewBotCommandScopeAllPrivateChats() *BotCommandScopeAllPrivateChats {
+	return &BotCommandScopeAllPrivateChats{}
 }
 
-// NewBotCommandScopeAllChatAdministrators creates a BotCommandScope containing a BotCommandScopeAllChatAdministrators.
-func NewBotCommandScopeAllChatAdministrators() BotCommandScope {
-	return BotCommandScope{AllChatAdministrators: &BotCommandScopeAllChatAdministrators{}}
+// AsBotCommandScope wraps the variant into a BotCommandScope union.
+func (v *BotCommandScopeAllPrivateChats) AsBotCommandScope() BotCommandScope {
+	return BotCommandScope{AllPrivateChats: v}
 }
 
-// NewBotCommandScopeChat creates a BotCommandScope containing a BotCommandScopeChat.
-func NewBotCommandScopeChat(chatID ChatID) BotCommandScope {
-	return BotCommandScope{Chat: &BotCommandScopeChat{
+// NewBotCommandScopeAllGroupChats creates a new BotCommandScopeAllGroupChats.
+func NewBotCommandScopeAllGroupChats() *BotCommandScopeAllGroupChats {
+	return &BotCommandScopeAllGroupChats{}
+}
+
+// AsBotCommandScope wraps the variant into a BotCommandScope union.
+func (v *BotCommandScopeAllGroupChats) AsBotCommandScope() BotCommandScope {
+	return BotCommandScope{AllGroupChats: v}
+}
+
+// NewBotCommandScopeAllChatAdministrators creates a new BotCommandScopeAllChatAdministrators.
+func NewBotCommandScopeAllChatAdministrators() *BotCommandScopeAllChatAdministrators {
+	return &BotCommandScopeAllChatAdministrators{}
+}
+
+// AsBotCommandScope wraps the variant into a BotCommandScope union.
+func (v *BotCommandScopeAllChatAdministrators) AsBotCommandScope() BotCommandScope {
+	return BotCommandScope{AllChatAdministrators: v}
+}
+
+// NewBotCommandScopeChat creates a new BotCommandScopeChat.
+func NewBotCommandScopeChat(chatID ChatID) *BotCommandScopeChat {
+	return &BotCommandScopeChat{
 		ChatID: chatID,
-	}}
+	}
 }
 
-// NewBotCommandScopeChatAdministrators creates a BotCommandScope containing a BotCommandScopeChatAdministrators.
-func NewBotCommandScopeChatAdministrators(chatID ChatID) BotCommandScope {
-	return BotCommandScope{ChatAdministrators: &BotCommandScopeChatAdministrators{
+// AsBotCommandScope wraps the variant into a BotCommandScope union.
+func (v *BotCommandScopeChat) AsBotCommandScope() BotCommandScope {
+	return BotCommandScope{Chat: v}
+}
+
+// NewBotCommandScopeChatAdministrators creates a new BotCommandScopeChatAdministrators.
+func NewBotCommandScopeChatAdministrators(chatID ChatID) *BotCommandScopeChatAdministrators {
+	return &BotCommandScopeChatAdministrators{
 		ChatID: chatID,
-	}}
+	}
 }
 
-// NewBotCommandScopeChatMember creates a BotCommandScope containing a BotCommandScopeChatMember.
-func NewBotCommandScopeChatMember(chatID ChatID, userID UserID) BotCommandScope {
-	return BotCommandScope{ChatMember: &BotCommandScopeChatMember{
+// AsBotCommandScope wraps the variant into a BotCommandScope union.
+func (v *BotCommandScopeChatAdministrators) AsBotCommandScope() BotCommandScope {
+	return BotCommandScope{ChatAdministrators: v}
+}
+
+// NewBotCommandScopeChatMember creates a new BotCommandScopeChatMember.
+func NewBotCommandScopeChatMember(chatID ChatID, userID UserID) *BotCommandScopeChatMember {
+	return &BotCommandScopeChatMember{
 		ChatID: chatID,
 		UserID: userID,
-	}}
+	}
+}
+
+// AsBotCommandScope wraps the variant into a BotCommandScope union.
+func (v *BotCommandScopeChatMember) AsBotCommandScope() BotCommandScope {
+	return BotCommandScope{ChatMember: v}
+}
+
+// BotCommandScopeClass is an interface for types that can be used as [BotCommandScope].
+//
+// Known implementations:
+//   - [*BotCommandScopeDefault]
+//   - [*BotCommandScopeAllPrivateChats]
+//   - [*BotCommandScopeAllGroupChats]
+//   - [*BotCommandScopeAllChatAdministrators]
+//   - [*BotCommandScopeChat]
+//   - [*BotCommandScopeChatAdministrators]
+//   - [*BotCommandScopeChatMember]
+//   - [BotCommandScope]
+type BotCommandScopeClass interface {
+	AsBotCommandScope() BotCommandScope
+}
+
+// AsBotCommandScope returns the union as-is, implementing BotCommandScopeClass.
+func (u BotCommandScope) AsBotCommandScope() BotCommandScope {
+	return u
+}
+
+// BotCommandScopeOf converts BotCommandScopeClass arguments to a slice of BotCommandScope.
+func BotCommandScopeOf(values ...BotCommandScopeClass) []BotCommandScope {
+	result := make([]BotCommandScope, len(values))
+	for i, v := range values {
+		result[i] = v.AsBotCommandScope()
+	}
+	return result
 }
 
 // MenuButtonType represents the type of MenuButton.
@@ -6632,22 +6788,62 @@ func (u *MenuButton) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewMenuButtonCommands creates a MenuButton containing a MenuButtonCommands.
-func NewMenuButtonCommands() MenuButton {
-	return MenuButton{Commands: &MenuButtonCommands{}}
+// NewMenuButtonCommands creates a new MenuButtonCommands.
+func NewMenuButtonCommands() *MenuButtonCommands {
+	return &MenuButtonCommands{}
 }
 
-// NewMenuButtonWebApp creates a MenuButton containing a MenuButtonWebApp.
-func NewMenuButtonWebApp(text string, webApp WebAppInfo) MenuButton {
-	return MenuButton{WebApp: &MenuButtonWebApp{
+// AsMenuButton wraps the variant into a MenuButton union.
+func (v *MenuButtonCommands) AsMenuButton() MenuButton {
+	return MenuButton{Commands: v}
+}
+
+// NewMenuButtonWebApp creates a new MenuButtonWebApp.
+func NewMenuButtonWebApp(text string, webApp WebAppInfo) *MenuButtonWebApp {
+	return &MenuButtonWebApp{
 		Text:   text,
 		WebApp: webApp,
-	}}
+	}
 }
 
-// NewMenuButtonDefault creates a MenuButton containing a MenuButtonDefault.
-func NewMenuButtonDefault() MenuButton {
-	return MenuButton{Default: &MenuButtonDefault{}}
+// AsMenuButton wraps the variant into a MenuButton union.
+func (v *MenuButtonWebApp) AsMenuButton() MenuButton {
+	return MenuButton{WebApp: v}
+}
+
+// NewMenuButtonDefault creates a new MenuButtonDefault.
+func NewMenuButtonDefault() *MenuButtonDefault {
+	return &MenuButtonDefault{}
+}
+
+// AsMenuButton wraps the variant into a MenuButton union.
+func (v *MenuButtonDefault) AsMenuButton() MenuButton {
+	return MenuButton{Default: v}
+}
+
+// MenuButtonClass is an interface for types that can be used as [MenuButton].
+//
+// Known implementations:
+//   - [*MenuButtonCommands]
+//   - [*MenuButtonWebApp]
+//   - [*MenuButtonDefault]
+//   - [MenuButton]
+type MenuButtonClass interface {
+	AsMenuButton() MenuButton
+}
+
+// AsMenuButton returns the union as-is, implementing MenuButtonClass.
+func (u MenuButton) AsMenuButton() MenuButton {
+	return u
+}
+
+// MenuButtonOf converts MenuButtonClass arguments to a slice of MenuButton.
+func MenuButtonOf(values ...MenuButtonClass) []MenuButton {
+	result := make([]MenuButton, len(values))
+	for i, v := range values {
+		result[i] = v.AsMenuButton()
+	}
+	return result
 }
 
 // ChatBoostSourceSource represents the type of ChatBoostSource.
@@ -6912,39 +7108,91 @@ func (u *InputMedia) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewInputMediaAnimation creates a InputMedia containing a InputMediaAnimation.
-func NewInputMediaAnimation(media FileArg) InputMedia {
-	return InputMedia{Animation: &InputMediaAnimation{
+// NewInputMediaAnimation creates a new InputMediaAnimation.
+func NewInputMediaAnimation(media FileArg) *InputMediaAnimation {
+	return &InputMediaAnimation{
 		Media: media,
-	}}
+	}
 }
 
-// NewInputMediaDocument creates a InputMedia containing a InputMediaDocument.
-func NewInputMediaDocument(media FileArg) InputMedia {
-	return InputMedia{Document: &InputMediaDocument{
-		Media: media,
-	}}
+// AsInputMedia wraps the variant into a InputMedia union.
+func (v *InputMediaAnimation) AsInputMedia() InputMedia {
+	return InputMedia{Animation: v}
 }
 
-// NewInputMediaAudio creates a InputMedia containing a InputMediaAudio.
-func NewInputMediaAudio(media FileArg) InputMedia {
-	return InputMedia{Audio: &InputMediaAudio{
+// NewInputMediaDocument creates a new InputMediaDocument.
+func NewInputMediaDocument(media FileArg) *InputMediaDocument {
+	return &InputMediaDocument{
 		Media: media,
-	}}
+	}
 }
 
-// NewInputMediaPhoto creates a InputMedia containing a InputMediaPhoto.
-func NewInputMediaPhoto(media FileArg) InputMedia {
-	return InputMedia{Photo: &InputMediaPhoto{
-		Media: media,
-	}}
+// AsInputMedia wraps the variant into a InputMedia union.
+func (v *InputMediaDocument) AsInputMedia() InputMedia {
+	return InputMedia{Document: v}
 }
 
-// NewInputMediaVideo creates a InputMedia containing a InputMediaVideo.
-func NewInputMediaVideo(media FileArg) InputMedia {
-	return InputMedia{Video: &InputMediaVideo{
+// NewInputMediaAudio creates a new InputMediaAudio.
+func NewInputMediaAudio(media FileArg) *InputMediaAudio {
+	return &InputMediaAudio{
 		Media: media,
-	}}
+	}
+}
+
+// AsInputMedia wraps the variant into a InputMedia union.
+func (v *InputMediaAudio) AsInputMedia() InputMedia {
+	return InputMedia{Audio: v}
+}
+
+// NewInputMediaPhoto creates a new InputMediaPhoto.
+func NewInputMediaPhoto(media FileArg) *InputMediaPhoto {
+	return &InputMediaPhoto{
+		Media: media,
+	}
+}
+
+// AsInputMedia wraps the variant into a InputMedia union.
+func (v *InputMediaPhoto) AsInputMedia() InputMedia {
+	return InputMedia{Photo: v}
+}
+
+// NewInputMediaVideo creates a new InputMediaVideo.
+func NewInputMediaVideo(media FileArg) *InputMediaVideo {
+	return &InputMediaVideo{
+		Media: media,
+	}
+}
+
+// AsInputMedia wraps the variant into a InputMedia union.
+func (v *InputMediaVideo) AsInputMedia() InputMedia {
+	return InputMedia{Video: v}
+}
+
+// InputMediaClass is an interface for types that can be used as [InputMedia].
+//
+// Known implementations:
+//   - [*InputMediaAnimation]
+//   - [*InputMediaDocument]
+//   - [*InputMediaAudio]
+//   - [*InputMediaPhoto]
+//   - [*InputMediaVideo]
+//   - [InputMedia]
+type InputMediaClass interface {
+	AsInputMedia() InputMedia
+}
+
+// AsInputMedia returns the union as-is, implementing InputMediaClass.
+func (u InputMedia) AsInputMedia() InputMedia {
+	return u
+}
+
+// InputMediaOf converts InputMediaClass arguments to a slice of InputMedia.
+func InputMediaOf(values ...InputMediaClass) []InputMedia {
+	result := make([]InputMedia, len(values))
+	for i, v := range values {
+		result[i] = v.AsInputMedia()
+	}
+	return result
 }
 
 // InputPaidMediaType represents the type of InputPaidMedia.
@@ -7048,18 +7296,52 @@ func (u *InputPaidMedia) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewInputPaidMediaPhoto creates a InputPaidMedia containing a InputPaidMediaPhoto.
-func NewInputPaidMediaPhoto(media FileArg) InputPaidMedia {
-	return InputPaidMedia{Photo: &InputPaidMediaPhoto{
+// NewInputPaidMediaPhoto creates a new InputPaidMediaPhoto.
+func NewInputPaidMediaPhoto(media FileArg) *InputPaidMediaPhoto {
+	return &InputPaidMediaPhoto{
 		Media: media,
-	}}
+	}
 }
 
-// NewInputPaidMediaVideo creates a InputPaidMedia containing a InputPaidMediaVideo.
-func NewInputPaidMediaVideo(media FileArg) InputPaidMedia {
-	return InputPaidMedia{Video: &InputPaidMediaVideo{
+// AsInputPaidMedia wraps the variant into a InputPaidMedia union.
+func (v *InputPaidMediaPhoto) AsInputPaidMedia() InputPaidMedia {
+	return InputPaidMedia{Photo: v}
+}
+
+// NewInputPaidMediaVideo creates a new InputPaidMediaVideo.
+func NewInputPaidMediaVideo(media FileArg) *InputPaidMediaVideo {
+	return &InputPaidMediaVideo{
 		Media: media,
-	}}
+	}
+}
+
+// AsInputPaidMedia wraps the variant into a InputPaidMedia union.
+func (v *InputPaidMediaVideo) AsInputPaidMedia() InputPaidMedia {
+	return InputPaidMedia{Video: v}
+}
+
+// InputPaidMediaClass is an interface for types that can be used as [InputPaidMedia].
+//
+// Known implementations:
+//   - [*InputPaidMediaPhoto]
+//   - [*InputPaidMediaVideo]
+//   - [InputPaidMedia]
+type InputPaidMediaClass interface {
+	AsInputPaidMedia() InputPaidMedia
+}
+
+// AsInputPaidMedia returns the union as-is, implementing InputPaidMediaClass.
+func (u InputPaidMedia) AsInputPaidMedia() InputPaidMedia {
+	return u
+}
+
+// InputPaidMediaOf converts InputPaidMediaClass arguments to a slice of InputPaidMedia.
+func InputPaidMediaOf(values ...InputPaidMediaClass) []InputPaidMedia {
+	result := make([]InputPaidMedia, len(values))
+	for i, v := range values {
+		result[i] = v.AsInputPaidMedia()
+	}
+	return result
 }
 
 // InputProfilePhotoType represents the type of InputProfilePhoto.
@@ -7163,18 +7445,52 @@ func (u *InputProfilePhoto) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewInputProfilePhotoStatic creates a InputProfilePhoto containing a InputProfilePhotoStatic.
-func NewInputProfilePhotoStatic(photo InputFile) InputProfilePhoto {
-	return InputProfilePhoto{Static: &InputProfilePhotoStatic{
+// NewInputProfilePhotoStatic creates a new InputProfilePhotoStatic.
+func NewInputProfilePhotoStatic(photo InputFile) *InputProfilePhotoStatic {
+	return &InputProfilePhotoStatic{
 		Photo: photo,
-	}}
+	}
 }
 
-// NewInputProfilePhotoAnimated creates a InputProfilePhoto containing a InputProfilePhotoAnimated.
-func NewInputProfilePhotoAnimated(animation InputFile) InputProfilePhoto {
-	return InputProfilePhoto{Animated: &InputProfilePhotoAnimated{
+// AsInputProfilePhoto wraps the variant into a InputProfilePhoto union.
+func (v *InputProfilePhotoStatic) AsInputProfilePhoto() InputProfilePhoto {
+	return InputProfilePhoto{Static: v}
+}
+
+// NewInputProfilePhotoAnimated creates a new InputProfilePhotoAnimated.
+func NewInputProfilePhotoAnimated(animation InputFile) *InputProfilePhotoAnimated {
+	return &InputProfilePhotoAnimated{
 		Animation: animation,
-	}}
+	}
+}
+
+// AsInputProfilePhoto wraps the variant into a InputProfilePhoto union.
+func (v *InputProfilePhotoAnimated) AsInputProfilePhoto() InputProfilePhoto {
+	return InputProfilePhoto{Animated: v}
+}
+
+// InputProfilePhotoClass is an interface for types that can be used as [InputProfilePhoto].
+//
+// Known implementations:
+//   - [*InputProfilePhotoStatic]
+//   - [*InputProfilePhotoAnimated]
+//   - [InputProfilePhoto]
+type InputProfilePhotoClass interface {
+	AsInputProfilePhoto() InputProfilePhoto
+}
+
+// AsInputProfilePhoto returns the union as-is, implementing InputProfilePhotoClass.
+func (u InputProfilePhoto) AsInputProfilePhoto() InputProfilePhoto {
+	return u
+}
+
+// InputProfilePhotoOf converts InputProfilePhotoClass arguments to a slice of InputProfilePhoto.
+func InputProfilePhotoOf(values ...InputProfilePhotoClass) []InputProfilePhoto {
+	result := make([]InputProfilePhoto, len(values))
+	for i, v := range values {
+		result[i] = v.AsInputProfilePhoto()
+	}
+	return result
 }
 
 // InputStoryContentType represents the type of InputStoryContent.
@@ -7278,18 +7594,52 @@ func (u *InputStoryContent) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewInputStoryContentPhoto creates a InputStoryContent containing a InputStoryContentPhoto.
-func NewInputStoryContentPhoto(photo InputFile) InputStoryContent {
-	return InputStoryContent{Photo: &InputStoryContentPhoto{
+// NewInputStoryContentPhoto creates a new InputStoryContentPhoto.
+func NewInputStoryContentPhoto(photo InputFile) *InputStoryContentPhoto {
+	return &InputStoryContentPhoto{
 		Photo: photo,
-	}}
+	}
 }
 
-// NewInputStoryContentVideo creates a InputStoryContent containing a InputStoryContentVideo.
-func NewInputStoryContentVideo(video InputFile) InputStoryContent {
-	return InputStoryContent{Video: &InputStoryContentVideo{
+// AsInputStoryContent wraps the variant into a InputStoryContent union.
+func (v *InputStoryContentPhoto) AsInputStoryContent() InputStoryContent {
+	return InputStoryContent{Photo: v}
+}
+
+// NewInputStoryContentVideo creates a new InputStoryContentVideo.
+func NewInputStoryContentVideo(video InputFile) *InputStoryContentVideo {
+	return &InputStoryContentVideo{
 		Video: video,
-	}}
+	}
+}
+
+// AsInputStoryContent wraps the variant into a InputStoryContent union.
+func (v *InputStoryContentVideo) AsInputStoryContent() InputStoryContent {
+	return InputStoryContent{Video: v}
+}
+
+// InputStoryContentClass is an interface for types that can be used as [InputStoryContent].
+//
+// Known implementations:
+//   - [*InputStoryContentPhoto]
+//   - [*InputStoryContentVideo]
+//   - [InputStoryContent]
+type InputStoryContentClass interface {
+	AsInputStoryContent() InputStoryContent
+}
+
+// AsInputStoryContent returns the union as-is, implementing InputStoryContentClass.
+func (u InputStoryContent) AsInputStoryContent() InputStoryContent {
+	return u
+}
+
+// InputStoryContentOf converts InputStoryContentClass arguments to a slice of InputStoryContent.
+func InputStoryContentOf(values ...InputStoryContentClass) []InputStoryContent {
+	result := make([]InputStoryContent, len(values))
+	for i, v := range values {
+		result[i] = v.AsInputStoryContent()
+	}
+	return result
 }
 
 // InlineQueryResultType represents the type of InlineQueryResult.
@@ -7539,184 +7889,326 @@ func (u *InlineQueryResult) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewInlineQueryResultCachedAudio creates a InlineQueryResult containing a InlineQueryResultCachedAudio.
-func NewInlineQueryResultCachedAudio(id string, audioFileID FileID) InlineQueryResult {
-	return InlineQueryResult{CachedAudio: &InlineQueryResultCachedAudio{
+// NewInlineQueryResultCachedAudio creates a new InlineQueryResultCachedAudio.
+func NewInlineQueryResultCachedAudio(id string, audioFileID FileID) *InlineQueryResultCachedAudio {
+	return &InlineQueryResultCachedAudio{
 		ID:          id,
 		AudioFileID: audioFileID,
-	}}
+	}
 }
 
-// NewInlineQueryResultCachedDocument creates a InlineQueryResult containing a InlineQueryResultCachedDocument.
-func NewInlineQueryResultCachedDocument(id string, title string, documentFileID FileID) InlineQueryResult {
-	return InlineQueryResult{CachedDocument: &InlineQueryResultCachedDocument{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultCachedAudio) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{CachedAudio: v}
+}
+
+// NewInlineQueryResultCachedDocument creates a new InlineQueryResultCachedDocument.
+func NewInlineQueryResultCachedDocument(id string, title string, documentFileID FileID) *InlineQueryResultCachedDocument {
+	return &InlineQueryResultCachedDocument{
 		ID:             id,
 		Title:          title,
 		DocumentFileID: documentFileID,
-	}}
+	}
 }
 
-// NewInlineQueryResultCachedGIF creates a InlineQueryResult containing a InlineQueryResultCachedGIF.
-func NewInlineQueryResultCachedGIF(id string, gifFileID FileID) InlineQueryResult {
-	return InlineQueryResult{CachedGIF: &InlineQueryResultCachedGIF{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultCachedDocument) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{CachedDocument: v}
+}
+
+// NewInlineQueryResultCachedGIF creates a new InlineQueryResultCachedGIF.
+func NewInlineQueryResultCachedGIF(id string, gifFileID FileID) *InlineQueryResultCachedGIF {
+	return &InlineQueryResultCachedGIF{
 		ID:        id,
 		GIFFileID: gifFileID,
-	}}
+	}
 }
 
-// NewInlineQueryResultCachedMPEG4GIF creates a InlineQueryResult containing a InlineQueryResultCachedMPEG4GIF.
-func NewInlineQueryResultCachedMPEG4GIF(id string, mpeG4FileID FileID) InlineQueryResult {
-	return InlineQueryResult{CachedMPEG4GIF: &InlineQueryResultCachedMPEG4GIF{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultCachedGIF) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{CachedGIF: v}
+}
+
+// NewInlineQueryResultCachedMPEG4GIF creates a new InlineQueryResultCachedMPEG4GIF.
+func NewInlineQueryResultCachedMPEG4GIF(id string, mpeG4FileID FileID) *InlineQueryResultCachedMPEG4GIF {
+	return &InlineQueryResultCachedMPEG4GIF{
 		ID:          id,
 		MPEG4FileID: mpeG4FileID,
-	}}
+	}
 }
 
-// NewInlineQueryResultCachedPhoto creates a InlineQueryResult containing a InlineQueryResultCachedPhoto.
-func NewInlineQueryResultCachedPhoto(id string, photoFileID FileID) InlineQueryResult {
-	return InlineQueryResult{CachedPhoto: &InlineQueryResultCachedPhoto{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultCachedMPEG4GIF) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{CachedMPEG4GIF: v}
+}
+
+// NewInlineQueryResultCachedPhoto creates a new InlineQueryResultCachedPhoto.
+func NewInlineQueryResultCachedPhoto(id string, photoFileID FileID) *InlineQueryResultCachedPhoto {
+	return &InlineQueryResultCachedPhoto{
 		ID:          id,
 		PhotoFileID: photoFileID,
-	}}
+	}
 }
 
-// NewInlineQueryResultCachedSticker creates a InlineQueryResult containing a InlineQueryResultCachedSticker.
-func NewInlineQueryResultCachedSticker(id string, stickerFileID FileID) InlineQueryResult {
-	return InlineQueryResult{CachedSticker: &InlineQueryResultCachedSticker{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultCachedPhoto) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{CachedPhoto: v}
+}
+
+// NewInlineQueryResultCachedSticker creates a new InlineQueryResultCachedSticker.
+func NewInlineQueryResultCachedSticker(id string, stickerFileID FileID) *InlineQueryResultCachedSticker {
+	return &InlineQueryResultCachedSticker{
 		ID:            id,
 		StickerFileID: stickerFileID,
-	}}
+	}
 }
 
-// NewInlineQueryResultCachedVideo creates a InlineQueryResult containing a InlineQueryResultCachedVideo.
-func NewInlineQueryResultCachedVideo(id string, videoFileID FileID, title string) InlineQueryResult {
-	return InlineQueryResult{CachedVideo: &InlineQueryResultCachedVideo{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultCachedSticker) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{CachedSticker: v}
+}
+
+// NewInlineQueryResultCachedVideo creates a new InlineQueryResultCachedVideo.
+func NewInlineQueryResultCachedVideo(id string, videoFileID FileID, title string) *InlineQueryResultCachedVideo {
+	return &InlineQueryResultCachedVideo{
 		ID:          id,
 		VideoFileID: videoFileID,
 		Title:       title,
-	}}
+	}
 }
 
-// NewInlineQueryResultCachedVoice creates a InlineQueryResult containing a InlineQueryResultCachedVoice.
-func NewInlineQueryResultCachedVoice(id string, voiceFileID FileID, title string) InlineQueryResult {
-	return InlineQueryResult{CachedVoice: &InlineQueryResultCachedVoice{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultCachedVideo) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{CachedVideo: v}
+}
+
+// NewInlineQueryResultCachedVoice creates a new InlineQueryResultCachedVoice.
+func NewInlineQueryResultCachedVoice(id string, voiceFileID FileID, title string) *InlineQueryResultCachedVoice {
+	return &InlineQueryResultCachedVoice{
 		ID:          id,
 		VoiceFileID: voiceFileID,
 		Title:       title,
-	}}
+	}
 }
 
-// NewInlineQueryResultArticle creates a InlineQueryResult containing a InlineQueryResultArticle.
-func NewInlineQueryResultArticle(id string, title string, inputMessageContent InputMessageContent) InlineQueryResult {
-	return InlineQueryResult{Article: &InlineQueryResultArticle{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultCachedVoice) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{CachedVoice: v}
+}
+
+// NewInlineQueryResultArticle creates a new InlineQueryResultArticle.
+func NewInlineQueryResultArticle(id string, title string, inputMessageContent InputMessageContent) *InlineQueryResultArticle {
+	return &InlineQueryResultArticle{
 		ID:                  id,
 		Title:               title,
 		InputMessageContent: inputMessageContent,
-	}}
+	}
 }
 
-// NewInlineQueryResultAudio creates a InlineQueryResult containing a InlineQueryResultAudio.
-func NewInlineQueryResultAudio(id string, audioURL string, title string) InlineQueryResult {
-	return InlineQueryResult{Audio: &InlineQueryResultAudio{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultArticle) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Article: v}
+}
+
+// NewInlineQueryResultAudio creates a new InlineQueryResultAudio.
+func NewInlineQueryResultAudio(id string, audioURL string, title string) *InlineQueryResultAudio {
+	return &InlineQueryResultAudio{
 		ID:       id,
 		AudioURL: audioURL,
 		Title:    title,
-	}}
+	}
 }
 
-// NewInlineQueryResultContact creates a InlineQueryResult containing a InlineQueryResultContact.
-func NewInlineQueryResultContact(id string, phoneNumber string, firstName string) InlineQueryResult {
-	return InlineQueryResult{Contact: &InlineQueryResultContact{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultAudio) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Audio: v}
+}
+
+// NewInlineQueryResultContact creates a new InlineQueryResultContact.
+func NewInlineQueryResultContact(id string, phoneNumber string, firstName string) *InlineQueryResultContact {
+	return &InlineQueryResultContact{
 		ID:          id,
 		PhoneNumber: phoneNumber,
 		FirstName:   firstName,
-	}}
+	}
 }
 
-// NewInlineQueryResultGame creates a InlineQueryResult containing a InlineQueryResultGame.
-func NewInlineQueryResultGame(id string, gameShortName string) InlineQueryResult {
-	return InlineQueryResult{Game: &InlineQueryResultGame{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultContact) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Contact: v}
+}
+
+// NewInlineQueryResultGame creates a new InlineQueryResultGame.
+func NewInlineQueryResultGame(id string, gameShortName string) *InlineQueryResultGame {
+	return &InlineQueryResultGame{
 		ID:            id,
 		GameShortName: gameShortName,
-	}}
+	}
 }
 
-// NewInlineQueryResultDocument creates a InlineQueryResult containing a InlineQueryResultDocument.
-func NewInlineQueryResultDocument(id string, title string, documentURL string, mimeType string) InlineQueryResult {
-	return InlineQueryResult{Document: &InlineQueryResultDocument{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultGame) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Game: v}
+}
+
+// NewInlineQueryResultDocument creates a new InlineQueryResultDocument.
+func NewInlineQueryResultDocument(id string, title string, documentURL string, mimeType string) *InlineQueryResultDocument {
+	return &InlineQueryResultDocument{
 		ID:          id,
 		Title:       title,
 		DocumentURL: documentURL,
 		MIMEType:    mimeType,
-	}}
+	}
 }
 
-// NewInlineQueryResultGIF creates a InlineQueryResult containing a InlineQueryResultGIF.
-func NewInlineQueryResultGIF(id string, gifurl string, thumbnailURL string) InlineQueryResult {
-	return InlineQueryResult{GIF: &InlineQueryResultGIF{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultDocument) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Document: v}
+}
+
+// NewInlineQueryResultGIF creates a new InlineQueryResultGIF.
+func NewInlineQueryResultGIF(id string, gifurl string, thumbnailURL string) *InlineQueryResultGIF {
+	return &InlineQueryResultGIF{
 		ID:           id,
 		GIFURL:       gifurl,
 		ThumbnailURL: thumbnailURL,
-	}}
+	}
 }
 
-// NewInlineQueryResultLocation creates a InlineQueryResult containing a InlineQueryResultLocation.
-func NewInlineQueryResultLocation(id string, latitude float64, longitude float64, title string) InlineQueryResult {
-	return InlineQueryResult{Location: &InlineQueryResultLocation{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultGIF) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{GIF: v}
+}
+
+// NewInlineQueryResultLocation creates a new InlineQueryResultLocation.
+func NewInlineQueryResultLocation(id string, latitude float64, longitude float64, title string) *InlineQueryResultLocation {
+	return &InlineQueryResultLocation{
 		ID:        id,
 		Latitude:  latitude,
 		Longitude: longitude,
 		Title:     title,
-	}}
+	}
 }
 
-// NewInlineQueryResultMPEG4GIF creates a InlineQueryResult containing a InlineQueryResultMPEG4GIF.
-func NewInlineQueryResultMPEG4GIF(id string, mpeG4URL string, thumbnailURL string) InlineQueryResult {
-	return InlineQueryResult{MPEG4GIF: &InlineQueryResultMPEG4GIF{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultLocation) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Location: v}
+}
+
+// NewInlineQueryResultMPEG4GIF creates a new InlineQueryResultMPEG4GIF.
+func NewInlineQueryResultMPEG4GIF(id string, mpeG4URL string, thumbnailURL string) *InlineQueryResultMPEG4GIF {
+	return &InlineQueryResultMPEG4GIF{
 		ID:           id,
 		MPEG4URL:     mpeG4URL,
 		ThumbnailURL: thumbnailURL,
-	}}
+	}
 }
 
-// NewInlineQueryResultPhoto creates a InlineQueryResult containing a InlineQueryResultPhoto.
-func NewInlineQueryResultPhoto(id string, photoURL string, thumbnailURL string) InlineQueryResult {
-	return InlineQueryResult{Photo: &InlineQueryResultPhoto{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultMPEG4GIF) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{MPEG4GIF: v}
+}
+
+// NewInlineQueryResultPhoto creates a new InlineQueryResultPhoto.
+func NewInlineQueryResultPhoto(id string, photoURL string, thumbnailURL string) *InlineQueryResultPhoto {
+	return &InlineQueryResultPhoto{
 		ID:           id,
 		PhotoURL:     photoURL,
 		ThumbnailURL: thumbnailURL,
-	}}
+	}
 }
 
-// NewInlineQueryResultVenue creates a InlineQueryResult containing a InlineQueryResultVenue.
-func NewInlineQueryResultVenue(id string, latitude float64, longitude float64, title string, address string) InlineQueryResult {
-	return InlineQueryResult{Venue: &InlineQueryResultVenue{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultPhoto) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Photo: v}
+}
+
+// NewInlineQueryResultVenue creates a new InlineQueryResultVenue.
+func NewInlineQueryResultVenue(id string, latitude float64, longitude float64, title string, address string) *InlineQueryResultVenue {
+	return &InlineQueryResultVenue{
 		ID:        id,
 		Latitude:  latitude,
 		Longitude: longitude,
 		Title:     title,
 		Address:   address,
-	}}
+	}
 }
 
-// NewInlineQueryResultVideo creates a InlineQueryResult containing a InlineQueryResultVideo.
-func NewInlineQueryResultVideo(id string, videoURL string, mimeType string, thumbnailURL string, title string) InlineQueryResult {
-	return InlineQueryResult{Video: &InlineQueryResultVideo{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultVenue) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Venue: v}
+}
+
+// NewInlineQueryResultVideo creates a new InlineQueryResultVideo.
+func NewInlineQueryResultVideo(id string, videoURL string, mimeType string, thumbnailURL string, title string) *InlineQueryResultVideo {
+	return &InlineQueryResultVideo{
 		ID:           id,
 		VideoURL:     videoURL,
 		MIMEType:     mimeType,
 		ThumbnailURL: thumbnailURL,
 		Title:        title,
-	}}
+	}
 }
 
-// NewInlineQueryResultVoice creates a InlineQueryResult containing a InlineQueryResultVoice.
-func NewInlineQueryResultVoice(id string, voiceURL string, title string) InlineQueryResult {
-	return InlineQueryResult{Voice: &InlineQueryResultVoice{
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultVideo) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Video: v}
+}
+
+// NewInlineQueryResultVoice creates a new InlineQueryResultVoice.
+func NewInlineQueryResultVoice(id string, voiceURL string, title string) *InlineQueryResultVoice {
+	return &InlineQueryResultVoice{
 		ID:       id,
 		VoiceURL: voiceURL,
 		Title:    title,
-	}}
+	}
+}
+
+// AsInlineQueryResult wraps the variant into a InlineQueryResult union.
+func (v *InlineQueryResultVoice) AsInlineQueryResult() InlineQueryResult {
+	return InlineQueryResult{Voice: v}
+}
+
+// InlineQueryResultClass is an interface for types that can be used as [InlineQueryResult].
+//
+// Known implementations:
+//   - [*InlineQueryResultCachedAudio]
+//   - [*InlineQueryResultCachedDocument]
+//   - [*InlineQueryResultCachedGIF]
+//   - [*InlineQueryResultCachedMPEG4GIF]
+//   - [*InlineQueryResultCachedPhoto]
+//   - [*InlineQueryResultCachedSticker]
+//   - [*InlineQueryResultCachedVideo]
+//   - [*InlineQueryResultCachedVoice]
+//   - [*InlineQueryResultArticle]
+//   - [*InlineQueryResultAudio]
+//   - [*InlineQueryResultContact]
+//   - [*InlineQueryResultGame]
+//   - [*InlineQueryResultDocument]
+//   - [*InlineQueryResultGIF]
+//   - [*InlineQueryResultLocation]
+//   - [*InlineQueryResultMPEG4GIF]
+//   - [*InlineQueryResultPhoto]
+//   - [*InlineQueryResultVenue]
+//   - [*InlineQueryResultVideo]
+//   - [*InlineQueryResultVoice]
+//   - [InlineQueryResult]
+type InlineQueryResultClass interface {
+	AsInlineQueryResult() InlineQueryResult
+}
+
+// AsInlineQueryResult returns the union as-is, implementing InlineQueryResultClass.
+func (u InlineQueryResult) AsInlineQueryResult() InlineQueryResult {
+	return u
+}
+
+// InlineQueryResultOf converts InlineQueryResultClass arguments to a slice of InlineQueryResult.
+func InlineQueryResultOf(values ...InlineQueryResultClass) []InlineQueryResult {
+	result := make([]InlineQueryResult, len(values))
+	for i, v := range values {
+		result[i] = v.AsInlineQueryResult()
+	}
+	return result
 }
 
 // RevenueWithdrawalStateType represents the type of RevenueWithdrawalState.
@@ -8217,89 +8709,172 @@ func (u *PassportElementError) IsUnknown() bool {
 	return u.Unknown != nil
 }
 
-// NewPassportElementErrorDataField creates a PassportElementError containing a PassportElementErrorDataField.
-func NewPassportElementErrorDataField(type_ string, fieldName string, dataHash string, message string) PassportElementError {
-	return PassportElementError{DataField: &PassportElementErrorDataField{
+// NewPassportElementErrorDataField creates a new PassportElementErrorDataField.
+func NewPassportElementErrorDataField(type_ string, fieldName string, dataHash string, message string) *PassportElementErrorDataField {
+	return &PassportElementErrorDataField{
 		Type:      type_,
 		FieldName: fieldName,
 		DataHash:  dataHash,
 		Message:   message,
-	}}
+	}
 }
 
-// NewPassportElementErrorFrontSide creates a PassportElementError containing a PassportElementErrorFrontSide.
-func NewPassportElementErrorFrontSide(type_ string, fileHash string, message string) PassportElementError {
-	return PassportElementError{FrontSide: &PassportElementErrorFrontSide{
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorDataField) AsPassportElementError() PassportElementError {
+	return PassportElementError{DataField: v}
+}
+
+// NewPassportElementErrorFrontSide creates a new PassportElementErrorFrontSide.
+func NewPassportElementErrorFrontSide(type_ string, fileHash string, message string) *PassportElementErrorFrontSide {
+	return &PassportElementErrorFrontSide{
 		Type:     type_,
 		FileHash: fileHash,
 		Message:  message,
-	}}
+	}
 }
 
-// NewPassportElementErrorReverseSide creates a PassportElementError containing a PassportElementErrorReverseSide.
-func NewPassportElementErrorReverseSide(type_ string, fileHash string, message string) PassportElementError {
-	return PassportElementError{ReverseSide: &PassportElementErrorReverseSide{
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorFrontSide) AsPassportElementError() PassportElementError {
+	return PassportElementError{FrontSide: v}
+}
+
+// NewPassportElementErrorReverseSide creates a new PassportElementErrorReverseSide.
+func NewPassportElementErrorReverseSide(type_ string, fileHash string, message string) *PassportElementErrorReverseSide {
+	return &PassportElementErrorReverseSide{
 		Type:     type_,
 		FileHash: fileHash,
 		Message:  message,
-	}}
+	}
 }
 
-// NewPassportElementErrorSelfie creates a PassportElementError containing a PassportElementErrorSelfie.
-func NewPassportElementErrorSelfie(type_ string, fileHash string, message string) PassportElementError {
-	return PassportElementError{Selfie: &PassportElementErrorSelfie{
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorReverseSide) AsPassportElementError() PassportElementError {
+	return PassportElementError{ReverseSide: v}
+}
+
+// NewPassportElementErrorSelfie creates a new PassportElementErrorSelfie.
+func NewPassportElementErrorSelfie(type_ string, fileHash string, message string) *PassportElementErrorSelfie {
+	return &PassportElementErrorSelfie{
 		Type:     type_,
 		FileHash: fileHash,
 		Message:  message,
-	}}
+	}
 }
 
-// NewPassportElementErrorFile creates a PassportElementError containing a PassportElementErrorFile.
-func NewPassportElementErrorFile(type_ string, fileHash string, message string) PassportElementError {
-	return PassportElementError{File: &PassportElementErrorFile{
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorSelfie) AsPassportElementError() PassportElementError {
+	return PassportElementError{Selfie: v}
+}
+
+// NewPassportElementErrorFile creates a new PassportElementErrorFile.
+func NewPassportElementErrorFile(type_ string, fileHash string, message string) *PassportElementErrorFile {
+	return &PassportElementErrorFile{
 		Type:     type_,
 		FileHash: fileHash,
 		Message:  message,
-	}}
+	}
 }
 
-// NewPassportElementErrorFiles creates a PassportElementError containing a PassportElementErrorFiles.
-func NewPassportElementErrorFiles(type_ string, fileHashes []string, message string) PassportElementError {
-	return PassportElementError{Files: &PassportElementErrorFiles{
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorFile) AsPassportElementError() PassportElementError {
+	return PassportElementError{File: v}
+}
+
+// NewPassportElementErrorFiles creates a new PassportElementErrorFiles.
+func NewPassportElementErrorFiles(type_ string, fileHashes []string, message string) *PassportElementErrorFiles {
+	return &PassportElementErrorFiles{
 		Type:       type_,
 		FileHashes: fileHashes,
 		Message:    message,
-	}}
+	}
 }
 
-// NewPassportElementErrorTranslationFile creates a PassportElementError containing a PassportElementErrorTranslationFile.
-func NewPassportElementErrorTranslationFile(type_ string, fileHash string, message string) PassportElementError {
-	return PassportElementError{TranslationFile: &PassportElementErrorTranslationFile{
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorFiles) AsPassportElementError() PassportElementError {
+	return PassportElementError{Files: v}
+}
+
+// NewPassportElementErrorTranslationFile creates a new PassportElementErrorTranslationFile.
+func NewPassportElementErrorTranslationFile(type_ string, fileHash string, message string) *PassportElementErrorTranslationFile {
+	return &PassportElementErrorTranslationFile{
 		Type:     type_,
 		FileHash: fileHash,
 		Message:  message,
-	}}
+	}
 }
 
-// NewPassportElementErrorTranslationFiles creates a PassportElementError containing a PassportElementErrorTranslationFiles.
-func NewPassportElementErrorTranslationFiles(type_ string, fileHashes []string, message string) PassportElementError {
-	return PassportElementError{TranslationFiles: &PassportElementErrorTranslationFiles{
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorTranslationFile) AsPassportElementError() PassportElementError {
+	return PassportElementError{TranslationFile: v}
+}
+
+// NewPassportElementErrorTranslationFiles creates a new PassportElementErrorTranslationFiles.
+func NewPassportElementErrorTranslationFiles(type_ string, fileHashes []string, message string) *PassportElementErrorTranslationFiles {
+	return &PassportElementErrorTranslationFiles{
 		Type:       type_,
 		FileHashes: fileHashes,
 		Message:    message,
-	}}
+	}
 }
 
-// NewPassportElementErrorUnspecified creates a PassportElementError containing a PassportElementErrorUnspecified.
-func NewPassportElementErrorUnspecified(type_ string, elementHash string, message string) PassportElementError {
-	return PassportElementError{Unspecified: &PassportElementErrorUnspecified{
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorTranslationFiles) AsPassportElementError() PassportElementError {
+	return PassportElementError{TranslationFiles: v}
+}
+
+// NewPassportElementErrorUnspecified creates a new PassportElementErrorUnspecified.
+func NewPassportElementErrorUnspecified(type_ string, elementHash string, message string) *PassportElementErrorUnspecified {
+	return &PassportElementErrorUnspecified{
 		Type:        type_,
 		ElementHash: elementHash,
 		Message:     message,
-	}}
+	}
+}
+
+// AsPassportElementError wraps the variant into a PassportElementError union.
+func (v *PassportElementErrorUnspecified) AsPassportElementError() PassportElementError {
+	return PassportElementError{Unspecified: v}
+}
+
+// PassportElementErrorClass is an interface for types that can be used as [PassportElementError].
+//
+// Known implementations:
+//   - [*PassportElementErrorDataField]
+//   - [*PassportElementErrorFrontSide]
+//   - [*PassportElementErrorReverseSide]
+//   - [*PassportElementErrorSelfie]
+//   - [*PassportElementErrorFile]
+//   - [*PassportElementErrorFiles]
+//   - [*PassportElementErrorTranslationFile]
+//   - [*PassportElementErrorTranslationFiles]
+//   - [*PassportElementErrorUnspecified]
+//   - [PassportElementError]
+type PassportElementErrorClass interface {
+	AsPassportElementError() PassportElementError
+}
+
+// AsPassportElementError returns the union as-is, implementing PassportElementErrorClass.
+func (u PassportElementError) AsPassportElementError() PassportElementError {
+	return u
+}
+
+// PassportElementErrorOf converts PassportElementErrorClass arguments to a slice of PassportElementError.
+func PassportElementErrorOf(values ...PassportElementErrorClass) []PassportElementError {
+	result := make([]PassportElementError, len(values))
+	for i, v := range values {
+		result[i] = v.AsPassportElementError()
+	}
+	return result
 }
 
 // InputMessageContent this object represents the content of a message to be sent as a result of an inline query. Telegram clients currently support the following 5 types:
+//
+// Known implementations:
+//   - [InputTextMessageContent]
+//   - [InputLocationMessageContent]
+//   - [InputVenueMessageContent]
+//   - [InputContactMessageContent]
+//   - [InputInvoiceMessageContent]
 type InputMessageContent interface {
 	isInputMessageContent()
 }
@@ -8355,6 +8930,12 @@ func NewInputInvoiceMessageContent(title string, description string, payload str
 }
 
 // ReplyMarkup is a marker interface for ReplyMarkup variants.
+//
+// Known implementations:
+//   - [InlineKeyboardMarkup]
+//   - [ReplyKeyboardMarkup]
+//   - [ReplyKeyboardRemove]
+//   - [ForceReply]
 type ReplyMarkup interface {
 	isReplyMarkup()
 }
@@ -10443,6 +11024,1176 @@ func NewInlineQueryResultsButtonStartParameter(text string, startParameter strin
 		Text:           text,
 		StartParameter: startParameter,
 	}
+}
+
+// WithAddress sets the Address field.
+func (v *StoryAreaTypeLocation) WithAddress(address LocationAddress) *StoryAreaTypeLocation {
+	v.Address = &address
+	return v
+}
+
+// WithIsDark sets the IsDark field.
+func (v *StoryAreaTypeSuggestedReaction) WithIsDark() *StoryAreaTypeSuggestedReaction {
+	v.IsDark = true
+	return v
+}
+
+// WithIsFlipped sets the IsFlipped field.
+func (v *StoryAreaTypeSuggestedReaction) WithIsFlipped() *StoryAreaTypeSuggestedReaction {
+	v.IsFlipped = true
+	return v
+}
+
+// WithThumbnail sets the Thumbnail field.
+func (v *InputMediaAnimation) WithThumbnail(thumbnail InputFile) *InputMediaAnimation {
+	v.Thumbnail = &thumbnail
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InputMediaAnimation) WithCaption(caption string) *InputMediaAnimation {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InputMediaAnimation) WithParseMode(parseMode ParseMode) *InputMediaAnimation {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InputMediaAnimation) WithCaptionEntities(captionEntities []MessageEntity) *InputMediaAnimation {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InputMediaAnimation) WithShowCaptionAboveMedia() *InputMediaAnimation {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithWidth sets the Width field.
+func (v *InputMediaAnimation) WithWidth(width int) *InputMediaAnimation {
+	v.Width = width
+	return v
+}
+
+// WithHeight sets the Height field.
+func (v *InputMediaAnimation) WithHeight(height int) *InputMediaAnimation {
+	v.Height = height
+	return v
+}
+
+// WithDuration sets the Duration field.
+func (v *InputMediaAnimation) WithDuration(duration int) *InputMediaAnimation {
+	v.Duration = duration
+	return v
+}
+
+// WithHasSpoiler sets the HasSpoiler field.
+func (v *InputMediaAnimation) WithHasSpoiler() *InputMediaAnimation {
+	v.HasSpoiler = true
+	return v
+}
+
+// WithThumbnail sets the Thumbnail field.
+func (v *InputMediaDocument) WithThumbnail(thumbnail InputFile) *InputMediaDocument {
+	v.Thumbnail = &thumbnail
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InputMediaDocument) WithCaption(caption string) *InputMediaDocument {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InputMediaDocument) WithParseMode(parseMode ParseMode) *InputMediaDocument {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InputMediaDocument) WithCaptionEntities(captionEntities []MessageEntity) *InputMediaDocument {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithDisableContentTypeDetection sets the DisableContentTypeDetection field.
+func (v *InputMediaDocument) WithDisableContentTypeDetection() *InputMediaDocument {
+	v.DisableContentTypeDetection = true
+	return v
+}
+
+// WithThumbnail sets the Thumbnail field.
+func (v *InputMediaAudio) WithThumbnail(thumbnail InputFile) *InputMediaAudio {
+	v.Thumbnail = &thumbnail
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InputMediaAudio) WithCaption(caption string) *InputMediaAudio {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InputMediaAudio) WithParseMode(parseMode ParseMode) *InputMediaAudio {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InputMediaAudio) WithCaptionEntities(captionEntities []MessageEntity) *InputMediaAudio {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithDuration sets the Duration field.
+func (v *InputMediaAudio) WithDuration(duration int) *InputMediaAudio {
+	v.Duration = duration
+	return v
+}
+
+// WithPerformer sets the Performer field.
+func (v *InputMediaAudio) WithPerformer(performer string) *InputMediaAudio {
+	v.Performer = performer
+	return v
+}
+
+// WithTitle sets the Title field.
+func (v *InputMediaAudio) WithTitle(title string) *InputMediaAudio {
+	v.Title = title
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InputMediaPhoto) WithCaption(caption string) *InputMediaPhoto {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InputMediaPhoto) WithParseMode(parseMode ParseMode) *InputMediaPhoto {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InputMediaPhoto) WithCaptionEntities(captionEntities []MessageEntity) *InputMediaPhoto {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InputMediaPhoto) WithShowCaptionAboveMedia() *InputMediaPhoto {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithHasSpoiler sets the HasSpoiler field.
+func (v *InputMediaPhoto) WithHasSpoiler() *InputMediaPhoto {
+	v.HasSpoiler = true
+	return v
+}
+
+// WithThumbnail sets the Thumbnail field.
+func (v *InputMediaVideo) WithThumbnail(thumbnail InputFile) *InputMediaVideo {
+	v.Thumbnail = &thumbnail
+	return v
+}
+
+// WithCover sets the Cover field.
+func (v *InputMediaVideo) WithCover(cover FileArg) *InputMediaVideo {
+	v.Cover = &cover
+	return v
+}
+
+// WithStartTimestamp sets the StartTimestamp field.
+func (v *InputMediaVideo) WithStartTimestamp(startTimestamp int) *InputMediaVideo {
+	v.StartTimestamp = startTimestamp
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InputMediaVideo) WithCaption(caption string) *InputMediaVideo {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InputMediaVideo) WithParseMode(parseMode ParseMode) *InputMediaVideo {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InputMediaVideo) WithCaptionEntities(captionEntities []MessageEntity) *InputMediaVideo {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InputMediaVideo) WithShowCaptionAboveMedia() *InputMediaVideo {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithWidth sets the Width field.
+func (v *InputMediaVideo) WithWidth(width int) *InputMediaVideo {
+	v.Width = width
+	return v
+}
+
+// WithHeight sets the Height field.
+func (v *InputMediaVideo) WithHeight(height int) *InputMediaVideo {
+	v.Height = height
+	return v
+}
+
+// WithDuration sets the Duration field.
+func (v *InputMediaVideo) WithDuration(duration int) *InputMediaVideo {
+	v.Duration = duration
+	return v
+}
+
+// WithSupportsStreaming sets the SupportsStreaming field.
+func (v *InputMediaVideo) WithSupportsStreaming() *InputMediaVideo {
+	v.SupportsStreaming = true
+	return v
+}
+
+// WithHasSpoiler sets the HasSpoiler field.
+func (v *InputMediaVideo) WithHasSpoiler() *InputMediaVideo {
+	v.HasSpoiler = true
+	return v
+}
+
+// WithThumbnail sets the Thumbnail field.
+func (v *InputPaidMediaVideo) WithThumbnail(thumbnail InputFile) *InputPaidMediaVideo {
+	v.Thumbnail = &thumbnail
+	return v
+}
+
+// WithCover sets the Cover field.
+func (v *InputPaidMediaVideo) WithCover(cover FileArg) *InputPaidMediaVideo {
+	v.Cover = &cover
+	return v
+}
+
+// WithStartTimestamp sets the StartTimestamp field.
+func (v *InputPaidMediaVideo) WithStartTimestamp(startTimestamp int) *InputPaidMediaVideo {
+	v.StartTimestamp = startTimestamp
+	return v
+}
+
+// WithWidth sets the Width field.
+func (v *InputPaidMediaVideo) WithWidth(width int) *InputPaidMediaVideo {
+	v.Width = width
+	return v
+}
+
+// WithHeight sets the Height field.
+func (v *InputPaidMediaVideo) WithHeight(height int) *InputPaidMediaVideo {
+	v.Height = height
+	return v
+}
+
+// WithDuration sets the Duration field.
+func (v *InputPaidMediaVideo) WithDuration(duration int) *InputPaidMediaVideo {
+	v.Duration = duration
+	return v
+}
+
+// WithSupportsStreaming sets the SupportsStreaming field.
+func (v *InputPaidMediaVideo) WithSupportsStreaming() *InputPaidMediaVideo {
+	v.SupportsStreaming = true
+	return v
+}
+
+// WithMainFrameTimestamp sets the MainFrameTimestamp field.
+func (v *InputProfilePhotoAnimated) WithMainFrameTimestamp(mainFrameTimestamp float64) *InputProfilePhotoAnimated {
+	v.MainFrameTimestamp = mainFrameTimestamp
+	return v
+}
+
+// WithDuration sets the Duration field.
+func (v *InputStoryContentVideo) WithDuration(duration float64) *InputStoryContentVideo {
+	v.Duration = duration
+	return v
+}
+
+// WithCoverFrameTimestamp sets the CoverFrameTimestamp field.
+func (v *InputStoryContentVideo) WithCoverFrameTimestamp(coverFrameTimestamp float64) *InputStoryContentVideo {
+	v.CoverFrameTimestamp = coverFrameTimestamp
+	return v
+}
+
+// WithIsAnimation sets the IsAnimation field.
+func (v *InputStoryContentVideo) WithIsAnimation() *InputStoryContentVideo {
+	v.IsAnimation = true
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultCachedAudio) WithCaption(caption string) *InlineQueryResultCachedAudio {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultCachedAudio) WithParseMode(parseMode ParseMode) *InlineQueryResultCachedAudio {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultCachedAudio) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultCachedAudio {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultCachedAudio) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultCachedAudio {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultCachedAudio) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultCachedAudio {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithDescription sets the Description field.
+func (v *InlineQueryResultCachedDocument) WithDescription(description string) *InlineQueryResultCachedDocument {
+	v.Description = description
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultCachedDocument) WithCaption(caption string) *InlineQueryResultCachedDocument {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultCachedDocument) WithParseMode(parseMode ParseMode) *InlineQueryResultCachedDocument {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultCachedDocument) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultCachedDocument {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultCachedDocument) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultCachedDocument {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultCachedDocument) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultCachedDocument {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithTitle sets the Title field.
+func (v *InlineQueryResultCachedGIF) WithTitle(title string) *InlineQueryResultCachedGIF {
+	v.Title = title
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultCachedGIF) WithCaption(caption string) *InlineQueryResultCachedGIF {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultCachedGIF) WithParseMode(parseMode ParseMode) *InlineQueryResultCachedGIF {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultCachedGIF) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultCachedGIF {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InlineQueryResultCachedGIF) WithShowCaptionAboveMedia() *InlineQueryResultCachedGIF {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultCachedGIF) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultCachedGIF {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultCachedGIF) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultCachedGIF {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithTitle sets the Title field.
+func (v *InlineQueryResultCachedMPEG4GIF) WithTitle(title string) *InlineQueryResultCachedMPEG4GIF {
+	v.Title = title
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultCachedMPEG4GIF) WithCaption(caption string) *InlineQueryResultCachedMPEG4GIF {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultCachedMPEG4GIF) WithParseMode(parseMode ParseMode) *InlineQueryResultCachedMPEG4GIF {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultCachedMPEG4GIF) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultCachedMPEG4GIF {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InlineQueryResultCachedMPEG4GIF) WithShowCaptionAboveMedia() *InlineQueryResultCachedMPEG4GIF {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultCachedMPEG4GIF) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultCachedMPEG4GIF {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultCachedMPEG4GIF) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultCachedMPEG4GIF {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithTitle sets the Title field.
+func (v *InlineQueryResultCachedPhoto) WithTitle(title string) *InlineQueryResultCachedPhoto {
+	v.Title = title
+	return v
+}
+
+// WithDescription sets the Description field.
+func (v *InlineQueryResultCachedPhoto) WithDescription(description string) *InlineQueryResultCachedPhoto {
+	v.Description = description
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultCachedPhoto) WithCaption(caption string) *InlineQueryResultCachedPhoto {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultCachedPhoto) WithParseMode(parseMode ParseMode) *InlineQueryResultCachedPhoto {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultCachedPhoto) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultCachedPhoto {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InlineQueryResultCachedPhoto) WithShowCaptionAboveMedia() *InlineQueryResultCachedPhoto {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultCachedPhoto) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultCachedPhoto {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultCachedPhoto) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultCachedPhoto {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultCachedSticker) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultCachedSticker {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultCachedSticker) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultCachedSticker {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithDescription sets the Description field.
+func (v *InlineQueryResultCachedVideo) WithDescription(description string) *InlineQueryResultCachedVideo {
+	v.Description = description
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultCachedVideo) WithCaption(caption string) *InlineQueryResultCachedVideo {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultCachedVideo) WithParseMode(parseMode ParseMode) *InlineQueryResultCachedVideo {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultCachedVideo) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultCachedVideo {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InlineQueryResultCachedVideo) WithShowCaptionAboveMedia() *InlineQueryResultCachedVideo {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultCachedVideo) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultCachedVideo {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultCachedVideo) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultCachedVideo {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultCachedVoice) WithCaption(caption string) *InlineQueryResultCachedVoice {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultCachedVoice) WithParseMode(parseMode ParseMode) *InlineQueryResultCachedVoice {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultCachedVoice) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultCachedVoice {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultCachedVoice) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultCachedVoice {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultCachedVoice) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultCachedVoice {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultArticle) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultArticle {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithURL sets the URL field.
+func (v *InlineQueryResultArticle) WithURL(url string) *InlineQueryResultArticle {
+	v.URL = url
+	return v
+}
+
+// WithDescription sets the Description field.
+func (v *InlineQueryResultArticle) WithDescription(description string) *InlineQueryResultArticle {
+	v.Description = description
+	return v
+}
+
+// WithThumbnailURL sets the ThumbnailURL field.
+func (v *InlineQueryResultArticle) WithThumbnailURL(thumbnailURL string) *InlineQueryResultArticle {
+	v.ThumbnailURL = thumbnailURL
+	return v
+}
+
+// WithThumbnailWidth sets the ThumbnailWidth field.
+func (v *InlineQueryResultArticle) WithThumbnailWidth(thumbnailWidth int) *InlineQueryResultArticle {
+	v.ThumbnailWidth = thumbnailWidth
+	return v
+}
+
+// WithThumbnailHeight sets the ThumbnailHeight field.
+func (v *InlineQueryResultArticle) WithThumbnailHeight(thumbnailHeight int) *InlineQueryResultArticle {
+	v.ThumbnailHeight = thumbnailHeight
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultAudio) WithCaption(caption string) *InlineQueryResultAudio {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultAudio) WithParseMode(parseMode ParseMode) *InlineQueryResultAudio {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultAudio) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultAudio {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithPerformer sets the Performer field.
+func (v *InlineQueryResultAudio) WithPerformer(performer string) *InlineQueryResultAudio {
+	v.Performer = performer
+	return v
+}
+
+// WithAudioDuration sets the AudioDuration field.
+func (v *InlineQueryResultAudio) WithAudioDuration(audioDuration int) *InlineQueryResultAudio {
+	v.AudioDuration = audioDuration
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultAudio) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultAudio {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultAudio) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultAudio {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithLastName sets the LastName field.
+func (v *InlineQueryResultContact) WithLastName(lastName string) *InlineQueryResultContact {
+	v.LastName = lastName
+	return v
+}
+
+// WithVCard sets the VCard field.
+func (v *InlineQueryResultContact) WithVCard(vcard string) *InlineQueryResultContact {
+	v.VCard = vcard
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultContact) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultContact {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultContact) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultContact {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithThumbnailURL sets the ThumbnailURL field.
+func (v *InlineQueryResultContact) WithThumbnailURL(thumbnailURL string) *InlineQueryResultContact {
+	v.ThumbnailURL = thumbnailURL
+	return v
+}
+
+// WithThumbnailWidth sets the ThumbnailWidth field.
+func (v *InlineQueryResultContact) WithThumbnailWidth(thumbnailWidth int) *InlineQueryResultContact {
+	v.ThumbnailWidth = thumbnailWidth
+	return v
+}
+
+// WithThumbnailHeight sets the ThumbnailHeight field.
+func (v *InlineQueryResultContact) WithThumbnailHeight(thumbnailHeight int) *InlineQueryResultContact {
+	v.ThumbnailHeight = thumbnailHeight
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultGame) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultGame {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultDocument) WithCaption(caption string) *InlineQueryResultDocument {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultDocument) WithParseMode(parseMode ParseMode) *InlineQueryResultDocument {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultDocument) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultDocument {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithDescription sets the Description field.
+func (v *InlineQueryResultDocument) WithDescription(description string) *InlineQueryResultDocument {
+	v.Description = description
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultDocument) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultDocument {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultDocument) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultDocument {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithThumbnailURL sets the ThumbnailURL field.
+func (v *InlineQueryResultDocument) WithThumbnailURL(thumbnailURL string) *InlineQueryResultDocument {
+	v.ThumbnailURL = thumbnailURL
+	return v
+}
+
+// WithThumbnailWidth sets the ThumbnailWidth field.
+func (v *InlineQueryResultDocument) WithThumbnailWidth(thumbnailWidth int) *InlineQueryResultDocument {
+	v.ThumbnailWidth = thumbnailWidth
+	return v
+}
+
+// WithThumbnailHeight sets the ThumbnailHeight field.
+func (v *InlineQueryResultDocument) WithThumbnailHeight(thumbnailHeight int) *InlineQueryResultDocument {
+	v.ThumbnailHeight = thumbnailHeight
+	return v
+}
+
+// WithGIFWidth sets the GIFWidth field.
+func (v *InlineQueryResultGIF) WithGIFWidth(gifWidth int) *InlineQueryResultGIF {
+	v.GIFWidth = gifWidth
+	return v
+}
+
+// WithGIFHeight sets the GIFHeight field.
+func (v *InlineQueryResultGIF) WithGIFHeight(gifHeight int) *InlineQueryResultGIF {
+	v.GIFHeight = gifHeight
+	return v
+}
+
+// WithGIFDuration sets the GIFDuration field.
+func (v *InlineQueryResultGIF) WithGIFDuration(gifDuration int) *InlineQueryResultGIF {
+	v.GIFDuration = gifDuration
+	return v
+}
+
+// WithThumbnailMIMEType sets the ThumbnailMIMEType field.
+func (v *InlineQueryResultGIF) WithThumbnailMIMEType(thumbnailMIMEType string) *InlineQueryResultGIF {
+	v.ThumbnailMIMEType = thumbnailMIMEType
+	return v
+}
+
+// WithTitle sets the Title field.
+func (v *InlineQueryResultGIF) WithTitle(title string) *InlineQueryResultGIF {
+	v.Title = title
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultGIF) WithCaption(caption string) *InlineQueryResultGIF {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultGIF) WithParseMode(parseMode ParseMode) *InlineQueryResultGIF {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultGIF) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultGIF {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InlineQueryResultGIF) WithShowCaptionAboveMedia() *InlineQueryResultGIF {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultGIF) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultGIF {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultGIF) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultGIF {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithHorizontalAccuracy sets the HorizontalAccuracy field.
+func (v *InlineQueryResultLocation) WithHorizontalAccuracy(horizontalAccuracy float64) *InlineQueryResultLocation {
+	v.HorizontalAccuracy = horizontalAccuracy
+	return v
+}
+
+// WithLivePeriod sets the LivePeriod field.
+func (v *InlineQueryResultLocation) WithLivePeriod(livePeriod int) *InlineQueryResultLocation {
+	v.LivePeriod = livePeriod
+	return v
+}
+
+// WithHeading sets the Heading field.
+func (v *InlineQueryResultLocation) WithHeading(heading int) *InlineQueryResultLocation {
+	v.Heading = heading
+	return v
+}
+
+// WithProximityAlertRadius sets the ProximityAlertRadius field.
+func (v *InlineQueryResultLocation) WithProximityAlertRadius(proximityAlertRadius int) *InlineQueryResultLocation {
+	v.ProximityAlertRadius = proximityAlertRadius
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultLocation) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultLocation {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultLocation) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultLocation {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithThumbnailURL sets the ThumbnailURL field.
+func (v *InlineQueryResultLocation) WithThumbnailURL(thumbnailURL string) *InlineQueryResultLocation {
+	v.ThumbnailURL = thumbnailURL
+	return v
+}
+
+// WithThumbnailWidth sets the ThumbnailWidth field.
+func (v *InlineQueryResultLocation) WithThumbnailWidth(thumbnailWidth int) *InlineQueryResultLocation {
+	v.ThumbnailWidth = thumbnailWidth
+	return v
+}
+
+// WithThumbnailHeight sets the ThumbnailHeight field.
+func (v *InlineQueryResultLocation) WithThumbnailHeight(thumbnailHeight int) *InlineQueryResultLocation {
+	v.ThumbnailHeight = thumbnailHeight
+	return v
+}
+
+// WithMPEG4Width sets the MPEG4Width field.
+func (v *InlineQueryResultMPEG4GIF) WithMPEG4Width(mpeG4Width int) *InlineQueryResultMPEG4GIF {
+	v.MPEG4Width = mpeG4Width
+	return v
+}
+
+// WithMPEG4Height sets the MPEG4Height field.
+func (v *InlineQueryResultMPEG4GIF) WithMPEG4Height(mpeG4Height int) *InlineQueryResultMPEG4GIF {
+	v.MPEG4Height = mpeG4Height
+	return v
+}
+
+// WithMPEG4Duration sets the MPEG4Duration field.
+func (v *InlineQueryResultMPEG4GIF) WithMPEG4Duration(mpeG4Duration int) *InlineQueryResultMPEG4GIF {
+	v.MPEG4Duration = mpeG4Duration
+	return v
+}
+
+// WithThumbnailMIMEType sets the ThumbnailMIMEType field.
+func (v *InlineQueryResultMPEG4GIF) WithThumbnailMIMEType(thumbnailMIMEType string) *InlineQueryResultMPEG4GIF {
+	v.ThumbnailMIMEType = thumbnailMIMEType
+	return v
+}
+
+// WithTitle sets the Title field.
+func (v *InlineQueryResultMPEG4GIF) WithTitle(title string) *InlineQueryResultMPEG4GIF {
+	v.Title = title
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultMPEG4GIF) WithCaption(caption string) *InlineQueryResultMPEG4GIF {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultMPEG4GIF) WithParseMode(parseMode ParseMode) *InlineQueryResultMPEG4GIF {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultMPEG4GIF) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultMPEG4GIF {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InlineQueryResultMPEG4GIF) WithShowCaptionAboveMedia() *InlineQueryResultMPEG4GIF {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultMPEG4GIF) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultMPEG4GIF {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultMPEG4GIF) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultMPEG4GIF {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithPhotoWidth sets the PhotoWidth field.
+func (v *InlineQueryResultPhoto) WithPhotoWidth(photoWidth int) *InlineQueryResultPhoto {
+	v.PhotoWidth = photoWidth
+	return v
+}
+
+// WithPhotoHeight sets the PhotoHeight field.
+func (v *InlineQueryResultPhoto) WithPhotoHeight(photoHeight int) *InlineQueryResultPhoto {
+	v.PhotoHeight = photoHeight
+	return v
+}
+
+// WithTitle sets the Title field.
+func (v *InlineQueryResultPhoto) WithTitle(title string) *InlineQueryResultPhoto {
+	v.Title = title
+	return v
+}
+
+// WithDescription sets the Description field.
+func (v *InlineQueryResultPhoto) WithDescription(description string) *InlineQueryResultPhoto {
+	v.Description = description
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultPhoto) WithCaption(caption string) *InlineQueryResultPhoto {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultPhoto) WithParseMode(parseMode ParseMode) *InlineQueryResultPhoto {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultPhoto) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultPhoto {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InlineQueryResultPhoto) WithShowCaptionAboveMedia() *InlineQueryResultPhoto {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultPhoto) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultPhoto {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultPhoto) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultPhoto {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithFoursquareID sets the FoursquareID field.
+func (v *InlineQueryResultVenue) WithFoursquareID(foursquareID string) *InlineQueryResultVenue {
+	v.FoursquareID = foursquareID
+	return v
+}
+
+// WithFoursquareType sets the FoursquareType field.
+func (v *InlineQueryResultVenue) WithFoursquareType(foursquareType string) *InlineQueryResultVenue {
+	v.FoursquareType = foursquareType
+	return v
+}
+
+// WithGooglePlaceID sets the GooglePlaceID field.
+func (v *InlineQueryResultVenue) WithGooglePlaceID(googlePlaceID string) *InlineQueryResultVenue {
+	v.GooglePlaceID = googlePlaceID
+	return v
+}
+
+// WithGooglePlaceType sets the GooglePlaceType field.
+func (v *InlineQueryResultVenue) WithGooglePlaceType(googlePlaceType string) *InlineQueryResultVenue {
+	v.GooglePlaceType = googlePlaceType
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultVenue) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultVenue {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultVenue) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultVenue {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithThumbnailURL sets the ThumbnailURL field.
+func (v *InlineQueryResultVenue) WithThumbnailURL(thumbnailURL string) *InlineQueryResultVenue {
+	v.ThumbnailURL = thumbnailURL
+	return v
+}
+
+// WithThumbnailWidth sets the ThumbnailWidth field.
+func (v *InlineQueryResultVenue) WithThumbnailWidth(thumbnailWidth int) *InlineQueryResultVenue {
+	v.ThumbnailWidth = thumbnailWidth
+	return v
+}
+
+// WithThumbnailHeight sets the ThumbnailHeight field.
+func (v *InlineQueryResultVenue) WithThumbnailHeight(thumbnailHeight int) *InlineQueryResultVenue {
+	v.ThumbnailHeight = thumbnailHeight
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultVideo) WithCaption(caption string) *InlineQueryResultVideo {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultVideo) WithParseMode(parseMode ParseMode) *InlineQueryResultVideo {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultVideo) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultVideo {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithShowCaptionAboveMedia sets the ShowCaptionAboveMedia field.
+func (v *InlineQueryResultVideo) WithShowCaptionAboveMedia() *InlineQueryResultVideo {
+	v.ShowCaptionAboveMedia = true
+	return v
+}
+
+// WithVideoWidth sets the VideoWidth field.
+func (v *InlineQueryResultVideo) WithVideoWidth(videoWidth int) *InlineQueryResultVideo {
+	v.VideoWidth = videoWidth
+	return v
+}
+
+// WithVideoHeight sets the VideoHeight field.
+func (v *InlineQueryResultVideo) WithVideoHeight(videoHeight int) *InlineQueryResultVideo {
+	v.VideoHeight = videoHeight
+	return v
+}
+
+// WithVideoDuration sets the VideoDuration field.
+func (v *InlineQueryResultVideo) WithVideoDuration(videoDuration int) *InlineQueryResultVideo {
+	v.VideoDuration = videoDuration
+	return v
+}
+
+// WithDescription sets the Description field.
+func (v *InlineQueryResultVideo) WithDescription(description string) *InlineQueryResultVideo {
+	v.Description = description
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultVideo) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultVideo {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultVideo) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultVideo {
+	v.InputMessageContent = inputMessageContent
+	return v
+}
+
+// WithCaption sets the Caption field.
+func (v *InlineQueryResultVoice) WithCaption(caption string) *InlineQueryResultVoice {
+	v.Caption = caption
+	return v
+}
+
+// WithParseMode sets the ParseMode field.
+func (v *InlineQueryResultVoice) WithParseMode(parseMode ParseMode) *InlineQueryResultVoice {
+	v.ParseMode = parseMode
+	return v
+}
+
+// WithCaptionEntities sets the CaptionEntities field.
+func (v *InlineQueryResultVoice) WithCaptionEntities(captionEntities []MessageEntity) *InlineQueryResultVoice {
+	v.CaptionEntities = captionEntities
+	return v
+}
+
+// WithVoiceDuration sets the VoiceDuration field.
+func (v *InlineQueryResultVoice) WithVoiceDuration(voiceDuration int) *InlineQueryResultVoice {
+	v.VoiceDuration = voiceDuration
+	return v
+}
+
+// WithReplyMarkup sets the ReplyMarkup field.
+func (v *InlineQueryResultVoice) WithReplyMarkup(replyMarkup InlineKeyboardMarkup) *InlineQueryResultVoice {
+	v.ReplyMarkup = &replyMarkup
+	return v
+}
+
+// WithInputMessageContent sets the InputMessageContent field.
+func (v *InlineQueryResultVoice) WithInputMessageContent(inputMessageContent InputMessageContent) *InlineQueryResultVoice {
+	v.InputMessageContent = inputMessageContent
+	return v
 }
 
 // WithParseMode sets the ParseMode field.

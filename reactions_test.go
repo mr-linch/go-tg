@@ -56,7 +56,7 @@ func TestReactionType(t *testing.T) {
 
 func TestReactionType_MarshalJSON(t *testing.T) {
 	t.Run("Emoji", func(t *testing.T) {
-		r := NewReactionTypeEmoji(ReactionEmojiThumbsUp)
+		r := NewReactionTypeEmoji(ReactionEmojiThumbsUp).AsReactionType()
 
 		assert.Equal(t, ReactionTypeTypeEmoji, r.Type())
 
@@ -67,7 +67,7 @@ func TestReactionType_MarshalJSON(t *testing.T) {
 	})
 
 	t.Run("CustomEmoji", func(t *testing.T) {
-		r := NewReactionTypeCustomEmoji("12345")
+		r := NewReactionTypeCustomEmoji("12345").AsReactionType()
 
 		assert.Equal(t, ReactionTypeTypeCustomEmoji, r.Type())
 
