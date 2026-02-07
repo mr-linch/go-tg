@@ -4,7 +4,7 @@ package {{.Package}}
 
 import "github.com/mr-linch/go-tg"
 {{range .RouterMethods}}
-// {{.FieldName}} register handlers for Update with not empty {{.FieldName}} field.
+// {{.FieldName}} handles {{.Description}}
 func (bot *Router) {{.FieldName}}(handler {{.HandlerType}}, filters ...Filter) *Router {
 	return bot.register(tg.UpdateType{{.FieldName}}, handler, filters...)
 }

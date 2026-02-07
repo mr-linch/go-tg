@@ -31,18 +31,18 @@ var testAPI = &ir.API{
 	Types: []ir.Type{
 		{
 			Name:        "Update",
-			Description: "This object represents an incoming update.",
+			Description: "This [object](https://core.telegram.org/bots/api#available-types) represents an incoming update.",
 			Fields: []ir.Field{
 				{
 					Name:        "update_id",
 					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}}},
-					Description: "The update's unique identifier.",
+					Description: "The update's unique identifier. This identifier becomes especially handy if you're using [webhooks](https://core.telegram.org/bots/api#setwebhook).",
 				},
 				{
 					Name:        "message",
 					TypeExpr:    ir.TypeExpr{Types: []ir.TypeRef{{Type: "Message"}}},
 					Optional:    true,
-					Description: "Optional. New incoming message.",
+					Description: "Optional. New incoming [Message](https://core.telegram.org/bots/api#message).",
 				},
 			},
 		},
@@ -420,6 +420,9 @@ var testAPI = &ir.API{
 				},
 			},
 		},
+	},
+	Methods: []ir.Method{
+		{Name: "setWebhook"},
 	},
 }
 

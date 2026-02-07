@@ -216,6 +216,8 @@ func extractElementDescription(n *html.Node) (string, bool) {
 		if href != "" && text != "" {
 			if strings.HasPrefix(href, "#") {
 				href = baseURL + href
+			} else if strings.HasPrefix(href, "/") {
+				href = "https://core.telegram.org" + href
 			}
 			return "[" + text + "](" + href + ")", true
 		}

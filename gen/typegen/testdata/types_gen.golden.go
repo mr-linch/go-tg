@@ -11,12 +11,14 @@ import (
 	"fmt"
 )
 
-// Update this object represents an incoming update.
+// Update this [object] represents an incoming update.
+//
+// [object]: https://core.telegram.org/bots/api#available-types
 type Update struct {
-	// The update's unique identifier.
+	// The update's unique identifier. This identifier becomes especially handy if you're using [Client.SetWebhook].
 	ID int `json:"update_id"`
 
-	// Optional. New incoming message.
+	// Optional. New incoming [Message].
 	Message *Message `json:"message,omitempty"`
 }
 

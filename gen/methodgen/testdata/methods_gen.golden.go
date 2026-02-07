@@ -6,13 +6,17 @@ package tg
 // Release date:
 // Spec hash:
 
-// GetUpdatesCall represents a call to the getUpdates method.
-// Use this method to receive incoming updates using long polling.
+// GetUpdatesCall represents a call to the [getUpdates] method.
+// Use this method to receive incoming updates using long polling ([wiki]).
+// Returns an Array of [Update] objects.
+//
+// [wiki]: https://en.wikipedia.org/wiki/Push_technology#Long_polling
+// [getUpdates]: https://core.telegram.org/bots/api#getupdates
 type GetUpdatesCall struct {
 	Call[[]Update]
 }
 
-// NewGetUpdatesCall constructs a new GetUpdatesCall.
+// NewGetUpdatesCall constructs a new [GetUpdatesCall].
 func NewGetUpdatesCall() *GetUpdatesCall {
 	return &GetUpdatesCall{
 		Call[[]Update]{
@@ -21,7 +25,7 @@ func NewGetUpdatesCall() *GetUpdatesCall {
 	}
 }
 
-// GetUpdates constructs a new GetUpdatesCall.
+// GetUpdates constructs a new [GetUpdatesCall].
 func (client *Client) GetUpdates() *GetUpdatesCall {
 	return BindClient(
 		NewGetUpdatesCall(),
@@ -53,18 +57,21 @@ func (call *GetUpdatesCall) AllowedUpdates(allowedUpdates []UpdateType) *GetUpda
 	return call
 }
 
-// SendMessageCall represents a call to the sendMessage method.
-// Use this method to send text messages.
-// On success, the sent Message is returned.
+// SendMessageCall represents a call to the [sendMessage] method.
+// Use this method to send text messages. On success, the sent [Message] is returned.
+//
+// [sendMessage]: https://core.telegram.org/bots/api#sendmessage
 type SendMessageCall struct {
 	Call[Message]
 }
 
-// NewSendMessageCall constructs a new SendMessageCall.
+// NewSendMessageCall constructs a new [SendMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username.
-//   - text: Text of the message to be sent.
+//   - text: Text of the message to be sent. See [formatting options] for more details.
+//
+// [formatting options]: https://core.telegram.org/bots/api#formatting-options
 func NewSendMessageCall(chatID PeerID, text string) *SendMessageCall {
 	return &SendMessageCall{
 		Call[Message]{
@@ -75,11 +82,13 @@ func NewSendMessageCall(chatID PeerID, text string) *SendMessageCall {
 	}
 }
 
-// SendMessage constructs a new SendMessageCall.
+// SendMessage constructs a new [SendMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username.
-//   - text: Text of the message to be sent.
+//   - text: Text of the message to be sent. See [formatting options] for more details.
+//
+// [formatting options]: https://core.telegram.org/bots/api#formatting-options
 func (client *Client) SendMessage(chatID PeerID, text string) *SendMessageCall {
 	return BindClient(
 		NewSendMessageCall(chatID, text),
@@ -111,13 +120,15 @@ func (call *SendMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendMessageCa
 	return call
 }
 
-// DeleteWebhookCall represents a call to the deleteWebhook method.
+// DeleteWebhookCall represents a call to the [deleteWebhook] method.
 // Use this method to remove webhook integration.
+//
+// [deleteWebhook]: https://core.telegram.org/bots/api#deletewebhook
 type DeleteWebhookCall struct {
 	CallNoResult
 }
 
-// NewDeleteWebhookCall constructs a new DeleteWebhookCall.
+// NewDeleteWebhookCall constructs a new [DeleteWebhookCall].
 func NewDeleteWebhookCall() *DeleteWebhookCall {
 	return &DeleteWebhookCall{
 		CallNoResult{
@@ -126,7 +137,7 @@ func NewDeleteWebhookCall() *DeleteWebhookCall {
 	}
 }
 
-// DeleteWebhook constructs a new DeleteWebhookCall.
+// DeleteWebhook constructs a new [DeleteWebhookCall].
 func (client *Client) DeleteWebhook() *DeleteWebhookCall {
 	return BindClient(
 		NewDeleteWebhookCall(),
@@ -140,13 +151,15 @@ func (call *DeleteWebhookCall) DropPendingUpdates(dropPendingUpdates bool) *Dele
 	return call
 }
 
-// SendPhotoCall represents a call to the sendPhoto method.
+// SendPhotoCall represents a call to the [sendPhoto] method.
 // Use this method to send photos.
+//
+// [sendPhoto]: https://core.telegram.org/bots/api#sendphoto
 type SendPhotoCall struct {
 	Call[Message]
 }
 
-// NewSendPhotoCall constructs a new SendPhotoCall.
+// NewSendPhotoCall constructs a new [SendPhotoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat.
@@ -161,7 +174,7 @@ func NewSendPhotoCall(chatID PeerID, photo FileArg) *SendPhotoCall {
 	}
 }
 
-// SendPhoto constructs a new SendPhotoCall.
+// SendPhoto constructs a new [SendPhotoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat.
@@ -191,13 +204,15 @@ func (call *SendPhotoCall) Caption(caption string) *SendPhotoCall {
 	return call
 }
 
-// SetWebhookCall represents a call to the setWebhook method.
+// SetWebhookCall represents a call to the [setWebhook] method.
 // Use this method to specify a URL and receive incoming updates.
+//
+// [setWebhook]: https://core.telegram.org/bots/api#setwebhook
 type SetWebhookCall struct {
 	CallNoResult
 }
 
-// NewSetWebhookCall constructs a new SetWebhookCall.
+// NewSetWebhookCall constructs a new [SetWebhookCall].
 //
 // Required params:
 //   - url: HTTPS URL to send updates to.
@@ -210,7 +225,7 @@ func NewSetWebhookCall(url string) *SetWebhookCall {
 	}
 }
 
-// SetWebhook constructs a new SetWebhookCall.
+// SetWebhook constructs a new [SetWebhookCall].
 //
 // Required params:
 //   - url: HTTPS URL to send updates to.
@@ -233,13 +248,15 @@ func (call *SetWebhookCall) Certificate(certificate InputFile) *SetWebhookCall {
 	return call
 }
 
-// SendMediaGroupCall represents a call to the sendMediaGroup method.
+// SendMediaGroupCall represents a call to the [sendMediaGroup] method.
 // Use this method to send a group of photos or videos as an album.
+//
+// [sendMediaGroup]: https://core.telegram.org/bots/api#sendmediagroup
 type SendMediaGroupCall struct {
 	Call[[]Message]
 }
 
-// NewSendMediaGroupCall constructs a new SendMediaGroupCall.
+// NewSendMediaGroupCall constructs a new [SendMediaGroupCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat.
@@ -254,7 +271,7 @@ func NewSendMediaGroupCall(chatID PeerID, media []InputMedia) *SendMediaGroupCal
 	}
 }
 
-// SendMediaGroup constructs a new SendMediaGroupCall.
+// SendMediaGroup constructs a new [SendMediaGroupCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat.
@@ -278,13 +295,15 @@ func (call *SendMediaGroupCall) Media(media []InputMedia) *SendMediaGroupCall {
 	return call
 }
 
-// GetUserProfilePhotosCall represents a call to the getUserProfilePhotos method.
+// GetUserProfilePhotosCall represents a call to the [getUserProfilePhotos] method.
 // Use this method to get a list of profile pictures.
+//
+// [getUserProfilePhotos]: https://core.telegram.org/bots/api#getuserprofilephotos
 type GetUserProfilePhotosCall struct {
 	Call[UserProfilePhotos]
 }
 
-// NewGetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall.
+// NewGetUserProfilePhotosCall constructs a new [GetUserProfilePhotosCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user.
@@ -297,7 +316,7 @@ func NewGetUserProfilePhotosCall(userID UserID) *GetUserProfilePhotosCall {
 	}
 }
 
-// GetUserProfilePhotos constructs a new GetUserProfilePhotosCall.
+// GetUserProfilePhotos constructs a new [GetUserProfilePhotosCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user.

@@ -28,11 +28,15 @@ func loadTestConfig(t *testing.T) *config.MethodGen {
 }
 
 var testAPI = &ir.API{
+	Types: []ir.Type{
+		{Name: "Update"},
+		{Name: "Message"},
+	},
 	Methods: []ir.Method{
 		// Method with no required params, returns array
 		{
 			Name:        "getUpdates",
-			Description: []string{"Use this method to receive incoming updates using long polling."},
+			Description: []string{"Use this method to receive incoming updates using long polling ([wiki](https://en.wikipedia.org/wiki/Push_technology#Long_polling)).", "Returns an Array of [Update](https://core.telegram.org/bots/api#update) objects."},
 			Params: []ir.Param{
 				{Name: "offset", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}}}, Description: "Identifier of the first update to be returned."},
 				{Name: "limit", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}}}, Description: "Limits the number of updates to be retrieved."},
@@ -44,10 +48,10 @@ var testAPI = &ir.API{
 		// Method with required PeerID + string, returns Message
 		{
 			Name:        "sendMessage",
-			Description: []string{"Use this method to send text messages.", "On success, the sent Message is returned."},
+			Description: []string{"Use this method to send text messages. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned."},
 			Params: []ir.Param{
 				{Name: "chat_id", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "Integer"}, {Type: "String"}}}, Required: true, Description: "Unique identifier for the target chat or username."},
-				{Name: "text", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}, Required: true, Description: "Text of the message to be sent."},
+				{Name: "text", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}, Required: true, Description: "Text of the message to be sent. See [formatting options](https://core.telegram.org/bots/api#formatting-options) for more details."},
 				{Name: "parse_mode", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "String"}}}, Description: "Mode for parsing entities."},
 				{Name: "reply_markup", TypeExpr: ir.TypeExpr{Types: []ir.TypeRef{{Type: "InlineKeyboardMarkup"}, {Type: "ReplyKeyboardMarkup"}}}, Description: "Additional interface options."},
 			},

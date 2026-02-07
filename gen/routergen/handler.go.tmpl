@@ -2,23 +2,23 @@ package {{.Package}}
 
 {{template "header" .}}
 
-import "context"
+import (
+	"context"
 
-func firstNotNil[T any](fields ...*T) *T {
-	for _, field := range fields {
-		if field != nil {
-			return field
-		}
-	}
-	return nil
-}
+	"github.com/mr-linch/go-tg"
+)
 {{range .HandlerTypes}}
-// {{.HandlerName}} it's typed handler for {{.TypeName}}.
-// Implements Handler interface.
+// {{.HandlerName}} it's typed handler for [{{.WrapperName}}].
+// Implements [Handler] interface.
 type {{.HandlerName}} func(context.Context, *{{.WrapperName}}) error
 {{if .MultiField}}
 func (handler {{.HandlerName}}) Handle(ctx context.Context, update *Update) error {
-	if v := firstNotNil({{range $i, $f := .Fields}}{{if $i}}, {{end}}update.{{$f}}{{end}}); v != nil {
+	var v *{{.EmbedType}}
+	switch {
+	{{range .Fields}}case update.{{.}} != nil:
+		v = update.{{.}}
+	{{end}}}
+	if v != nil {
 		return handler(ctx, &{{.WrapperName}}{
 			{{.FieldName}}: v,
 			BaseUpdate: BaseUpdate{Update: update, Client: update.Client},

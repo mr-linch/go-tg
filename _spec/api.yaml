@@ -1,6 +1,6 @@
 version: "9.3"
 release_date: December 31, 2025
-hash: 1c93bd778a3c
+hash: f010e435c22c
 types:
   - name: Update
     description: This [object](https://core.telegram.org/bots/api#available-types) represents an incoming update. At most one of the optional parameters can be present in any given update.
@@ -68,7 +68,7 @@ types:
         type:
           types: [{type: ChosenInlineResult, ref: choseninlineresult}]
         optional: true
-        description: Optional. The result of an [inline](https://core.telegram.org/bots/api#inline-mode) query that was chosen by a user and sent to their chat partner. Please see our documentation on the [feedback collecting](/bots/inline#collecting-feedback) for details on how to enable these updates for your bot.
+        description: Optional. The result of an [inline](https://core.telegram.org/bots/api#inline-mode) query that was chosen by a user and sent to their chat partner. Please see our documentation on the [feedback collecting](https://core.telegram.org/bots/inline#collecting-feedback) for details on how to enable these updates for your bot.
       - name: callback_query
         type:
           types: [{type: CallbackQuery, ref: callbackquery}]
@@ -219,7 +219,7 @@ types:
         type:
           types: [{type: Boolean}]
         optional: true
-        description: Optional. True, if [privacy mode](/bots/features#privacy-mode) is disabled for the bot. Returned only in [getMe](https://core.telegram.org/bots/api#getme).
+        description: Optional. True, if [privacy mode](https://core.telegram.org/bots/features#privacy-mode) is disabled for the bot. Returned only in [getMe](https://core.telegram.org/bots/api#getme).
       - name: supports_inline_queries
         type:
           types: [{type: Boolean}]
@@ -910,12 +910,12 @@ types:
         type:
           types: [{type: String}]
         optional: true
-        description: Optional. The domain name of the website on which the user has logged in. [More about Telegram Login »](/widgets/login)
+        description: Optional. The domain name of the website on which the user has logged in. [More about Telegram Login »](https://core.telegram.org/widgets/login)
       - name: write_access_allowed
         type:
           types: [{type: WriteAccessAllowed, ref: writeaccessallowed}]
         optional: true
-        description: 'Optional. Service message: the user allowed the bot to write messages after adding it to the attachment or side menu, launching a Web App from a link, or accepting an explicit request from a Web App sent by the method [requestWriteAccess](/bots/webapps#initializing-mini-apps)'
+        description: 'Optional. Service message: the user allowed the bot to write messages after adding it to the attachment or side menu, launching a Web App from a link, or accepting an explicit request from a Web App sent by the method [requestWriteAccess](https://core.telegram.org/bots/webapps#initializing-mini-apps)'
       - name: passport_data
         type:
           types: [{type: PassportData, ref: passportdata}]
@@ -1118,11 +1118,11 @@ types:
       - name: offset
         type:
           types: [{type: Integer}]
-        description: Offset in [UTF-16 code units](/api/entities#entity-length) to the start of the entity
+        description: Offset in [UTF-16 code units](https://core.telegram.org/api/entities#entity-length) to the start of the entity
       - name: length
         type:
           types: [{type: Integer}]
-        description: Length of the entity in [UTF-16 code units](/api/entities#entity-length)
+        description: Length of the entity in [UTF-16 code units](https://core.telegram.org/api/entities#entity-length)
       - name: url
         type:
           types: [{type: String}]
@@ -2129,7 +2129,7 @@ types:
         optional: true
         description: Optional. Google Places type of the venue. (See [supported types](https://developers.google.com/places/web-service/supported_types).)
   - name: WebAppData
-    description: Describes data sent from a [Web App](/bots/webapps) to the bot.
+    description: Describes data sent from a [Web App](https://core.telegram.org/bots/webapps) to the bot.
     fields:
       - name: data
         type:
@@ -2427,13 +2427,13 @@ types:
         optional: true
         description: Optional. Available sizes of the chat photo, if the photo was requested by the bot
   - name: WriteAccessAllowed
-    description: This object represents a service message about a user allowing a bot to write messages after adding it to the attachment menu, launching a Web App from a link, or accepting an explicit request from a Web App sent by the method [requestWriteAccess](/bots/webapps#initializing-mini-apps).
+    description: This object represents a service message about a user allowing a bot to write messages after adding it to the attachment menu, launching a Web App from a link, or accepting an explicit request from a Web App sent by the method [requestWriteAccess](https://core.telegram.org/bots/webapps#initializing-mini-apps).
     fields:
       - name: from_request
         type:
           types: [{type: Boolean}]
         optional: true
-        description: Optional. True, if the access was granted after the user accepted an explicit request from a Web App sent by the method [requestWriteAccess](/bots/webapps#initializing-mini-apps)
+        description: Optional. True, if the access was granted after the user accepted an explicit request from a Web App sent by the method [requestWriteAccess](https://core.telegram.org/bots/webapps#initializing-mini-apps)
       - name: web_app_name
         type:
           types: [{type: String}]
@@ -2827,14 +2827,14 @@ types:
         optional: true
         description: Optional. File path. Use https://api.telegram.org/file/bot<token>/<file_path> to get the file.
   - name: WebAppInfo
-    description: Describes a [Web App](/bots/webapps).
+    description: Describes a [Web App](https://core.telegram.org/bots/webapps).
     fields:
       - name: url
         type:
           types: [{type: String}]
-        description: An HTTPS URL of a Web App to be opened with additional data as specified in [Initializing Web Apps](/bots/webapps#initializing-mini-apps)
+        description: An HTTPS URL of a Web App to be opened with additional data as specified in [Initializing Web Apps](https://core.telegram.org/bots/webapps#initializing-mini-apps)
   - name: ReplyKeyboardMarkup
-    description: This object represents a [custom keyboard](/bots/features#keyboards) with reply options (see [Introduction to bots](/bots/features#keyboards) for details and examples). Not supported in channels and for messages sent on behalf of a Telegram Business account.
+    description: This object represents a [custom keyboard](https://core.telegram.org/bots/features#keyboards) with reply options (see [Introduction to bots](https://core.telegram.org/bots/features#keyboards) for details and examples). Not supported in channels and for messages sent on behalf of a Telegram Business account.
     fields:
       - name: keyboard
         type:
@@ -2904,9 +2904,9 @@ types:
         type:
           types: [{type: WebAppInfo, ref: webappinfo}]
         optional: true
-        description: Optional. If specified, the described [Web App](/bots/webapps) will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only.
+        description: Optional. If specified, the described [Web App](https://core.telegram.org/bots/webapps) will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only.
   - name: KeyboardButtonRequestUsers
-    description: This object defines the criteria used to request suitable users. Information about the selected users will be shared with the bot when the corresponding button is pressed. [More about requesting users »](/bots/features#chat-and-user-selection)
+    description: This object defines the criteria used to request suitable users. Information about the selected users will be shared with the bot when the corresponding button is pressed. [More about requesting users »](https://core.telegram.org/bots/features#chat-and-user-selection)
     fields:
       - name: request_id
         type:
@@ -2943,7 +2943,7 @@ types:
         optional: true
         description: Optional. Pass True to request the users' photos
   - name: KeyboardButtonRequestChat
-    description: This object defines the criteria used to request a suitable chat. Information about the selected chat will be shared with the bot when the corresponding button is pressed. The bot will be granted requested rights in the chat if appropriate. [More about requesting chats »](/bots/features#chat-and-user-selection).
+    description: This object defines the criteria used to request a suitable chat. Information about the selected chat will be shared with the bot when the corresponding button is pressed. The bot will be granted requested rights in the chat if appropriate. [More about requesting chats »](https://core.telegram.org/bots/features#chat-and-user-selection).
     fields:
       - name: request_id
         type:
@@ -3019,7 +3019,7 @@ types:
         optional: true
         description: 'Optional. Use this parameter if you want to remove the keyboard for specific users only. Targets: 1) users that are @mentioned in the text of the [Message](https://core.telegram.org/bots/api#message) object; 2) if the bot''s message is a reply to a message in the same chat and forum topic, sender of the original message.  Example: A user votes in a poll, bot returns confirmation message in reply to the vote and removes the keyboard for that user, while still showing the keyboard with poll options to users who haven''t voted yet.'
   - name: InlineKeyboardMarkup
-    description: This object represents an [inline keyboard](/bots/features#inline-keyboards) that appears right next to the message it belongs to.
+    description: This object represents an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) that appears right next to the message it belongs to.
     fields:
       - name: inline_keyboard
         type:
@@ -3047,12 +3047,12 @@ types:
         type:
           types: [{type: WebAppInfo, ref: webappinfo}]
         optional: true
-        description: Optional. Description of the [Web App](/bots/webapps) that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method [answerWebAppQuery](https://core.telegram.org/bots/api#answerwebappquery). Available only in private chats between a user and the bot. Not supported for messages sent on behalf of a Telegram Business account.
+        description: Optional. Description of the [Web App](https://core.telegram.org/bots/webapps) that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method [answerWebAppQuery](https://core.telegram.org/bots/api#answerwebappquery). Available only in private chats between a user and the bot. Not supported for messages sent on behalf of a Telegram Business account.
       - name: login_url
         type:
           types: [{type: LoginUrl, ref: loginurl}]
         optional: true
-        description: Optional. An HTTPS URL used to automatically authorize the user. Can be used as a replacement for the [Telegram Login Widget](/widgets/login).
+        description: Optional. An HTTPS URL used to automatically authorize the user. Can be used as a replacement for the [Telegram Login Widget](https://core.telegram.org/widgets/login).
       - name: switch_inline_query
         type:
           types: [{type: String}]
@@ -3085,13 +3085,13 @@ types:
         description: 'Optional. Specify True, to send a [Pay button](https://core.telegram.org/bots/api#payments). Substrings “⭐” and “XTR” in the buttons''s text will be replaced with a Telegram Star icon.  NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages.'
   - name: LoginUrl
     description: |-
-      This object represents a parameter of the inline keyboard button used to automatically authorize a user. Serves as a great replacement for the [Telegram Login Widget](/widgets/login) when the user is coming from Telegram. All the user needs to do is tap/click a button and confirm that they want to log in:
+      This object represents a parameter of the inline keyboard button used to automatically authorize a user. Serves as a great replacement for the [Telegram Login Widget](https://core.telegram.org/widgets/login) when the user is coming from Telegram. All the user needs to do is tap/click a button and confirm that they want to log in:
       Telegram apps support these buttons as of [version 5.7](https://telegram.org/blog/privacy-discussions-web-bots#meet-seamless-web-bots).
     fields:
       - name: url
         type:
           types: [{type: String}]
-        description: 'An HTTPS URL to be opened with user authorization data added to the query string when the button is pressed. If the user refuses to provide authorization data, the original URL without information about the user will be opened. The data added is the same as described in [Receiving authorization data](/widgets/login#receiving-authorization-data).  NOTE: You must always check the hash of the received data to verify the authentication and the integrity of the data as described in [Checking authorization](/widgets/login#checking-authorization).'
+        description: 'An HTTPS URL to be opened with user authorization data added to the query string when the button is pressed. If the user refuses to provide authorization data, the original URL without information about the user will be opened. The data added is the same as described in [Receiving authorization data](https://core.telegram.org/widgets/login#receiving-authorization-data).  NOTE: You must always check the hash of the received data to verify the authentication and the integrity of the data as described in [Checking authorization](https://core.telegram.org/widgets/login#checking-authorization).'
       - name: forward_text
         type:
           types: [{type: String}]
@@ -3101,7 +3101,7 @@ types:
         type:
           types: [{type: String}]
         optional: true
-        description: Optional. Username of a bot, which will be used for user authorization. See [Setting up a bot](/widgets/login#setting-up-a-bot) for more details. If not specified, the current bot's username will be assumed. The url's domain must be the same as the domain linked with the bot. See [Linking your domain to the bot](/widgets/login#linking-your-domain-to-the-bot) for more details.
+        description: Optional. Username of a bot, which will be used for user authorization. See [Setting up a bot](https://core.telegram.org/widgets/login#setting-up-a-bot) for more details. If not specified, the current bot's username will be assumed. The url's domain must be the same as the domain linked with the bot. See [Linking your domain to the bot](https://core.telegram.org/widgets/login#linking-your-domain-to-the-bot) for more details.
       - name: request_write_access
         type:
           types: [{type: Boolean}]
@@ -3143,7 +3143,7 @@ types:
           types: [{type: String}]
         description: The text to be copied to the clipboard; 1-256 characters
   - name: CallbackQuery
-    description: This object represents an incoming callback query from a callback button in an [inline keyboard](/bots/features#inline-keyboards). If the button that originated the query was attached to a message sent by the bot, the field message will be present. If the button was attached to a message sent via the bot (in [inline mode](https://core.telegram.org/bots/api#inline-mode)), the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
+    description: This object represents an incoming callback query from a callback button in an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards). If the button that originated the query was attached to a message sent by the bot, the field message will be present. If the button was attached to a message sent via the bot (in [inline mode](https://core.telegram.org/bots/api#inline-mode)), the field inline_message_id will be present. Exactly one of the fields data or game_short_name will be present.
     fields:
       - name: id
         type:
@@ -3178,7 +3178,7 @@ types:
         optional: true
         description: Optional. Short name of a [Game](https://core.telegram.org/bots/api#games) to be returned, serves as the unique identifier for the game
   - name: ForceReply
-    description: Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice [privacy mode](/bots/features#privacy-mode). Not supported in channels and for messages sent on behalf of a Telegram Business account.
+    description: Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot's message and tapped 'Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice [privacy mode](https://core.telegram.org/bots/features#privacy-mode). Not supported in channels and for messages sent on behalf of a Telegram Business account.
     fields:
       - name: force_reply
         type:
@@ -4812,7 +4812,7 @@ types:
         description: Type of the button, must be commands
         const: commands
   - name: MenuButtonWebApp
-    description: Represents a menu button, which launches a [Web App](/bots/webapps).
+    description: Represents a menu button, which launches a [Web App](https://core.telegram.org/bots/webapps).
     fields:
       - name: type
         type:
@@ -5691,12 +5691,12 @@ types:
         type:
           types: [{type: WebAppInfo, ref: webappinfo}]
         optional: true
-        description: Optional. Description of the [Web App](/bots/webapps) that will be launched when the user presses the button. The Web App will be able to switch back to the inline mode using the method [switchInlineQuery](/bots/webapps#initializing-mini-apps) inside the Web App.
+        description: Optional. Description of the [Web App](https://core.telegram.org/bots/webapps) that will be launched when the user presses the button. The Web App will be able to switch back to the inline mode using the method [switchInlineQuery](https://core.telegram.org/bots/webapps#initializing-mini-apps) inside the Web App.
       - name: start_parameter
         type:
           types: [{type: String}]
         optional: true
-        description: 'Optional. [Deep-linking](/bots/features#deep-linking) parameter for the /start message sent to the bot when a user presses the button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.  Example: An inline bot that sends YouTube videos can ask the user to connect the bot to their YouTube account to adapt search results accordingly. To do this, it displays a ''Connect your YouTube account'' button above the results, or even before showing any. The user presses the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs the bot to return an OAuth link. Once done, the bot can offer a [switch_inline](https://core.telegram.org/bots/api#inlinekeyboardmarkup) button so that the user can easily return to the chat where they wanted to use the bot''s inline capabilities.'
+        description: 'Optional. [Deep-linking](https://core.telegram.org/bots/features#deep-linking) parameter for the /start message sent to the bot when a user presses the button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.  Example: An inline bot that sends YouTube videos can ask the user to connect the bot to their YouTube account to adapt search results accordingly. To do this, it displays a ''Connect your YouTube account'' button above the results, or even before showing any. The user presses the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs the bot to return an OAuth link. Once done, the bot can offer a [switch_inline](https://core.telegram.org/bots/api#inlinekeyboardmarkup) button so that the user can easily return to the chat where they wanted to use the bot''s inline capabilities.'
   - name: InlineQueryResult
     description: |-
       This object represents one result of an inline query. Telegram clients currently support results of the following 20 types:
@@ -5746,7 +5746,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: url
         type:
           types: [{type: String}]
@@ -5837,7 +5837,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -5917,7 +5917,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -5997,7 +5997,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6076,7 +6076,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6132,7 +6132,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6183,7 +6183,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6307,7 +6307,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6380,7 +6380,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6435,7 +6435,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6476,7 +6476,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
   - name: InlineQueryResultCachedPhoto
     description: Represents a link to a photo stored on the Telegram servers. By default, this photo will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
     fields:
@@ -6528,7 +6528,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6580,7 +6580,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6632,7 +6632,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6658,7 +6658,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6709,7 +6709,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6765,7 +6765,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6811,7 +6811,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -6853,7 +6853,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. [Inline keyboard](/bots/features#inline-keyboards) attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -7004,7 +7004,7 @@ types:
       - name: currency
         type:
           types: [{type: String}]
-        description: Three-letter ISO 4217 currency code, see [more on currencies](/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
+        description: Three-letter ISO 4217 currency code, see [more on currencies](https://core.telegram.org/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
       - name: prices
         type:
           types: [{type: LabeledPrice, ref: labeledprice}]
@@ -7014,7 +7014,7 @@ types:
         type:
           types: [{type: Integer}]
         optional: true
-        description: Optional. The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for payments in [Telegram Stars](https://t.me/BotNews/90).
+        description: Optional. The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in [currencies.json](https://core.telegram.org/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for payments in [Telegram Stars](https://t.me/BotNews/90).
       - name: suggested_tip_amounts
         type:
           types: [{type: Integer}]
@@ -7084,7 +7084,7 @@ types:
   - name: ChosenInlineResult
     description: |-
       Represents a [result](https://core.telegram.org/bots/api#inlinequeryresult) of an inline query that was chosen by the user and sent to their chat partner.
-      Note: It is necessary to enable [inline feedback](/bots/inline#collecting-feedback) via [@BotFather](https://t.me/botfather) in order to receive these objects in updates.
+      Note: It is necessary to enable [inline feedback](https://core.telegram.org/bots/inline#collecting-feedback) via [@BotFather](https://t.me/botfather) in order to receive these objects in updates.
     fields:
       - name: result_id
         type:
@@ -7109,7 +7109,7 @@ types:
           types: [{type: String}]
         description: The query that was used to obtain the result
   - name: SentWebAppMessage
-    description: Describes an inline message sent by a [Web App](/bots/webapps) on behalf of a user.
+    description: Describes an inline message sent by a [Web App](https://core.telegram.org/bots/webapps) on behalf of a user.
     fields:
       - name: inline_message_id
         type:
@@ -7137,7 +7137,7 @@ types:
       - name: amount
         type:
           types: [{type: Integer}]
-        description: Price of the product in the smallest units of the [currency](/bots/payments#supported-currencies) (integer, not float/double). For example, for a price of US$ 1.45 pass amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
+        description: Price of the product in the smallest units of the [currency](https://core.telegram.org/bots/payments#supported-currencies) (integer, not float/double). For example, for a price of US$ 1.45 pass amount = 145. See the exp parameter in [currencies.json](https://core.telegram.org/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
   - name: Invoice
     description: This object contains basic information about an invoice.
     fields:
@@ -7156,11 +7156,11 @@ types:
       - name: currency
         type:
           types: [{type: String}]
-        description: Three-letter ISO 4217 [currency](/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90)
+        description: Three-letter ISO 4217 [currency](https://core.telegram.org/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90)
       - name: total_amount
         type:
           types: [{type: Integer}]
-        description: Total price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45 pass amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
+        description: Total price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45 pass amount = 145. See the exp parameter in [currencies.json](https://core.telegram.org/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
   - name: ShippingAddress
     description: This object represents a shipping address.
     fields:
@@ -7233,11 +7233,11 @@ types:
       - name: currency
         type:
           types: [{type: String}]
-        description: Three-letter ISO 4217 [currency](/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90)
+        description: Three-letter ISO 4217 [currency](https://core.telegram.org/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90)
       - name: total_amount
         type:
           types: [{type: Integer}]
-        description: Total price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45 pass amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
+        description: Total price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45 pass amount = 145. See the exp parameter in [currencies.json](https://core.telegram.org/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
       - name: invoice_payload
         type:
           types: [{type: String}]
@@ -7281,12 +7281,12 @@ types:
       - name: currency
         type:
           types: [{type: String}]
-        description: Three-letter ISO 4217 [currency](/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90). Currently, always “XTR”
+        description: Three-letter ISO 4217 [currency](https://core.telegram.org/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90). Currently, always “XTR”
         const: XTR
       - name: total_amount
         type:
           types: [{type: Integer}]
-        description: Total refunded price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45, total_amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
+        description: Total refunded price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45, total_amount = 145. See the exp parameter in [currencies.json](https://core.telegram.org/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
       - name: invoice_payload
         type:
           types: [{type: String}]
@@ -7333,11 +7333,11 @@ types:
       - name: currency
         type:
           types: [{type: String}]
-        description: Three-letter ISO 4217 [currency](/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90)
+        description: Three-letter ISO 4217 [currency](https://core.telegram.org/bots/payments#supported-currencies) code, or “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90)
       - name: total_amount
         type:
           types: [{type: Integer}]
-        description: Total price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45 pass amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
+        description: Total price in the smallest units of the currency (integer, not float/double). For example, for a price of US$ 1.45 pass amount = 145. See the exp parameter in [currencies.json](https://core.telegram.org/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
       - name: invoice_payload
         type:
           types: [{type: String}]
@@ -7746,7 +7746,7 @@ types:
           types: [{type: String}]
         description: Base64-encoded element hash for using in [PassportElementErrorUnspecified](https://core.telegram.org/bots/api#passportelementerrorunspecified)
   - name: EncryptedCredentials
-    description: Describes data required for decrypting and authenticating [EncryptedPassportElement](https://core.telegram.org/bots/api#encryptedpassportelement). See the [Telegram Passport Documentation](/passport#receiving-information) for a complete description of the data decryption and authentication processes.
+    description: Describes data required for decrypting and authenticating [EncryptedPassportElement](https://core.telegram.org/bots/api#encryptedpassportelement). See the [Telegram Passport Documentation](https://core.telegram.org/passport#receiving-information) for a complete description of the data decryption and authentication processes.
     fields:
       - name: data
         type:
@@ -8047,7 +8047,7 @@ types:
   - name: GameHighScore
     description: |-
       This object represents one row of the high scores table for a game.
-      And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »](/bots/faq)
+      And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »](https://core.telegram.org/bots/faq)
     fields:
       - name: position
         type:
@@ -8105,9 +8105,9 @@ methods:
       - If you'd like to make sure that the webhook was set by you, you can specify secret data in the parameter secret_token. If specified, the request will contain a header “X-Telegram-Bot-Api-Secret-Token” with the secret token as content.
       - Notes
       - 1. You will not be able to receive updates using [getUpdates](https://core.telegram.org/bots/api#getupdates) for as long as an outgoing webhook is set up.
-      - 2. To use a self-signed certificate, you need to upload your [public key certificate](/bots/self-signed) using certificate parameter. Please upload as InputFile, sending a String will not work.
+      - 2. To use a self-signed certificate, you need to upload your [public key certificate](https://core.telegram.org/bots/self-signed) using certificate parameter. Please upload as InputFile, sending a String will not work.
       - '3. Ports currently supported for webhooks: 443, 80, 88, 8443.'
-      - If you're having any trouble setting up webhooks, please check out this [amazing guide to webhooks](/bots/webhooks).
+      - If you're having any trouble setting up webhooks, please check out this [amazing guide to webhooks](https://core.telegram.org/bots/webhooks).
     params:
       - name: url
         type:
@@ -8117,7 +8117,7 @@ methods:
       - name: certificate
         type:
           types: [{type: InputFile, ref: inputfile}]
-        description: Upload your public key certificate so that the root certificate in use can be checked. See our [self-signed guide](/bots/self-signed) for details.
+        description: Upload your public key certificate so that the root certificate in use can be checked. See our [self-signed guide](https://core.telegram.org/bots/self-signed) for details.
       - name: ip_address
         type:
           types: [{type: String}]
@@ -8246,7 +8246,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: forwardMessage
@@ -8420,7 +8420,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: MessageId, ref: messageid}]
   - name: copyMessages
@@ -8546,7 +8546,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendAudio
@@ -8634,7 +8634,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendDocument
@@ -8715,7 +8715,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendVideo
@@ -8824,7 +8824,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendAnimation
@@ -8921,7 +8921,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendVoice
@@ -8996,7 +8996,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendVideoNote
@@ -9064,7 +9064,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendPaidMedia
@@ -9145,7 +9145,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendMediaGroup
@@ -9272,7 +9272,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendVenue
@@ -9359,7 +9359,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendContact
@@ -9428,7 +9428,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendPoll
@@ -9542,7 +9542,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendChecklist
@@ -9645,7 +9645,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: sendMessageDraft
@@ -9769,7 +9769,7 @@ methods:
       types: [{type: UserProfilePhotos, ref: userprofilephotos}]
   - name: setUserEmojiStatus
     description:
-      - Changes the emoji status for a given user that previously allowed the bot to manage their emoji status via the Mini App method [requestEmojiStatusAccess](/bots/webapps#initializing-mini-apps). Returns True on success.
+      - Changes the emoji status for a given user that previously allowed the bot to manage their emoji status via the Mini App method [requestEmojiStatusAccess](https://core.telegram.org/bots/webapps#initializing-mini-apps). Returns True on success.
     params:
       - name: user_id
         type:
@@ -10610,7 +10610,7 @@ methods:
       types: [{type: "True"}]
   - name: answerCallbackQuery
     description:
-      - Use this method to send answers to callback queries sent from [inline keyboards](/bots/features#inline-keyboards). The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
+      - Use this method to send answers to callback queries sent from [inline keyboards](https://core.telegram.org/bots/features#inline-keyboards). The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
       - Alternatively, the user can be redirected to the specified Game URL. For this option to work, you must first create a game for your bot via [@BotFather](https://t.me/botfather) and accept the terms. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a parameter.
     params:
       - name: callback_query_id
@@ -10671,7 +10671,7 @@ methods:
       types: [{type: BusinessConnection, ref: businessconnection}]
   - name: setMyCommands
     description:
-      - Use this method to change the list of the bot's commands. See [this manual](/bots/features#commands) for more details about bot commands. Returns True on success.
+      - Use this method to change the list of the bot's commands. See [this manual](https://core.telegram.org/bots/features#commands) for more details about bot commands. Returns True on success.
     params:
       - name: commands
         type:
@@ -11555,7 +11555,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards).
+        description: A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards).
     returns:
       types: [{type: "True"}]
   - name: editMessageCaption
@@ -11607,7 +11607,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards).
+        description: A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards).
     returns:
       types: [{type: "True"}]
   - name: editMessageMedia
@@ -11645,7 +11645,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for a new [inline keyboard](/bots/features#inline-keyboards).
+        description: A JSON-serialized object for a new [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards).
     returns:
       types: [{type: "True"}]
   - name: editMessageLiveLocation
@@ -11707,7 +11707,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for a new [inline keyboard](/bots/features#inline-keyboards).
+        description: A JSON-serialized object for a new [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards).
     returns:
       types: [{type: "True"}]
   - name: stopMessageLiveLocation
@@ -11740,7 +11740,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for a new [inline keyboard](/bots/features#inline-keyboards).
+        description: A JSON-serialized object for a new [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards).
     returns:
       types: [{type: "True"}]
   - name: editMessageChecklist
@@ -11803,7 +11803,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards).
+        description: A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards).
     returns:
       types: [{type: "True"}]
   - name: stopPoll
@@ -11827,7 +11827,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for a new message [inline keyboard](/bots/features#inline-keyboards).
+        description: A JSON-serialized object for a new message [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards).
     returns:
       types: [{type: Poll, ref: poll}]
   - name: approveSuggestedPost
@@ -11970,7 +11970,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}, {type: ReplyKeyboardMarkup, ref: replykeyboardmarkup}, {type: ReplyKeyboardRemove, ref: replykeyboardremove}, {type: ForceReply, ref: forcereply}]
-        description: Additional interface options. A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards), [custom reply keyboard](/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
+        description: Additional interface options. A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards), [custom reply keyboard](https://core.telegram.org/bots/features#keyboards), instructions to remove a reply keyboard or to force a reply from the user
     returns:
       types: [{type: Message, ref: message}]
   - name: getStickerSet
@@ -12291,7 +12291,7 @@ methods:
       types: [{type: "True"}]
   - name: answerWebAppQuery
     description:
-      - Use this method to set the result of an interaction with a [Web App](/bots/webapps) and send a corresponding message on behalf of the user to the chat from which the query originated. On success, a [SentWebAppMessage](https://core.telegram.org/bots/api#sentwebappmessage) object is returned.
+      - Use this method to set the result of an interaction with a [Web App](https://core.telegram.org/bots/webapps) and send a corresponding message on behalf of the user to the chat from which the query originated. On success, a [SentWebAppMessage](https://core.telegram.org/bots/api#sentwebappmessage) object is returned.
     params:
       - name: web_app_query_id
         type:
@@ -12377,7 +12377,7 @@ methods:
         type:
           types: [{type: String}]
         required: true
-        description: Three-letter ISO 4217 currency code, see [more on currencies](/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
+        description: Three-letter ISO 4217 currency code, see [more on currencies](https://core.telegram.org/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
       - name: prices
         type:
           types: [{type: LabeledPrice, ref: labeledprice}]
@@ -12387,7 +12387,7 @@ methods:
       - name: max_tip_amount
         type:
           types: [{type: Integer}]
-        description: The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for payments in [Telegram Stars](https://t.me/BotNews/90).
+        description: The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in [currencies.json](https://core.telegram.org/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for payments in [Telegram Stars](https://t.me/BotNews/90).
         default: "0"
         enum:
           - smallest units
@@ -12479,7 +12479,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards). If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
+        description: A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards). If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
     returns:
       types: [{type: Message, ref: message}]
   - name: createInvoiceLink
@@ -12513,7 +12513,7 @@ methods:
         type:
           types: [{type: String}]
         required: true
-        description: Three-letter ISO 4217 currency code, see [more on currencies](/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
+        description: Three-letter ISO 4217 currency code, see [more on currencies](https://core.telegram.org/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
       - name: prices
         type:
           types: [{type: LabeledPrice, ref: labeledprice}]
@@ -12527,7 +12527,7 @@ methods:
       - name: max_tip_amount
         type:
           types: [{type: Integer}]
-        description: The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in [currencies.json](/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for payments in [Telegram Stars](https://t.me/BotNews/90).
+        description: The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in [currencies.json](https://core.telegram.org/bots/payments/currencies.json), it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0. Not supported for payments in [Telegram Stars](https://t.me/BotNews/90).
         default: "0"
         enum:
           - smallest units
@@ -12761,7 +12761,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for an [inline keyboard](/bots/features#inline-keyboards). If empty, one 'Play game_title' button will be shown. If not empty, the first button must launch the game.
+        description: A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards). If empty, one 'Play game_title' button will be shown. If not empty, the first button must launch the game.
     returns:
       types: [{type: Message, ref: message}]
   - name: setGameScore

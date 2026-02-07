@@ -4,21 +4,16 @@ package tgb
 //
 // Telegram Bot API version: 9.3
 // Release date: December 31, 2025
-// Spec hash: 1c93bd778a3c
+// Spec hash: f010e435c22c
 
-import "context"
+import (
+	"context"
 
-func firstNotNil[T any](fields ...*T) *T {
-	for _, field := range fields {
-		if field != nil {
-			return field
-		}
-	}
-	return nil
-}
+	"github.com/mr-linch/go-tg"
+)
 
-// BusinessConnectionHandler it's typed handler for BusinessConnection.
-// Implements Handler interface.
+// BusinessConnectionHandler it's typed handler for [BusinessConnectionUpdate].
+// Implements [Handler] interface.
 type BusinessConnectionHandler func(context.Context, *BusinessConnectionUpdate) error
 
 func (handler BusinessConnectionHandler) Handle(ctx context.Context, update *Update) error {
@@ -28,8 +23,8 @@ func (handler BusinessConnectionHandler) Handle(ctx context.Context, update *Upd
 	})
 }
 
-// CallbackQueryHandler it's typed handler for CallbackQuery.
-// Implements Handler interface.
+// CallbackQueryHandler it's typed handler for [CallbackQueryUpdate].
+// Implements [Handler] interface.
 type CallbackQueryHandler func(context.Context, *CallbackQueryUpdate) error
 
 func (handler CallbackQueryHandler) Handle(ctx context.Context, update *Update) error {
@@ -39,8 +34,8 @@ func (handler CallbackQueryHandler) Handle(ctx context.Context, update *Update) 
 	})
 }
 
-// ChatBoostHandler it's typed handler for ChatBoostUpdated.
-// Implements Handler interface.
+// ChatBoostHandler it's typed handler for [ChatBoostUpdate].
+// Implements [Handler] interface.
 type ChatBoostHandler func(context.Context, *ChatBoostUpdate) error
 
 func (handler ChatBoostHandler) Handle(ctx context.Context, update *Update) error {
@@ -50,8 +45,8 @@ func (handler ChatBoostHandler) Handle(ctx context.Context, update *Update) erro
 	})
 }
 
-// ChatJoinRequestHandler it's typed handler for ChatJoinRequest.
-// Implements Handler interface.
+// ChatJoinRequestHandler it's typed handler for [ChatJoinRequestUpdate].
+// Implements [Handler] interface.
 type ChatJoinRequestHandler func(context.Context, *ChatJoinRequestUpdate) error
 
 func (handler ChatJoinRequestHandler) Handle(ctx context.Context, update *Update) error {
@@ -61,12 +56,19 @@ func (handler ChatJoinRequestHandler) Handle(ctx context.Context, update *Update
 	})
 }
 
-// ChatMemberUpdatedHandler it's typed handler for ChatMemberUpdated.
-// Implements Handler interface.
+// ChatMemberUpdatedHandler it's typed handler for [ChatMemberUpdatedUpdate].
+// Implements [Handler] interface.
 type ChatMemberUpdatedHandler func(context.Context, *ChatMemberUpdatedUpdate) error
 
 func (handler ChatMemberUpdatedHandler) Handle(ctx context.Context, update *Update) error {
-	if v := firstNotNil(update.MyChatMember, update.ChatMember); v != nil {
+	var v *tg.ChatMemberUpdated
+	switch {
+	case update.MyChatMember != nil:
+		v = update.MyChatMember
+	case update.ChatMember != nil:
+		v = update.ChatMember
+	}
+	if v != nil {
 		return handler(ctx, &ChatMemberUpdatedUpdate{
 			ChatMemberUpdated: v,
 			BaseUpdate:        BaseUpdate{Update: update, Client: update.Client},
@@ -75,8 +77,8 @@ func (handler ChatMemberUpdatedHandler) Handle(ctx context.Context, update *Upda
 	return nil
 }
 
-// ChosenInlineResultHandler it's typed handler for ChosenInlineResult.
-// Implements Handler interface.
+// ChosenInlineResultHandler it's typed handler for [ChosenInlineResultUpdate].
+// Implements [Handler] interface.
 type ChosenInlineResultHandler func(context.Context, *ChosenInlineResultUpdate) error
 
 func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *Update) error {
@@ -86,8 +88,8 @@ func (handler ChosenInlineResultHandler) Handle(ctx context.Context, update *Upd
 	})
 }
 
-// DeletedBusinessMessagesHandler it's typed handler for BusinessMessagesDeleted.
-// Implements Handler interface.
+// DeletedBusinessMessagesHandler it's typed handler for [DeletedBusinessMessagesUpdate].
+// Implements [Handler] interface.
 type DeletedBusinessMessagesHandler func(context.Context, *DeletedBusinessMessagesUpdate) error
 
 func (handler DeletedBusinessMessagesHandler) Handle(ctx context.Context, update *Update) error {
@@ -97,8 +99,8 @@ func (handler DeletedBusinessMessagesHandler) Handle(ctx context.Context, update
 	})
 }
 
-// InlineQueryHandler it's typed handler for InlineQuery.
-// Implements Handler interface.
+// InlineQueryHandler it's typed handler for [InlineQueryUpdate].
+// Implements [Handler] interface.
 type InlineQueryHandler func(context.Context, *InlineQueryUpdate) error
 
 func (handler InlineQueryHandler) Handle(ctx context.Context, update *Update) error {
@@ -108,12 +110,27 @@ func (handler InlineQueryHandler) Handle(ctx context.Context, update *Update) er
 	})
 }
 
-// MessageHandler it's typed handler for Message.
-// Implements Handler interface.
+// MessageHandler it's typed handler for [MessageUpdate].
+// Implements [Handler] interface.
 type MessageHandler func(context.Context, *MessageUpdate) error
 
 func (handler MessageHandler) Handle(ctx context.Context, update *Update) error {
-	if v := firstNotNil(update.Message, update.EditedMessage, update.ChannelPost, update.EditedChannelPost, update.BusinessMessage, update.EditedBusinessMessage); v != nil {
+	var v *tg.Message
+	switch {
+	case update.Message != nil:
+		v = update.Message
+	case update.EditedMessage != nil:
+		v = update.EditedMessage
+	case update.ChannelPost != nil:
+		v = update.ChannelPost
+	case update.EditedChannelPost != nil:
+		v = update.EditedChannelPost
+	case update.BusinessMessage != nil:
+		v = update.BusinessMessage
+	case update.EditedBusinessMessage != nil:
+		v = update.EditedBusinessMessage
+	}
+	if v != nil {
 		return handler(ctx, &MessageUpdate{
 			Message:    v,
 			BaseUpdate: BaseUpdate{Update: update, Client: update.Client},
@@ -122,8 +139,8 @@ func (handler MessageHandler) Handle(ctx context.Context, update *Update) error 
 	return nil
 }
 
-// MessageReactionCountHandler it's typed handler for MessageReactionCountUpdated.
-// Implements Handler interface.
+// MessageReactionCountHandler it's typed handler for [MessageReactionCountUpdate].
+// Implements [Handler] interface.
 type MessageReactionCountHandler func(context.Context, *MessageReactionCountUpdate) error
 
 func (handler MessageReactionCountHandler) Handle(ctx context.Context, update *Update) error {
@@ -133,8 +150,8 @@ func (handler MessageReactionCountHandler) Handle(ctx context.Context, update *U
 	})
 }
 
-// MessageReactionHandler it's typed handler for MessageReactionUpdated.
-// Implements Handler interface.
+// MessageReactionHandler it's typed handler for [MessageReactionUpdate].
+// Implements [Handler] interface.
 type MessageReactionHandler func(context.Context, *MessageReactionUpdate) error
 
 func (handler MessageReactionHandler) Handle(ctx context.Context, update *Update) error {
@@ -144,8 +161,8 @@ func (handler MessageReactionHandler) Handle(ctx context.Context, update *Update
 	})
 }
 
-// PollAnswerHandler it's typed handler for PollAnswer.
-// Implements Handler interface.
+// PollAnswerHandler it's typed handler for [PollAnswerUpdate].
+// Implements [Handler] interface.
 type PollAnswerHandler func(context.Context, *PollAnswerUpdate) error
 
 func (handler PollAnswerHandler) Handle(ctx context.Context, update *Update) error {
@@ -155,8 +172,8 @@ func (handler PollAnswerHandler) Handle(ctx context.Context, update *Update) err
 	})
 }
 
-// PollHandler it's typed handler for Poll.
-// Implements Handler interface.
+// PollHandler it's typed handler for [PollUpdate].
+// Implements [Handler] interface.
 type PollHandler func(context.Context, *PollUpdate) error
 
 func (handler PollHandler) Handle(ctx context.Context, update *Update) error {
@@ -166,8 +183,8 @@ func (handler PollHandler) Handle(ctx context.Context, update *Update) error {
 	})
 }
 
-// PreCheckoutQueryHandler it's typed handler for PreCheckoutQuery.
-// Implements Handler interface.
+// PreCheckoutQueryHandler it's typed handler for [PreCheckoutQueryUpdate].
+// Implements [Handler] interface.
 type PreCheckoutQueryHandler func(context.Context, *PreCheckoutQueryUpdate) error
 
 func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *Update) error {
@@ -177,8 +194,8 @@ func (handler PreCheckoutQueryHandler) Handle(ctx context.Context, update *Updat
 	})
 }
 
-// PurchasedPaidMediaHandler it's typed handler for PaidMediaPurchased.
-// Implements Handler interface.
+// PurchasedPaidMediaHandler it's typed handler for [PurchasedPaidMediaUpdate].
+// Implements [Handler] interface.
 type PurchasedPaidMediaHandler func(context.Context, *PurchasedPaidMediaUpdate) error
 
 func (handler PurchasedPaidMediaHandler) Handle(ctx context.Context, update *Update) error {
@@ -188,8 +205,8 @@ func (handler PurchasedPaidMediaHandler) Handle(ctx context.Context, update *Upd
 	})
 }
 
-// RemovedChatBoostHandler it's typed handler for ChatBoostRemoved.
-// Implements Handler interface.
+// RemovedChatBoostHandler it's typed handler for [RemovedChatBoostUpdate].
+// Implements [Handler] interface.
 type RemovedChatBoostHandler func(context.Context, *RemovedChatBoostUpdate) error
 
 func (handler RemovedChatBoostHandler) Handle(ctx context.Context, update *Update) error {
@@ -199,8 +216,8 @@ func (handler RemovedChatBoostHandler) Handle(ctx context.Context, update *Updat
 	})
 }
 
-// ShippingQueryHandler it's typed handler for ShippingQuery.
-// Implements Handler interface.
+// ShippingQueryHandler it's typed handler for [ShippingQueryUpdate].
+// Implements [Handler] interface.
 type ShippingQueryHandler func(context.Context, *ShippingQueryUpdate) error
 
 func (handler ShippingQueryHandler) Handle(ctx context.Context, update *Update) error {

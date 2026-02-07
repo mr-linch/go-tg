@@ -10,6 +10,7 @@ import (
 	"text/template"
 
 	"github.com/mr-linch/go-tg/gen/config"
+	"github.com/mr-linch/go-tg/gen/docutil"
 	"github.com/mr-linch/go-tg/gen/ir"
 	"github.com/mr-linch/go-tg/gen/naming"
 	"mvdan.cc/gofumpt/format"
@@ -34,12 +35,14 @@ type GoConstructor struct {
 	Suffix         string    // "" for default, "Inline" for inline variants
 	RequiredParams []GoParam // params to use in constructor signature
 	EmbedType      string    // override embed type for this variant (empty = use method default)
+	LinkDefs       []string  // URL link target definitions from param descriptions
 }
 
 // GoMethod represents a resolved method for template rendering.
 type GoMethod struct {
 	Comment      string          // multi-line doc comment
 	APIName      string          // e.g., "sendMessage"
+	APIDocURL    string          // e.g., "https://core.telegram.org/bots/api#sendmessage"
 	CallTypeName string          // e.g., "SendMessageCall"
 	GoName       string          // e.g., "SendMessage" (client method name)
 	EmbedType    string          // "Call[Message]" or "CallNoResult"
@@ -162,11 +165,21 @@ func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamT
 		}
 	}
 
+	// Build lookup maps for Go doc link resolution.
+	knownTypes := make(map[string]bool, len(api.Types))
+	for _, t := range api.Types {
+		knownTypes[naming.NormalizeTypeName(t.Name)] = true
+	}
+	knownMethods := make(map[string]string, len(api.Methods))
+	for _, m := range api.Methods {
+		knownMethods[m.Name] = "Client." + naming.MethodName(m.Name)
+	}
+
 	usedParamOverrides := make(map[string]bool)
 	usedReturnOverrides := make(map[string]bool)
 
 	for _, m := range api.Methods {
-		goMethod := resolveMethod(m, cfg, rules, stringerTypes, subtypeToUnion, usedParamOverrides, usedReturnOverrides)
+		goMethod := resolveMethod(m, cfg, rules, stringerTypes, subtypeToUnion, usedParamOverrides, usedReturnOverrides, knownTypes, knownMethods)
 		data.Methods = append(data.Methods, goMethod)
 	}
 
@@ -188,7 +201,7 @@ func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamT
 	return data
 }
 
-func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, subtypeToUnion map[string]string, usedParamOverrides, usedReturnOverrides map[string]bool) GoMethod {
+func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, subtypeToUnion map[string]string, usedParamOverrides, usedReturnOverrides, knownTypes map[string]bool, knownMethods map[string]string) GoMethod {
 	goName := naming.MethodName(m.Name)
 	callTypeName := goName + "Call"
 
@@ -199,8 +212,8 @@ func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeR
 		params = append(params, goParam)
 	}
 
-	// Build constructor variants.
-	constructors := buildConstructors(m.Name, params, cfg.ConstructorVariants)
+	// Build constructor variants with link extraction from param descriptions.
+	constructors := buildConstructors(m.Name, params, cfg.ConstructorVariants, knownTypes, knownMethods)
 
 	// Resolve return type - use first variant's return_type if specified.
 	var embedType string
@@ -212,11 +225,14 @@ func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeR
 		embedType, isNoResult = resolveReturnType(m, cfg.ReturnTypeOverrides, usedReturnOverrides)
 	}
 
-	comment := formatMethodComment(m.Description)
+	comment := formatMethodComment(m.Description, knownTypes, knownMethods)
+
+	apiDocURL := "https://core.telegram.org/bots/api#" + strings.ToLower(m.Name)
 
 	return GoMethod{
 		Comment:      comment,
 		APIName:      m.Name,
+		APIDocURL:    apiDocURL,
 		CallTypeName: callTypeName,
 		GoName:       goName,
 		EmbedType:    embedType,
@@ -227,7 +243,7 @@ func resolveMethod(m ir.Method, cfg *config.MethodGen, rules *CompiledParamTypeR
 }
 
 // buildConstructors builds the constructor variants for a method.
-func buildConstructors(methodName string, params []GoParam, variants map[string][]config.ConstructorVariant) []GoConstructor {
+func buildConstructors(methodName string, params []GoParam, variants map[string][]config.ConstructorVariant, knownTypes map[string]bool, knownMethods map[string]string) []GoConstructor {
 	// Check for explicit variants in config.
 	if cfgVariants, ok := variants[methodName]; ok {
 		constructors := make([]GoConstructor, 0, len(cfgVariants))
@@ -246,10 +262,12 @@ func buildConstructors(methodName string, params []GoParam, variants map[string]
 			if v.ReturnType != "" {
 				embedType = returnTypeToEmbed(v.ReturnType)
 			}
+			rp, linkDefs := convertParamLinks(requiredParams, knownTypes, knownMethods)
 			constructors = append(constructors, GoConstructor{
 				Suffix:         v.Suffix,
-				RequiredParams: requiredParams,
+				RequiredParams: rp,
 				EmbedType:      embedType,
+				LinkDefs:       linkDefs,
 			})
 		}
 		return constructors
@@ -262,9 +280,11 @@ func buildConstructors(methodName string, params []GoParam, variants map[string]
 			requiredParams = append(requiredParams, p)
 		}
 	}
+	rp, linkDefs := convertParamLinks(requiredParams, knownTypes, knownMethods)
 	return []GoConstructor{{
 		Suffix:         "",
-		RequiredParams: requiredParams,
+		RequiredParams: rp,
+		LinkDefs:       linkDefs,
 	}}
 }
 
@@ -409,9 +429,42 @@ func resolveRequestMethod(goType string, stringerTypes map[string]bool) string {
 	return "JSON"
 }
 
-func formatMethodComment(desc []string) string {
+func formatMethodComment(desc []string, knownTypes map[string]bool, knownMethods map[string]string) string {
 	if len(desc) == 0 {
 		return ""
 	}
-	return strings.Join(desc, "\n// ")
+	joined := strings.Join(desc, "\n")
+	converted := docutil.ConvertLinks(joined, knownTypes, knownMethods)
+	// Re-split and re-join with "// " prefix for continuation lines.
+	lines := strings.Split(converted, "\n")
+	if len(lines) <= 1 {
+		return converted
+	}
+	var sb strings.Builder
+	for i, line := range lines {
+		if i > 0 {
+			sb.WriteString("\n// ")
+		}
+		sb.WriteString(line)
+	}
+	return sb.String()
+}
+
+// convertParamLinks processes markdown links in param descriptions.
+// It converts links in-place and collects URL link target definitions separately.
+func convertParamLinks(params []GoParam, knownTypes map[string]bool, knownMethods map[string]string) (result []GoParam, allLinkDefs []string) {
+	seen := map[string]bool{}
+	result = make([]GoParam, len(params))
+	copy(result, params)
+	for i := range result {
+		converted, linkDefs := docutil.ExtractLinks(result[i].Description, knownTypes, knownMethods)
+		result[i].Description = converted
+		for _, ld := range linkDefs {
+			if !seen[ld] {
+				seen[ld] = true
+				allLinkDefs = append(allLinkDefs, ld)
+			}
+		}
+	}
+	return result, allLinkDefs
 }

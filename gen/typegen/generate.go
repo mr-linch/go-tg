@@ -11,6 +11,7 @@ import (
 	"text/template"
 
 	"github.com/mr-linch/go-tg/gen/config"
+	"github.com/mr-linch/go-tg/gen/docutil"
 	"github.com/mr-linch/go-tg/gen/ir"
 	"github.com/mr-linch/go-tg/gen/naming"
 	"mvdan.cc/gofumpt/format"
@@ -248,6 +249,16 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 	// Collect types used in method parameters (need constructors).
 	inputTypes := collectInputTypes(api)
 
+	// Build lookup maps for Go doc link resolution.
+	knownTypes := make(map[string]bool, len(api.Types))
+	for _, t := range api.Types {
+		knownTypes[naming.NormalizeTypeName(t.Name)] = true
+	}
+	knownMethods := make(map[string]string, len(api.Methods))
+	for _, m := range api.Methods {
+		knownMethods[m.Name] = "Client." + naming.MethodName(m.Name)
+	}
+
 	typeMap := make(map[string]*ir.Type)
 	for i := range api.Types {
 		typeMap[api.Types[i].Name] = &api.Types[i]
@@ -261,12 +272,12 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 		}
 
 		if len(t.Subtypes) > 0 && len(t.Fields) == 0 {
-			resolveUnionOrInterface(t, data, api.Types, inputTypes, cfg, rules, usedNameOverrides, usedTypeOverrides, typeMap, log)
+			resolveUnionOrInterface(t, data, api.Types, inputTypes, cfg, rules, usedNameOverrides, usedTypeOverrides, typeMap, knownTypes, knownMethods, log)
 			continue
 		}
 
 		log.Debug("generating type", "name", t.Name)
-		goType := resolveType(t, cfg, rules, usedNameOverrides, usedTypeOverrides)
+		goType := resolveType(t, cfg, rules, usedNameOverrides, usedTypeOverrides, knownTypes, knownMethods)
 		data.Types = append(data.Types, goType)
 	}
 
@@ -348,10 +359,10 @@ func warnUnusedConfig(cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedEx
 	}
 }
 
-func resolveType(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) GoType {
+func resolveType(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes, knownTypes map[string]bool, knownMethods map[string]string) GoType {
 	name := naming.NormalizeTypeName(t.Name)
 	gt := GoType{
-		Comment: formatTypeComment(name, t.Description),
+		Comment: formatTypeComment(name, t.Description, knownTypes, knownMethods),
 		Name:    name,
 	}
 
@@ -360,18 +371,18 @@ func resolveType(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, 
 		if f.Const != "" {
 			continue
 		}
-		gf := resolveField(t.Name, f, cfg, rules, usedNames, usedTypes)
+		gf := resolveField(t.Name, f, cfg, rules, usedNames, usedTypes, knownTypes, knownMethods)
 		gt.Fields = append(gt.Fields, gf)
 	}
 
 	return gt
 }
 
-func resolveField(typeName string, f ir.Field, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) GoField {
+func resolveField(typeName string, f ir.Field, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes, knownTypes map[string]bool, knownMethods map[string]string) GoField {
 	goName := resolveFieldName(typeName, f.Name, cfg, usedNames)
 	goType := resolveGoType(typeName, f, cfg, rules, usedTypes)
 	jsonTag := buildJSONTag(f.Name, f.Optional)
-	comment := formatFieldComment(f.Description)
+	comment := formatFieldComment(f.Description, knownTypes, knownMethods)
 
 	return GoField{
 		Comment: comment,
@@ -397,13 +408,14 @@ func buildJSONTag(fieldName string, optional bool) string {
 	return fmt.Sprintf("`json:%q`", fieldName)
 }
 
-func formatTypeComment(name, desc string) string {
+func formatTypeComment(name, desc string, knownTypes map[string]bool, knownMethods map[string]string) string {
 	if desc == "" {
 		return name
 	}
 	runes := []rune(desc)
 	first := strings.ToLower(string(runes[0]))
 	text := name + " " + first + string(runes[1:])
+	text = docutil.ConvertLinks(text, knownTypes, knownMethods)
 	return wrapComment(text)
 }
 
@@ -425,11 +437,11 @@ func wrapComment(s string) string {
 }
 
 // formatFieldComment formats a field description for use as a Go comment.
-func formatFieldComment(s string) string {
-	return wrapComment(s)
+func formatFieldComment(s string, knownTypes map[string]bool, knownMethods map[string]string) string {
+	return wrapComment(docutil.ConvertLinks(s, knownTypes, knownMethods))
 }
 
-func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool) *GoUnionType {
+func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes, knownTypes map[string]bool, knownMethods map[string]string) *GoUnionType {
 	firstSubtype := findType(allTypes, t.Subtypes[0])
 	if firstSubtype == nil {
 		return nil
@@ -451,7 +463,7 @@ func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool,
 	discTypeName := name + discGoField
 	union := &GoUnionType{
 		Name:                    name,
-		Comment:                 formatTypeComment(name, t.Description),
+		Comment:                 formatTypeComment(name, t.Description, knownTypes, knownMethods),
 		Discriminator:           discField,
 		DiscriminatorGoField:    discGoField,
 		DiscriminatorTypeName:   discTypeName,
@@ -514,8 +526,8 @@ func resolveUnionType(t ir.Type, allTypes []ir.Type, inputTypes map[string]bool,
 
 // resolveUnionOrInterface handles a type with subtypes but no fields, resolving it as either a
 // discriminator union (struct-based) or an interface union (marker interface).
-func resolveUnionOrInterface(t ir.Type, data *TemplateData, allTypes []ir.Type, inputTypes map[string]bool, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, typeMap map[string]*ir.Type, log *slog.Logger) {
-	if u := resolveUnionType(t, allTypes, inputTypes, cfg, rules, usedNames, usedTypes); u != nil {
+func resolveUnionOrInterface(t ir.Type, data *TemplateData, allTypes []ir.Type, inputTypes map[string]bool, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, typeMap map[string]*ir.Type, knownTypes map[string]bool, knownMethods map[string]string, log *slog.Logger) {
+	if u := resolveUnionType(t, allTypes, inputTypes, cfg, rules, usedNames, usedTypes, knownTypes, knownMethods); u != nil {
 		log.Debug("generating union", "name", t.Name, "variants", len(u.Variants), "hasConstructors", u.HasConstructors)
 		data.UnionTypes = append(data.UnionTypes, *u)
 		data.NeedJSON = true
@@ -523,7 +535,7 @@ func resolveUnionOrInterface(t ir.Type, data *TemplateData, allTypes []ir.Type, 
 		return
 	}
 
-	iu := resolveInterfaceUnion(t, cfg, rules, usedNames, usedTypes, typeMap)
+	iu := resolveInterfaceUnion(t, cfg, rules, usedNames, usedTypes, typeMap, knownTypes, knownMethods)
 	if iu == nil {
 		return
 	}
@@ -571,10 +583,10 @@ func resolveConfigInterfaceUnion(iuCfg *config.InterfaceUnionDef, data *Template
 
 // resolveInterfaceUnion creates a GoInterfaceUnion for union types without a discriminator field.
 // These are spec types with subtypes but no Const fields (e.g., InputMessageContent).
-func resolveInterfaceUnion(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, typeMap map[string]*ir.Type) *GoInterfaceUnion {
+func resolveInterfaceUnion(t ir.Type, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes map[string]bool, typeMap map[string]*ir.Type, knownTypes map[string]bool, knownMethods map[string]string) *GoInterfaceUnion {
 	name := naming.NormalizeTypeName(t.Name)
 	iu := &GoInterfaceUnion{
-		Comment:      formatTypeComment(name, t.Description),
+		Comment:      formatTypeComment(name, t.Description, knownTypes, knownMethods),
 		Name:         name,
 		MarkerMethod: "is" + name,
 	}

@@ -4,121 +4,142 @@ package tgb
 //
 // Telegram Bot API version: 9.3
 // Release date: December 31, 2025
-// Spec hash: 1c93bd778a3c
+// Spec hash: f010e435c22c
 
 import "github.com/mr-linch/go-tg"
 
-// Message register handlers for Update with not empty Message field.
+// Message handles new incoming message of any kind - text, photo, sticker, etc.
 func (bot *Router) Message(handler MessageHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeMessage, handler, filters...)
 }
 
-// EditedMessage register handlers for Update with not empty EditedMessage field.
+// EditedMessage handles new version of a message that is known to the bot and was edited.
+// This update may at times be triggered by changes to message fields that are either unavailable or not actively used by your bot.
 func (bot *Router) EditedMessage(handler MessageHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeEditedMessage, handler, filters...)
 }
 
-// ChannelPost register handlers for Update with not empty ChannelPost field.
+// ChannelPost handles new incoming channel post of any kind - text, photo, sticker, etc.
 func (bot *Router) ChannelPost(handler MessageHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeChannelPost, handler, filters...)
 }
 
-// EditedChannelPost register handlers for Update with not empty EditedChannelPost field.
+// EditedChannelPost handles new version of a channel post that is known to the bot and was edited.
+// This update may at times be triggered by changes to message fields that are either unavailable or not actively used by your bot.
 func (bot *Router) EditedChannelPost(handler MessageHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeEditedChannelPost, handler, filters...)
 }
 
-// BusinessConnection register handlers for Update with not empty BusinessConnection field.
+// BusinessConnection handles the bot was connected to or disconnected from a business account, or a user edited an existing connection with the bot
 func (bot *Router) BusinessConnection(handler BusinessConnectionHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeBusinessConnection, handler, filters...)
 }
 
-// BusinessMessage register handlers for Update with not empty BusinessMessage field.
+// BusinessMessage handles new message from a connected business account
 func (bot *Router) BusinessMessage(handler MessageHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeBusinessMessage, handler, filters...)
 }
 
-// EditedBusinessMessage register handlers for Update with not empty EditedBusinessMessage field.
+// EditedBusinessMessage handles new version of a message from a connected business account
 func (bot *Router) EditedBusinessMessage(handler MessageHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeEditedBusinessMessage, handler, filters...)
 }
 
-// DeletedBusinessMessages register handlers for Update with not empty DeletedBusinessMessages field.
+// DeletedBusinessMessages handles messages were deleted from a connected business account
 func (bot *Router) DeletedBusinessMessages(handler DeletedBusinessMessagesHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeDeletedBusinessMessages, handler, filters...)
 }
 
-// MessageReaction register handlers for Update with not empty MessageReaction field.
+// MessageReaction handles a reaction to a message was changed by a user.
+// The bot must be an administrator in the chat and must explicitly specify "message_reaction" in the list of allowed_updates to receive these updates.
+// The update isn't received for reactions set by bots.
 func (bot *Router) MessageReaction(handler MessageReactionHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeMessageReaction, handler, filters...)
 }
 
-// MessageReactionCount register handlers for Update with not empty MessageReactionCount field.
+// MessageReactionCount handles reactions to a message with anonymous reactions were changed.
+// The bot must be an administrator in the chat and must explicitly specify "message_reaction_count" in the list of allowed_updates to receive these updates.
+// The updates are grouped and can be sent with delay up to a few minutes.
 func (bot *Router) MessageReactionCount(handler MessageReactionCountHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeMessageReactionCount, handler, filters...)
 }
 
-// InlineQuery register handlers for Update with not empty InlineQuery field.
+// InlineQuery handles new incoming [inline] query
+//
+// [inline]: https://core.telegram.org/bots/api#inline-mode
 func (bot *Router) InlineQuery(handler InlineQueryHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeInlineQuery, handler, filters...)
 }
 
-// ChosenInlineResult register handlers for Update with not empty ChosenInlineResult field.
+// ChosenInlineResult handles the result of an [inline] query that was chosen by a user and sent to their chat partner.
+// Please see our documentation on the [feedback collecting] for details on how to enable these updates for your bot.
+//
+// [inline]: https://core.telegram.org/bots/api#inline-mode
+// [feedback collecting]: https://core.telegram.org/bots/inline#collecting-feedback
 func (bot *Router) ChosenInlineResult(handler ChosenInlineResultHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeChosenInlineResult, handler, filters...)
 }
 
-// CallbackQuery register handlers for Update with not empty CallbackQuery field.
+// CallbackQuery handles new incoming callback query
 func (bot *Router) CallbackQuery(handler CallbackQueryHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeCallbackQuery, handler, filters...)
 }
 
-// ShippingQuery register handlers for Update with not empty ShippingQuery field.
+// ShippingQuery handles new incoming shipping query.
+// Only for invoices with flexible price
 func (bot *Router) ShippingQuery(handler ShippingQueryHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeShippingQuery, handler, filters...)
 }
 
-// PreCheckoutQuery register handlers for Update with not empty PreCheckoutQuery field.
+// PreCheckoutQuery handles new incoming pre-checkout query.
+// Contains full information about checkout
 func (bot *Router) PreCheckoutQuery(handler PreCheckoutQueryHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypePreCheckoutQuery, handler, filters...)
 }
 
-// PurchasedPaidMedia register handlers for Update with not empty PurchasedPaidMedia field.
+// PurchasedPaidMedia handles a user purchased paid media with a non-empty payload sent by the bot in a non-channel chat
 func (bot *Router) PurchasedPaidMedia(handler PurchasedPaidMediaHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypePurchasedPaidMedia, handler, filters...)
 }
 
-// Poll register handlers for Update with not empty Poll field.
+// Poll handles new poll state.
+// Bots receive only updates about manually stopped polls and polls, which are sent by the bot
 func (bot *Router) Poll(handler PollHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypePoll, handler, filters...)
 }
 
-// PollAnswer register handlers for Update with not empty PollAnswer field.
+// PollAnswer handles a user changed their answer in a non-anonymous poll.
+// Bots receive new votes only in polls that were sent by the bot itself.
 func (bot *Router) PollAnswer(handler PollAnswerHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypePollAnswer, handler, filters...)
 }
 
-// MyChatMember register handlers for Update with not empty MyChatMember field.
+// MyChatMember handles the bot's chat member status was updated in a chat.
+// For private chats, this update is received only when the bot is blocked or unblocked by the user.
 func (bot *Router) MyChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeMyChatMember, handler, filters...)
 }
 
-// ChatMember register handlers for Update with not empty ChatMember field.
+// ChatMember handles a chat member's status was updated in a chat.
+// The bot must be an administrator in the chat and must explicitly specify "chat_member" in the list of allowed_updates to receive these updates.
 func (bot *Router) ChatMember(handler ChatMemberUpdatedHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeChatMember, handler, filters...)
 }
 
-// ChatJoinRequest register handlers for Update with not empty ChatJoinRequest field.
+// ChatJoinRequest handles a request to join the chat has been sent.
+// The bot must have the can_invite_users administrator right in the chat to receive these updates.
 func (bot *Router) ChatJoinRequest(handler ChatJoinRequestHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeChatJoinRequest, handler, filters...)
 }
 
-// ChatBoost register handlers for Update with not empty ChatBoost field.
+// ChatBoost handles a chat boost was added or changed.
+// The bot must be an administrator in the chat to receive these updates.
 func (bot *Router) ChatBoost(handler ChatBoostHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeChatBoost, handler, filters...)
 }
 
-// RemovedChatBoost register handlers for Update with not empty RemovedChatBoost field.
+// RemovedChatBoost handles a boost was removed from a chat.
+// The bot must be an administrator in the chat to receive these updates.
 func (bot *Router) RemovedChatBoost(handler RemovedChatBoostHandler, filters ...Filter) *Router {
 	return bot.register(tg.UpdateTypeRemovedChatBoost, handler, filters...)
 }

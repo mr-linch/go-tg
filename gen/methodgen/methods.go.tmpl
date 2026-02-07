@@ -2,20 +2,28 @@ package {{.Package}}
 
 {{template "header" .}}
 {{range $method := .Methods}}
-// {{$method.CallTypeName}} represents a call to the {{$method.APIName}} method.
+// {{$method.CallTypeName}} represents a call to the [{{$method.APIName}}] method.
 {{- if $method.Comment}}
 // {{$method.Comment}}
 {{- end}}
+//
+// [{{$method.APIName}}]: {{$method.APIDocURL}}
 type {{$method.CallTypeName}} struct {
 	{{$method.EmbedType}}
 }
 {{range $ctor := $method.Constructors}}
-// New{{$method.GoName}}{{$ctor.Suffix}}Call constructs a new {{$method.CallTypeName}}.
+// New{{$method.GoName}}{{$ctor.Suffix}}Call constructs a new [{{$method.CallTypeName}}].
 {{- if $ctor.RequiredParams}}
 //
 // Required params:
 {{- range $ctor.RequiredParams}}
 //   - {{.GoArgName}}: {{.Description}}
+{{- end}}
+{{- end}}
+{{- if $ctor.LinkDefs}}
+//
+{{- range $ctor.LinkDefs}}
+// {{.}}
 {{- end}}
 {{- end}}
 func New{{$method.GoName}}{{$ctor.Suffix}}Call({{range $i, $p := $ctor.RequiredParams}}{{if $i}}, {{end}}{{$p.GoArgName}} {{$p.GoType}}{{end}}) *{{$method.CallTypeName}} {
@@ -29,12 +37,18 @@ func New{{$method.GoName}}{{$ctor.Suffix}}Call({{range $i, $p := $ctor.RequiredP
 	}
 }
 
-// {{$method.GoName}}{{$ctor.Suffix}} constructs a new {{$method.CallTypeName}}.
+// {{$method.GoName}}{{$ctor.Suffix}} constructs a new [{{$method.CallTypeName}}].
 {{- if $ctor.RequiredParams}}
 //
 // Required params:
 {{- range $ctor.RequiredParams}}
 //   - {{.GoArgName}}: {{.Description}}
+{{- end}}
+{{- end}}
+{{- if $ctor.LinkDefs}}
+//
+{{- range $ctor.LinkDefs}}
+// {{.}}
 {{- end}}
 {{- end}}
 func (client *Client) {{$method.GoName}}{{$ctor.Suffix}}({{range $i, $p := $ctor.RequiredParams}}{{if $i}}, {{end}}{{$p.GoArgName}} {{$p.GoType}}{{end}}) *{{$method.CallTypeName}} {

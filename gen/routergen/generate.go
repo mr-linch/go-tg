@@ -7,8 +7,10 @@ import (
 	"io"
 	"log/slog"
 	"slices"
+	"strings"
 	"text/template"
 
+	"github.com/mr-linch/go-tg/gen/docutil"
 	"github.com/mr-linch/go-tg/gen/ir"
 	"github.com/mr-linch/go-tg/gen/naming"
 	"mvdan.cc/gofumpt/format"
@@ -27,6 +29,7 @@ var updateTmpl string
 type GoRouterMethod struct {
 	FieldName   string // PascalCase field name (e.g., "Message", "EditedMessage")
 	HandlerType string // e.g., "MessageHandler"
+	Description string // field description from API spec (with doc links)
 }
 
 // GoHandlerType represents a unique handler type (grouped by underlying type).
@@ -182,6 +185,16 @@ func buildTemplateData(api *ir.API, pkg string, _ *slog.Logger) (*TemplateData, 
 		return 0
 	})
 
+	// Build lookup maps for doc link resolution.
+	knownTypes := make(map[string]bool, len(api.Types))
+	for _, t := range api.Types {
+		knownTypes[naming.NormalizeTypeName(t.Name)] = true
+	}
+	knownMethods := make(map[string]string, len(api.Methods))
+	for _, m := range api.Methods {
+		knownMethods[m.Name] = "tg.Client." + naming.MethodName(m.Name)
+	}
+
 	// Build router methods (one per Update field).
 	routerMethods := make([]GoRouterMethod, 0, len(updateType.Fields))
 	for _, f := range updateType.Fields {
@@ -196,9 +209,12 @@ func buildTemplateData(api *ir.API, pkg string, _ *slog.Logger) (*TemplateData, 
 		baseName := typeToHandler[typeName]
 		handlerType := baseName + "Handler"
 
+		desc := formatDescription(f.Description, knownTypes, knownMethods)
+
 		routerMethods = append(routerMethods, GoRouterMethod{
 			FieldName:   fieldName,
 			HandlerType: handlerType,
+			Description: desc,
 		})
 	}
 
@@ -208,4 +224,43 @@ func buildTemplateData(api *ir.API, pkg string, _ *slog.Logger) (*TemplateData, 
 		RouterMethods: routerMethods,
 		HandlerTypes:  handlerTypes,
 	}, nil
+}
+
+// formatDescription converts a field description into a Go doc comment body.
+// It strips "Optional. ", lowercases the first letter (for "handles <desc>" style),
+// splits sentences by ". ", and converts markdown links.
+func formatDescription(desc string, knownTypes map[string]bool, knownMethods map[string]string) string {
+	if desc == "" {
+		return ""
+	}
+
+	// Strip "Optional. " prefix.
+	desc = strings.TrimPrefix(desc, "Optional. ")
+
+	// Convert markdown links; extract link defs separately.
+	text, linkDefs := docutil.ExtractLinks(desc, knownTypes, knownMethods)
+
+	// Lowercase first character for "handles <desc>" style.
+	runes := []rune(text)
+	if len(runes) > 0 {
+		text = strings.ToLower(string(runes[0])) + string(runes[1:])
+	}
+
+	// Split by ". " into sentences for multi-line comments.
+	sentences := strings.Split(text, ". ")
+	var sb strings.Builder
+	for i, s := range sentences {
+		if i > 0 {
+			sb.WriteString(".\n// ")
+		}
+		sb.WriteString(s)
+	}
+
+	// Append link defs block.
+	if len(linkDefs) > 0 {
+		sb.WriteString("\n//\n// ")
+		sb.WriteString(strings.Join(linkDefs, "\n// "))
+	}
+
+	return sb.String()
 }

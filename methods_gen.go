@@ -4,18 +4,21 @@ package tg
 //
 // Telegram Bot API version: 9.3
 // Release date: December 31, 2025
-// Spec hash: 1c93bd778a3c
+// Spec hash: f010e435c22c
 
-// GetUpdatesCall represents a call to the getUpdates method.
-// Use this method to receive incoming updates using long polling ([wiki](https://en.wikipedia.org/wiki/Push_technology#Long_polling)). Returns an Array of [Update](https://core.telegram.org/bots/api#update) objects.
+// GetUpdatesCall represents a call to the [getUpdates] method.
+// Use this method to receive incoming updates using long polling ([wiki]). Returns an Array of [Update] objects.
 // Notes
 // 1. This method will not work if an outgoing webhook is set up.
 // 2. In order to avoid getting duplicate updates, recalculate offset after each server response.
+//
+// [wiki]: https://en.wikipedia.org/wiki/Push_technology#Long_polling
+// [getUpdates]: https://core.telegram.org/bots/api#getupdates
 type GetUpdatesCall struct {
 	Call[[]Update]
 }
 
-// NewGetUpdatesCall constructs a new GetUpdatesCall.
+// NewGetUpdatesCall constructs a new [GetUpdatesCall].
 func NewGetUpdatesCall() *GetUpdatesCall {
 	return &GetUpdatesCall{
 		Call[[]Update]{
@@ -24,7 +27,7 @@ func NewGetUpdatesCall() *GetUpdatesCall {
 	}
 }
 
-// GetUpdates constructs a new GetUpdatesCall.
+// GetUpdates constructs a new [GetUpdatesCall].
 func (client *Client) GetUpdates() *GetUpdatesCall {
 	return BindClient(
 		NewGetUpdatesCall(),
@@ -56,19 +59,24 @@ func (call *GetUpdatesCall) AllowedUpdates(allowedUpdates []UpdateType) *GetUpda
 	return call
 }
 
-// SetWebhookCall represents a call to the setWebhook method.
-// Use this method to specify a URL and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, we will send an HTTPS POST request to the specified URL, containing a JSON-serialized [Update](https://core.telegram.org/bots/api#update). In case of an unsuccessful request (a request with response [HTTP status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) different from 2XY), we will repeat the request and give up after a reasonable amount of attempts. Returns True on success.
+// SetWebhookCall represents a call to the [setWebhook] method.
+// Use this method to specify a URL and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, we will send an HTTPS POST request to the specified URL, containing a JSON-serialized [Update]. In case of an unsuccessful request (a request with response [HTTP status code] different from 2XY), we will repeat the request and give up after a reasonable amount of attempts. Returns True on success.
 // If you'd like to make sure that the webhook was set by you, you can specify secret data in the parameter secret_token. If specified, the request will contain a header “X-Telegram-Bot-Api-Secret-Token” with the secret token as content.
 // Notes
-// 1. You will not be able to receive updates using [getUpdates](https://core.telegram.org/bots/api#getupdates) for as long as an outgoing webhook is set up.
-// 2. To use a self-signed certificate, you need to upload your [public key certificate](/bots/self-signed) using certificate parameter. Please upload as InputFile, sending a String will not work.
+// 1. You will not be able to receive updates using [Client.GetUpdates] for as long as an outgoing webhook is set up.
+// 2. To use a self-signed certificate, you need to upload your [public key certificate] using certificate parameter. Please upload as InputFile, sending a String will not work.
 // 3. Ports currently supported for webhooks: 443, 80, 88, 8443.
-// If you're having any trouble setting up webhooks, please check out this [amazing guide to webhooks](/bots/webhooks).
+// If you're having any trouble setting up webhooks, please check out this [amazing guide to webhooks].
+//
+// [HTTP status code]: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+// [public key certificate]: https://core.telegram.org/bots/self-signed
+// [amazing guide to webhooks]: https://core.telegram.org/bots/webhooks
+// [setWebhook]: https://core.telegram.org/bots/api#setwebhook
 type SetWebhookCall struct {
 	CallNoResult
 }
 
-// NewSetWebhookCall constructs a new SetWebhookCall.
+// NewSetWebhookCall constructs a new [SetWebhookCall].
 //
 // Required params:
 //   - url: HTTPS URL to send updates to. Use an empty string to remove webhook integration
@@ -81,7 +89,7 @@ func NewSetWebhookCall(url string) *SetWebhookCall {
 	}
 }
 
-// SetWebhook constructs a new SetWebhookCall.
+// SetWebhook constructs a new [SetWebhookCall].
 //
 // Required params:
 //   - url: HTTPS URL to send updates to. Use an empty string to remove webhook integration
@@ -134,13 +142,15 @@ func (call *SetWebhookCall) SecretToken(secretToken string) *SetWebhookCall {
 	return call
 }
 
-// DeleteWebhookCall represents a call to the deleteWebhook method.
-// Use this method to remove webhook integration if you decide to switch back to [getUpdates](https://core.telegram.org/bots/api#getupdates). Returns True on success.
+// DeleteWebhookCall represents a call to the [deleteWebhook] method.
+// Use this method to remove webhook integration if you decide to switch back to [Client.GetUpdates]. Returns True on success.
+//
+// [deleteWebhook]: https://core.telegram.org/bots/api#deletewebhook
 type DeleteWebhookCall struct {
 	CallNoResult
 }
 
-// NewDeleteWebhookCall constructs a new DeleteWebhookCall.
+// NewDeleteWebhookCall constructs a new [DeleteWebhookCall].
 func NewDeleteWebhookCall() *DeleteWebhookCall {
 	return &DeleteWebhookCall{
 		CallNoResult{
@@ -149,7 +159,7 @@ func NewDeleteWebhookCall() *DeleteWebhookCall {
 	}
 }
 
-// DeleteWebhook constructs a new DeleteWebhookCall.
+// DeleteWebhook constructs a new [DeleteWebhookCall].
 func (client *Client) DeleteWebhook() *DeleteWebhookCall {
 	return BindClient(
 		NewDeleteWebhookCall(),
@@ -163,13 +173,15 @@ func (call *DeleteWebhookCall) DropPendingUpdates(dropPendingUpdates bool) *Dele
 	return call
 }
 
-// GetWebhookInfoCall represents a call to the getWebhookInfo method.
-// Use this method to get current webhook status. Requires no parameters. On success, returns a [WebhookInfo](https://core.telegram.org/bots/api#webhookinfo) object. If the bot is using [getUpdates](https://core.telegram.org/bots/api#getupdates), will return an object with the url field empty.
+// GetWebhookInfoCall represents a call to the [getWebhookInfo] method.
+// Use this method to get current webhook status. Requires no parameters. On success, returns a [WebhookInfo] object. If the bot is using [Client.GetUpdates], will return an object with the url field empty.
+//
+// [getWebhookInfo]: https://core.telegram.org/bots/api#getwebhookinfo
 type GetWebhookInfoCall struct {
 	Call[WebhookInfo]
 }
 
-// NewGetWebhookInfoCall constructs a new GetWebhookInfoCall.
+// NewGetWebhookInfoCall constructs a new [GetWebhookInfoCall].
 func NewGetWebhookInfoCall() *GetWebhookInfoCall {
 	return &GetWebhookInfoCall{
 		Call[WebhookInfo]{
@@ -178,7 +190,7 @@ func NewGetWebhookInfoCall() *GetWebhookInfoCall {
 	}
 }
 
-// GetWebhookInfo constructs a new GetWebhookInfoCall.
+// GetWebhookInfo constructs a new [GetWebhookInfoCall].
 func (client *Client) GetWebhookInfo() *GetWebhookInfoCall {
 	return BindClient(
 		NewGetWebhookInfoCall(),
@@ -186,13 +198,15 @@ func (client *Client) GetWebhookInfo() *GetWebhookInfoCall {
 	)
 }
 
-// GetMeCall represents a call to the getMe method.
-// A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information about the bot in form of a [User](https://core.telegram.org/bots/api#user) object.
+// GetMeCall represents a call to the [getMe] method.
+// A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information about the bot in form of a [User] object.
+//
+// [getMe]: https://core.telegram.org/bots/api#getme
 type GetMeCall struct {
 	Call[User]
 }
 
-// NewGetMeCall constructs a new GetMeCall.
+// NewGetMeCall constructs a new [GetMeCall].
 func NewGetMeCall() *GetMeCall {
 	return &GetMeCall{
 		Call[User]{
@@ -201,7 +215,7 @@ func NewGetMeCall() *GetMeCall {
 	}
 }
 
-// GetMe constructs a new GetMeCall.
+// GetMe constructs a new [GetMeCall].
 func (client *Client) GetMe() *GetMeCall {
 	return BindClient(
 		NewGetMeCall(),
@@ -209,13 +223,15 @@ func (client *Client) GetMe() *GetMeCall {
 	)
 }
 
-// LogOutCall represents a call to the logOut method.
+// LogOutCall represents a call to the [logOut] method.
 // Use this method to log out from the cloud Bot API server before launching the bot locally. You must log out the bot before running it locally, otherwise there is no guarantee that the bot will receive updates. After a successful call, you can immediately log in on a local server, but will not be able to log in back to the cloud Bot API server for 10 minutes. Returns True on success. Requires no parameters.
+//
+// [logOut]: https://core.telegram.org/bots/api#logout
 type LogOutCall struct {
 	CallNoResult
 }
 
-// NewLogOutCall constructs a new LogOutCall.
+// NewLogOutCall constructs a new [LogOutCall].
 func NewLogOutCall() *LogOutCall {
 	return &LogOutCall{
 		CallNoResult{
@@ -224,7 +240,7 @@ func NewLogOutCall() *LogOutCall {
 	}
 }
 
-// LogOut constructs a new LogOutCall.
+// LogOut constructs a new [LogOutCall].
 func (client *Client) LogOut() *LogOutCall {
 	return BindClient(
 		NewLogOutCall(),
@@ -232,13 +248,15 @@ func (client *Client) LogOut() *LogOutCall {
 	)
 }
 
-// CloseCall represents a call to the close method.
+// CloseCall represents a call to the [close] method.
 // Use this method to close the bot instance before moving it from one local server to another. You need to delete the webhook before calling this method to ensure that the bot isn't launched again after server restart. The method will return error 429 in the first 10 minutes after the bot is launched. Returns True on success. Requires no parameters.
+//
+// [close]: https://core.telegram.org/bots/api#close
 type CloseCall struct {
 	CallNoResult
 }
 
-// NewCloseCall constructs a new CloseCall.
+// NewCloseCall constructs a new [CloseCall].
 func NewCloseCall() *CloseCall {
 	return &CloseCall{
 		CallNoResult{
@@ -247,7 +265,7 @@ func NewCloseCall() *CloseCall {
 	}
 }
 
-// Close constructs a new CloseCall.
+// Close constructs a new [CloseCall].
 func (client *Client) Close() *CloseCall {
 	return BindClient(
 		NewCloseCall(),
@@ -255,13 +273,15 @@ func (client *Client) Close() *CloseCall {
 	)
 }
 
-// SendMessageCall represents a call to the sendMessage method.
-// Use this method to send text messages. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendMessageCall represents a call to the [sendMessage] method.
+// Use this method to send text messages. On success, the sent [Message] is returned.
+//
+// [sendMessage]: https://core.telegram.org/bots/api#sendmessage
 type SendMessageCall struct {
 	Call[Message]
 }
 
-// NewSendMessageCall constructs a new SendMessageCall.
+// NewSendMessageCall constructs a new [SendMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -276,7 +296,7 @@ func NewSendMessageCall(chatID PeerID, text string) *SendMessageCall {
 	}
 }
 
-// SendMessage constructs a new SendMessageCall.
+// SendMessage constructs a new [SendMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -378,13 +398,15 @@ func (call *SendMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendMessageCa
 	return call
 }
 
-// ForwardMessageCall represents a call to the forwardMessage method.
-// Use this method to forward messages of any kind. Service messages and messages with protected content can't be forwarded. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// ForwardMessageCall represents a call to the [forwardMessage] method.
+// Use this method to forward messages of any kind. Service messages and messages with protected content can't be forwarded. On success, the sent [Message] is returned.
+//
+// [forwardMessage]: https://core.telegram.org/bots/api#forwardmessage
 type ForwardMessageCall struct {
 	Call[Message]
 }
 
-// NewForwardMessageCall constructs a new ForwardMessageCall.
+// NewForwardMessageCall constructs a new [ForwardMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -401,7 +423,7 @@ func NewForwardMessageCall(chatID PeerID, fromChatID PeerID, messageID int) *For
 	}
 }
 
-// ForwardMessage constructs a new ForwardMessageCall.
+// ForwardMessage constructs a new [ForwardMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -474,13 +496,15 @@ func (call *ForwardMessageCall) MessageID(messageID int) *ForwardMessageCall {
 	return call
 }
 
-// ForwardMessagesCall represents a call to the forwardMessages method.
-// Use this method to forward multiple messages of any kind. If some of the specified messages can't be found or forwarded, they are skipped. Service messages and messages with protected content can't be forwarded. Album grouping is kept for forwarded messages. On success, an array of [MessageId](https://core.telegram.org/bots/api#messageid) of the sent messages is returned.
+// ForwardMessagesCall represents a call to the [forwardMessages] method.
+// Use this method to forward multiple messages of any kind. If some of the specified messages can't be found or forwarded, they are skipped. Service messages and messages with protected content can't be forwarded. Album grouping is kept for forwarded messages. On success, an array of [MessageID] of the sent messages is returned.
+//
+// [forwardMessages]: https://core.telegram.org/bots/api#forwardmessages
 type ForwardMessagesCall struct {
 	Call[[]MessageID]
 }
 
-// NewForwardMessagesCall constructs a new ForwardMessagesCall.
+// NewForwardMessagesCall constructs a new [ForwardMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -497,7 +521,7 @@ func NewForwardMessagesCall(chatID PeerID, fromChatID PeerID, messageIDs []int) 
 	}
 }
 
-// ForwardMessages constructs a new ForwardMessagesCall.
+// ForwardMessages constructs a new [ForwardMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -552,13 +576,15 @@ func (call *ForwardMessagesCall) ProtectContent(protectContent bool) *ForwardMes
 	return call
 }
 
-// CopyMessageCall represents a call to the copyMessage method.
-// Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz [poll](https://core.telegram.org/bots/api#poll) can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the method [forwardMessage](https://core.telegram.org/bots/api#forwardmessage), but the copied message doesn't have a link to the original message. Returns the [MessageId](https://core.telegram.org/bots/api#messageid) of the sent message on success.
+// CopyMessageCall represents a call to the [copyMessage] method.
+// Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz [Poll] can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the method [Client.ForwardMessage], but the copied message doesn't have a link to the original message. Returns the [MessageID] of the sent message on success.
+//
+// [copyMessage]: https://core.telegram.org/bots/api#copymessage
 type CopyMessageCall struct {
 	Call[MessageID]
 }
 
-// NewCopyMessageCall constructs a new CopyMessageCall.
+// NewCopyMessageCall constructs a new [CopyMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -575,7 +601,7 @@ func NewCopyMessageCall(chatID PeerID, fromChatID PeerID, messageID int) *CopyMe
 	}
 }
 
-// CopyMessage constructs a new CopyMessageCall.
+// CopyMessage constructs a new [CopyMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -690,13 +716,15 @@ func (call *CopyMessageCall) ReplyMarkup(replyMarkup ReplyMarkup) *CopyMessageCa
 	return call
 }
 
-// CopyMessagesCall represents a call to the copyMessages method.
-// Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz [poll](https://core.telegram.org/bots/api#poll) can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the method [forwardMessages](https://core.telegram.org/bots/api#forwardmessages), but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an array of [MessageId](https://core.telegram.org/bots/api#messageid) of the sent messages is returned.
+// CopyMessagesCall represents a call to the [copyMessages] method.
+// Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz [Poll] can be copied only if the value of the field correct_option_id is known to the bot. The method is analogous to the method [Client.ForwardMessages], but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an array of [MessageID] of the sent messages is returned.
+//
+// [copyMessages]: https://core.telegram.org/bots/api#copymessages
 type CopyMessagesCall struct {
 	Call[[]MessageID]
 }
 
-// NewCopyMessagesCall constructs a new CopyMessagesCall.
+// NewCopyMessagesCall constructs a new [CopyMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -713,7 +741,7 @@ func NewCopyMessagesCall(chatID PeerID, fromChatID PeerID, messageIDs []int) *Co
 	}
 }
 
-// CopyMessages constructs a new CopyMessagesCall.
+// CopyMessages constructs a new [CopyMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -774,17 +802,21 @@ func (call *CopyMessagesCall) RemoveCaption(removeCaption bool) *CopyMessagesCal
 	return call
 }
 
-// SendPhotoCall represents a call to the sendPhoto method.
-// Use this method to send photos. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendPhotoCall represents a call to the [sendPhoto] method.
+// Use this method to send photos. On success, the sent [Message] is returned.
+//
+// [sendPhoto]: https://core.telegram.org/bots/api#sendphoto
 type SendPhotoCall struct {
 	Call[Message]
 }
 
-// NewSendPhotoCall constructs a new SendPhotoCall.
+// NewSendPhotoCall constructs a new [SendPhotoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - photo: Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - photo: Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewSendPhotoCall(chatID PeerID, photo FileArg) *SendPhotoCall {
 	return &SendPhotoCall{
 		Call[Message]{
@@ -795,11 +827,13 @@ func NewSendPhotoCall(chatID PeerID, photo FileArg) *SendPhotoCall {
 	}
 }
 
-// SendPhoto constructs a new SendPhotoCall.
+// SendPhoto constructs a new [SendPhotoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - photo: Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - photo: Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) SendPhoto(chatID PeerID, photo FileArg) *SendPhotoCall {
 	return BindClient(
 		NewSendPhotoCall(chatID, photo),
@@ -909,18 +943,22 @@ func (call *SendPhotoCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPhotoCall {
 	return call
 }
 
-// SendAudioCall represents a call to the sendAudio method.
-// Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .MP3 or .M4A format. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned. Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future.
-// For sending voice messages, use the [sendVoice](https://core.telegram.org/bots/api#sendvoice) method instead.
+// SendAudioCall represents a call to the [sendAudio] method.
+// Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .MP3 or .M4A format. On success, the sent [Message] is returned. Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future.
+// For sending voice messages, use the [Client.SendVoice] method instead.
+//
+// [sendAudio]: https://core.telegram.org/bots/api#sendaudio
 type SendAudioCall struct {
 	Call[Message]
 }
 
-// NewSendAudioCall constructs a new SendAudioCall.
+// NewSendAudioCall constructs a new [SendAudioCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - audio: Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - audio: Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewSendAudioCall(chatID PeerID, audio FileArg) *SendAudioCall {
 	return &SendAudioCall{
 		Call[Message]{
@@ -931,11 +969,13 @@ func NewSendAudioCall(chatID PeerID, audio FileArg) *SendAudioCall {
 	}
 }
 
-// SendAudio constructs a new SendAudioCall.
+// SendAudio constructs a new [SendAudioCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - audio: Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - audio: Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) SendAudio(chatID PeerID, audio FileArg) *SendAudioCall {
 	return BindClient(
 		NewSendAudioCall(chatID, audio),
@@ -1057,17 +1097,21 @@ func (call *SendAudioCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAudioCall {
 	return call
 }
 
-// SendDocumentCall represents a call to the sendDocument method.
-// Use this method to send general files. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned. Bots can currently send files of any type of up to 50 MB in size, this limit may be changed in the future.
+// SendDocumentCall represents a call to the [sendDocument] method.
+// Use this method to send general files. On success, the sent [Message] is returned. Bots can currently send files of any type of up to 50 MB in size, this limit may be changed in the future.
+//
+// [sendDocument]: https://core.telegram.org/bots/api#senddocument
 type SendDocumentCall struct {
 	Call[Message]
 }
 
-// NewSendDocumentCall constructs a new SendDocumentCall.
+// NewSendDocumentCall constructs a new [SendDocumentCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - document: File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - document: File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewSendDocumentCall(chatID PeerID, document FileArg) *SendDocumentCall {
 	return &SendDocumentCall{
 		Call[Message]{
@@ -1078,11 +1122,13 @@ func NewSendDocumentCall(chatID PeerID, document FileArg) *SendDocumentCall {
 	}
 }
 
-// SendDocument constructs a new SendDocumentCall.
+// SendDocument constructs a new [SendDocumentCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - document: File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - document: File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) SendDocument(chatID PeerID, document FileArg) *SendDocumentCall {
 	return BindClient(
 		NewSendDocumentCall(chatID, document),
@@ -1192,17 +1238,21 @@ func (call *SendDocumentCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendDocument
 	return call
 }
 
-// SendVideoCall represents a call to the sendVideo method.
-// Use this method to send video files, Telegram clients support MPEG4 videos (other formats may be sent as [Document](https://core.telegram.org/bots/api#document)). On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned. Bots can currently send video files of up to 50 MB in size, this limit may be changed in the future.
+// SendVideoCall represents a call to the [sendVideo] method.
+// Use this method to send video files, Telegram clients support MPEG4 videos (other formats may be sent as [Document]). On success, the sent [Message] is returned. Bots can currently send video files of up to 50 MB in size, this limit may be changed in the future.
+//
+// [sendVideo]: https://core.telegram.org/bots/api#sendvideo
 type SendVideoCall struct {
 	Call[Message]
 }
 
-// NewSendVideoCall constructs a new SendVideoCall.
+// NewSendVideoCall constructs a new [SendVideoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - video: Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - video: Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewSendVideoCall(chatID PeerID, video FileArg) *SendVideoCall {
 	return &SendVideoCall{
 		Call[Message]{
@@ -1213,11 +1263,13 @@ func NewSendVideoCall(chatID PeerID, video FileArg) *SendVideoCall {
 	}
 }
 
-// SendVideo constructs a new SendVideoCall.
+// SendVideo constructs a new [SendVideoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - video: Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - video: Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) SendVideo(chatID PeerID, video FileArg) *SendVideoCall {
 	return BindClient(
 		NewSendVideoCall(chatID, video),
@@ -1369,17 +1421,21 @@ func (call *SendVideoCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVideoCall {
 	return call
 }
 
-// SendAnimationCall represents a call to the sendAnimation method.
-// Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned. Bots can currently send animation files of up to 50 MB in size, this limit may be changed in the future.
+// SendAnimationCall represents a call to the [sendAnimation] method.
+// Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent [Message] is returned. Bots can currently send animation files of up to 50 MB in size, this limit may be changed in the future.
+//
+// [sendAnimation]: https://core.telegram.org/bots/api#sendanimation
 type SendAnimationCall struct {
 	Call[Message]
 }
 
-// NewSendAnimationCall constructs a new SendAnimationCall.
+// NewSendAnimationCall constructs a new [SendAnimationCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - animation: Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - animation: Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewSendAnimationCall(chatID PeerID, animation FileArg) *SendAnimationCall {
 	return &SendAnimationCall{
 		Call[Message]{
@@ -1390,11 +1446,13 @@ func NewSendAnimationCall(chatID PeerID, animation FileArg) *SendAnimationCall {
 	}
 }
 
-// SendAnimation constructs a new SendAnimationCall.
+// SendAnimation constructs a new [SendAnimationCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - animation: Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - animation: Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) SendAnimation(chatID PeerID, animation FileArg) *SendAnimationCall {
 	return BindClient(
 		NewSendAnimationCall(chatID, animation),
@@ -1528,17 +1586,21 @@ func (call *SendAnimationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendAnimati
 	return call
 }
 
-// SendVoiceCall represents a call to the sendVoice method.
-// Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS, or in .MP3 format, or in .M4A format (other formats may be sent as [Audio](https://core.telegram.org/bots/api#audio) or [Document](https://core.telegram.org/bots/api#document)). On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.
+// SendVoiceCall represents a call to the [sendVoice] method.
+// Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS, or in .MP3 format, or in .M4A format (other formats may be sent as [Audio] or [Document]). On success, the sent [Message] is returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.
+//
+// [sendVoice]: https://core.telegram.org/bots/api#sendvoice
 type SendVoiceCall struct {
 	Call[Message]
 }
 
-// NewSendVoiceCall constructs a new SendVoiceCall.
+// NewSendVoiceCall constructs a new [SendVoiceCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - voice: Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - voice: Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewSendVoiceCall(chatID PeerID, voice FileArg) *SendVoiceCall {
 	return &SendVoiceCall{
 		Call[Message]{
@@ -1549,11 +1611,13 @@ func NewSendVoiceCall(chatID PeerID, voice FileArg) *SendVoiceCall {
 	}
 }
 
-// SendVoice constructs a new SendVoiceCall.
+// SendVoice constructs a new [SendVoiceCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - voice: Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - voice: Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. [More information on Sending Files »]
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) SendVoice(chatID PeerID, voice FileArg) *SendVoiceCall {
 	return BindClient(
 		NewSendVoiceCall(chatID, voice),
@@ -1657,17 +1721,22 @@ func (call *SendVoiceCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVoiceCall {
 	return call
 }
 
-// SendVideoNoteCall represents a call to the sendVideoNote method.
-// As of [v.4.0](https://telegram.org/blog/video-messages-and-telescope), Telegram clients support rounded square MPEG4 videos of up to 1 minute long. Use this method to send video messages. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendVideoNoteCall represents a call to the [sendVideoNote] method.
+// As of [v.4.0], Telegram clients support rounded square MPEG4 videos of up to 1 minute long. Use this method to send video messages. On success, the sent [Message] is returned.
+//
+// [v.4.0]: https://telegram.org/blog/video-messages-and-telescope
+// [sendVideoNote]: https://core.telegram.org/bots/api#sendvideonote
 type SendVideoNoteCall struct {
 	Call[Message]
 }
 
-// NewSendVideoNoteCall constructs a new SendVideoNoteCall.
+// NewSendVideoNoteCall constructs a new [SendVideoNoteCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - videoNote: Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files). Sending video notes by a URL is currently unsupported
+//   - videoNote: Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. [More information on Sending Files »]. Sending video notes by a URL is currently unsupported
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewSendVideoNoteCall(chatID PeerID, videoNote FileArg) *SendVideoNoteCall {
 	return &SendVideoNoteCall{
 		Call[Message]{
@@ -1678,11 +1747,13 @@ func NewSendVideoNoteCall(chatID PeerID, videoNote FileArg) *SendVideoNoteCall {
 	}
 }
 
-// SendVideoNote constructs a new SendVideoNoteCall.
+// SendVideoNote constructs a new [SendVideoNoteCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - videoNote: Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files). Sending video notes by a URL is currently unsupported
+//   - videoNote: Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. [More information on Sending Files »]. Sending video notes by a URL is currently unsupported
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) SendVideoNote(chatID PeerID, videoNote FileArg) *SendVideoNoteCall {
 	return BindClient(
 		NewSendVideoNoteCall(chatID, videoNote),
@@ -1780,13 +1851,15 @@ func (call *SendVideoNoteCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVideoNo
 	return call
 }
 
-// SendPaidMediaCall represents a call to the sendPaidMedia method.
-// Use this method to send paid media. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendPaidMediaCall represents a call to the [sendPaidMedia] method.
+// Use this method to send paid media. On success, the sent [Message] is returned.
+//
+// [sendPaidMedia]: https://core.telegram.org/bots/api#sendpaidmedia
 type SendPaidMediaCall struct {
 	Call[Message]
 }
 
-// NewSendPaidMediaCall constructs a new SendPaidMediaCall.
+// NewSendPaidMediaCall constructs a new [SendPaidMediaCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername). If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance. Otherwise, they will be credited to the bot's balance.
@@ -1803,7 +1876,7 @@ func NewSendPaidMediaCall(chatID PeerID, starCount int, media []InputPaidMedia) 
 	}
 }
 
-// SendPaidMedia constructs a new SendPaidMediaCall.
+// SendPaidMedia constructs a new [SendPaidMediaCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername). If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance. Otherwise, they will be credited to the bot's balance.
@@ -1918,13 +1991,15 @@ func (call *SendPaidMediaCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPaidMed
 	return call
 }
 
-// SendMediaGroupCall represents a call to the sendMediaGroup method.
-// Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can be only grouped in an album with messages of the same type. On success, an array of [Message](https://core.telegram.org/bots/api#message) objects that were sent is returned.
+// SendMediaGroupCall represents a call to the [sendMediaGroup] method.
+// Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can be only grouped in an album with messages of the same type. On success, an array of [Message] objects that were sent is returned.
+//
+// [sendMediaGroup]: https://core.telegram.org/bots/api#sendmediagroup
 type SendMediaGroupCall struct {
 	Call[[]Message]
 }
 
-// NewSendMediaGroupCall constructs a new SendMediaGroupCall.
+// NewSendMediaGroupCall constructs a new [SendMediaGroupCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -1939,7 +2014,7 @@ func NewSendMediaGroupCall(chatID PeerID, media []InputMedia) *SendMediaGroupCal
 	}
 }
 
-// SendMediaGroup constructs a new SendMediaGroupCall.
+// SendMediaGroup constructs a new [SendMediaGroupCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2011,13 +2086,15 @@ func (call *SendMediaGroupCall) ReplyParameters(replyParameters ReplyParameters)
 	return call
 }
 
-// SendLocationCall represents a call to the sendLocation method.
-// Use this method to send point on the map. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendLocationCall represents a call to the [sendLocation] method.
+// Use this method to send point on the map. On success, the sent [Message] is returned.
+//
+// [sendLocation]: https://core.telegram.org/bots/api#sendlocation
 type SendLocationCall struct {
 	Call[Message]
 }
 
-// NewSendLocationCall constructs a new SendLocationCall.
+// NewSendLocationCall constructs a new [SendLocationCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2034,7 +2111,7 @@ func NewSendLocationCall(chatID PeerID, latitude float64, longitude float64) *Se
 	}
 }
 
-// SendLocation constructs a new SendLocationCall.
+// SendLocation constructs a new [SendLocationCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2149,13 +2226,15 @@ func (call *SendLocationCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendLocation
 	return call
 }
 
-// SendVenueCall represents a call to the sendVenue method.
-// Use this method to send information about a venue. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendVenueCall represents a call to the [sendVenue] method.
+// Use this method to send information about a venue. On success, the sent [Message] is returned.
+//
+// [sendVenue]: https://core.telegram.org/bots/api#sendvenue
 type SendVenueCall struct {
 	Call[Message]
 }
 
-// NewSendVenueCall constructs a new SendVenueCall.
+// NewSendVenueCall constructs a new [SendVenueCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2176,7 +2255,7 @@ func NewSendVenueCall(chatID PeerID, latitude float64, longitude float64, title 
 	}
 }
 
-// SendVenue constructs a new SendVenueCall.
+// SendVenue constructs a new [SendVenueCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2305,13 +2384,15 @@ func (call *SendVenueCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendVenueCall {
 	return call
 }
 
-// SendContactCall represents a call to the sendContact method.
-// Use this method to send phone contacts. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendContactCall represents a call to the [sendContact] method.
+// Use this method to send phone contacts. On success, the sent [Message] is returned.
+//
+// [sendContact]: https://core.telegram.org/bots/api#sendcontact
 type SendContactCall struct {
 	Call[Message]
 }
 
-// NewSendContactCall constructs a new SendContactCall.
+// NewSendContactCall constructs a new [SendContactCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2328,7 +2409,7 @@ func NewSendContactCall(chatID PeerID, phoneNumber string, firstName string) *Se
 	}
 }
 
-// SendContact constructs a new SendContactCall.
+// SendContact constructs a new [SendContactCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2431,13 +2512,15 @@ func (call *SendContactCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendContactCa
 	return call
 }
 
-// SendPollCall represents a call to the sendPoll method.
-// Use this method to send a native poll. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendPollCall represents a call to the [sendPoll] method.
+// Use this method to send a native poll. On success, the sent [Message] is returned.
+//
+// [sendPoll]: https://core.telegram.org/bots/api#sendpoll
 type SendPollCall struct {
 	Call[Message]
 }
 
-// NewSendPollCall constructs a new SendPollCall.
+// NewSendPollCall constructs a new [SendPollCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername). Polls can't be sent to channel direct messages chats.
@@ -2454,7 +2537,7 @@ func NewSendPollCall(chatID PeerID, question string, options []InputPollOption) 
 	}
 }
 
-// SendPoll constructs a new SendPollCall.
+// SendPoll constructs a new [SendPollCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername). Polls can't be sent to channel direct messages chats.
@@ -2605,13 +2688,15 @@ func (call *SendPollCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendPollCall {
 	return call
 }
 
-// SendChecklistCall represents a call to the sendChecklist method.
-// Use this method to send a checklist on behalf of a connected business account. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendChecklistCall represents a call to the [sendChecklist] method.
+// Use this method to send a checklist on behalf of a connected business account. On success, the sent [Message] is returned.
+//
+// [sendChecklist]: https://core.telegram.org/bots/api#sendchecklist
 type SendChecklistCall struct {
 	Call[Message]
 }
 
-// NewSendChecklistCall constructs a new SendChecklistCall.
+// NewSendChecklistCall constructs a new [SendChecklistCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection on behalf of which the message will be sent
@@ -2628,7 +2713,7 @@ func NewSendChecklistCall(businessConnectionID string, chatID int, checklist Inp
 	}
 }
 
-// SendChecklist constructs a new SendChecklistCall.
+// SendChecklist constructs a new [SendChecklistCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection on behalf of which the message will be sent
@@ -2689,13 +2774,15 @@ func (call *SendChecklistCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *Se
 	return call
 }
 
-// SendDiceCall represents a call to the sendDice method.
-// Use this method to send an animated emoji that will display a random value. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendDiceCall represents a call to the [sendDice] method.
+// Use this method to send an animated emoji that will display a random value. On success, the sent [Message] is returned.
+//
+// [sendDice]: https://core.telegram.org/bots/api#senddice
 type SendDiceCall struct {
 	Call[Message]
 }
 
-// NewSendDiceCall constructs a new SendDiceCall.
+// NewSendDiceCall constructs a new [SendDiceCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2708,7 +2795,7 @@ func NewSendDiceCall(chatID PeerID) *SendDiceCall {
 	}
 }
 
-// SendDice constructs a new SendDiceCall.
+// SendDice constructs a new [SendDiceCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2791,13 +2878,15 @@ func (call *SendDiceCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendDiceCall {
 	return call
 }
 
-// SendMessageDraftCall represents a call to the sendMessageDraft method.
+// SendMessageDraftCall represents a call to the [sendMessageDraft] method.
 // Use this method to stream a partial message to a user while the message is being generated; supported only for bots with forum topic mode enabled. Returns True on success.
+//
+// [sendMessageDraft]: https://core.telegram.org/bots/api#sendmessagedraft
 type SendMessageDraftCall struct {
 	CallNoResult
 }
 
-// NewSendMessageDraftCall constructs a new SendMessageDraftCall.
+// NewSendMessageDraftCall constructs a new [SendMessageDraftCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target private chat
@@ -2814,7 +2903,7 @@ func NewSendMessageDraftCall(chatID int, draftID int, text string) *SendMessageD
 	}
 }
 
-// SendMessageDraft constructs a new SendMessageDraftCall.
+// SendMessageDraft constructs a new [SendMessageDraftCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target private chat
@@ -2863,19 +2952,22 @@ func (call *SendMessageDraftCall) Entities(entities []MessageEntity) *SendMessag
 	return call
 }
 
-// SendChatActionCall represents a call to the sendChatAction method.
+// SendChatActionCall represents a call to the [sendChatAction] method.
 // Use this method when you need to tell the user that something is happening on the bot's side. The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status). Returns True on success.
-// Example: The [ImageBot](https://t.me/imagebot) needs some time to process a request and upload the image. Instead of sending a text message along the lines of “Retrieving image, please wait…”, the bot may use [sendChatAction](https://core.telegram.org/bots/api#sendchataction) with action = upload_photo. The user will see a “sending photo” status for the bot.
+// Example: The [ImageBot] needs some time to process a request and upload the image. Instead of sending a text message along the lines of “Retrieving image, please wait…”, the bot may use [Client.SendChatAction] with action = upload_photo. The user will see a “sending photo” status for the bot.
 // We only recommend using this method when a response from the bot will take a noticeable amount of time to arrive.
+//
+// [ImageBot]: https://t.me/imagebot
+// [sendChatAction]: https://core.telegram.org/bots/api#sendchataction
 type SendChatActionCall struct {
 	CallNoResult
 }
 
-// NewSendChatActionCall constructs a new SendChatActionCall.
+// NewSendChatActionCall constructs a new [SendChatActionCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername). Channel chats and channel direct messages chats aren't supported.
-//   - action: Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for [text messages](https://core.telegram.org/bots/api#sendmessage), upload_photo for [photos](https://core.telegram.org/bots/api#sendphoto), record_video or upload_video for [videos](https://core.telegram.org/bots/api#sendvideo), record_voice or upload_voice for [voice notes](https://core.telegram.org/bots/api#sendvoice), upload_document for [general files](https://core.telegram.org/bots/api#senddocument), choose_sticker for [stickers](https://core.telegram.org/bots/api#sendsticker), find_location for [location data](https://core.telegram.org/bots/api#sendlocation), record_video_note or upload_video_note for [video notes](https://core.telegram.org/bots/api#sendvideonote).
+//   - action: Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for [Client.SendMessage], upload_photo for [Client.SendPhoto], record_video or upload_video for [Client.SendVideo], record_voice or upload_voice for [Client.SendVoice], upload_document for [Client.SendDocument], choose_sticker for [Client.SendSticker], find_location for [Client.SendLocation], record_video_note or upload_video_note for [Client.SendVideoNote].
 func NewSendChatActionCall(chatID PeerID, action ChatAction) *SendChatActionCall {
 	return &SendChatActionCall{
 		CallNoResult{
@@ -2886,11 +2978,11 @@ func NewSendChatActionCall(chatID PeerID, action ChatAction) *SendChatActionCall
 	}
 }
 
-// SendChatAction constructs a new SendChatActionCall.
+// SendChatAction constructs a new [SendChatActionCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername). Channel chats and channel direct messages chats aren't supported.
-//   - action: Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for [text messages](https://core.telegram.org/bots/api#sendmessage), upload_photo for [photos](https://core.telegram.org/bots/api#sendphoto), record_video or upload_video for [videos](https://core.telegram.org/bots/api#sendvideo), record_voice or upload_voice for [voice notes](https://core.telegram.org/bots/api#sendvoice), upload_document for [general files](https://core.telegram.org/bots/api#senddocument), choose_sticker for [stickers](https://core.telegram.org/bots/api#sendsticker), find_location for [location data](https://core.telegram.org/bots/api#sendlocation), record_video_note or upload_video_note for [video notes](https://core.telegram.org/bots/api#sendvideonote).
+//   - action: Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for [Client.SendMessage], upload_photo for [Client.SendPhoto], record_video or upload_video for [Client.SendVideo], record_voice or upload_voice for [Client.SendVoice], upload_document for [Client.SendDocument], choose_sticker for [Client.SendSticker], find_location for [Client.SendLocation], record_video_note or upload_video_note for [Client.SendVideoNote].
 func (client *Client) SendChatAction(chatID PeerID, action ChatAction) *SendChatActionCall {
 	return BindClient(
 		NewSendChatActionCall(chatID, action),
@@ -2922,13 +3014,15 @@ func (call *SendChatActionCall) Action(action ChatAction) *SendChatActionCall {
 	return call
 }
 
-// SetMessageReactionCall represents a call to the setMessageReaction method.
+// SetMessageReactionCall represents a call to the [setMessageReaction] method.
 // Use this method to change the chosen reactions on a message. Service messages of some types can't be reacted to. Automatically forwarded messages from a channel to its discussion group have the same available reactions as messages in the channel. Bots can't use paid reactions. Returns True on success.
+//
+// [setMessageReaction]: https://core.telegram.org/bots/api#setmessagereaction
 type SetMessageReactionCall struct {
 	CallNoResult
 }
 
-// NewSetMessageReactionCall constructs a new SetMessageReactionCall.
+// NewSetMessageReactionCall constructs a new [SetMessageReactionCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2943,7 +3037,7 @@ func NewSetMessageReactionCall(chatID PeerID, messageID int) *SetMessageReaction
 	}
 }
 
-// SetMessageReaction constructs a new SetMessageReactionCall.
+// SetMessageReaction constructs a new [SetMessageReactionCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -2979,13 +3073,15 @@ func (call *SetMessageReactionCall) IsBig(isBig bool) *SetMessageReactionCall {
 	return call
 }
 
-// GetUserProfilePhotosCall represents a call to the getUserProfilePhotos method.
-// Use this method to get a list of profile pictures for a user. Returns a [UserProfilePhotos](https://core.telegram.org/bots/api#userprofilephotos) object.
+// GetUserProfilePhotosCall represents a call to the [getUserProfilePhotos] method.
+// Use this method to get a list of profile pictures for a user. Returns a [UserProfilePhotos] object.
+//
+// [getUserProfilePhotos]: https://core.telegram.org/bots/api#getuserprofilephotos
 type GetUserProfilePhotosCall struct {
 	Call[UserProfilePhotos]
 }
 
-// NewGetUserProfilePhotosCall constructs a new GetUserProfilePhotosCall.
+// NewGetUserProfilePhotosCall constructs a new [GetUserProfilePhotosCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user
@@ -2998,7 +3094,7 @@ func NewGetUserProfilePhotosCall(userID UserID) *GetUserProfilePhotosCall {
 	}
 }
 
-// GetUserProfilePhotos constructs a new GetUserProfilePhotosCall.
+// GetUserProfilePhotos constructs a new [GetUserProfilePhotosCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user
@@ -3027,13 +3123,16 @@ func (call *GetUserProfilePhotosCall) Limit(limit int) *GetUserProfilePhotosCall
 	return call
 }
 
-// SetUserEmojiStatusCall represents a call to the setUserEmojiStatus method.
-// Changes the emoji status for a given user that previously allowed the bot to manage their emoji status via the Mini App method [requestEmojiStatusAccess](/bots/webapps#initializing-mini-apps). Returns True on success.
+// SetUserEmojiStatusCall represents a call to the [setUserEmojiStatus] method.
+// Changes the emoji status for a given user that previously allowed the bot to manage their emoji status via the Mini App method [requestEmojiStatusAccess]. Returns True on success.
+//
+// [requestEmojiStatusAccess]: https://core.telegram.org/bots/webapps#initializing-mini-apps
+// [setUserEmojiStatus]: https://core.telegram.org/bots/api#setuseremojistatus
 type SetUserEmojiStatusCall struct {
 	CallNoResult
 }
 
-// NewSetUserEmojiStatusCall constructs a new SetUserEmojiStatusCall.
+// NewSetUserEmojiStatusCall constructs a new [SetUserEmojiStatusCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user
@@ -3046,7 +3145,7 @@ func NewSetUserEmojiStatusCall(userID UserID) *SetUserEmojiStatusCall {
 	}
 }
 
-// SetUserEmojiStatus constructs a new SetUserEmojiStatusCall.
+// SetUserEmojiStatus constructs a new [SetUserEmojiStatusCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user
@@ -3075,14 +3174,16 @@ func (call *SetUserEmojiStatusCall) EmojiStatusExpirationDate(emojiStatusExpirat
 	return call
 }
 
-// GetFileCall represents a call to the getFile method.
-// Use this method to get basic information about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a [File](https://core.telegram.org/bots/api#file) object is returned. The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling [getFile](https://core.telegram.org/bots/api#getfile) again.
+// GetFileCall represents a call to the [getFile] method.
+// Use this method to get basic information about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a [File] object is returned. The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling [Client.GetFile] again.
 // Note: This function may not preserve the original file name and MIME type. You should save the file's MIME type and name (if available) when the File object is received.
+//
+// [getFile]: https://core.telegram.org/bots/api#getfile
 type GetFileCall struct {
 	Call[File]
 }
 
-// NewGetFileCall constructs a new GetFileCall.
+// NewGetFileCall constructs a new [GetFileCall].
 //
 // Required params:
 //   - fileID: File identifier to get information about
@@ -3095,7 +3196,7 @@ func NewGetFileCall(fileID FileID) *GetFileCall {
 	}
 }
 
-// GetFile constructs a new GetFileCall.
+// GetFile constructs a new [GetFileCall].
 //
 // Required params:
 //   - fileID: File identifier to get information about
@@ -3112,13 +3213,15 @@ func (call *GetFileCall) FileID(fileID FileID) *GetFileCall {
 	return call
 }
 
-// BanChatMemberCall represents a call to the banChatMember method.
-// Use this method to ban a user in a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless [unbanned](https://core.telegram.org/bots/api#unbanchatmember) first. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+// BanChatMemberCall represents a call to the [banChatMember] method.
+// Use this method to ban a user in a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless [Client.UnbanChatMember] first. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+//
+// [banChatMember]: https://core.telegram.org/bots/api#banchatmember
 type BanChatMemberCall struct {
 	CallNoResult
 }
 
-// NewBanChatMemberCall constructs a new BanChatMemberCall.
+// NewBanChatMemberCall constructs a new [BanChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
@@ -3133,7 +3236,7 @@ func NewBanChatMemberCall(chatID PeerID, userID UserID) *BanChatMemberCall {
 	}
 }
 
-// BanChatMember constructs a new BanChatMemberCall.
+// BanChatMember constructs a new [BanChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
@@ -3169,13 +3272,15 @@ func (call *BanChatMemberCall) RevokeMessages(revokeMessages bool) *BanChatMembe
 	return call
 }
 
-// UnbanChatMemberCall represents a call to the unbanChatMember method.
+// UnbanChatMemberCall represents a call to the [unbanChatMember] method.
 // Use this method to unban a previously banned user in a supergroup or channel. The user will not return to the group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it. So if the user is a member of the chat they will also be removed from the chat. If you don't want this, use the parameter only_if_banned. Returns True on success.
+//
+// [unbanChatMember]: https://core.telegram.org/bots/api#unbanchatmember
 type UnbanChatMemberCall struct {
 	CallNoResult
 }
 
-// NewUnbanChatMemberCall constructs a new UnbanChatMemberCall.
+// NewUnbanChatMemberCall constructs a new [UnbanChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
@@ -3190,7 +3295,7 @@ func NewUnbanChatMemberCall(chatID PeerID, userID UserID) *UnbanChatMemberCall {
 	}
 }
 
-// UnbanChatMember constructs a new UnbanChatMemberCall.
+// UnbanChatMember constructs a new [UnbanChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
@@ -3220,13 +3325,15 @@ func (call *UnbanChatMemberCall) OnlyIfBanned(onlyIfBanned bool) *UnbanChatMembe
 	return call
 }
 
-// RestrictChatMemberCall represents a call to the restrictChatMember method.
+// RestrictChatMemberCall represents a call to the [restrictChatMember] method.
 // Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to work and must have the appropriate administrator rights. Pass True for all permissions to lift restrictions from a user. Returns True on success.
+//
+// [restrictChatMember]: https://core.telegram.org/bots/api#restrictchatmember
 type RestrictChatMemberCall struct {
 	CallNoResult
 }
 
-// NewRestrictChatMemberCall constructs a new RestrictChatMemberCall.
+// NewRestrictChatMemberCall constructs a new [RestrictChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -3243,7 +3350,7 @@ func NewRestrictChatMemberCall(chatID PeerID, userID UserID, permissions ChatPer
 	}
 }
 
-// RestrictChatMember constructs a new RestrictChatMemberCall.
+// RestrictChatMember constructs a new [RestrictChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -3286,13 +3393,15 @@ func (call *RestrictChatMemberCall) UntilDate(untilDate int) *RestrictChatMember
 	return call
 }
 
-// PromoteChatMemberCall represents a call to the promoteChatMember method.
+// PromoteChatMemberCall represents a call to the [promoteChatMember] method.
 // Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Pass False for all boolean parameters to demote a user. Returns True on success.
+//
+// [promoteChatMember]: https://core.telegram.org/bots/api#promotechatmember
 type PromoteChatMemberCall struct {
 	CallNoResult
 }
 
-// NewPromoteChatMemberCall constructs a new PromoteChatMemberCall.
+// NewPromoteChatMemberCall constructs a new [PromoteChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3307,7 +3416,7 @@ func NewPromoteChatMemberCall(chatID PeerID, userID UserID) *PromoteChatMemberCa
 	}
 }
 
-// PromoteChatMember constructs a new PromoteChatMemberCall.
+// PromoteChatMember constructs a new [PromoteChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3427,13 +3536,15 @@ func (call *PromoteChatMemberCall) CanManageDirectMessages(canManageDirectMessag
 	return call
 }
 
-// SetChatAdministratorCustomTitleCall represents a call to the setChatAdministratorCustomTitle method.
+// SetChatAdministratorCustomTitleCall represents a call to the [setChatAdministratorCustomTitle] method.
 // Use this method to set a custom title for an administrator in a supergroup promoted by the bot. Returns True on success.
+//
+// [setChatAdministratorCustomTitle]: https://core.telegram.org/bots/api#setchatadministratorcustomtitle
 type SetChatAdministratorCustomTitleCall struct {
 	CallNoResult
 }
 
-// NewSetChatAdministratorCustomTitleCall constructs a new SetChatAdministratorCustomTitleCall.
+// NewSetChatAdministratorCustomTitleCall constructs a new [SetChatAdministratorCustomTitleCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -3450,7 +3561,7 @@ func NewSetChatAdministratorCustomTitleCall(chatID PeerID, userID UserID, custom
 	}
 }
 
-// SetChatAdministratorCustomTitle constructs a new SetChatAdministratorCustomTitleCall.
+// SetChatAdministratorCustomTitle constructs a new [SetChatAdministratorCustomTitleCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -3481,13 +3592,15 @@ func (call *SetChatAdministratorCustomTitleCall) CustomTitle(customTitle string)
 	return call
 }
 
-// BanChatSenderChatCall represents a call to the banChatSenderChat method.
-// Use this method to ban a channel chat in a supergroup or a channel. Until the chat is [unbanned](https://core.telegram.org/bots/api#unbanchatsenderchat), the owner of the banned chat won't be able to send messages on behalf of any of their channels. The bot must be an administrator in the supergroup or channel for this to work and must have the appropriate administrator rights. Returns True on success.
+// BanChatSenderChatCall represents a call to the [banChatSenderChat] method.
+// Use this method to ban a channel chat in a supergroup or a channel. Until the chat is [Client.UnbanChatSenderChat], the owner of the banned chat won't be able to send messages on behalf of any of their channels. The bot must be an administrator in the supergroup or channel for this to work and must have the appropriate administrator rights. Returns True on success.
+//
+// [banChatSenderChat]: https://core.telegram.org/bots/api#banchatsenderchat
 type BanChatSenderChatCall struct {
 	CallNoResult
 }
 
-// NewBanChatSenderChatCall constructs a new BanChatSenderChatCall.
+// NewBanChatSenderChatCall constructs a new [BanChatSenderChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3502,7 +3615,7 @@ func NewBanChatSenderChatCall(chatID PeerID, senderChatID int) *BanChatSenderCha
 	}
 }
 
-// BanChatSenderChat constructs a new BanChatSenderChatCall.
+// BanChatSenderChat constructs a new [BanChatSenderChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3526,13 +3639,15 @@ func (call *BanChatSenderChatCall) SenderChatID(senderChatID int) *BanChatSender
 	return call
 }
 
-// UnbanChatSenderChatCall represents a call to the unbanChatSenderChat method.
+// UnbanChatSenderChatCall represents a call to the [unbanChatSenderChat] method.
 // Use this method to unban a previously banned channel chat in a supergroup or channel. The bot must be an administrator for this to work and must have the appropriate administrator rights. Returns True on success.
+//
+// [unbanChatSenderChat]: https://core.telegram.org/bots/api#unbanchatsenderchat
 type UnbanChatSenderChatCall struct {
 	CallNoResult
 }
 
-// NewUnbanChatSenderChatCall constructs a new UnbanChatSenderChatCall.
+// NewUnbanChatSenderChatCall constructs a new [UnbanChatSenderChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3547,7 +3662,7 @@ func NewUnbanChatSenderChatCall(chatID PeerID, senderChatID int) *UnbanChatSende
 	}
 }
 
-// UnbanChatSenderChat constructs a new UnbanChatSenderChatCall.
+// UnbanChatSenderChat constructs a new [UnbanChatSenderChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3571,13 +3686,15 @@ func (call *UnbanChatSenderChatCall) SenderChatID(senderChatID int) *UnbanChatSe
 	return call
 }
 
-// SetChatPermissionsCall represents a call to the setChatPermissions method.
+// SetChatPermissionsCall represents a call to the [setChatPermissions] method.
 // Use this method to set default chat permissions for all members. The bot must be an administrator in the group or a supergroup for this to work and must have the can_restrict_members administrator rights. Returns True on success.
+//
+// [setChatPermissions]: https://core.telegram.org/bots/api#setchatpermissions
 type SetChatPermissionsCall struct {
 	CallNoResult
 }
 
-// NewSetChatPermissionsCall constructs a new SetChatPermissionsCall.
+// NewSetChatPermissionsCall constructs a new [SetChatPermissionsCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -3592,7 +3709,7 @@ func NewSetChatPermissionsCall(chatID PeerID, permissions ChatPermissions) *SetC
 	}
 }
 
-// SetChatPermissions constructs a new SetChatPermissionsCall.
+// SetChatPermissions constructs a new [SetChatPermissionsCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -3622,14 +3739,16 @@ func (call *SetChatPermissionsCall) UseIndependentChatPermissions(useIndependent
 	return call
 }
 
-// ExportChatInviteLinkCall represents a call to the exportChatInviteLink method.
+// ExportChatInviteLinkCall represents a call to the [exportChatInviteLink] method.
 // Use this method to generate a new primary invite link for a chat; any previously generated primary link is revoked. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns the new invite link as String on success.
-// Note: Each administrator in a chat generates their own invite links. Bots can't use invite links generated by other administrators. If you want your bot to work with invite links, it will need to generate its own link using [exportChatInviteLink](https://core.telegram.org/bots/api#exportchatinvitelink) or by calling the [getChat](https://core.telegram.org/bots/api#getchat) method. If your bot needs to generate a new primary invite link replacing its previous one, use [exportChatInviteLink](https://core.telegram.org/bots/api#exportchatinvitelink) again.
+// Note: Each administrator in a chat generates their own invite links. Bots can't use invite links generated by other administrators. If you want your bot to work with invite links, it will need to generate its own link using [Client.ExportChatInviteLink] or by calling the [Client.GetChat] method. If your bot needs to generate a new primary invite link replacing its previous one, use [Client.ExportChatInviteLink] again.
+//
+// [exportChatInviteLink]: https://core.telegram.org/bots/api#exportchatinvitelink
 type ExportChatInviteLinkCall struct {
 	Call[string]
 }
 
-// NewExportChatInviteLinkCall constructs a new ExportChatInviteLinkCall.
+// NewExportChatInviteLinkCall constructs a new [ExportChatInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3642,7 +3761,7 @@ func NewExportChatInviteLinkCall(chatID PeerID) *ExportChatInviteLinkCall {
 	}
 }
 
-// ExportChatInviteLink constructs a new ExportChatInviteLinkCall.
+// ExportChatInviteLink constructs a new [ExportChatInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3659,13 +3778,15 @@ func (call *ExportChatInviteLinkCall) ChatID(chatID PeerID) *ExportChatInviteLin
 	return call
 }
 
-// CreateChatInviteLinkCall represents a call to the createChatInviteLink method.
-// Use this method to create an additional invite link for a chat. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. The link can be revoked using the method [revokeChatInviteLink](https://core.telegram.org/bots/api#revokechatinvitelink). Returns the new invite link as [ChatInviteLink](https://core.telegram.org/bots/api#chatinvitelink) object.
+// CreateChatInviteLinkCall represents a call to the [createChatInviteLink] method.
+// Use this method to create an additional invite link for a chat. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. The link can be revoked using the method [Client.RevokeChatInviteLink]. Returns the new invite link as [ChatInviteLink] object.
+//
+// [createChatInviteLink]: https://core.telegram.org/bots/api#createchatinvitelink
 type CreateChatInviteLinkCall struct {
 	Call[ChatInviteLink]
 }
 
-// NewCreateChatInviteLinkCall constructs a new CreateChatInviteLinkCall.
+// NewCreateChatInviteLinkCall constructs a new [CreateChatInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3678,7 +3799,7 @@ func NewCreateChatInviteLinkCall(chatID PeerID) *CreateChatInviteLinkCall {
 	}
 }
 
-// CreateChatInviteLink constructs a new CreateChatInviteLinkCall.
+// CreateChatInviteLink constructs a new [CreateChatInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3719,13 +3840,15 @@ func (call *CreateChatInviteLinkCall) CreatesJoinRequest(createsJoinRequest bool
 	return call
 }
 
-// EditChatInviteLinkCall represents a call to the editChatInviteLink method.
-// Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns the edited invite link as a [ChatInviteLink](https://core.telegram.org/bots/api#chatinvitelink) object.
+// EditChatInviteLinkCall represents a call to the [editChatInviteLink] method.
+// Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns the edited invite link as a [ChatInviteLink] object.
+//
+// [editChatInviteLink]: https://core.telegram.org/bots/api#editchatinvitelink
 type EditChatInviteLinkCall struct {
 	Call[ChatInviteLink]
 }
 
-// NewEditChatInviteLinkCall constructs a new EditChatInviteLinkCall.
+// NewEditChatInviteLinkCall constructs a new [EditChatInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3740,7 +3863,7 @@ func NewEditChatInviteLinkCall(chatID PeerID, inviteLink string) *EditChatInvite
 	}
 }
 
-// EditChatInviteLink constructs a new EditChatInviteLinkCall.
+// EditChatInviteLink constructs a new [EditChatInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3788,13 +3911,16 @@ func (call *EditChatInviteLinkCall) CreatesJoinRequest(createsJoinRequest bool) 
 	return call
 }
 
-// CreateChatSubscriptionInviteLinkCall represents a call to the createChatSubscriptionInviteLink method.
-// Use this method to create a [subscription invite link](https://telegram.org/blog/superchannels-star-reactions-subscriptions#star-subscriptions) for a channel chat. The bot must have the can_invite_users administrator rights. The link can be edited using the method [editChatSubscriptionInviteLink](https://core.telegram.org/bots/api#editchatsubscriptioninvitelink) or revoked using the method [revokeChatInviteLink](https://core.telegram.org/bots/api#revokechatinvitelink). Returns the new invite link as a [ChatInviteLink](https://core.telegram.org/bots/api#chatinvitelink) object.
+// CreateChatSubscriptionInviteLinkCall represents a call to the [createChatSubscriptionInviteLink] method.
+// Use this method to create a [subscription invite link] for a channel chat. The bot must have the can_invite_users administrator rights. The link can be edited using the method [Client.EditChatSubscriptionInviteLink] or revoked using the method [Client.RevokeChatInviteLink]. Returns the new invite link as a [ChatInviteLink] object.
+//
+// [subscription invite link]: https://telegram.org/blog/superchannels-star-reactions-subscriptions#star-subscriptions
+// [createChatSubscriptionInviteLink]: https://core.telegram.org/bots/api#createchatsubscriptioninvitelink
 type CreateChatSubscriptionInviteLinkCall struct {
 	Call[ChatInviteLink]
 }
 
-// NewCreateChatSubscriptionInviteLinkCall constructs a new CreateChatSubscriptionInviteLinkCall.
+// NewCreateChatSubscriptionInviteLinkCall constructs a new [CreateChatSubscriptionInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target channel chat or username of the target channel (in the format @channelusername)
@@ -3811,7 +3937,7 @@ func NewCreateChatSubscriptionInviteLinkCall(chatID PeerID, subscriptionPeriod i
 	}
 }
 
-// CreateChatSubscriptionInviteLink constructs a new CreateChatSubscriptionInviteLinkCall.
+// CreateChatSubscriptionInviteLink constructs a new [CreateChatSubscriptionInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target channel chat or username of the target channel (in the format @channelusername)
@@ -3848,13 +3974,15 @@ func (call *CreateChatSubscriptionInviteLinkCall) SubscriptionPrice(subscription
 	return call
 }
 
-// EditChatSubscriptionInviteLinkCall represents a call to the editChatSubscriptionInviteLink method.
-// Use this method to edit a subscription invite link created by the bot. The bot must have the can_invite_users administrator rights. Returns the edited invite link as a [ChatInviteLink](https://core.telegram.org/bots/api#chatinvitelink) object.
+// EditChatSubscriptionInviteLinkCall represents a call to the [editChatSubscriptionInviteLink] method.
+// Use this method to edit a subscription invite link created by the bot. The bot must have the can_invite_users administrator rights. Returns the edited invite link as a [ChatInviteLink] object.
+//
+// [editChatSubscriptionInviteLink]: https://core.telegram.org/bots/api#editchatsubscriptioninvitelink
 type EditChatSubscriptionInviteLinkCall struct {
 	Call[ChatInviteLink]
 }
 
-// NewEditChatSubscriptionInviteLinkCall constructs a new EditChatSubscriptionInviteLinkCall.
+// NewEditChatSubscriptionInviteLinkCall constructs a new [EditChatSubscriptionInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3869,7 +3997,7 @@ func NewEditChatSubscriptionInviteLinkCall(chatID PeerID, inviteLink string) *Ed
 	}
 }
 
-// EditChatSubscriptionInviteLink constructs a new EditChatSubscriptionInviteLinkCall.
+// EditChatSubscriptionInviteLink constructs a new [EditChatSubscriptionInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3899,13 +4027,15 @@ func (call *EditChatSubscriptionInviteLinkCall) Name(name string) *EditChatSubsc
 	return call
 }
 
-// RevokeChatInviteLinkCall represents a call to the revokeChatInviteLink method.
-// Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is automatically generated. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns the revoked invite link as [ChatInviteLink](https://core.telegram.org/bots/api#chatinvitelink) object.
+// RevokeChatInviteLinkCall represents a call to the [revokeChatInviteLink] method.
+// Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is automatically generated. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns the revoked invite link as [ChatInviteLink] object.
+//
+// [revokeChatInviteLink]: https://core.telegram.org/bots/api#revokechatinvitelink
 type RevokeChatInviteLinkCall struct {
 	Call[ChatInviteLink]
 }
 
-// NewRevokeChatInviteLinkCall constructs a new RevokeChatInviteLinkCall.
+// NewRevokeChatInviteLinkCall constructs a new [RevokeChatInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier of the target chat or username of the target channel (in the format @channelusername)
@@ -3920,7 +4050,7 @@ func NewRevokeChatInviteLinkCall(chatID PeerID, inviteLink string) *RevokeChatIn
 	}
 }
 
-// RevokeChatInviteLink constructs a new RevokeChatInviteLinkCall.
+// RevokeChatInviteLink constructs a new [RevokeChatInviteLinkCall].
 //
 // Required params:
 //   - chatID: Unique identifier of the target chat or username of the target channel (in the format @channelusername)
@@ -3944,13 +4074,15 @@ func (call *RevokeChatInviteLinkCall) InviteLink(inviteLink string) *RevokeChatI
 	return call
 }
 
-// ApproveChatJoinRequestCall represents a call to the approveChatJoinRequest method.
+// ApproveChatJoinRequestCall represents a call to the [approveChatJoinRequest] method.
 // Use this method to approve a chat join request. The bot must be an administrator in the chat for this to work and must have the can_invite_users administrator right. Returns True on success.
+//
+// [approveChatJoinRequest]: https://core.telegram.org/bots/api#approvechatjoinrequest
 type ApproveChatJoinRequestCall struct {
 	CallNoResult
 }
 
-// NewApproveChatJoinRequestCall constructs a new ApproveChatJoinRequestCall.
+// NewApproveChatJoinRequestCall constructs a new [ApproveChatJoinRequestCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3965,7 +4097,7 @@ func NewApproveChatJoinRequestCall(chatID PeerID, userID UserID) *ApproveChatJoi
 	}
 }
 
-// ApproveChatJoinRequest constructs a new ApproveChatJoinRequestCall.
+// ApproveChatJoinRequest constructs a new [ApproveChatJoinRequestCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -3989,13 +4121,15 @@ func (call *ApproveChatJoinRequestCall) UserID(userID UserID) *ApproveChatJoinRe
 	return call
 }
 
-// DeclineChatJoinRequestCall represents a call to the declineChatJoinRequest method.
+// DeclineChatJoinRequestCall represents a call to the [declineChatJoinRequest] method.
 // Use this method to decline a chat join request. The bot must be an administrator in the chat for this to work and must have the can_invite_users administrator right. Returns True on success.
+//
+// [declineChatJoinRequest]: https://core.telegram.org/bots/api#declinechatjoinrequest
 type DeclineChatJoinRequestCall struct {
 	CallNoResult
 }
 
-// NewDeclineChatJoinRequestCall constructs a new DeclineChatJoinRequestCall.
+// NewDeclineChatJoinRequestCall constructs a new [DeclineChatJoinRequestCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4010,7 +4144,7 @@ func NewDeclineChatJoinRequestCall(chatID PeerID, userID UserID) *DeclineChatJoi
 	}
 }
 
-// DeclineChatJoinRequest constructs a new DeclineChatJoinRequestCall.
+// DeclineChatJoinRequest constructs a new [DeclineChatJoinRequestCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4034,13 +4168,15 @@ func (call *DeclineChatJoinRequestCall) UserID(userID UserID) *DeclineChatJoinRe
 	return call
 }
 
-// SetChatPhotoCall represents a call to the setChatPhoto method.
+// SetChatPhotoCall represents a call to the [setChatPhoto] method.
 // Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+//
+// [setChatPhoto]: https://core.telegram.org/bots/api#setchatphoto
 type SetChatPhotoCall struct {
 	CallNoResult
 }
 
-// NewSetChatPhotoCall constructs a new SetChatPhotoCall.
+// NewSetChatPhotoCall constructs a new [SetChatPhotoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4055,7 +4191,7 @@ func NewSetChatPhotoCall(chatID PeerID, photo InputFile) *SetChatPhotoCall {
 	}
 }
 
-// SetChatPhoto constructs a new SetChatPhotoCall.
+// SetChatPhoto constructs a new [SetChatPhotoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4079,13 +4215,15 @@ func (call *SetChatPhotoCall) Photo(photo InputFile) *SetChatPhotoCall {
 	return call
 }
 
-// DeleteChatPhotoCall represents a call to the deleteChatPhoto method.
+// DeleteChatPhotoCall represents a call to the [deleteChatPhoto] method.
 // Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+//
+// [deleteChatPhoto]: https://core.telegram.org/bots/api#deletechatphoto
 type DeleteChatPhotoCall struct {
 	CallNoResult
 }
 
-// NewDeleteChatPhotoCall constructs a new DeleteChatPhotoCall.
+// NewDeleteChatPhotoCall constructs a new [DeleteChatPhotoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4098,7 +4236,7 @@ func NewDeleteChatPhotoCall(chatID PeerID) *DeleteChatPhotoCall {
 	}
 }
 
-// DeleteChatPhoto constructs a new DeleteChatPhotoCall.
+// DeleteChatPhoto constructs a new [DeleteChatPhotoCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4115,13 +4253,15 @@ func (call *DeleteChatPhotoCall) ChatID(chatID PeerID) *DeleteChatPhotoCall {
 	return call
 }
 
-// SetChatTitleCall represents a call to the setChatTitle method.
+// SetChatTitleCall represents a call to the [setChatTitle] method.
 // Use this method to change the title of a chat. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+//
+// [setChatTitle]: https://core.telegram.org/bots/api#setchattitle
 type SetChatTitleCall struct {
 	CallNoResult
 }
 
-// NewSetChatTitleCall constructs a new SetChatTitleCall.
+// NewSetChatTitleCall constructs a new [SetChatTitleCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4136,7 +4276,7 @@ func NewSetChatTitleCall(chatID PeerID, title string) *SetChatTitleCall {
 	}
 }
 
-// SetChatTitle constructs a new SetChatTitleCall.
+// SetChatTitle constructs a new [SetChatTitleCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4160,13 +4300,15 @@ func (call *SetChatTitleCall) Title(title string) *SetChatTitleCall {
 	return call
 }
 
-// SetChatDescriptionCall represents a call to the setChatDescription method.
+// SetChatDescriptionCall represents a call to the [setChatDescription] method.
 // Use this method to change the description of a group, a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+//
+// [setChatDescription]: https://core.telegram.org/bots/api#setchatdescription
 type SetChatDescriptionCall struct {
 	CallNoResult
 }
 
-// NewSetChatDescriptionCall constructs a new SetChatDescriptionCall.
+// NewSetChatDescriptionCall constructs a new [SetChatDescriptionCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4179,7 +4321,7 @@ func NewSetChatDescriptionCall(chatID PeerID) *SetChatDescriptionCall {
 	}
 }
 
-// SetChatDescription constructs a new SetChatDescriptionCall.
+// SetChatDescription constructs a new [SetChatDescriptionCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4202,13 +4344,15 @@ func (call *SetChatDescriptionCall) Description(description string) *SetChatDesc
 	return call
 }
 
-// PinChatMessageCall represents a call to the pinChatMessage method.
+// PinChatMessageCall represents a call to the [pinChatMessage] method.
 // Use this method to add a message to the list of pinned messages in a chat. In private chats and channel direct messages chats, all non-service messages can be pinned. Conversely, the bot must be an administrator with the 'can_pin_messages' right or the 'can_edit_messages' right to pin messages in groups and channels respectively. Returns True on success.
+//
+// [pinChatMessage]: https://core.telegram.org/bots/api#pinchatmessage
 type PinChatMessageCall struct {
 	CallNoResult
 }
 
-// NewPinChatMessageCall constructs a new PinChatMessageCall.
+// NewPinChatMessageCall constructs a new [PinChatMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4223,7 +4367,7 @@ func NewPinChatMessageCall(chatID PeerID, messageID int) *PinChatMessageCall {
 	}
 }
 
-// PinChatMessage constructs a new PinChatMessageCall.
+// PinChatMessage constructs a new [PinChatMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4259,13 +4403,15 @@ func (call *PinChatMessageCall) DisableNotification(disableNotification bool) *P
 	return call
 }
 
-// UnpinChatMessageCall represents a call to the unpinChatMessage method.
+// UnpinChatMessageCall represents a call to the [unpinChatMessage] method.
 // Use this method to remove a message from the list of pinned messages in a chat. In private chats and channel direct messages chats, all messages can be unpinned. Conversely, the bot must be an administrator with the 'can_pin_messages' right or the 'can_edit_messages' right to unpin messages in groups and channels respectively. Returns True on success.
+//
+// [unpinChatMessage]: https://core.telegram.org/bots/api#unpinchatmessage
 type UnpinChatMessageCall struct {
 	CallNoResult
 }
 
-// NewUnpinChatMessageCall constructs a new UnpinChatMessageCall.
+// NewUnpinChatMessageCall constructs a new [UnpinChatMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4278,7 +4424,7 @@ func NewUnpinChatMessageCall(chatID PeerID) *UnpinChatMessageCall {
 	}
 }
 
-// UnpinChatMessage constructs a new UnpinChatMessageCall.
+// UnpinChatMessage constructs a new [UnpinChatMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4307,13 +4453,15 @@ func (call *UnpinChatMessageCall) MessageID(messageID int) *UnpinChatMessageCall
 	return call
 }
 
-// UnpinAllChatMessagesCall represents a call to the unpinAllChatMessages method.
+// UnpinAllChatMessagesCall represents a call to the [unpinAllChatMessages] method.
 // Use this method to clear the list of pinned messages in a chat. In private chats and channel direct messages chats, no additional rights are required to unpin all pinned messages. Conversely, the bot must be an administrator with the 'can_pin_messages' right or the 'can_edit_messages' right to unpin all pinned messages in groups and channels respectively. Returns True on success.
+//
+// [unpinAllChatMessages]: https://core.telegram.org/bots/api#unpinallchatmessages
 type UnpinAllChatMessagesCall struct {
 	CallNoResult
 }
 
-// NewUnpinAllChatMessagesCall constructs a new UnpinAllChatMessagesCall.
+// NewUnpinAllChatMessagesCall constructs a new [UnpinAllChatMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4326,7 +4474,7 @@ func NewUnpinAllChatMessagesCall(chatID PeerID) *UnpinAllChatMessagesCall {
 	}
 }
 
-// UnpinAllChatMessages constructs a new UnpinAllChatMessagesCall.
+// UnpinAllChatMessages constructs a new [UnpinAllChatMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -4343,13 +4491,15 @@ func (call *UnpinAllChatMessagesCall) ChatID(chatID PeerID) *UnpinAllChatMessage
 	return call
 }
 
-// LeaveChatCall represents a call to the leaveChat method.
+// LeaveChatCall represents a call to the [leaveChat] method.
 // Use this method for your bot to leave a group, supergroup or channel. Returns True on success.
+//
+// [leaveChat]: https://core.telegram.org/bots/api#leavechat
 type LeaveChatCall struct {
 	CallNoResult
 }
 
-// NewLeaveChatCall constructs a new LeaveChatCall.
+// NewLeaveChatCall constructs a new [LeaveChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername). Channel direct messages chats aren't supported; leave the corresponding channel instead.
@@ -4362,7 +4512,7 @@ func NewLeaveChatCall(chatID PeerID) *LeaveChatCall {
 	}
 }
 
-// LeaveChat constructs a new LeaveChatCall.
+// LeaveChat constructs a new [LeaveChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername). Channel direct messages chats aren't supported; leave the corresponding channel instead.
@@ -4379,13 +4529,15 @@ func (call *LeaveChatCall) ChatID(chatID PeerID) *LeaveChatCall {
 	return call
 }
 
-// GetChatCall represents a call to the getChat method.
-// Use this method to get up-to-date information about the chat. Returns a [ChatFullInfo](https://core.telegram.org/bots/api#chatfullinfo) object on success.
+// GetChatCall represents a call to the [getChat] method.
+// Use this method to get up-to-date information about the chat. Returns a [ChatFullInfo] object on success.
+//
+// [getChat]: https://core.telegram.org/bots/api#getchat
 type GetChatCall struct {
 	Call[ChatFullInfo]
 }
 
-// NewGetChatCall constructs a new GetChatCall.
+// NewGetChatCall constructs a new [GetChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
@@ -4398,7 +4550,7 @@ func NewGetChatCall(chatID PeerID) *GetChatCall {
 	}
 }
 
-// GetChat constructs a new GetChatCall.
+// GetChat constructs a new [GetChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
@@ -4415,13 +4567,15 @@ func (call *GetChatCall) ChatID(chatID PeerID) *GetChatCall {
 	return call
 }
 
-// GetChatAdministratorsCall represents a call to the getChatAdministrators method.
-// Use this method to get a list of administrators in a chat, which aren't bots. Returns an Array of [ChatMember](https://core.telegram.org/bots/api#chatmember) objects.
+// GetChatAdministratorsCall represents a call to the [getChatAdministrators] method.
+// Use this method to get a list of administrators in a chat, which aren't bots. Returns an Array of [ChatMember] objects.
+//
+// [getChatAdministrators]: https://core.telegram.org/bots/api#getchatadministrators
 type GetChatAdministratorsCall struct {
 	Call[[]ChatMember]
 }
 
-// NewGetChatAdministratorsCall constructs a new GetChatAdministratorsCall.
+// NewGetChatAdministratorsCall constructs a new [GetChatAdministratorsCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
@@ -4434,7 +4588,7 @@ func NewGetChatAdministratorsCall(chatID PeerID) *GetChatAdministratorsCall {
 	}
 }
 
-// GetChatAdministrators constructs a new GetChatAdministratorsCall.
+// GetChatAdministrators constructs a new [GetChatAdministratorsCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
@@ -4451,13 +4605,15 @@ func (call *GetChatAdministratorsCall) ChatID(chatID PeerID) *GetChatAdministrat
 	return call
 }
 
-// GetChatMemberCountCall represents a call to the getChatMemberCount method.
+// GetChatMemberCountCall represents a call to the [getChatMemberCount] method.
 // Use this method to get the number of members in a chat. Returns Int on success.
+//
+// [getChatMemberCount]: https://core.telegram.org/bots/api#getchatmembercount
 type GetChatMemberCountCall struct {
 	Call[int]
 }
 
-// NewGetChatMemberCountCall constructs a new GetChatMemberCountCall.
+// NewGetChatMemberCountCall constructs a new [GetChatMemberCountCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
@@ -4470,7 +4626,7 @@ func NewGetChatMemberCountCall(chatID PeerID) *GetChatMemberCountCall {
 	}
 }
 
-// GetChatMemberCount constructs a new GetChatMemberCountCall.
+// GetChatMemberCount constructs a new [GetChatMemberCountCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
@@ -4487,13 +4643,15 @@ func (call *GetChatMemberCountCall) ChatID(chatID PeerID) *GetChatMemberCountCal
 	return call
 }
 
-// GetChatMemberCall represents a call to the getChatMember method.
-// Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat. Returns a [ChatMember](https://core.telegram.org/bots/api#chatmember) object on success.
+// GetChatMemberCall represents a call to the [getChatMember] method.
+// Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat. Returns a [ChatMember] object on success.
+//
+// [getChatMember]: https://core.telegram.org/bots/api#getchatmember
 type GetChatMemberCall struct {
 	Call[ChatMember]
 }
 
-// NewGetChatMemberCall constructs a new GetChatMemberCall.
+// NewGetChatMemberCall constructs a new [GetChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
@@ -4508,7 +4666,7 @@ func NewGetChatMemberCall(chatID PeerID, userID UserID) *GetChatMemberCall {
 	}
 }
 
-// GetChatMember constructs a new GetChatMemberCall.
+// GetChatMember constructs a new [GetChatMemberCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
@@ -4532,13 +4690,15 @@ func (call *GetChatMemberCall) UserID(userID UserID) *GetChatMemberCall {
 	return call
 }
 
-// SetChatStickerSetCall represents a call to the setChatStickerSet method.
-// Use this method to set a new group sticker set for a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Use the field can_set_sticker_set optionally returned in [getChat](https://core.telegram.org/bots/api#getchat) requests to check if the bot can use this method. Returns True on success.
+// SetChatStickerSetCall represents a call to the [setChatStickerSet] method.
+// Use this method to set a new group sticker set for a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Use the field can_set_sticker_set optionally returned in [Client.GetChat] requests to check if the bot can use this method. Returns True on success.
+//
+// [setChatStickerSet]: https://core.telegram.org/bots/api#setchatstickerset
 type SetChatStickerSetCall struct {
 	CallNoResult
 }
 
-// NewSetChatStickerSetCall constructs a new SetChatStickerSetCall.
+// NewSetChatStickerSetCall constructs a new [SetChatStickerSetCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4553,7 +4713,7 @@ func NewSetChatStickerSetCall(chatID PeerID, stickerSetName string) *SetChatStic
 	}
 }
 
-// SetChatStickerSet constructs a new SetChatStickerSetCall.
+// SetChatStickerSet constructs a new [SetChatStickerSetCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4577,13 +4737,15 @@ func (call *SetChatStickerSetCall) StickerSetName(stickerSetName string) *SetCha
 	return call
 }
 
-// DeleteChatStickerSetCall represents a call to the deleteChatStickerSet method.
-// Use this method to delete a group sticker set from a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Use the field can_set_sticker_set optionally returned in [getChat](https://core.telegram.org/bots/api#getchat) requests to check if the bot can use this method. Returns True on success.
+// DeleteChatStickerSetCall represents a call to the [deleteChatStickerSet] method.
+// Use this method to delete a group sticker set from a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Use the field can_set_sticker_set optionally returned in [Client.GetChat] requests to check if the bot can use this method. Returns True on success.
+//
+// [deleteChatStickerSet]: https://core.telegram.org/bots/api#deletechatstickerset
 type DeleteChatStickerSetCall struct {
 	CallNoResult
 }
 
-// NewDeleteChatStickerSetCall constructs a new DeleteChatStickerSetCall.
+// NewDeleteChatStickerSetCall constructs a new [DeleteChatStickerSetCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4596,7 +4758,7 @@ func NewDeleteChatStickerSetCall(chatID PeerID) *DeleteChatStickerSetCall {
 	}
 }
 
-// DeleteChatStickerSet constructs a new DeleteChatStickerSetCall.
+// DeleteChatStickerSet constructs a new [DeleteChatStickerSetCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4613,13 +4775,15 @@ func (call *DeleteChatStickerSetCall) ChatID(chatID PeerID) *DeleteChatStickerSe
 	return call
 }
 
-// GetForumTopicIconStickersCall represents a call to the getForumTopicIconStickers method.
-// Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user. Requires no parameters. Returns an Array of [Sticker](https://core.telegram.org/bots/api#sticker) objects.
+// GetForumTopicIconStickersCall represents a call to the [getForumTopicIconStickers] method.
+// Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user. Requires no parameters. Returns an Array of [Sticker] objects.
+//
+// [getForumTopicIconStickers]: https://core.telegram.org/bots/api#getforumtopiciconstickers
 type GetForumTopicIconStickersCall struct {
 	Call[[]Sticker]
 }
 
-// NewGetForumTopicIconStickersCall constructs a new GetForumTopicIconStickersCall.
+// NewGetForumTopicIconStickersCall constructs a new [GetForumTopicIconStickersCall].
 func NewGetForumTopicIconStickersCall() *GetForumTopicIconStickersCall {
 	return &GetForumTopicIconStickersCall{
 		Call[[]Sticker]{
@@ -4628,7 +4792,7 @@ func NewGetForumTopicIconStickersCall() *GetForumTopicIconStickersCall {
 	}
 }
 
-// GetForumTopicIconStickers constructs a new GetForumTopicIconStickersCall.
+// GetForumTopicIconStickers constructs a new [GetForumTopicIconStickersCall].
 func (client *Client) GetForumTopicIconStickers() *GetForumTopicIconStickersCall {
 	return BindClient(
 		NewGetForumTopicIconStickersCall(),
@@ -4636,13 +4800,15 @@ func (client *Client) GetForumTopicIconStickers() *GetForumTopicIconStickersCall
 	)
 }
 
-// CreateForumTopicCall represents a call to the createForumTopic method.
-// Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns information about the created topic as a [ForumTopic](https://core.telegram.org/bots/api#forumtopic) object.
+// CreateForumTopicCall represents a call to the [createForumTopic] method.
+// Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns information about the created topic as a [ForumTopic] object.
+//
+// [createForumTopic]: https://core.telegram.org/bots/api#createforumtopic
 type CreateForumTopicCall struct {
 	Call[ForumTopic]
 }
 
-// NewCreateForumTopicCall constructs a new CreateForumTopicCall.
+// NewCreateForumTopicCall constructs a new [CreateForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4657,7 +4823,7 @@ func NewCreateForumTopicCall(chatID PeerID, name string) *CreateForumTopicCall {
 	}
 }
 
-// CreateForumTopic constructs a new CreateForumTopicCall.
+// CreateForumTopic constructs a new [CreateForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4693,13 +4859,15 @@ func (call *CreateForumTopicCall) IconCustomEmojiID(iconCustomEmojiID string) *C
 	return call
 }
 
-// EditForumTopicCall represents a call to the editForumTopic method.
+// EditForumTopicCall represents a call to the [editForumTopic] method.
 // Use this method to edit name and icon of a topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
+//
+// [editForumTopic]: https://core.telegram.org/bots/api#editforumtopic
 type EditForumTopicCall struct {
 	CallNoResult
 }
 
-// NewEditForumTopicCall constructs a new EditForumTopicCall.
+// NewEditForumTopicCall constructs a new [EditForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4714,7 +4882,7 @@ func NewEditForumTopicCall(chatID PeerID, messageThreadID int) *EditForumTopicCa
 	}
 }
 
-// EditForumTopic constructs a new EditForumTopicCall.
+// EditForumTopic constructs a new [EditForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4750,13 +4918,15 @@ func (call *EditForumTopicCall) IconCustomEmojiID(iconCustomEmojiID string) *Edi
 	return call
 }
 
-// CloseForumTopicCall represents a call to the closeForumTopic method.
+// CloseForumTopicCall represents a call to the [closeForumTopic] method.
 // Use this method to close an open topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
+//
+// [closeForumTopic]: https://core.telegram.org/bots/api#closeforumtopic
 type CloseForumTopicCall struct {
 	CallNoResult
 }
 
-// NewCloseForumTopicCall constructs a new CloseForumTopicCall.
+// NewCloseForumTopicCall constructs a new [CloseForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4771,7 +4941,7 @@ func NewCloseForumTopicCall(chatID PeerID, messageThreadID int) *CloseForumTopic
 	}
 }
 
-// CloseForumTopic constructs a new CloseForumTopicCall.
+// CloseForumTopic constructs a new [CloseForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4795,13 +4965,15 @@ func (call *CloseForumTopicCall) MessageThreadID(messageThreadID int) *CloseForu
 	return call
 }
 
-// ReopenForumTopicCall represents a call to the reopenForumTopic method.
+// ReopenForumTopicCall represents a call to the [reopenForumTopic] method.
 // Use this method to reopen a closed topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
+//
+// [reopenForumTopic]: https://core.telegram.org/bots/api#reopenforumtopic
 type ReopenForumTopicCall struct {
 	CallNoResult
 }
 
-// NewReopenForumTopicCall constructs a new ReopenForumTopicCall.
+// NewReopenForumTopicCall constructs a new [ReopenForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4816,7 +4988,7 @@ func NewReopenForumTopicCall(chatID PeerID, messageThreadID int) *ReopenForumTop
 	}
 }
 
-// ReopenForumTopic constructs a new ReopenForumTopicCall.
+// ReopenForumTopic constructs a new [ReopenForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4840,13 +5012,15 @@ func (call *ReopenForumTopicCall) MessageThreadID(messageThreadID int) *ReopenFo
 	return call
 }
 
-// DeleteForumTopicCall represents a call to the deleteForumTopic method.
+// DeleteForumTopicCall represents a call to the [deleteForumTopic] method.
 // Use this method to delete a forum topic along with all its messages in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the can_delete_messages administrator rights. Returns True on success.
+//
+// [deleteForumTopic]: https://core.telegram.org/bots/api#deleteforumtopic
 type DeleteForumTopicCall struct {
 	CallNoResult
 }
 
-// NewDeleteForumTopicCall constructs a new DeleteForumTopicCall.
+// NewDeleteForumTopicCall constructs a new [DeleteForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4861,7 +5035,7 @@ func NewDeleteForumTopicCall(chatID PeerID, messageThreadID int) *DeleteForumTop
 	}
 }
 
-// DeleteForumTopic constructs a new DeleteForumTopicCall.
+// DeleteForumTopic constructs a new [DeleteForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4885,13 +5059,15 @@ func (call *DeleteForumTopicCall) MessageThreadID(messageThreadID int) *DeleteFo
 	return call
 }
 
-// UnpinAllForumTopicMessagesCall represents a call to the unpinAllForumTopicMessages method.
+// UnpinAllForumTopicMessagesCall represents a call to the [unpinAllForumTopicMessages] method.
 // Use this method to clear the list of pinned messages in a forum topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup. Returns True on success.
+//
+// [unpinAllForumTopicMessages]: https://core.telegram.org/bots/api#unpinallforumtopicmessages
 type UnpinAllForumTopicMessagesCall struct {
 	CallNoResult
 }
 
-// NewUnpinAllForumTopicMessagesCall constructs a new UnpinAllForumTopicMessagesCall.
+// NewUnpinAllForumTopicMessagesCall constructs a new [UnpinAllForumTopicMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4906,7 +5082,7 @@ func NewUnpinAllForumTopicMessagesCall(chatID PeerID, messageThreadID int) *Unpi
 	}
 }
 
-// UnpinAllForumTopicMessages constructs a new UnpinAllForumTopicMessagesCall.
+// UnpinAllForumTopicMessages constructs a new [UnpinAllForumTopicMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4930,13 +5106,15 @@ func (call *UnpinAllForumTopicMessagesCall) MessageThreadID(messageThreadID int)
 	return call
 }
 
-// EditGeneralForumTopicCall represents a call to the editGeneralForumTopic method.
+// EditGeneralForumTopicCall represents a call to the [editGeneralForumTopic] method.
 // Use this method to edit the name of the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+//
+// [editGeneralForumTopic]: https://core.telegram.org/bots/api#editgeneralforumtopic
 type EditGeneralForumTopicCall struct {
 	CallNoResult
 }
 
-// NewEditGeneralForumTopicCall constructs a new EditGeneralForumTopicCall.
+// NewEditGeneralForumTopicCall constructs a new [EditGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4951,7 +5129,7 @@ func NewEditGeneralForumTopicCall(chatID PeerID, name string) *EditGeneralForumT
 	}
 }
 
-// EditGeneralForumTopic constructs a new EditGeneralForumTopicCall.
+// EditGeneralForumTopic constructs a new [EditGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4975,13 +5153,15 @@ func (call *EditGeneralForumTopicCall) Name(name string) *EditGeneralForumTopicC
 	return call
 }
 
-// CloseGeneralForumTopicCall represents a call to the closeGeneralForumTopic method.
+// CloseGeneralForumTopicCall represents a call to the [closeGeneralForumTopic] method.
 // Use this method to close an open 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+//
+// [closeGeneralForumTopic]: https://core.telegram.org/bots/api#closegeneralforumtopic
 type CloseGeneralForumTopicCall struct {
 	CallNoResult
 }
 
-// NewCloseGeneralForumTopicCall constructs a new CloseGeneralForumTopicCall.
+// NewCloseGeneralForumTopicCall constructs a new [CloseGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -4994,7 +5174,7 @@ func NewCloseGeneralForumTopicCall(chatID PeerID) *CloseGeneralForumTopicCall {
 	}
 }
 
-// CloseGeneralForumTopic constructs a new CloseGeneralForumTopicCall.
+// CloseGeneralForumTopic constructs a new [CloseGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5011,13 +5191,15 @@ func (call *CloseGeneralForumTopicCall) ChatID(chatID PeerID) *CloseGeneralForum
 	return call
 }
 
-// ReopenGeneralForumTopicCall represents a call to the reopenGeneralForumTopic method.
+// ReopenGeneralForumTopicCall represents a call to the [reopenGeneralForumTopic] method.
 // Use this method to reopen a closed 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically unhidden if it was hidden. Returns True on success.
+//
+// [reopenGeneralForumTopic]: https://core.telegram.org/bots/api#reopengeneralforumtopic
 type ReopenGeneralForumTopicCall struct {
 	CallNoResult
 }
 
-// NewReopenGeneralForumTopicCall constructs a new ReopenGeneralForumTopicCall.
+// NewReopenGeneralForumTopicCall constructs a new [ReopenGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5030,7 +5212,7 @@ func NewReopenGeneralForumTopicCall(chatID PeerID) *ReopenGeneralForumTopicCall 
 	}
 }
 
-// ReopenGeneralForumTopic constructs a new ReopenGeneralForumTopicCall.
+// ReopenGeneralForumTopic constructs a new [ReopenGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5047,13 +5229,15 @@ func (call *ReopenGeneralForumTopicCall) ChatID(chatID PeerID) *ReopenGeneralFor
 	return call
 }
 
-// HideGeneralForumTopicCall represents a call to the hideGeneralForumTopic method.
+// HideGeneralForumTopicCall represents a call to the [hideGeneralForumTopic] method.
 // Use this method to hide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically closed if it was open. Returns True on success.
+//
+// [hideGeneralForumTopic]: https://core.telegram.org/bots/api#hidegeneralforumtopic
 type HideGeneralForumTopicCall struct {
 	CallNoResult
 }
 
-// NewHideGeneralForumTopicCall constructs a new HideGeneralForumTopicCall.
+// NewHideGeneralForumTopicCall constructs a new [HideGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5066,7 +5250,7 @@ func NewHideGeneralForumTopicCall(chatID PeerID) *HideGeneralForumTopicCall {
 	}
 }
 
-// HideGeneralForumTopic constructs a new HideGeneralForumTopicCall.
+// HideGeneralForumTopic constructs a new [HideGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5083,13 +5267,15 @@ func (call *HideGeneralForumTopicCall) ChatID(chatID PeerID) *HideGeneralForumTo
 	return call
 }
 
-// UnhideGeneralForumTopicCall represents a call to the unhideGeneralForumTopic method.
+// UnhideGeneralForumTopicCall represents a call to the [unhideGeneralForumTopic] method.
 // Use this method to unhide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+//
+// [unhideGeneralForumTopic]: https://core.telegram.org/bots/api#unhidegeneralforumtopic
 type UnhideGeneralForumTopicCall struct {
 	CallNoResult
 }
 
-// NewUnhideGeneralForumTopicCall constructs a new UnhideGeneralForumTopicCall.
+// NewUnhideGeneralForumTopicCall constructs a new [UnhideGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5102,7 +5288,7 @@ func NewUnhideGeneralForumTopicCall(chatID PeerID) *UnhideGeneralForumTopicCall 
 	}
 }
 
-// UnhideGeneralForumTopic constructs a new UnhideGeneralForumTopicCall.
+// UnhideGeneralForumTopic constructs a new [UnhideGeneralForumTopicCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5119,13 +5305,15 @@ func (call *UnhideGeneralForumTopicCall) ChatID(chatID PeerID) *UnhideGeneralFor
 	return call
 }
 
-// UnpinAllGeneralForumTopicMessagesCall represents a call to the unpinAllGeneralForumTopicMessages method.
+// UnpinAllGeneralForumTopicMessagesCall represents a call to the [unpinAllGeneralForumTopicMessages] method.
 // Use this method to clear the list of pinned messages in a General forum topic. The bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup. Returns True on success.
+//
+// [unpinAllGeneralForumTopicMessages]: https://core.telegram.org/bots/api#unpinallgeneralforumtopicmessages
 type UnpinAllGeneralForumTopicMessagesCall struct {
 	CallNoResult
 }
 
-// NewUnpinAllGeneralForumTopicMessagesCall constructs a new UnpinAllGeneralForumTopicMessagesCall.
+// NewUnpinAllGeneralForumTopicMessagesCall constructs a new [UnpinAllGeneralForumTopicMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5138,7 +5326,7 @@ func NewUnpinAllGeneralForumTopicMessagesCall(chatID PeerID) *UnpinAllGeneralFor
 	}
 }
 
-// UnpinAllGeneralForumTopicMessages constructs a new UnpinAllGeneralForumTopicMessagesCall.
+// UnpinAllGeneralForumTopicMessages constructs a new [UnpinAllGeneralForumTopicMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
@@ -5155,14 +5343,18 @@ func (call *UnpinAllGeneralForumTopicMessagesCall) ChatID(chatID PeerID) *UnpinA
 	return call
 }
 
-// AnswerCallbackQueryCall represents a call to the answerCallbackQuery method.
-// Use this method to send answers to callback queries sent from [inline keyboards](/bots/features#inline-keyboards). The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
-// Alternatively, the user can be redirected to the specified Game URL. For this option to work, you must first create a game for your bot via [@BotFather](https://t.me/botfather) and accept the terms. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a parameter.
+// AnswerCallbackQueryCall represents a call to the [answerCallbackQuery] method.
+// Use this method to send answers to callback queries sent from [inline keyboards]. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
+// Alternatively, the user can be redirected to the specified Game URL. For this option to work, you must first create a game for your bot via [@BotFather] and accept the terms. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a parameter.
+//
+// [inline keyboards]: https://core.telegram.org/bots/features#inline-keyboards
+// [@BotFather]: https://t.me/botfather
+// [answerCallbackQuery]: https://core.telegram.org/bots/api#answercallbackquery
 type AnswerCallbackQueryCall struct {
 	CallNoResult
 }
 
-// NewAnswerCallbackQueryCall constructs a new AnswerCallbackQueryCall.
+// NewAnswerCallbackQueryCall constructs a new [AnswerCallbackQueryCall].
 //
 // Required params:
 //   - callbackQueryID: Unique identifier for the query to be answered
@@ -5175,7 +5367,7 @@ func NewAnswerCallbackQueryCall(callbackQueryID string) *AnswerCallbackQueryCall
 	}
 }
 
-// AnswerCallbackQuery constructs a new AnswerCallbackQueryCall.
+// AnswerCallbackQuery constructs a new [AnswerCallbackQueryCall].
 //
 // Required params:
 //   - callbackQueryID: Unique identifier for the query to be answered
@@ -5216,13 +5408,15 @@ func (call *AnswerCallbackQueryCall) CacheTime(cacheTime int) *AnswerCallbackQue
 	return call
 }
 
-// GetUserChatBoostsCall represents a call to the getUserChatBoosts method.
-// Use this method to get the list of boosts added to a chat by a user. Requires administrator rights in the chat. Returns a [UserChatBoosts](https://core.telegram.org/bots/api#userchatboosts) object.
+// GetUserChatBoostsCall represents a call to the [getUserChatBoosts] method.
+// Use this method to get the list of boosts added to a chat by a user. Requires administrator rights in the chat. Returns a [UserChatBoosts] object.
+//
+// [getUserChatBoosts]: https://core.telegram.org/bots/api#getuserchatboosts
 type GetUserChatBoostsCall struct {
 	Call[UserChatBoosts]
 }
 
-// NewGetUserChatBoostsCall constructs a new GetUserChatBoostsCall.
+// NewGetUserChatBoostsCall constructs a new [GetUserChatBoostsCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the chat or username of the channel (in the format @channelusername)
@@ -5237,7 +5431,7 @@ func NewGetUserChatBoostsCall(chatID PeerID, userID UserID) *GetUserChatBoostsCa
 	}
 }
 
-// GetUserChatBoosts constructs a new GetUserChatBoostsCall.
+// GetUserChatBoosts constructs a new [GetUserChatBoostsCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the chat or username of the channel (in the format @channelusername)
@@ -5261,13 +5455,15 @@ func (call *GetUserChatBoostsCall) UserID(userID UserID) *GetUserChatBoostsCall 
 	return call
 }
 
-// GetBusinessConnectionCall represents a call to the getBusinessConnection method.
-// Use this method to get information about the connection of the bot with a business account. Returns a [BusinessConnection](https://core.telegram.org/bots/api#businessconnection) object on success.
+// GetBusinessConnectionCall represents a call to the [getBusinessConnection] method.
+// Use this method to get information about the connection of the bot with a business account. Returns a [BusinessConnection] object on success.
+//
+// [getBusinessConnection]: https://core.telegram.org/bots/api#getbusinessconnection
 type GetBusinessConnectionCall struct {
 	Call[BusinessConnection]
 }
 
-// NewGetBusinessConnectionCall constructs a new GetBusinessConnectionCall.
+// NewGetBusinessConnectionCall constructs a new [GetBusinessConnectionCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -5280,7 +5476,7 @@ func NewGetBusinessConnectionCall(businessConnectionID string) *GetBusinessConne
 	}
 }
 
-// GetBusinessConnection constructs a new GetBusinessConnectionCall.
+// GetBusinessConnection constructs a new [GetBusinessConnectionCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -5297,13 +5493,16 @@ func (call *GetBusinessConnectionCall) BusinessConnectionID(businessConnectionID
 	return call
 }
 
-// SetMyCommandsCall represents a call to the setMyCommands method.
-// Use this method to change the list of the bot's commands. See [this manual](/bots/features#commands) for more details about bot commands. Returns True on success.
+// SetMyCommandsCall represents a call to the [setMyCommands] method.
+// Use this method to change the list of the bot's commands. See [this manual] for more details about bot commands. Returns True on success.
+//
+// [this manual]: https://core.telegram.org/bots/features#commands
+// [setMyCommands]: https://core.telegram.org/bots/api#setmycommands
 type SetMyCommandsCall struct {
 	CallNoResult
 }
 
-// NewSetMyCommandsCall constructs a new SetMyCommandsCall.
+// NewSetMyCommandsCall constructs a new [SetMyCommandsCall].
 //
 // Required params:
 //   - commands: A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
@@ -5316,7 +5515,7 @@ func NewSetMyCommandsCall(commands []BotCommand) *SetMyCommandsCall {
 	}
 }
 
-// SetMyCommands constructs a new SetMyCommandsCall.
+// SetMyCommands constructs a new [SetMyCommandsCall].
 //
 // Required params:
 //   - commands: A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
@@ -5345,13 +5544,16 @@ func (call *SetMyCommandsCall) LanguageCode(languageCode string) *SetMyCommandsC
 	return call
 }
 
-// DeleteMyCommandsCall represents a call to the deleteMyCommands method.
-// Use this method to delete the list of the bot's commands for the given scope and user language. After deletion, [higher level commands](https://core.telegram.org/bots/api#determining-list-of-commands) will be shown to affected users. Returns True on success.
+// DeleteMyCommandsCall represents a call to the [deleteMyCommands] method.
+// Use this method to delete the list of the bot's commands for the given scope and user language. After deletion, [higher level commands] will be shown to affected users. Returns True on success.
+//
+// [higher level commands]: https://core.telegram.org/bots/api#determining-list-of-commands
+// [deleteMyCommands]: https://core.telegram.org/bots/api#deletemycommands
 type DeleteMyCommandsCall struct {
 	CallNoResult
 }
 
-// NewDeleteMyCommandsCall constructs a new DeleteMyCommandsCall.
+// NewDeleteMyCommandsCall constructs a new [DeleteMyCommandsCall].
 func NewDeleteMyCommandsCall() *DeleteMyCommandsCall {
 	return &DeleteMyCommandsCall{
 		CallNoResult{
@@ -5360,7 +5562,7 @@ func NewDeleteMyCommandsCall() *DeleteMyCommandsCall {
 	}
 }
 
-// DeleteMyCommands constructs a new DeleteMyCommandsCall.
+// DeleteMyCommands constructs a new [DeleteMyCommandsCall].
 func (client *Client) DeleteMyCommands() *DeleteMyCommandsCall {
 	return BindClient(
 		NewDeleteMyCommandsCall(),
@@ -5380,13 +5582,15 @@ func (call *DeleteMyCommandsCall) LanguageCode(languageCode string) *DeleteMyCom
 	return call
 }
 
-// GetMyCommandsCall represents a call to the getMyCommands method.
-// Use this method to get the current list of the bot's commands for the given scope and user language. Returns an Array of [BotCommand](https://core.telegram.org/bots/api#botcommand) objects. If commands aren't set, an empty list is returned.
+// GetMyCommandsCall represents a call to the [getMyCommands] method.
+// Use this method to get the current list of the bot's commands for the given scope and user language. Returns an Array of [BotCommand] objects. If commands aren't set, an empty list is returned.
+//
+// [getMyCommands]: https://core.telegram.org/bots/api#getmycommands
 type GetMyCommandsCall struct {
 	Call[[]BotCommand]
 }
 
-// NewGetMyCommandsCall constructs a new GetMyCommandsCall.
+// NewGetMyCommandsCall constructs a new [GetMyCommandsCall].
 func NewGetMyCommandsCall() *GetMyCommandsCall {
 	return &GetMyCommandsCall{
 		Call[[]BotCommand]{
@@ -5395,7 +5599,7 @@ func NewGetMyCommandsCall() *GetMyCommandsCall {
 	}
 }
 
-// GetMyCommands constructs a new GetMyCommandsCall.
+// GetMyCommands constructs a new [GetMyCommandsCall].
 func (client *Client) GetMyCommands() *GetMyCommandsCall {
 	return BindClient(
 		NewGetMyCommandsCall(),
@@ -5415,13 +5619,15 @@ func (call *GetMyCommandsCall) LanguageCode(languageCode string) *GetMyCommandsC
 	return call
 }
 
-// SetMyNameCall represents a call to the setMyName method.
+// SetMyNameCall represents a call to the [setMyName] method.
 // Use this method to change the bot's name. Returns True on success.
+//
+// [setMyName]: https://core.telegram.org/bots/api#setmyname
 type SetMyNameCall struct {
 	CallNoResult
 }
 
-// NewSetMyNameCall constructs a new SetMyNameCall.
+// NewSetMyNameCall constructs a new [SetMyNameCall].
 func NewSetMyNameCall() *SetMyNameCall {
 	return &SetMyNameCall{
 		CallNoResult{
@@ -5430,7 +5636,7 @@ func NewSetMyNameCall() *SetMyNameCall {
 	}
 }
 
-// SetMyName constructs a new SetMyNameCall.
+// SetMyName constructs a new [SetMyNameCall].
 func (client *Client) SetMyName() *SetMyNameCall {
 	return BindClient(
 		NewSetMyNameCall(),
@@ -5450,13 +5656,15 @@ func (call *SetMyNameCall) LanguageCode(languageCode string) *SetMyNameCall {
 	return call
 }
 
-// GetMyNameCall represents a call to the getMyName method.
-// Use this method to get the current bot name for the given user language. Returns [BotName](https://core.telegram.org/bots/api#botname) on success.
+// GetMyNameCall represents a call to the [getMyName] method.
+// Use this method to get the current bot name for the given user language. Returns [BotName] on success.
+//
+// [getMyName]: https://core.telegram.org/bots/api#getmyname
 type GetMyNameCall struct {
 	Call[BotName]
 }
 
-// NewGetMyNameCall constructs a new GetMyNameCall.
+// NewGetMyNameCall constructs a new [GetMyNameCall].
 func NewGetMyNameCall() *GetMyNameCall {
 	return &GetMyNameCall{
 		Call[BotName]{
@@ -5465,7 +5673,7 @@ func NewGetMyNameCall() *GetMyNameCall {
 	}
 }
 
-// GetMyName constructs a new GetMyNameCall.
+// GetMyName constructs a new [GetMyNameCall].
 func (client *Client) GetMyName() *GetMyNameCall {
 	return BindClient(
 		NewGetMyNameCall(),
@@ -5479,13 +5687,15 @@ func (call *GetMyNameCall) LanguageCode(languageCode string) *GetMyNameCall {
 	return call
 }
 
-// SetMyDescriptionCall represents a call to the setMyDescription method.
+// SetMyDescriptionCall represents a call to the [setMyDescription] method.
 // Use this method to change the bot's description, which is shown in the chat with the bot if the chat is empty. Returns True on success.
+//
+// [setMyDescription]: https://core.telegram.org/bots/api#setmydescription
 type SetMyDescriptionCall struct {
 	CallNoResult
 }
 
-// NewSetMyDescriptionCall constructs a new SetMyDescriptionCall.
+// NewSetMyDescriptionCall constructs a new [SetMyDescriptionCall].
 func NewSetMyDescriptionCall() *SetMyDescriptionCall {
 	return &SetMyDescriptionCall{
 		CallNoResult{
@@ -5494,7 +5704,7 @@ func NewSetMyDescriptionCall() *SetMyDescriptionCall {
 	}
 }
 
-// SetMyDescription constructs a new SetMyDescriptionCall.
+// SetMyDescription constructs a new [SetMyDescriptionCall].
 func (client *Client) SetMyDescription() *SetMyDescriptionCall {
 	return BindClient(
 		NewSetMyDescriptionCall(),
@@ -5514,13 +5724,15 @@ func (call *SetMyDescriptionCall) LanguageCode(languageCode string) *SetMyDescri
 	return call
 }
 
-// GetMyDescriptionCall represents a call to the getMyDescription method.
-// Use this method to get the current bot description for the given user language. Returns [BotDescription](https://core.telegram.org/bots/api#botdescription) on success.
+// GetMyDescriptionCall represents a call to the [getMyDescription] method.
+// Use this method to get the current bot description for the given user language. Returns [BotDescription] on success.
+//
+// [getMyDescription]: https://core.telegram.org/bots/api#getmydescription
 type GetMyDescriptionCall struct {
 	Call[BotDescription]
 }
 
-// NewGetMyDescriptionCall constructs a new GetMyDescriptionCall.
+// NewGetMyDescriptionCall constructs a new [GetMyDescriptionCall].
 func NewGetMyDescriptionCall() *GetMyDescriptionCall {
 	return &GetMyDescriptionCall{
 		Call[BotDescription]{
@@ -5529,7 +5741,7 @@ func NewGetMyDescriptionCall() *GetMyDescriptionCall {
 	}
 }
 
-// GetMyDescription constructs a new GetMyDescriptionCall.
+// GetMyDescription constructs a new [GetMyDescriptionCall].
 func (client *Client) GetMyDescription() *GetMyDescriptionCall {
 	return BindClient(
 		NewGetMyDescriptionCall(),
@@ -5543,13 +5755,15 @@ func (call *GetMyDescriptionCall) LanguageCode(languageCode string) *GetMyDescri
 	return call
 }
 
-// SetMyShortDescriptionCall represents a call to the setMyShortDescription method.
+// SetMyShortDescriptionCall represents a call to the [setMyShortDescription] method.
 // Use this method to change the bot's short description, which is shown on the bot's profile page and is sent together with the link when users share the bot. Returns True on success.
+//
+// [setMyShortDescription]: https://core.telegram.org/bots/api#setmyshortdescription
 type SetMyShortDescriptionCall struct {
 	CallNoResult
 }
 
-// NewSetMyShortDescriptionCall constructs a new SetMyShortDescriptionCall.
+// NewSetMyShortDescriptionCall constructs a new [SetMyShortDescriptionCall].
 func NewSetMyShortDescriptionCall() *SetMyShortDescriptionCall {
 	return &SetMyShortDescriptionCall{
 		CallNoResult{
@@ -5558,7 +5772,7 @@ func NewSetMyShortDescriptionCall() *SetMyShortDescriptionCall {
 	}
 }
 
-// SetMyShortDescription constructs a new SetMyShortDescriptionCall.
+// SetMyShortDescription constructs a new [SetMyShortDescriptionCall].
 func (client *Client) SetMyShortDescription() *SetMyShortDescriptionCall {
 	return BindClient(
 		NewSetMyShortDescriptionCall(),
@@ -5578,13 +5792,15 @@ func (call *SetMyShortDescriptionCall) LanguageCode(languageCode string) *SetMyS
 	return call
 }
 
-// GetMyShortDescriptionCall represents a call to the getMyShortDescription method.
-// Use this method to get the current bot short description for the given user language. Returns [BotShortDescription](https://core.telegram.org/bots/api#botshortdescription) on success.
+// GetMyShortDescriptionCall represents a call to the [getMyShortDescription] method.
+// Use this method to get the current bot short description for the given user language. Returns [BotShortDescription] on success.
+//
+// [getMyShortDescription]: https://core.telegram.org/bots/api#getmyshortdescription
 type GetMyShortDescriptionCall struct {
 	Call[BotShortDescription]
 }
 
-// NewGetMyShortDescriptionCall constructs a new GetMyShortDescriptionCall.
+// NewGetMyShortDescriptionCall constructs a new [GetMyShortDescriptionCall].
 func NewGetMyShortDescriptionCall() *GetMyShortDescriptionCall {
 	return &GetMyShortDescriptionCall{
 		Call[BotShortDescription]{
@@ -5593,7 +5809,7 @@ func NewGetMyShortDescriptionCall() *GetMyShortDescriptionCall {
 	}
 }
 
-// GetMyShortDescription constructs a new GetMyShortDescriptionCall.
+// GetMyShortDescription constructs a new [GetMyShortDescriptionCall].
 func (client *Client) GetMyShortDescription() *GetMyShortDescriptionCall {
 	return BindClient(
 		NewGetMyShortDescriptionCall(),
@@ -5607,13 +5823,15 @@ func (call *GetMyShortDescriptionCall) LanguageCode(languageCode string) *GetMyS
 	return call
 }
 
-// SetChatMenuButtonCall represents a call to the setChatMenuButton method.
+// SetChatMenuButtonCall represents a call to the [setChatMenuButton] method.
 // Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on success.
+//
+// [setChatMenuButton]: https://core.telegram.org/bots/api#setchatmenubutton
 type SetChatMenuButtonCall struct {
 	CallNoResult
 }
 
-// NewSetChatMenuButtonCall constructs a new SetChatMenuButtonCall.
+// NewSetChatMenuButtonCall constructs a new [SetChatMenuButtonCall].
 func NewSetChatMenuButtonCall() *SetChatMenuButtonCall {
 	return &SetChatMenuButtonCall{
 		CallNoResult{
@@ -5622,7 +5840,7 @@ func NewSetChatMenuButtonCall() *SetChatMenuButtonCall {
 	}
 }
 
-// SetChatMenuButton constructs a new SetChatMenuButtonCall.
+// SetChatMenuButton constructs a new [SetChatMenuButtonCall].
 func (client *Client) SetChatMenuButton() *SetChatMenuButtonCall {
 	return BindClient(
 		NewSetChatMenuButtonCall(),
@@ -5642,13 +5860,15 @@ func (call *SetChatMenuButtonCall) MenuButton(menuButton MenuButton) *SetChatMen
 	return call
 }
 
-// GetChatMenuButtonCall represents a call to the getChatMenuButton method.
-// Use this method to get the current value of the bot's menu button in a private chat, or the default menu button. Returns [MenuButton](https://core.telegram.org/bots/api#menubutton) on success.
+// GetChatMenuButtonCall represents a call to the [getChatMenuButton] method.
+// Use this method to get the current value of the bot's menu button in a private chat, or the default menu button. Returns [MenuButton] on success.
+//
+// [getChatMenuButton]: https://core.telegram.org/bots/api#getchatmenubutton
 type GetChatMenuButtonCall struct {
 	Call[MenuButton]
 }
 
-// NewGetChatMenuButtonCall constructs a new GetChatMenuButtonCall.
+// NewGetChatMenuButtonCall constructs a new [GetChatMenuButtonCall].
 func NewGetChatMenuButtonCall() *GetChatMenuButtonCall {
 	return &GetChatMenuButtonCall{
 		Call[MenuButton]{
@@ -5657,7 +5877,7 @@ func NewGetChatMenuButtonCall() *GetChatMenuButtonCall {
 	}
 }
 
-// GetChatMenuButton constructs a new GetChatMenuButtonCall.
+// GetChatMenuButton constructs a new [GetChatMenuButtonCall].
 func (client *Client) GetChatMenuButton() *GetChatMenuButtonCall {
 	return BindClient(
 		NewGetChatMenuButtonCall(),
@@ -5671,13 +5891,15 @@ func (call *GetChatMenuButtonCall) ChatID(chatID int) *GetChatMenuButtonCall {
 	return call
 }
 
-// SetMyDefaultAdministratorRightsCall represents a call to the setMyDefaultAdministratorRights method.
+// SetMyDefaultAdministratorRightsCall represents a call to the [setMyDefaultAdministratorRights] method.
 // Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels. These rights will be suggested to users, but they are free to modify the list before adding the bot. Returns True on success.
+//
+// [setMyDefaultAdministratorRights]: https://core.telegram.org/bots/api#setmydefaultadministratorrights
 type SetMyDefaultAdministratorRightsCall struct {
 	CallNoResult
 }
 
-// NewSetMyDefaultAdministratorRightsCall constructs a new SetMyDefaultAdministratorRightsCall.
+// NewSetMyDefaultAdministratorRightsCall constructs a new [SetMyDefaultAdministratorRightsCall].
 func NewSetMyDefaultAdministratorRightsCall() *SetMyDefaultAdministratorRightsCall {
 	return &SetMyDefaultAdministratorRightsCall{
 		CallNoResult{
@@ -5686,7 +5908,7 @@ func NewSetMyDefaultAdministratorRightsCall() *SetMyDefaultAdministratorRightsCa
 	}
 }
 
-// SetMyDefaultAdministratorRights constructs a new SetMyDefaultAdministratorRightsCall.
+// SetMyDefaultAdministratorRights constructs a new [SetMyDefaultAdministratorRightsCall].
 func (client *Client) SetMyDefaultAdministratorRights() *SetMyDefaultAdministratorRightsCall {
 	return BindClient(
 		NewSetMyDefaultAdministratorRightsCall(),
@@ -5706,13 +5928,15 @@ func (call *SetMyDefaultAdministratorRightsCall) ForChannels(forChannels bool) *
 	return call
 }
 
-// GetMyDefaultAdministratorRightsCall represents a call to the getMyDefaultAdministratorRights method.
-// Use this method to get the current default administrator rights of the bot. Returns [ChatAdministratorRights](https://core.telegram.org/bots/api#chatadministratorrights) on success.
+// GetMyDefaultAdministratorRightsCall represents a call to the [getMyDefaultAdministratorRights] method.
+// Use this method to get the current default administrator rights of the bot. Returns [ChatAdministratorRights] on success.
+//
+// [getMyDefaultAdministratorRights]: https://core.telegram.org/bots/api#getmydefaultadministratorrights
 type GetMyDefaultAdministratorRightsCall struct {
 	Call[ChatAdministratorRights]
 }
 
-// NewGetMyDefaultAdministratorRightsCall constructs a new GetMyDefaultAdministratorRightsCall.
+// NewGetMyDefaultAdministratorRightsCall constructs a new [GetMyDefaultAdministratorRightsCall].
 func NewGetMyDefaultAdministratorRightsCall() *GetMyDefaultAdministratorRightsCall {
 	return &GetMyDefaultAdministratorRightsCall{
 		Call[ChatAdministratorRights]{
@@ -5721,7 +5945,7 @@ func NewGetMyDefaultAdministratorRightsCall() *GetMyDefaultAdministratorRightsCa
 	}
 }
 
-// GetMyDefaultAdministratorRights constructs a new GetMyDefaultAdministratorRightsCall.
+// GetMyDefaultAdministratorRights constructs a new [GetMyDefaultAdministratorRightsCall].
 func (client *Client) GetMyDefaultAdministratorRights() *GetMyDefaultAdministratorRightsCall {
 	return BindClient(
 		NewGetMyDefaultAdministratorRightsCall(),
@@ -5735,13 +5959,15 @@ func (call *GetMyDefaultAdministratorRightsCall) ForChannels(forChannels bool) *
 	return call
 }
 
-// GetAvailableGiftsCall represents a call to the getAvailableGifts method.
-// Returns the list of gifts that can be sent by the bot to users and channel chats. Requires no parameters. Returns a [Gifts](https://core.telegram.org/bots/api#gifts) object.
+// GetAvailableGiftsCall represents a call to the [getAvailableGifts] method.
+// Returns the list of gifts that can be sent by the bot to users and channel chats. Requires no parameters. Returns a [Gifts] object.
+//
+// [getAvailableGifts]: https://core.telegram.org/bots/api#getavailablegifts
 type GetAvailableGiftsCall struct {
 	Call[Gifts]
 }
 
-// NewGetAvailableGiftsCall constructs a new GetAvailableGiftsCall.
+// NewGetAvailableGiftsCall constructs a new [GetAvailableGiftsCall].
 func NewGetAvailableGiftsCall() *GetAvailableGiftsCall {
 	return &GetAvailableGiftsCall{
 		Call[Gifts]{
@@ -5750,7 +5976,7 @@ func NewGetAvailableGiftsCall() *GetAvailableGiftsCall {
 	}
 }
 
-// GetAvailableGifts constructs a new GetAvailableGiftsCall.
+// GetAvailableGifts constructs a new [GetAvailableGiftsCall].
 func (client *Client) GetAvailableGifts() *GetAvailableGiftsCall {
 	return BindClient(
 		NewGetAvailableGiftsCall(),
@@ -5758,13 +5984,15 @@ func (client *Client) GetAvailableGifts() *GetAvailableGiftsCall {
 	)
 }
 
-// SendGiftCall represents a call to the sendGift method.
+// SendGiftCall represents a call to the [sendGift] method.
 // Sends a gift to the given user or channel chat. The gift can't be converted to Telegram Stars by the receiver. Returns True on success.
+//
+// [sendGift]: https://core.telegram.org/bots/api#sendgift
 type SendGiftCall struct {
 	CallNoResult
 }
 
-// NewSendGiftCall constructs a new SendGiftCall.
+// NewSendGiftCall constructs a new [SendGiftCall].
 //
 // Required params:
 //   - giftID: Identifier of the gift; limited gifts can't be sent to channel chats
@@ -5777,7 +6005,7 @@ func NewSendGiftCall(giftID string) *SendGiftCall {
 	}
 }
 
-// SendGift constructs a new SendGiftCall.
+// SendGift constructs a new [SendGiftCall].
 //
 // Required params:
 //   - giftID: Identifier of the gift; limited gifts can't be sent to channel chats
@@ -5830,13 +6058,15 @@ func (call *SendGiftCall) TextEntities(textEntities []MessageEntity) *SendGiftCa
 	return call
 }
 
-// GiftPremiumSubscriptionCall represents a call to the giftPremiumSubscription method.
+// GiftPremiumSubscriptionCall represents a call to the [giftPremiumSubscription] method.
 // Gifts a Telegram Premium subscription to the given user. Returns True on success.
+//
+// [giftPremiumSubscription]: https://core.telegram.org/bots/api#giftpremiumsubscription
 type GiftPremiumSubscriptionCall struct {
 	CallNoResult
 }
 
-// NewGiftPremiumSubscriptionCall constructs a new GiftPremiumSubscriptionCall.
+// NewGiftPremiumSubscriptionCall constructs a new [GiftPremiumSubscriptionCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user who will receive a Telegram Premium subscription
@@ -5853,7 +6083,7 @@ func NewGiftPremiumSubscriptionCall(userID UserID, monthCount int, starCount int
 	}
 }
 
-// GiftPremiumSubscription constructs a new GiftPremiumSubscriptionCall.
+// GiftPremiumSubscription constructs a new [GiftPremiumSubscriptionCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user who will receive a Telegram Premium subscription
@@ -5902,13 +6132,16 @@ func (call *GiftPremiumSubscriptionCall) TextEntities(textEntities []MessageEnti
 	return call
 }
 
-// VerifyUserCall represents a call to the verifyUser method.
-// Verifies a user [on behalf of the organization](https://telegram.org/verify#third-party-verification) which is represented by the bot. Returns True on success.
+// VerifyUserCall represents a call to the [verifyUser] method.
+// Verifies a user [on behalf of the organization] which is represented by the bot. Returns True on success.
+//
+// [on behalf of the organization]: https://telegram.org/verify#third-party-verification
+// [verifyUser]: https://core.telegram.org/bots/api#verifyuser
 type VerifyUserCall struct {
 	CallNoResult
 }
 
-// NewVerifyUserCall constructs a new VerifyUserCall.
+// NewVerifyUserCall constructs a new [VerifyUserCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user
@@ -5921,7 +6154,7 @@ func NewVerifyUserCall(userID UserID) *VerifyUserCall {
 	}
 }
 
-// VerifyUser constructs a new VerifyUserCall.
+// VerifyUser constructs a new [VerifyUserCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user
@@ -5944,13 +6177,16 @@ func (call *VerifyUserCall) CustomDescription(customDescription string) *VerifyU
 	return call
 }
 
-// VerifyChatCall represents a call to the verifyChat method.
-// Verifies a chat [on behalf of the organization](https://telegram.org/verify#third-party-verification) which is represented by the bot. Returns True on success.
+// VerifyChatCall represents a call to the [verifyChat] method.
+// Verifies a chat [on behalf of the organization] which is represented by the bot. Returns True on success.
+//
+// [on behalf of the organization]: https://telegram.org/verify#third-party-verification
+// [verifyChat]: https://core.telegram.org/bots/api#verifychat
 type VerifyChatCall struct {
 	CallNoResult
 }
 
-// NewVerifyChatCall constructs a new VerifyChatCall.
+// NewVerifyChatCall constructs a new [VerifyChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername). Channel direct messages chats can't be verified.
@@ -5963,7 +6199,7 @@ func NewVerifyChatCall(chatID PeerID) *VerifyChatCall {
 	}
 }
 
-// VerifyChat constructs a new VerifyChatCall.
+// VerifyChat constructs a new [VerifyChatCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername). Channel direct messages chats can't be verified.
@@ -5986,13 +6222,16 @@ func (call *VerifyChatCall) CustomDescription(customDescription string) *VerifyC
 	return call
 }
 
-// RemoveUserVerificationCall represents a call to the removeUserVerification method.
-// Removes verification from a user who is currently verified [on behalf of the organization](https://telegram.org/verify#third-party-verification) represented by the bot. Returns True on success.
+// RemoveUserVerificationCall represents a call to the [removeUserVerification] method.
+// Removes verification from a user who is currently verified [on behalf of the organization] represented by the bot. Returns True on success.
+//
+// [on behalf of the organization]: https://telegram.org/verify#third-party-verification
+// [removeUserVerification]: https://core.telegram.org/bots/api#removeuserverification
 type RemoveUserVerificationCall struct {
 	CallNoResult
 }
 
-// NewRemoveUserVerificationCall constructs a new RemoveUserVerificationCall.
+// NewRemoveUserVerificationCall constructs a new [RemoveUserVerificationCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user
@@ -6005,7 +6244,7 @@ func NewRemoveUserVerificationCall(userID UserID) *RemoveUserVerificationCall {
 	}
 }
 
-// RemoveUserVerification constructs a new RemoveUserVerificationCall.
+// RemoveUserVerification constructs a new [RemoveUserVerificationCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user
@@ -6022,13 +6261,16 @@ func (call *RemoveUserVerificationCall) UserID(userID UserID) *RemoveUserVerific
 	return call
 }
 
-// RemoveChatVerificationCall represents a call to the removeChatVerification method.
-// Removes verification from a chat that is currently verified [on behalf of the organization](https://telegram.org/verify#third-party-verification) represented by the bot. Returns True on success.
+// RemoveChatVerificationCall represents a call to the [removeChatVerification] method.
+// Removes verification from a chat that is currently verified [on behalf of the organization] represented by the bot. Returns True on success.
+//
+// [on behalf of the organization]: https://telegram.org/verify#third-party-verification
+// [removeChatVerification]: https://core.telegram.org/bots/api#removechatverification
 type RemoveChatVerificationCall struct {
 	CallNoResult
 }
 
-// NewRemoveChatVerificationCall constructs a new RemoveChatVerificationCall.
+// NewRemoveChatVerificationCall constructs a new [RemoveChatVerificationCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -6041,7 +6283,7 @@ func NewRemoveChatVerificationCall(chatID PeerID) *RemoveChatVerificationCall {
 	}
 }
 
-// RemoveChatVerification constructs a new RemoveChatVerificationCall.
+// RemoveChatVerification constructs a new [RemoveChatVerificationCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -6058,13 +6300,15 @@ func (call *RemoveChatVerificationCall) ChatID(chatID PeerID) *RemoveChatVerific
 	return call
 }
 
-// ReadBusinessMessageCall represents a call to the readBusinessMessage method.
+// ReadBusinessMessageCall represents a call to the [readBusinessMessage] method.
 // Marks incoming message as read on behalf of a business account. Requires the can_read_messages business bot right. Returns True on success.
+//
+// [readBusinessMessage]: https://core.telegram.org/bots/api#readbusinessmessage
 type ReadBusinessMessageCall struct {
 	CallNoResult
 }
 
-// NewReadBusinessMessageCall constructs a new ReadBusinessMessageCall.
+// NewReadBusinessMessageCall constructs a new [ReadBusinessMessageCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection on behalf of which to read the message
@@ -6081,7 +6325,7 @@ func NewReadBusinessMessageCall(businessConnectionID string, chatID int, message
 	}
 }
 
-// ReadBusinessMessage constructs a new ReadBusinessMessageCall.
+// ReadBusinessMessage constructs a new [ReadBusinessMessageCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection on behalf of which to read the message
@@ -6112,17 +6356,19 @@ func (call *ReadBusinessMessageCall) MessageID(messageID int) *ReadBusinessMessa
 	return call
 }
 
-// DeleteBusinessMessagesCall represents a call to the deleteBusinessMessages method.
+// DeleteBusinessMessagesCall represents a call to the [deleteBusinessMessages] method.
 // Delete messages on behalf of a business account. Requires the can_delete_sent_messages business bot right to delete messages sent by the bot itself, or the can_delete_all_messages business bot right to delete any message. Returns True on success.
+//
+// [deleteBusinessMessages]: https://core.telegram.org/bots/api#deletebusinessmessages
 type DeleteBusinessMessagesCall struct {
 	CallNoResult
 }
 
-// NewDeleteBusinessMessagesCall constructs a new DeleteBusinessMessagesCall.
+// NewDeleteBusinessMessagesCall constructs a new [DeleteBusinessMessagesCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection on behalf of which to delete the messages
-//   - messageIDs: A JSON-serialized list of 1-100 identifiers of messages to delete. All messages must be from the same chat. See [deleteMessage](https://core.telegram.org/bots/api#deletemessage) for limitations on which messages can be deleted
+//   - messageIDs: A JSON-serialized list of 1-100 identifiers of messages to delete. All messages must be from the same chat. See [Client.DeleteMessage] for limitations on which messages can be deleted
 func NewDeleteBusinessMessagesCall(businessConnectionID string, messageIDs []int) *DeleteBusinessMessagesCall {
 	return &DeleteBusinessMessagesCall{
 		CallNoResult{
@@ -6133,11 +6379,11 @@ func NewDeleteBusinessMessagesCall(businessConnectionID string, messageIDs []int
 	}
 }
 
-// DeleteBusinessMessages constructs a new DeleteBusinessMessagesCall.
+// DeleteBusinessMessages constructs a new [DeleteBusinessMessagesCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection on behalf of which to delete the messages
-//   - messageIDs: A JSON-serialized list of 1-100 identifiers of messages to delete. All messages must be from the same chat. See [deleteMessage](https://core.telegram.org/bots/api#deletemessage) for limitations on which messages can be deleted
+//   - messageIDs: A JSON-serialized list of 1-100 identifiers of messages to delete. All messages must be from the same chat. See [Client.DeleteMessage] for limitations on which messages can be deleted
 func (client *Client) DeleteBusinessMessages(businessConnectionID string, messageIDs []int) *DeleteBusinessMessagesCall {
 	return BindClient(
 		NewDeleteBusinessMessagesCall(businessConnectionID, messageIDs),
@@ -6157,13 +6403,15 @@ func (call *DeleteBusinessMessagesCall) MessageIDs(messageIDs []int) *DeleteBusi
 	return call
 }
 
-// SetBusinessAccountNameCall represents a call to the setBusinessAccountName method.
+// SetBusinessAccountNameCall represents a call to the [setBusinessAccountName] method.
 // Changes the first and last name of a managed business account. Requires the can_change_name business bot right. Returns True on success.
+//
+// [setBusinessAccountName]: https://core.telegram.org/bots/api#setbusinessaccountname
 type SetBusinessAccountNameCall struct {
 	CallNoResult
 }
 
-// NewSetBusinessAccountNameCall constructs a new SetBusinessAccountNameCall.
+// NewSetBusinessAccountNameCall constructs a new [SetBusinessAccountNameCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6178,7 +6426,7 @@ func NewSetBusinessAccountNameCall(businessConnectionID string, firstName string
 	}
 }
 
-// SetBusinessAccountName constructs a new SetBusinessAccountNameCall.
+// SetBusinessAccountName constructs a new [SetBusinessAccountNameCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6208,13 +6456,15 @@ func (call *SetBusinessAccountNameCall) LastName(lastName string) *SetBusinessAc
 	return call
 }
 
-// SetBusinessAccountUsernameCall represents a call to the setBusinessAccountUsername method.
+// SetBusinessAccountUsernameCall represents a call to the [setBusinessAccountUsername] method.
 // Changes the username of a managed business account. Requires the can_change_username business bot right. Returns True on success.
+//
+// [setBusinessAccountUsername]: https://core.telegram.org/bots/api#setbusinessaccountusername
 type SetBusinessAccountUsernameCall struct {
 	CallNoResult
 }
 
-// NewSetBusinessAccountUsernameCall constructs a new SetBusinessAccountUsernameCall.
+// NewSetBusinessAccountUsernameCall constructs a new [SetBusinessAccountUsernameCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6227,7 +6477,7 @@ func NewSetBusinessAccountUsernameCall(businessConnectionID string) *SetBusiness
 	}
 }
 
-// SetBusinessAccountUsername constructs a new SetBusinessAccountUsernameCall.
+// SetBusinessAccountUsername constructs a new [SetBusinessAccountUsernameCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6250,13 +6500,15 @@ func (call *SetBusinessAccountUsernameCall) Username(username string) *SetBusine
 	return call
 }
 
-// SetBusinessAccountBioCall represents a call to the setBusinessAccountBio method.
+// SetBusinessAccountBioCall represents a call to the [setBusinessAccountBio] method.
 // Changes the bio of a managed business account. Requires the can_change_bio business bot right. Returns True on success.
+//
+// [setBusinessAccountBio]: https://core.telegram.org/bots/api#setbusinessaccountbio
 type SetBusinessAccountBioCall struct {
 	CallNoResult
 }
 
-// NewSetBusinessAccountBioCall constructs a new SetBusinessAccountBioCall.
+// NewSetBusinessAccountBioCall constructs a new [SetBusinessAccountBioCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6269,7 +6521,7 @@ func NewSetBusinessAccountBioCall(businessConnectionID string) *SetBusinessAccou
 	}
 }
 
-// SetBusinessAccountBio constructs a new SetBusinessAccountBioCall.
+// SetBusinessAccountBio constructs a new [SetBusinessAccountBioCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6292,13 +6544,15 @@ func (call *SetBusinessAccountBioCall) Bio(bio string) *SetBusinessAccountBioCal
 	return call
 }
 
-// SetBusinessAccountProfilePhotoCall represents a call to the setBusinessAccountProfilePhoto method.
+// SetBusinessAccountProfilePhotoCall represents a call to the [setBusinessAccountProfilePhoto] method.
 // Changes the profile photo of a managed business account. Requires the can_edit_profile_photo business bot right. Returns True on success.
+//
+// [setBusinessAccountProfilePhoto]: https://core.telegram.org/bots/api#setbusinessaccountprofilephoto
 type SetBusinessAccountProfilePhotoCall struct {
 	CallNoResult
 }
 
-// NewSetBusinessAccountProfilePhotoCall constructs a new SetBusinessAccountProfilePhotoCall.
+// NewSetBusinessAccountProfilePhotoCall constructs a new [SetBusinessAccountProfilePhotoCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6313,7 +6567,7 @@ func NewSetBusinessAccountProfilePhotoCall(businessConnectionID string, photo In
 	}
 }
 
-// SetBusinessAccountProfilePhoto constructs a new SetBusinessAccountProfilePhotoCall.
+// SetBusinessAccountProfilePhoto constructs a new [SetBusinessAccountProfilePhotoCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6343,13 +6597,15 @@ func (call *SetBusinessAccountProfilePhotoCall) IsPublic(isPublic bool) *SetBusi
 	return call
 }
 
-// RemoveBusinessAccountProfilePhotoCall represents a call to the removeBusinessAccountProfilePhoto method.
+// RemoveBusinessAccountProfilePhotoCall represents a call to the [removeBusinessAccountProfilePhoto] method.
 // Removes the current profile photo of a managed business account. Requires the can_edit_profile_photo business bot right. Returns True on success.
+//
+// [removeBusinessAccountProfilePhoto]: https://core.telegram.org/bots/api#removebusinessaccountprofilephoto
 type RemoveBusinessAccountProfilePhotoCall struct {
 	CallNoResult
 }
 
-// NewRemoveBusinessAccountProfilePhotoCall constructs a new RemoveBusinessAccountProfilePhotoCall.
+// NewRemoveBusinessAccountProfilePhotoCall constructs a new [RemoveBusinessAccountProfilePhotoCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6362,7 +6618,7 @@ func NewRemoveBusinessAccountProfilePhotoCall(businessConnectionID string) *Remo
 	}
 }
 
-// RemoveBusinessAccountProfilePhoto constructs a new RemoveBusinessAccountProfilePhotoCall.
+// RemoveBusinessAccountProfilePhoto constructs a new [RemoveBusinessAccountProfilePhotoCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6385,13 +6641,15 @@ func (call *RemoveBusinessAccountProfilePhotoCall) IsPublic(isPublic bool) *Remo
 	return call
 }
 
-// SetBusinessAccountGiftSettingsCall represents a call to the setBusinessAccountGiftSettings method.
+// SetBusinessAccountGiftSettingsCall represents a call to the [setBusinessAccountGiftSettings] method.
 // Changes the privacy settings pertaining to incoming gifts in a managed business account. Requires the can_change_gift_settings business bot right. Returns True on success.
+//
+// [setBusinessAccountGiftSettings]: https://core.telegram.org/bots/api#setbusinessaccountgiftsettings
 type SetBusinessAccountGiftSettingsCall struct {
 	CallNoResult
 }
 
-// NewSetBusinessAccountGiftSettingsCall constructs a new SetBusinessAccountGiftSettingsCall.
+// NewSetBusinessAccountGiftSettingsCall constructs a new [SetBusinessAccountGiftSettingsCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6408,7 +6666,7 @@ func NewSetBusinessAccountGiftSettingsCall(businessConnectionID string, showGift
 	}
 }
 
-// SetBusinessAccountGiftSettings constructs a new SetBusinessAccountGiftSettingsCall.
+// SetBusinessAccountGiftSettings constructs a new [SetBusinessAccountGiftSettingsCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6439,13 +6697,15 @@ func (call *SetBusinessAccountGiftSettingsCall) AcceptedGiftTypes(acceptedGiftTy
 	return call
 }
 
-// GetBusinessAccountStarBalanceCall represents a call to the getBusinessAccountStarBalance method.
-// Returns the amount of Telegram Stars owned by a managed business account. Requires the can_view_gifts_and_stars business bot right. Returns [StarAmount](https://core.telegram.org/bots/api#staramount) on success.
+// GetBusinessAccountStarBalanceCall represents a call to the [getBusinessAccountStarBalance] method.
+// Returns the amount of Telegram Stars owned by a managed business account. Requires the can_view_gifts_and_stars business bot right. Returns [StarAmount] on success.
+//
+// [getBusinessAccountStarBalance]: https://core.telegram.org/bots/api#getbusinessaccountstarbalance
 type GetBusinessAccountStarBalanceCall struct {
 	Call[StarAmount]
 }
 
-// NewGetBusinessAccountStarBalanceCall constructs a new GetBusinessAccountStarBalanceCall.
+// NewGetBusinessAccountStarBalanceCall constructs a new [GetBusinessAccountStarBalanceCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6458,7 +6718,7 @@ func NewGetBusinessAccountStarBalanceCall(businessConnectionID string) *GetBusin
 	}
 }
 
-// GetBusinessAccountStarBalance constructs a new GetBusinessAccountStarBalanceCall.
+// GetBusinessAccountStarBalance constructs a new [GetBusinessAccountStarBalanceCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6475,13 +6735,15 @@ func (call *GetBusinessAccountStarBalanceCall) BusinessConnectionID(businessConn
 	return call
 }
 
-// TransferBusinessAccountStarsCall represents a call to the transferBusinessAccountStars method.
+// TransferBusinessAccountStarsCall represents a call to the [transferBusinessAccountStars] method.
 // Transfers Telegram Stars from the business account balance to the bot's balance. Requires the can_transfer_stars business bot right. Returns True on success.
+//
+// [transferBusinessAccountStars]: https://core.telegram.org/bots/api#transferbusinessaccountstars
 type TransferBusinessAccountStarsCall struct {
 	CallNoResult
 }
 
-// NewTransferBusinessAccountStarsCall constructs a new TransferBusinessAccountStarsCall.
+// NewTransferBusinessAccountStarsCall constructs a new [TransferBusinessAccountStarsCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6496,7 +6758,7 @@ func NewTransferBusinessAccountStarsCall(businessConnectionID string, starCount 
 	}
 }
 
-// TransferBusinessAccountStars constructs a new TransferBusinessAccountStarsCall.
+// TransferBusinessAccountStars constructs a new [TransferBusinessAccountStarsCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6520,13 +6782,15 @@ func (call *TransferBusinessAccountStarsCall) StarCount(starCount int) *Transfer
 	return call
 }
 
-// GetBusinessAccountGiftsCall represents a call to the getBusinessAccountGifts method.
-// Returns the gifts received and owned by a managed business account. Requires the can_view_gifts_and_stars business bot right. Returns [OwnedGifts](https://core.telegram.org/bots/api#ownedgifts) on success.
+// GetBusinessAccountGiftsCall represents a call to the [getBusinessAccountGifts] method.
+// Returns the gifts received and owned by a managed business account. Requires the can_view_gifts_and_stars business bot right. Returns [OwnedGifts] on success.
+//
+// [getBusinessAccountGifts]: https://core.telegram.org/bots/api#getbusinessaccountgifts
 type GetBusinessAccountGiftsCall struct {
 	Call[OwnedGifts]
 }
 
-// NewGetBusinessAccountGiftsCall constructs a new GetBusinessAccountGiftsCall.
+// NewGetBusinessAccountGiftsCall constructs a new [GetBusinessAccountGiftsCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6539,7 +6803,7 @@ func NewGetBusinessAccountGiftsCall(businessConnectionID string) *GetBusinessAcc
 	}
 }
 
-// GetBusinessAccountGifts constructs a new GetBusinessAccountGiftsCall.
+// GetBusinessAccountGifts constructs a new [GetBusinessAccountGiftsCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6616,13 +6880,15 @@ func (call *GetBusinessAccountGiftsCall) Limit(limit int) *GetBusinessAccountGif
 	return call
 }
 
-// GetUserGiftsCall represents a call to the getUserGifts method.
-// Returns the gifts owned and hosted by a user. Returns [OwnedGifts](https://core.telegram.org/bots/api#ownedgifts) on success.
+// GetUserGiftsCall represents a call to the [getUserGifts] method.
+// Returns the gifts owned and hosted by a user. Returns [OwnedGifts] on success.
+//
+// [getUserGifts]: https://core.telegram.org/bots/api#getusergifts
 type GetUserGiftsCall struct {
 	Call[OwnedGifts]
 }
 
-// NewGetUserGiftsCall constructs a new GetUserGiftsCall.
+// NewGetUserGiftsCall constructs a new [GetUserGiftsCall].
 //
 // Required params:
 //   - userID: Unique identifier of the user
@@ -6635,7 +6901,7 @@ func NewGetUserGiftsCall(userID UserID) *GetUserGiftsCall {
 	}
 }
 
-// GetUserGifts constructs a new GetUserGiftsCall.
+// GetUserGifts constructs a new [GetUserGiftsCall].
 //
 // Required params:
 //   - userID: Unique identifier of the user
@@ -6700,13 +6966,15 @@ func (call *GetUserGiftsCall) Limit(limit int) *GetUserGiftsCall {
 	return call
 }
 
-// GetChatGiftsCall represents a call to the getChatGifts method.
-// Returns the gifts owned by a chat. Returns [OwnedGifts](https://core.telegram.org/bots/api#ownedgifts) on success.
+// GetChatGiftsCall represents a call to the [getChatGifts] method.
+// Returns the gifts owned by a chat. Returns [OwnedGifts] on success.
+//
+// [getChatGifts]: https://core.telegram.org/bots/api#getchatgifts
 type GetChatGiftsCall struct {
 	Call[OwnedGifts]
 }
 
-// NewGetChatGiftsCall constructs a new GetChatGiftsCall.
+// NewGetChatGiftsCall constructs a new [GetChatGiftsCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -6719,7 +6987,7 @@ func NewGetChatGiftsCall(chatID PeerID) *GetChatGiftsCall {
 	}
 }
 
-// GetChatGifts constructs a new GetChatGiftsCall.
+// GetChatGifts constructs a new [GetChatGiftsCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -6796,13 +7064,15 @@ func (call *GetChatGiftsCall) Limit(limit int) *GetChatGiftsCall {
 	return call
 }
 
-// ConvertGiftToStarsCall represents a call to the convertGiftToStars method.
+// ConvertGiftToStarsCall represents a call to the [convertGiftToStars] method.
 // Converts a given regular gift to Telegram Stars. Requires the can_convert_gifts_to_stars business bot right. Returns True on success.
+//
+// [convertGiftToStars]: https://core.telegram.org/bots/api#convertgifttostars
 type ConvertGiftToStarsCall struct {
 	CallNoResult
 }
 
-// NewConvertGiftToStarsCall constructs a new ConvertGiftToStarsCall.
+// NewConvertGiftToStarsCall constructs a new [ConvertGiftToStarsCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6817,7 +7087,7 @@ func NewConvertGiftToStarsCall(businessConnectionID string, ownedGiftID string) 
 	}
 }
 
-// ConvertGiftToStars constructs a new ConvertGiftToStarsCall.
+// ConvertGiftToStars constructs a new [ConvertGiftToStarsCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6841,13 +7111,15 @@ func (call *ConvertGiftToStarsCall) OwnedGiftID(ownedGiftID string) *ConvertGift
 	return call
 }
 
-// UpgradeGiftCall represents a call to the upgradeGift method.
+// UpgradeGiftCall represents a call to the [upgradeGift] method.
 // Upgrades a given regular gift to a unique gift. Requires the can_transfer_and_upgrade_gifts business bot right. Additionally requires the can_transfer_stars business bot right if the upgrade is paid. Returns True on success.
+//
+// [upgradeGift]: https://core.telegram.org/bots/api#upgradegift
 type UpgradeGiftCall struct {
 	CallNoResult
 }
 
-// NewUpgradeGiftCall constructs a new UpgradeGiftCall.
+// NewUpgradeGiftCall constructs a new [UpgradeGiftCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6862,7 +7134,7 @@ func NewUpgradeGiftCall(businessConnectionID string, ownedGiftID string) *Upgrad
 	}
 }
 
-// UpgradeGift constructs a new UpgradeGiftCall.
+// UpgradeGift constructs a new [UpgradeGiftCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6898,13 +7170,15 @@ func (call *UpgradeGiftCall) StarCount(starCount int) *UpgradeGiftCall {
 	return call
 }
 
-// TransferGiftCall represents a call to the transferGift method.
+// TransferGiftCall represents a call to the [transferGift] method.
 // Transfers an owned unique gift to another user. Requires the can_transfer_and_upgrade_gifts business bot right. Requires can_transfer_stars business bot right if the transfer is paid. Returns True on success.
+//
+// [transferGift]: https://core.telegram.org/bots/api#transfergift
 type TransferGiftCall struct {
 	CallNoResult
 }
 
-// NewTransferGiftCall constructs a new TransferGiftCall.
+// NewTransferGiftCall constructs a new [TransferGiftCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6921,7 +7195,7 @@ func NewTransferGiftCall(businessConnectionID string, ownedGiftID string, newOwn
 	}
 }
 
-// TransferGift constructs a new TransferGiftCall.
+// TransferGift constructs a new [TransferGiftCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6958,13 +7232,15 @@ func (call *TransferGiftCall) StarCount(starCount int) *TransferGiftCall {
 	return call
 }
 
-// PostStoryCall represents a call to the postStory method.
-// Posts a story on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns [Story](https://core.telegram.org/bots/api#story) on success.
+// PostStoryCall represents a call to the [postStory] method.
+// Posts a story on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns [Story] on success.
+//
+// [postStory]: https://core.telegram.org/bots/api#poststory
 type PostStoryCall struct {
 	Call[Story]
 }
 
-// NewPostStoryCall constructs a new PostStoryCall.
+// NewPostStoryCall constructs a new [PostStoryCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -6981,7 +7257,7 @@ func NewPostStoryCall(businessConnectionID string, content InputStoryContent, ac
 	}
 }
 
-// PostStory constructs a new PostStoryCall.
+// PostStory constructs a new [PostStoryCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -7048,13 +7324,15 @@ func (call *PostStoryCall) ProtectContent(protectContent bool) *PostStoryCall {
 	return call
 }
 
-// RepostStoryCall represents a call to the repostStory method.
-// Reposts a story on behalf of a business account from another business account. Both business accounts must be managed by the same bot, and the story on the source account must have been posted (or reposted) by the bot. Requires the can_manage_stories business bot right for both business accounts. Returns [Story](https://core.telegram.org/bots/api#story) on success.
+// RepostStoryCall represents a call to the [repostStory] method.
+// Reposts a story on behalf of a business account from another business account. Both business accounts must be managed by the same bot, and the story on the source account must have been posted (or reposted) by the bot. Requires the can_manage_stories business bot right for both business accounts. Returns [Story] on success.
+//
+// [repostStory]: https://core.telegram.org/bots/api#repoststory
 type RepostStoryCall struct {
 	Call[Story]
 }
 
-// NewRepostStoryCall constructs a new RepostStoryCall.
+// NewRepostStoryCall constructs a new [RepostStoryCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -7073,7 +7351,7 @@ func NewRepostStoryCall(businessConnectionID string, fromChatID int, fromStoryID
 	}
 }
 
-// RepostStory constructs a new RepostStoryCall.
+// RepostStory constructs a new [RepostStoryCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -7123,13 +7401,15 @@ func (call *RepostStoryCall) ProtectContent(protectContent bool) *RepostStoryCal
 	return call
 }
 
-// EditStoryCall represents a call to the editStory method.
-// Edits a story previously posted by the bot on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns [Story](https://core.telegram.org/bots/api#story) on success.
+// EditStoryCall represents a call to the [editStory] method.
+// Edits a story previously posted by the bot on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns [Story] on success.
+//
+// [editStory]: https://core.telegram.org/bots/api#editstory
 type EditStoryCall struct {
 	Call[Story]
 }
 
-// NewEditStoryCall constructs a new EditStoryCall.
+// NewEditStoryCall constructs a new [EditStoryCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -7146,7 +7426,7 @@ func NewEditStoryCall(businessConnectionID string, storyID int, content InputSto
 	}
 }
 
-// EditStory constructs a new EditStoryCall.
+// EditStory constructs a new [EditStoryCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -7201,13 +7481,15 @@ func (call *EditStoryCall) Areas(areas []StoryArea) *EditStoryCall {
 	return call
 }
 
-// DeleteStoryCall represents a call to the deleteStory method.
+// DeleteStoryCall represents a call to the [deleteStory] method.
 // Deletes a story previously posted by the bot on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns True on success.
+//
+// [deleteStory]: https://core.telegram.org/bots/api#deletestory
 type DeleteStoryCall struct {
 	CallNoResult
 }
 
-// NewDeleteStoryCall constructs a new DeleteStoryCall.
+// NewDeleteStoryCall constructs a new [DeleteStoryCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -7222,7 +7504,7 @@ func NewDeleteStoryCall(businessConnectionID string, storyID int) *DeleteStoryCa
 	}
 }
 
-// DeleteStory constructs a new DeleteStoryCall.
+// DeleteStory constructs a new [DeleteStoryCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection
@@ -7246,13 +7528,16 @@ func (call *DeleteStoryCall) StoryID(storyID int) *DeleteStoryCall {
 	return call
 }
 
-// EditMessageTextCall represents a call to the editMessageText method.
-// Use this method to edit text and [game](https://core.telegram.org/bots/api#games) messages. On success, if the edited message is not an inline message, the edited [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+// EditMessageTextCall represents a call to the [editMessageText] method.
+// Use this method to edit text and [game] messages. On success, if the edited message is not an inline message, the edited [Message] is returned, otherwise True is returned. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+//
+// [game]: https://core.telegram.org/bots/api#games
+// [editMessageText]: https://core.telegram.org/bots/api#editmessagetext
 type EditMessageTextCall struct {
 	Call[Message]
 }
 
-// NewEditMessageTextCall constructs a new EditMessageTextCall.
+// NewEditMessageTextCall constructs a new [EditMessageTextCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7269,7 +7554,7 @@ func NewEditMessageTextCall(chatID PeerID, messageID int, text string) *EditMess
 	}
 }
 
-// EditMessageText constructs a new EditMessageTextCall.
+// EditMessageText constructs a new [EditMessageTextCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7282,7 +7567,7 @@ func (client *Client) EditMessageText(chatID PeerID, messageID int, text string)
 	)
 }
 
-// NewEditMessageTextInlineCall constructs a new EditMessageTextCall.
+// NewEditMessageTextInlineCall constructs a new [EditMessageTextCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7297,7 +7582,7 @@ func NewEditMessageTextInlineCall(inlineMessageID string, text string) *EditMess
 	}
 }
 
-// EditMessageTextInline constructs a new EditMessageTextCall.
+// EditMessageTextInline constructs a new [EditMessageTextCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7363,13 +7648,15 @@ func (call *EditMessageTextCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *
 	return call
 }
 
-// EditMessageCaptionCall represents a call to the editMessageCaption method.
-// Use this method to edit captions of messages. On success, if the edited message is not an inline message, the edited [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+// EditMessageCaptionCall represents a call to the [editMessageCaption] method.
+// Use this method to edit captions of messages. On success, if the edited message is not an inline message, the edited [Message] is returned, otherwise True is returned. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+//
+// [editMessageCaption]: https://core.telegram.org/bots/api#editmessagecaption
 type EditMessageCaptionCall struct {
 	Call[Message]
 }
 
-// NewEditMessageCaptionCall constructs a new EditMessageCaptionCall.
+// NewEditMessageCaptionCall constructs a new [EditMessageCaptionCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7386,7 +7673,7 @@ func NewEditMessageCaptionCall(chatID PeerID, messageID int, caption string) *Ed
 	}
 }
 
-// EditMessageCaption constructs a new EditMessageCaptionCall.
+// EditMessageCaption constructs a new [EditMessageCaptionCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7399,7 +7686,7 @@ func (client *Client) EditMessageCaption(chatID PeerID, messageID int, caption s
 	)
 }
 
-// NewEditMessageCaptionInlineCall constructs a new EditMessageCaptionCall.
+// NewEditMessageCaptionInlineCall constructs a new [EditMessageCaptionCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7414,7 +7701,7 @@ func NewEditMessageCaptionInlineCall(inlineMessageID string, caption string) *Ed
 	}
 }
 
-// EditMessageCaptionInline constructs a new EditMessageCaptionCall.
+// EditMessageCaptionInline constructs a new [EditMessageCaptionCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7480,13 +7767,15 @@ func (call *EditMessageCaptionCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup
 	return call
 }
 
-// EditMessageMediaCall represents a call to the editMessageMedia method.
-// Use this method to edit animation, audio, document, photo, or video messages, or to add media to text messages. If a message is part of a message album, then it can be edited only to an audio for audio albums, only to a document for document albums and to a photo or a video otherwise. When an inline message is edited, a new file can't be uploaded; use a previously uploaded file via its file_id or specify a URL. On success, if the edited message is not an inline message, the edited [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+// EditMessageMediaCall represents a call to the [editMessageMedia] method.
+// Use this method to edit animation, audio, document, photo, or video messages, or to add media to text messages. If a message is part of a message album, then it can be edited only to an audio for audio albums, only to a document for document albums and to a photo or a video otherwise. When an inline message is edited, a new file can't be uploaded; use a previously uploaded file via its file_id or specify a URL. On success, if the edited message is not an inline message, the edited [Message] is returned, otherwise True is returned. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+//
+// [editMessageMedia]: https://core.telegram.org/bots/api#editmessagemedia
 type EditMessageMediaCall struct {
 	Call[Message]
 }
 
-// NewEditMessageMediaCall constructs a new EditMessageMediaCall.
+// NewEditMessageMediaCall constructs a new [EditMessageMediaCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7503,7 +7792,7 @@ func NewEditMessageMediaCall(chatID PeerID, messageID int, media InputMedia) *Ed
 	}
 }
 
-// EditMessageMedia constructs a new EditMessageMediaCall.
+// EditMessageMedia constructs a new [EditMessageMediaCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7516,7 +7805,7 @@ func (client *Client) EditMessageMedia(chatID PeerID, messageID int, media Input
 	)
 }
 
-// NewEditMessageMediaInlineCall constructs a new EditMessageMediaCall.
+// NewEditMessageMediaInlineCall constructs a new [EditMessageMediaCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7531,7 +7820,7 @@ func NewEditMessageMediaInlineCall(inlineMessageID string, media InputMedia) *Ed
 	}
 }
 
-// EditMessageMediaInline constructs a new EditMessageMediaCall.
+// EditMessageMediaInline constructs a new [EditMessageMediaCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7579,13 +7868,15 @@ func (call *EditMessageMediaCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) 
 	return call
 }
 
-// EditMessageLiveLocationCall represents a call to the editMessageLiveLocation method.
-// Use this method to edit live location messages. A location can be edited until its live_period expires or editing is explicitly disabled by a call to [stopMessageLiveLocation](https://core.telegram.org/bots/api#stopmessagelivelocation). On success, if the edited message is not an inline message, the edited [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned.
+// EditMessageLiveLocationCall represents a call to the [editMessageLiveLocation] method.
+// Use this method to edit live location messages. A location can be edited until its live_period expires or editing is explicitly disabled by a call to [Client.StopMessageLiveLocation]. On success, if the edited message is not an inline message, the edited [Message] is returned, otherwise True is returned.
+//
+// [editMessageLiveLocation]: https://core.telegram.org/bots/api#editmessagelivelocation
 type EditMessageLiveLocationCall struct {
 	Call[Message]
 }
 
-// NewEditMessageLiveLocationCall constructs a new EditMessageLiveLocationCall.
+// NewEditMessageLiveLocationCall constructs a new [EditMessageLiveLocationCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7604,7 +7895,7 @@ func NewEditMessageLiveLocationCall(chatID PeerID, messageID int, latitude float
 	}
 }
 
-// EditMessageLiveLocation constructs a new EditMessageLiveLocationCall.
+// EditMessageLiveLocation constructs a new [EditMessageLiveLocationCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7618,7 +7909,7 @@ func (client *Client) EditMessageLiveLocation(chatID PeerID, messageID int, lati
 	)
 }
 
-// NewEditMessageLiveLocationInlineCall constructs a new EditMessageLiveLocationCall.
+// NewEditMessageLiveLocationInlineCall constructs a new [EditMessageLiveLocationCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7635,7 +7926,7 @@ func NewEditMessageLiveLocationInlineCall(inlineMessageID string, latitude float
 	}
 }
 
-// EditMessageLiveLocationInline constructs a new EditMessageLiveLocationCall.
+// EditMessageLiveLocationInline constructs a new [EditMessageLiveLocationCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7714,13 +8005,15 @@ func (call *EditMessageLiveLocationCall) ReplyMarkup(replyMarkup InlineKeyboardM
 	return call
 }
 
-// StopMessageLiveLocationCall represents a call to the stopMessageLiveLocation method.
-// Use this method to stop updating a live location message before live_period expires. On success, if the message is not an inline message, the edited [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned.
+// StopMessageLiveLocationCall represents a call to the [stopMessageLiveLocation] method.
+// Use this method to stop updating a live location message before live_period expires. On success, if the message is not an inline message, the edited [Message] is returned, otherwise True is returned.
+//
+// [stopMessageLiveLocation]: https://core.telegram.org/bots/api#stopmessagelivelocation
 type StopMessageLiveLocationCall struct {
 	Call[Message]
 }
 
-// NewStopMessageLiveLocationCall constructs a new StopMessageLiveLocationCall.
+// NewStopMessageLiveLocationCall constructs a new [StopMessageLiveLocationCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7735,7 +8028,7 @@ func NewStopMessageLiveLocationCall(chatID PeerID, messageID int) *StopMessageLi
 	}
 }
 
-// StopMessageLiveLocation constructs a new StopMessageLiveLocationCall.
+// StopMessageLiveLocation constructs a new [StopMessageLiveLocationCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7747,7 +8040,7 @@ func (client *Client) StopMessageLiveLocation(chatID PeerID, messageID int) *Sto
 	)
 }
 
-// NewStopMessageLiveLocationInlineCall constructs a new StopMessageLiveLocationCall.
+// NewStopMessageLiveLocationInlineCall constructs a new [StopMessageLiveLocationCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7760,7 +8053,7 @@ func NewStopMessageLiveLocationInlineCall(inlineMessageID string) *StopMessageLi
 	}
 }
 
-// StopMessageLiveLocationInline constructs a new StopMessageLiveLocationCall.
+// StopMessageLiveLocationInline constructs a new [StopMessageLiveLocationCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7801,13 +8094,15 @@ func (call *StopMessageLiveLocationCall) ReplyMarkup(replyMarkup InlineKeyboardM
 	return call
 }
 
-// EditMessageChecklistCall represents a call to the editMessageChecklist method.
-// Use this method to edit a checklist on behalf of a connected business account. On success, the edited [Message](https://core.telegram.org/bots/api#message) is returned.
+// EditMessageChecklistCall represents a call to the [editMessageChecklist] method.
+// Use this method to edit a checklist on behalf of a connected business account. On success, the edited [Message] is returned.
+//
+// [editMessageChecklist]: https://core.telegram.org/bots/api#editmessagechecklist
 type EditMessageChecklistCall struct {
 	Call[Message]
 }
 
-// NewEditMessageChecklistCall constructs a new EditMessageChecklistCall.
+// NewEditMessageChecklistCall constructs a new [EditMessageChecklistCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection on behalf of which the message will be sent
@@ -7826,7 +8121,7 @@ func NewEditMessageChecklistCall(businessConnectionID string, chatID int, messag
 	}
 }
 
-// EditMessageChecklist constructs a new EditMessageChecklistCall.
+// EditMessageChecklist constructs a new [EditMessageChecklistCall].
 //
 // Required params:
 //   - businessConnectionID: Unique identifier of the business connection on behalf of which the message will be sent
@@ -7870,13 +8165,15 @@ func (call *EditMessageChecklistCall) ReplyMarkup(replyMarkup InlineKeyboardMark
 	return call
 }
 
-// EditMessageReplyMarkupCall represents a call to the editMessageReplyMarkup method.
-// Use this method to edit only the reply markup of messages. On success, if the edited message is not an inline message, the edited [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+// EditMessageReplyMarkupCall represents a call to the [editMessageReplyMarkup] method.
+// Use this method to edit only the reply markup of messages. On success, if the edited message is not an inline message, the edited [Message] is returned, otherwise True is returned. Note that business messages that were not sent by the bot and do not contain an inline keyboard can only be edited within 48 hours from the time they were sent.
+//
+// [editMessageReplyMarkup]: https://core.telegram.org/bots/api#editmessagereplymarkup
 type EditMessageReplyMarkupCall struct {
 	Call[Message]
 }
 
-// NewEditMessageReplyMarkupCall constructs a new EditMessageReplyMarkupCall.
+// NewEditMessageReplyMarkupCall constructs a new [EditMessageReplyMarkupCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7891,7 +8188,7 @@ func NewEditMessageReplyMarkupCall(chatID PeerID, messageID int) *EditMessageRep
 	}
 }
 
-// EditMessageReplyMarkup constructs a new EditMessageReplyMarkupCall.
+// EditMessageReplyMarkup constructs a new [EditMessageReplyMarkupCall].
 //
 // Required params:
 //   - chatID: Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7903,7 +8200,7 @@ func (client *Client) EditMessageReplyMarkup(chatID PeerID, messageID int) *Edit
 	)
 }
 
-// NewEditMessageReplyMarkupInlineCall constructs a new EditMessageReplyMarkupCall.
+// NewEditMessageReplyMarkupInlineCall constructs a new [EditMessageReplyMarkupCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7916,7 +8213,7 @@ func NewEditMessageReplyMarkupInlineCall(inlineMessageID string) *EditMessageRep
 	}
 }
 
-// EditMessageReplyMarkupInline constructs a new EditMessageReplyMarkupCall.
+// EditMessageReplyMarkupInline constructs a new [EditMessageReplyMarkupCall].
 //
 // Required params:
 //   - inlineMessageID: Required if chat_id and message_id are not specified. Identifier of the inline message
@@ -7957,13 +8254,15 @@ func (call *EditMessageReplyMarkupCall) ReplyMarkup(replyMarkup InlineKeyboardMa
 	return call
 }
 
-// StopPollCall represents a call to the stopPoll method.
-// Use this method to stop a poll which was sent by the bot. On success, the stopped [Poll](https://core.telegram.org/bots/api#poll) is returned.
+// StopPollCall represents a call to the [stopPoll] method.
+// Use this method to stop a poll which was sent by the bot. On success, the stopped [Poll] is returned.
+//
+// [stopPoll]: https://core.telegram.org/bots/api#stoppoll
 type StopPollCall struct {
 	Call[Poll]
 }
 
-// NewStopPollCall constructs a new StopPollCall.
+// NewStopPollCall constructs a new [StopPollCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -7978,7 +8277,7 @@ func NewStopPollCall(chatID PeerID, messageID int) *StopPollCall {
 	}
 }
 
-// StopPoll constructs a new StopPollCall.
+// StopPoll constructs a new [StopPollCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -8014,13 +8313,15 @@ func (call *StopPollCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *StopPol
 	return call
 }
 
-// ApproveSuggestedPostCall represents a call to the approveSuggestedPost method.
+// ApproveSuggestedPostCall represents a call to the [approveSuggestedPost] method.
 // Use this method to approve a suggested post in a direct messages chat. The bot must have the 'can_post_messages' administrator right in the corresponding channel chat. Returns True on success.
+//
+// [approveSuggestedPost]: https://core.telegram.org/bots/api#approvesuggestedpost
 type ApproveSuggestedPostCall struct {
 	CallNoResult
 }
 
-// NewApproveSuggestedPostCall constructs a new ApproveSuggestedPostCall.
+// NewApproveSuggestedPostCall constructs a new [ApproveSuggestedPostCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target direct messages chat
@@ -8035,7 +8336,7 @@ func NewApproveSuggestedPostCall(chatID int, messageID int) *ApproveSuggestedPos
 	}
 }
 
-// ApproveSuggestedPost constructs a new ApproveSuggestedPostCall.
+// ApproveSuggestedPost constructs a new [ApproveSuggestedPostCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target direct messages chat
@@ -8065,13 +8366,15 @@ func (call *ApproveSuggestedPostCall) SendDate(sendDate int) *ApproveSuggestedPo
 	return call
 }
 
-// DeclineSuggestedPostCall represents a call to the declineSuggestedPost method.
+// DeclineSuggestedPostCall represents a call to the [declineSuggestedPost] method.
 // Use this method to decline a suggested post in a direct messages chat. The bot must have the 'can_manage_direct_messages' administrator right in the corresponding channel chat. Returns True on success.
+//
+// [declineSuggestedPost]: https://core.telegram.org/bots/api#declinesuggestedpost
 type DeclineSuggestedPostCall struct {
 	CallNoResult
 }
 
-// NewDeclineSuggestedPostCall constructs a new DeclineSuggestedPostCall.
+// NewDeclineSuggestedPostCall constructs a new [DeclineSuggestedPostCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target direct messages chat
@@ -8086,7 +8389,7 @@ func NewDeclineSuggestedPostCall(chatID int, messageID int) *DeclineSuggestedPos
 	}
 }
 
-// DeclineSuggestedPost constructs a new DeclineSuggestedPostCall.
+// DeclineSuggestedPost constructs a new [DeclineSuggestedPostCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target direct messages chat
@@ -8116,7 +8419,7 @@ func (call *DeclineSuggestedPostCall) Comment(comment string) *DeclineSuggestedP
 	return call
 }
 
-// DeleteMessageCall represents a call to the deleteMessage method.
+// DeleteMessageCall represents a call to the [deleteMessage] method.
 // Use this method to delete a message, including service messages, with the following limitations:
 // - A message can only be deleted if it was sent less than 48 hours ago.
 // - Service messages about a supergroup, channel, or forum topic creation can't be deleted.
@@ -8128,11 +8431,13 @@ func (call *DeclineSuggestedPostCall) Comment(comment string) *DeclineSuggestedP
 // - If the bot has can_delete_messages administrator right in a supergroup or a channel, it can delete any message there.
 // - If the bot has can_manage_direct_messages administrator right in a channel, it can delete any message in the corresponding direct messages chat.
 // Returns True on success.
+//
+// [deleteMessage]: https://core.telegram.org/bots/api#deletemessage
 type DeleteMessageCall struct {
 	CallNoResult
 }
 
-// NewDeleteMessageCall constructs a new DeleteMessageCall.
+// NewDeleteMessageCall constructs a new [DeleteMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -8147,7 +8452,7 @@ func NewDeleteMessageCall(chatID PeerID, messageID int) *DeleteMessageCall {
 	}
 }
 
-// DeleteMessage constructs a new DeleteMessageCall.
+// DeleteMessage constructs a new [DeleteMessageCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -8171,17 +8476,19 @@ func (call *DeleteMessageCall) MessageID(messageID int) *DeleteMessageCall {
 	return call
 }
 
-// DeleteMessagesCall represents a call to the deleteMessages method.
+// DeleteMessagesCall represents a call to the [deleteMessages] method.
 // Use this method to delete multiple messages simultaneously. If some of the specified messages can't be found, they are skipped. Returns True on success.
+//
+// [deleteMessages]: https://core.telegram.org/bots/api#deletemessages
 type DeleteMessagesCall struct {
 	CallNoResult
 }
 
-// NewDeleteMessagesCall constructs a new DeleteMessagesCall.
+// NewDeleteMessagesCall constructs a new [DeleteMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - messageIDs: A JSON-serialized list of 1-100 identifiers of messages to delete. See [deleteMessage](https://core.telegram.org/bots/api#deletemessage) for limitations on which messages can be deleted
+//   - messageIDs: A JSON-serialized list of 1-100 identifiers of messages to delete. See [Client.DeleteMessage] for limitations on which messages can be deleted
 func NewDeleteMessagesCall(chatID PeerID, messageIDs []int) *DeleteMessagesCall {
 	return &DeleteMessagesCall{
 		CallNoResult{
@@ -8192,11 +8499,11 @@ func NewDeleteMessagesCall(chatID PeerID, messageIDs []int) *DeleteMessagesCall 
 	}
 }
 
-// DeleteMessages constructs a new DeleteMessagesCall.
+// DeleteMessages constructs a new [DeleteMessagesCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - messageIDs: A JSON-serialized list of 1-100 identifiers of messages to delete. See [deleteMessage](https://core.telegram.org/bots/api#deletemessage) for limitations on which messages can be deleted
+//   - messageIDs: A JSON-serialized list of 1-100 identifiers of messages to delete. See [Client.DeleteMessage] for limitations on which messages can be deleted
 func (client *Client) DeleteMessages(chatID PeerID, messageIDs []int) *DeleteMessagesCall {
 	return BindClient(
 		NewDeleteMessagesCall(chatID, messageIDs),
@@ -8216,17 +8523,23 @@ func (call *DeleteMessagesCall) MessageIDs(messageIDs []int) *DeleteMessagesCall
 	return call
 }
 
-// SendStickerCall represents a call to the sendSticker method.
-// Use this method to send static .WEBP, [animated](https://telegram.org/blog/animated-stickers) .TGS, or [video](https://telegram.org/blog/video-stickers-better-reactions) .WEBM stickers. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendStickerCall represents a call to the [sendSticker] method.
+// Use this method to send static .WEBP, [animated] .TGS, or [video] .WEBM stickers. On success, the sent [Message] is returned.
+//
+// [animated]: https://telegram.org/blog/animated-stickers
+// [video]: https://telegram.org/blog/video-stickers-better-reactions
+// [sendSticker]: https://core.telegram.org/bots/api#sendsticker
 type SendStickerCall struct {
 	Call[Message]
 }
 
-// NewSendStickerCall constructs a new SendStickerCall.
+// NewSendStickerCall constructs a new [SendStickerCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - sticker: Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or .WEBM sticker using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files). Video and animated stickers can't be sent via an HTTP URL.
+//   - sticker: Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or .WEBM sticker using multipart/form-data. [More information on Sending Files »]. Video and animated stickers can't be sent via an HTTP URL.
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewSendStickerCall(chatID PeerID, sticker FileArg) *SendStickerCall {
 	return &SendStickerCall{
 		Call[Message]{
@@ -8237,11 +8550,13 @@ func NewSendStickerCall(chatID PeerID, sticker FileArg) *SendStickerCall {
 	}
 }
 
-// SendSticker constructs a new SendStickerCall.
+// SendSticker constructs a new [SendStickerCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-//   - sticker: Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or .WEBM sticker using multipart/form-data. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files). Video and animated stickers can't be sent via an HTTP URL.
+//   - sticker: Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or .WEBM sticker using multipart/form-data. [More information on Sending Files »]. Video and animated stickers can't be sent via an HTTP URL.
+//
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) SendSticker(chatID PeerID, sticker FileArg) *SendStickerCall {
 	return BindClient(
 		NewSendStickerCall(chatID, sticker),
@@ -8327,13 +8642,15 @@ func (call *SendStickerCall) ReplyMarkup(replyMarkup ReplyMarkup) *SendStickerCa
 	return call
 }
 
-// GetStickerSetCall represents a call to the getStickerSet method.
-// Use this method to get a sticker set. On success, a [StickerSet](https://core.telegram.org/bots/api#stickerset) object is returned.
+// GetStickerSetCall represents a call to the [getStickerSet] method.
+// Use this method to get a sticker set. On success, a [StickerSet] object is returned.
+//
+// [getStickerSet]: https://core.telegram.org/bots/api#getstickerset
 type GetStickerSetCall struct {
 	Call[StickerSet]
 }
 
-// NewGetStickerSetCall constructs a new GetStickerSetCall.
+// NewGetStickerSetCall constructs a new [GetStickerSetCall].
 //
 // Required params:
 //   - name: Name of the sticker set
@@ -8346,7 +8663,7 @@ func NewGetStickerSetCall(name string) *GetStickerSetCall {
 	}
 }
 
-// GetStickerSet constructs a new GetStickerSetCall.
+// GetStickerSet constructs a new [GetStickerSetCall].
 //
 // Required params:
 //   - name: Name of the sticker set
@@ -8363,13 +8680,15 @@ func (call *GetStickerSetCall) Name(name string) *GetStickerSetCall {
 	return call
 }
 
-// GetCustomEmojiStickersCall represents a call to the getCustomEmojiStickers method.
-// Use this method to get information about custom emoji stickers by their identifiers. Returns an Array of [Sticker](https://core.telegram.org/bots/api#sticker) objects.
+// GetCustomEmojiStickersCall represents a call to the [getCustomEmojiStickers] method.
+// Use this method to get information about custom emoji stickers by their identifiers. Returns an Array of [Sticker] objects.
+//
+// [getCustomEmojiStickers]: https://core.telegram.org/bots/api#getcustomemojistickers
 type GetCustomEmojiStickersCall struct {
 	Call[[]Sticker]
 }
 
-// NewGetCustomEmojiStickersCall constructs a new GetCustomEmojiStickersCall.
+// NewGetCustomEmojiStickersCall constructs a new [GetCustomEmojiStickersCall].
 //
 // Required params:
 //   - customEmojiIDs: A JSON-serialized list of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
@@ -8382,7 +8701,7 @@ func NewGetCustomEmojiStickersCall(customEmojiIDs []string) *GetCustomEmojiStick
 	}
 }
 
-// GetCustomEmojiStickers constructs a new GetCustomEmojiStickersCall.
+// GetCustomEmojiStickers constructs a new [GetCustomEmojiStickersCall].
 //
 // Required params:
 //   - customEmojiIDs: A JSON-serialized list of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
@@ -8399,18 +8718,23 @@ func (call *GetCustomEmojiStickersCall) CustomEmojiIDs(customEmojiIDs []string) 
 	return call
 }
 
-// UploadStickerFileCall represents a call to the uploadStickerFile method.
-// Use this method to upload a file with a sticker for later use in the [createNewStickerSet](https://core.telegram.org/bots/api#createnewstickerset), [addStickerToSet](https://core.telegram.org/bots/api#addstickertoset), or [replaceStickerInSet](https://core.telegram.org/bots/api#replacestickerinset) methods (the file can be used multiple times). Returns the uploaded [File](https://core.telegram.org/bots/api#file) on success.
+// UploadStickerFileCall represents a call to the [uploadStickerFile] method.
+// Use this method to upload a file with a sticker for later use in the [Client.CreateNewStickerSet], [Client.AddStickerToSet], or [Client.ReplaceStickerInSet] methods (the file can be used multiple times). Returns the uploaded [File] on success.
+//
+// [uploadStickerFile]: https://core.telegram.org/bots/api#uploadstickerfile
 type UploadStickerFileCall struct {
 	Call[File]
 }
 
-// NewUploadStickerFileCall constructs a new UploadStickerFileCall.
+// NewUploadStickerFileCall constructs a new [UploadStickerFileCall].
 //
 // Required params:
 //   - userID: User identifier of sticker file owner
-//   - sticker: A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See [https://core.telegram.org/stickers](https://core.telegram.org/stickers) for technical requirements. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - sticker: A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See [https://core.telegram.org/stickers] for technical requirements. [More information on Sending Files »]
 //   - stickerFormat: Format of the sticker, must be one of “static”, “animated”, “video”
+//
+// [https://core.telegram.org/stickers]: https://core.telegram.org/stickers
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func NewUploadStickerFileCall(userID UserID, sticker InputFile, stickerFormat string) *UploadStickerFileCall {
 	return &UploadStickerFileCall{
 		Call[File]{
@@ -8422,12 +8746,15 @@ func NewUploadStickerFileCall(userID UserID, sticker InputFile, stickerFormat st
 	}
 }
 
-// UploadStickerFile constructs a new UploadStickerFileCall.
+// UploadStickerFile constructs a new [UploadStickerFileCall].
 //
 // Required params:
 //   - userID: User identifier of sticker file owner
-//   - sticker: A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See [https://core.telegram.org/stickers](https://core.telegram.org/stickers) for technical requirements. [More information on Sending Files »](https://core.telegram.org/bots/api#sending-files)
+//   - sticker: A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See [https://core.telegram.org/stickers] for technical requirements. [More information on Sending Files »]
 //   - stickerFormat: Format of the sticker, must be one of “static”, “animated”, “video”
+//
+// [https://core.telegram.org/stickers]: https://core.telegram.org/stickers
+// [More information on Sending Files »]: https://core.telegram.org/bots/api#sending-files
 func (client *Client) UploadStickerFile(userID UserID, sticker InputFile, stickerFormat string) *UploadStickerFileCall {
 	return BindClient(
 		NewUploadStickerFileCall(userID, sticker, stickerFormat),
@@ -8453,13 +8780,15 @@ func (call *UploadStickerFileCall) StickerFormat(stickerFormat string) *UploadSt
 	return call
 }
 
-// CreateNewStickerSetCall represents a call to the createNewStickerSet method.
+// CreateNewStickerSetCall represents a call to the [createNewStickerSet] method.
 // Use this method to create a new sticker set owned by a user. The bot will be able to edit the sticker set thus created. Returns True on success.
+//
+// [createNewStickerSet]: https://core.telegram.org/bots/api#createnewstickerset
 type CreateNewStickerSetCall struct {
 	CallNoResult
 }
 
-// NewCreateNewStickerSetCall constructs a new CreateNewStickerSetCall.
+// NewCreateNewStickerSetCall constructs a new [CreateNewStickerSetCall].
 //
 // Required params:
 //   - userID: User identifier of created sticker set owner
@@ -8478,7 +8807,7 @@ func NewCreateNewStickerSetCall(userID UserID, name string, title string, sticke
 	}
 }
 
-// CreateNewStickerSet constructs a new CreateNewStickerSetCall.
+// CreateNewStickerSet constructs a new [CreateNewStickerSetCall].
 //
 // Required params:
 //   - userID: User identifier of created sticker set owner
@@ -8528,13 +8857,15 @@ func (call *CreateNewStickerSetCall) NeedsRepainting(needsRepainting bool) *Crea
 	return call
 }
 
-// AddStickerToSetCall represents a call to the addStickerToSet method.
+// AddStickerToSetCall represents a call to the [addStickerToSet] method.
 // Use this method to add a new sticker to a set created by the bot. Emoji sticker sets can have up to 200 stickers. Other sticker sets can have up to 120 stickers. Returns True on success.
+//
+// [addStickerToSet]: https://core.telegram.org/bots/api#addstickertoset
 type AddStickerToSetCall struct {
 	CallNoResult
 }
 
-// NewAddStickerToSetCall constructs a new AddStickerToSetCall.
+// NewAddStickerToSetCall constructs a new [AddStickerToSetCall].
 //
 // Required params:
 //   - userID: User identifier of sticker set owner
@@ -8551,7 +8882,7 @@ func NewAddStickerToSetCall(userID UserID, name string, sticker InputSticker) *A
 	}
 }
 
-// AddStickerToSet constructs a new AddStickerToSetCall.
+// AddStickerToSet constructs a new [AddStickerToSetCall].
 //
 // Required params:
 //   - userID: User identifier of sticker set owner
@@ -8582,13 +8913,15 @@ func (call *AddStickerToSetCall) Sticker(sticker InputSticker) *AddStickerToSetC
 	return call
 }
 
-// SetStickerPositionInSetCall represents a call to the setStickerPositionInSet method.
+// SetStickerPositionInSetCall represents a call to the [setStickerPositionInSet] method.
 // Use this method to move a sticker in a set created by the bot to a specific position. Returns True on success.
+//
+// [setStickerPositionInSet]: https://core.telegram.org/bots/api#setstickerpositioninset
 type SetStickerPositionInSetCall struct {
 	CallNoResult
 }
 
-// NewSetStickerPositionInSetCall constructs a new SetStickerPositionInSetCall.
+// NewSetStickerPositionInSetCall constructs a new [SetStickerPositionInSetCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8603,7 +8936,7 @@ func NewSetStickerPositionInSetCall(sticker string, position int) *SetStickerPos
 	}
 }
 
-// SetStickerPositionInSet constructs a new SetStickerPositionInSetCall.
+// SetStickerPositionInSet constructs a new [SetStickerPositionInSetCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8627,13 +8960,15 @@ func (call *SetStickerPositionInSetCall) Position(position int) *SetStickerPosit
 	return call
 }
 
-// DeleteStickerFromSetCall represents a call to the deleteStickerFromSet method.
+// DeleteStickerFromSetCall represents a call to the [deleteStickerFromSet] method.
 // Use this method to delete a sticker from a set created by the bot. Returns True on success.
+//
+// [deleteStickerFromSet]: https://core.telegram.org/bots/api#deletestickerfromset
 type DeleteStickerFromSetCall struct {
 	CallNoResult
 }
 
-// NewDeleteStickerFromSetCall constructs a new DeleteStickerFromSetCall.
+// NewDeleteStickerFromSetCall constructs a new [DeleteStickerFromSetCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8646,7 +8981,7 @@ func NewDeleteStickerFromSetCall(sticker string) *DeleteStickerFromSetCall {
 	}
 }
 
-// DeleteStickerFromSet constructs a new DeleteStickerFromSetCall.
+// DeleteStickerFromSet constructs a new [DeleteStickerFromSetCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8663,13 +8998,15 @@ func (call *DeleteStickerFromSetCall) Sticker(sticker string) *DeleteStickerFrom
 	return call
 }
 
-// ReplaceStickerInSetCall represents a call to the replaceStickerInSet method.
-// Use this method to replace an existing sticker in a sticker set with a new one. The method is equivalent to calling [deleteStickerFromSet](https://core.telegram.org/bots/api#deletestickerfromset), then [addStickerToSet](https://core.telegram.org/bots/api#addstickertoset), then [setStickerPositionInSet](https://core.telegram.org/bots/api#setstickerpositioninset). Returns True on success.
+// ReplaceStickerInSetCall represents a call to the [replaceStickerInSet] method.
+// Use this method to replace an existing sticker in a sticker set with a new one. The method is equivalent to calling [Client.DeleteStickerFromSet], then [Client.AddStickerToSet], then [Client.SetStickerPositionInSet]. Returns True on success.
+//
+// [replaceStickerInSet]: https://core.telegram.org/bots/api#replacestickerinset
 type ReplaceStickerInSetCall struct {
 	CallNoResult
 }
 
-// NewReplaceStickerInSetCall constructs a new ReplaceStickerInSetCall.
+// NewReplaceStickerInSetCall constructs a new [ReplaceStickerInSetCall].
 //
 // Required params:
 //   - userID: User identifier of the sticker set owner
@@ -8688,7 +9025,7 @@ func NewReplaceStickerInSetCall(userID UserID, name string, oldSticker string, s
 	}
 }
 
-// ReplaceStickerInSet constructs a new ReplaceStickerInSetCall.
+// ReplaceStickerInSet constructs a new [ReplaceStickerInSetCall].
 //
 // Required params:
 //   - userID: User identifier of the sticker set owner
@@ -8726,13 +9063,15 @@ func (call *ReplaceStickerInSetCall) Sticker(sticker InputSticker) *ReplaceStick
 	return call
 }
 
-// SetStickerEmojiListCall represents a call to the setStickerEmojiList method.
+// SetStickerEmojiListCall represents a call to the [setStickerEmojiList] method.
 // Use this method to change the list of emoji assigned to a regular or custom emoji sticker. The sticker must belong to a sticker set created by the bot. Returns True on success.
+//
+// [setStickerEmojiList]: https://core.telegram.org/bots/api#setstickeremojilist
 type SetStickerEmojiListCall struct {
 	CallNoResult
 }
 
-// NewSetStickerEmojiListCall constructs a new SetStickerEmojiListCall.
+// NewSetStickerEmojiListCall constructs a new [SetStickerEmojiListCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8747,7 +9086,7 @@ func NewSetStickerEmojiListCall(sticker string, emojiList []string) *SetStickerE
 	}
 }
 
-// SetStickerEmojiList constructs a new SetStickerEmojiListCall.
+// SetStickerEmojiList constructs a new [SetStickerEmojiListCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8771,13 +9110,15 @@ func (call *SetStickerEmojiListCall) EmojiList(emojiList []string) *SetStickerEm
 	return call
 }
 
-// SetStickerKeywordsCall represents a call to the setStickerKeywords method.
+// SetStickerKeywordsCall represents a call to the [setStickerKeywords] method.
 // Use this method to change search keywords assigned to a regular or custom emoji sticker. The sticker must belong to a sticker set created by the bot. Returns True on success.
+//
+// [setStickerKeywords]: https://core.telegram.org/bots/api#setstickerkeywords
 type SetStickerKeywordsCall struct {
 	CallNoResult
 }
 
-// NewSetStickerKeywordsCall constructs a new SetStickerKeywordsCall.
+// NewSetStickerKeywordsCall constructs a new [SetStickerKeywordsCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8790,7 +9131,7 @@ func NewSetStickerKeywordsCall(sticker string) *SetStickerKeywordsCall {
 	}
 }
 
-// SetStickerKeywords constructs a new SetStickerKeywordsCall.
+// SetStickerKeywords constructs a new [SetStickerKeywordsCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8813,13 +9154,15 @@ func (call *SetStickerKeywordsCall) Keywords(keywords []string) *SetStickerKeywo
 	return call
 }
 
-// SetStickerMaskPositionCall represents a call to the setStickerMaskPosition method.
-// Use this method to change the [mask position](https://core.telegram.org/bots/api#maskposition) of a mask sticker. The sticker must belong to a sticker set that was created by the bot. Returns True on success.
+// SetStickerMaskPositionCall represents a call to the [setStickerMaskPosition] method.
+// Use this method to change the [MaskPosition] of a mask sticker. The sticker must belong to a sticker set that was created by the bot. Returns True on success.
+//
+// [setStickerMaskPosition]: https://core.telegram.org/bots/api#setstickermaskposition
 type SetStickerMaskPositionCall struct {
 	CallNoResult
 }
 
-// NewSetStickerMaskPositionCall constructs a new SetStickerMaskPositionCall.
+// NewSetStickerMaskPositionCall constructs a new [SetStickerMaskPositionCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8832,7 +9175,7 @@ func NewSetStickerMaskPositionCall(sticker string) *SetStickerMaskPositionCall {
 	}
 }
 
-// SetStickerMaskPosition constructs a new SetStickerMaskPositionCall.
+// SetStickerMaskPosition constructs a new [SetStickerMaskPositionCall].
 //
 // Required params:
 //   - sticker: File identifier of the sticker
@@ -8855,13 +9198,15 @@ func (call *SetStickerMaskPositionCall) MaskPosition(maskPosition MaskPosition) 
 	return call
 }
 
-// SetStickerSetTitleCall represents a call to the setStickerSetTitle method.
+// SetStickerSetTitleCall represents a call to the [setStickerSetTitle] method.
 // Use this method to set the title of a created sticker set. Returns True on success.
+//
+// [setStickerSetTitle]: https://core.telegram.org/bots/api#setstickersettitle
 type SetStickerSetTitleCall struct {
 	CallNoResult
 }
 
-// NewSetStickerSetTitleCall constructs a new SetStickerSetTitleCall.
+// NewSetStickerSetTitleCall constructs a new [SetStickerSetTitleCall].
 //
 // Required params:
 //   - name: Sticker set name
@@ -8876,7 +9221,7 @@ func NewSetStickerSetTitleCall(name string, title string) *SetStickerSetTitleCal
 	}
 }
 
-// SetStickerSetTitle constructs a new SetStickerSetTitleCall.
+// SetStickerSetTitle constructs a new [SetStickerSetTitleCall].
 //
 // Required params:
 //   - name: Sticker set name
@@ -8900,13 +9245,15 @@ func (call *SetStickerSetTitleCall) Title(title string) *SetStickerSetTitleCall 
 	return call
 }
 
-// SetStickerSetThumbnailCall represents a call to the setStickerSetThumbnail method.
+// SetStickerSetThumbnailCall represents a call to the [setStickerSetThumbnail] method.
 // Use this method to set the thumbnail of a regular or mask sticker set. The format of the thumbnail file must match the format of the stickers in the set. Returns True on success.
+//
+// [setStickerSetThumbnail]: https://core.telegram.org/bots/api#setstickersetthumbnail
 type SetStickerSetThumbnailCall struct {
 	CallNoResult
 }
 
-// NewSetStickerSetThumbnailCall constructs a new SetStickerSetThumbnailCall.
+// NewSetStickerSetThumbnailCall constructs a new [SetStickerSetThumbnailCall].
 //
 // Required params:
 //   - name: Sticker set name
@@ -8923,7 +9270,7 @@ func NewSetStickerSetThumbnailCall(name string, userID UserID, format string) *S
 	}
 }
 
-// SetStickerSetThumbnail constructs a new SetStickerSetThumbnailCall.
+// SetStickerSetThumbnail constructs a new [SetStickerSetThumbnailCall].
 //
 // Required params:
 //   - name: Sticker set name
@@ -8960,13 +9307,15 @@ func (call *SetStickerSetThumbnailCall) Format(format string) *SetStickerSetThum
 	return call
 }
 
-// SetCustomEmojiStickerSetThumbnailCall represents a call to the setCustomEmojiStickerSetThumbnail method.
+// SetCustomEmojiStickerSetThumbnailCall represents a call to the [setCustomEmojiStickerSetThumbnail] method.
 // Use this method to set the thumbnail of a custom emoji sticker set. Returns True on success.
+//
+// [setCustomEmojiStickerSetThumbnail]: https://core.telegram.org/bots/api#setcustomemojistickersetthumbnail
 type SetCustomEmojiStickerSetThumbnailCall struct {
 	CallNoResult
 }
 
-// NewSetCustomEmojiStickerSetThumbnailCall constructs a new SetCustomEmojiStickerSetThumbnailCall.
+// NewSetCustomEmojiStickerSetThumbnailCall constructs a new [SetCustomEmojiStickerSetThumbnailCall].
 //
 // Required params:
 //   - name: Sticker set name
@@ -8979,7 +9328,7 @@ func NewSetCustomEmojiStickerSetThumbnailCall(name string) *SetCustomEmojiSticke
 	}
 }
 
-// SetCustomEmojiStickerSetThumbnail constructs a new SetCustomEmojiStickerSetThumbnailCall.
+// SetCustomEmojiStickerSetThumbnail constructs a new [SetCustomEmojiStickerSetThumbnailCall].
 //
 // Required params:
 //   - name: Sticker set name
@@ -9002,13 +9351,15 @@ func (call *SetCustomEmojiStickerSetThumbnailCall) CustomEmojiID(customEmojiID s
 	return call
 }
 
-// DeleteStickerSetCall represents a call to the deleteStickerSet method.
+// DeleteStickerSetCall represents a call to the [deleteStickerSet] method.
 // Use this method to delete a sticker set that was created by the bot. Returns True on success.
+//
+// [deleteStickerSet]: https://core.telegram.org/bots/api#deletestickerset
 type DeleteStickerSetCall struct {
 	CallNoResult
 }
 
-// NewDeleteStickerSetCall constructs a new DeleteStickerSetCall.
+// NewDeleteStickerSetCall constructs a new [DeleteStickerSetCall].
 //
 // Required params:
 //   - name: Sticker set name
@@ -9021,7 +9372,7 @@ func NewDeleteStickerSetCall(name string) *DeleteStickerSetCall {
 	}
 }
 
-// DeleteStickerSet constructs a new DeleteStickerSetCall.
+// DeleteStickerSet constructs a new [DeleteStickerSetCall].
 //
 // Required params:
 //   - name: Sticker set name
@@ -9038,14 +9389,16 @@ func (call *DeleteStickerSetCall) Name(name string) *DeleteStickerSetCall {
 	return call
 }
 
-// AnswerInlineQueryCall represents a call to the answerInlineQuery method.
+// AnswerInlineQueryCall represents a call to the [answerInlineQuery] method.
 // Use this method to send answers to an inline query. On success, True is returned.
 // No more than 50 results per query are allowed.
+//
+// [answerInlineQuery]: https://core.telegram.org/bots/api#answerinlinequery
 type AnswerInlineQueryCall struct {
 	CallNoResult
 }
 
-// NewAnswerInlineQueryCall constructs a new AnswerInlineQueryCall.
+// NewAnswerInlineQueryCall constructs a new [AnswerInlineQueryCall].
 //
 // Required params:
 //   - inlineQueryID: Unique identifier for the answered query
@@ -9060,7 +9413,7 @@ func NewAnswerInlineQueryCall(inlineQueryID string, results []InlineQueryResult)
 	}
 }
 
-// AnswerInlineQuery constructs a new AnswerInlineQueryCall.
+// AnswerInlineQuery constructs a new [AnswerInlineQueryCall].
 //
 // Required params:
 //   - inlineQueryID: Unique identifier for the answered query
@@ -9108,13 +9461,16 @@ func (call *AnswerInlineQueryCall) Button(button InlineQueryResultsButton) *Answ
 	return call
 }
 
-// AnswerWebAppQueryCall represents a call to the answerWebAppQuery method.
-// Use this method to set the result of an interaction with a [Web App](/bots/webapps) and send a corresponding message on behalf of the user to the chat from which the query originated. On success, a [SentWebAppMessage](https://core.telegram.org/bots/api#sentwebappmessage) object is returned.
+// AnswerWebAppQueryCall represents a call to the [answerWebAppQuery] method.
+// Use this method to set the result of an interaction with a [Web App] and send a corresponding message on behalf of the user to the chat from which the query originated. On success, a [SentWebAppMessage] object is returned.
+//
+// [Web App]: https://core.telegram.org/bots/webapps
+// [answerWebAppQuery]: https://core.telegram.org/bots/api#answerwebappquery
 type AnswerWebAppQueryCall struct {
 	Call[SentWebAppMessage]
 }
 
-// NewAnswerWebAppQueryCall constructs a new AnswerWebAppQueryCall.
+// NewAnswerWebAppQueryCall constructs a new [AnswerWebAppQueryCall].
 //
 // Required params:
 //   - webAppQueryID: Unique identifier for the query to be answered
@@ -9129,7 +9485,7 @@ func NewAnswerWebAppQueryCall(webAppQueryID string, result InlineQueryResult) *A
 	}
 }
 
-// AnswerWebAppQuery constructs a new AnswerWebAppQueryCall.
+// AnswerWebAppQuery constructs a new [AnswerWebAppQueryCall].
 //
 // Required params:
 //   - webAppQueryID: Unique identifier for the query to be answered
@@ -9153,13 +9509,15 @@ func (call *AnswerWebAppQueryCall) Result(result InlineQueryResult) *AnswerWebAp
 	return call
 }
 
-// SavePreparedInlineMessageCall represents a call to the savePreparedInlineMessage method.
-// Stores a message that can be sent by a user of a Mini App. Returns a [PreparedInlineMessage](https://core.telegram.org/bots/api#preparedinlinemessage) object.
+// SavePreparedInlineMessageCall represents a call to the [savePreparedInlineMessage] method.
+// Stores a message that can be sent by a user of a Mini App. Returns a [PreparedInlineMessage] object.
+//
+// [savePreparedInlineMessage]: https://core.telegram.org/bots/api#savepreparedinlinemessage
 type SavePreparedInlineMessageCall struct {
 	Call[PreparedInlineMessage]
 }
 
-// NewSavePreparedInlineMessageCall constructs a new SavePreparedInlineMessageCall.
+// NewSavePreparedInlineMessageCall constructs a new [SavePreparedInlineMessageCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user that can use the prepared message
@@ -9174,7 +9532,7 @@ func NewSavePreparedInlineMessageCall(userID UserID, result InlineQueryResult) *
 	}
 }
 
-// SavePreparedInlineMessage constructs a new SavePreparedInlineMessageCall.
+// SavePreparedInlineMessage constructs a new [SavePreparedInlineMessageCall].
 //
 // Required params:
 //   - userID: Unique identifier of the target user that can use the prepared message
@@ -9222,21 +9580,26 @@ func (call *SavePreparedInlineMessageCall) AllowChannelChats(allowChannelChats b
 	return call
 }
 
-// SendInvoiceCall represents a call to the sendInvoice method.
-// Use this method to send invoices. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendInvoiceCall represents a call to the [sendInvoice] method.
+// Use this method to send invoices. On success, the sent [Message] is returned.
+//
+// [sendInvoice]: https://core.telegram.org/bots/api#sendinvoice
 type SendInvoiceCall struct {
 	Call[Message]
 }
 
-// NewSendInvoiceCall constructs a new SendInvoiceCall.
+// NewSendInvoiceCall constructs a new [SendInvoiceCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 //   - title: Product name, 1-32 characters
 //   - description: Product description, 1-255 characters
 //   - payload: Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use it for your internal processes.
-//   - currency: Three-letter ISO 4217 currency code, see [more on currencies](/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
-//   - prices: Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in [Telegram Stars](https://t.me/BotNews/90).
+//   - currency: Three-letter ISO 4217 currency code, see [more on currencies]. Pass “XTR” for payments in [Telegram Stars].
+//   - prices: Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in [Telegram Stars].
+//
+// [more on currencies]: https://core.telegram.org/bots/payments#supported-currencies
+// [Telegram Stars]: https://t.me/BotNews/90
 func NewSendInvoiceCall(chatID PeerID, title string, description string, payload string, currency string, prices []LabeledPrice) *SendInvoiceCall {
 	return &SendInvoiceCall{
 		Call[Message]{
@@ -9251,15 +9614,18 @@ func NewSendInvoiceCall(chatID PeerID, title string, description string, payload
 	}
 }
 
-// SendInvoice constructs a new SendInvoiceCall.
+// SendInvoice constructs a new [SendInvoiceCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 //   - title: Product name, 1-32 characters
 //   - description: Product description, 1-255 characters
 //   - payload: Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use it for your internal processes.
-//   - currency: Three-letter ISO 4217 currency code, see [more on currencies](/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
-//   - prices: Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in [Telegram Stars](https://t.me/BotNews/90).
+//   - currency: Three-letter ISO 4217 currency code, see [more on currencies]. Pass “XTR” for payments in [Telegram Stars].
+//   - prices: Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in [Telegram Stars].
+//
+// [more on currencies]: https://core.telegram.org/bots/payments#supported-currencies
+// [Telegram Stars]: https://t.me/BotNews/90
 func (client *Client) SendInvoice(chatID PeerID, title string, description string, payload string, currency string, prices []LabeledPrice) *SendInvoiceCall {
 	return BindClient(
 		NewSendInvoiceCall(chatID, title, description, payload, currency, prices),
@@ -9453,20 +9819,25 @@ func (call *SendInvoiceCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *Send
 	return call
 }
 
-// CreateInvoiceLinkCall represents a call to the createInvoiceLink method.
+// CreateInvoiceLinkCall represents a call to the [createInvoiceLink] method.
 // Use this method to create a link for an invoice. Returns the created invoice link as String on success.
+//
+// [createInvoiceLink]: https://core.telegram.org/bots/api#createinvoicelink
 type CreateInvoiceLinkCall struct {
 	Call[string]
 }
 
-// NewCreateInvoiceLinkCall constructs a new CreateInvoiceLinkCall.
+// NewCreateInvoiceLinkCall constructs a new [CreateInvoiceLinkCall].
 //
 // Required params:
 //   - title: Product name, 1-32 characters
 //   - description: Product description, 1-255 characters
 //   - payload: Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use it for your internal processes.
-//   - currency: Three-letter ISO 4217 currency code, see [more on currencies](/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
-//   - prices: Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in [Telegram Stars](https://t.me/BotNews/90).
+//   - currency: Three-letter ISO 4217 currency code, see [more on currencies]. Pass “XTR” for payments in [Telegram Stars].
+//   - prices: Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in [Telegram Stars].
+//
+// [more on currencies]: https://core.telegram.org/bots/payments#supported-currencies
+// [Telegram Stars]: https://t.me/BotNews/90
 func NewCreateInvoiceLinkCall(title string, description string, payload string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
 	return &CreateInvoiceLinkCall{
 		Call[string]{
@@ -9480,14 +9851,17 @@ func NewCreateInvoiceLinkCall(title string, description string, payload string, 
 	}
 }
 
-// CreateInvoiceLink constructs a new CreateInvoiceLinkCall.
+// CreateInvoiceLink constructs a new [CreateInvoiceLinkCall].
 //
 // Required params:
 //   - title: Product name, 1-32 characters
 //   - description: Product description, 1-255 characters
 //   - payload: Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use it for your internal processes.
-//   - currency: Three-letter ISO 4217 currency code, see [more on currencies](/bots/payments#supported-currencies). Pass “XTR” for payments in [Telegram Stars](https://t.me/BotNews/90).
-//   - prices: Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in [Telegram Stars](https://t.me/BotNews/90).
+//   - currency: Three-letter ISO 4217 currency code, see [more on currencies]. Pass “XTR” for payments in [Telegram Stars].
+//   - prices: Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.). Must contain exactly one item for payments in [Telegram Stars].
+//
+// [more on currencies]: https://core.telegram.org/bots/payments#supported-currencies
+// [Telegram Stars]: https://t.me/BotNews/90
 func (client *Client) CreateInvoiceLink(title string, description string, payload string, currency string, prices []LabeledPrice) *CreateInvoiceLinkCall {
 	return BindClient(
 		NewCreateInvoiceLinkCall(title, description, payload, currency, prices),
@@ -9627,13 +10001,15 @@ func (call *CreateInvoiceLinkCall) IsFlexible(isFlexible bool) *CreateInvoiceLin
 	return call
 }
 
-// AnswerShippingQueryCall represents a call to the answerShippingQuery method.
-// If you sent an invoice requesting a shipping address and the parameter is_flexible was specified, the Bot API will send an [Update](https://core.telegram.org/bots/api#update) with a shipping_query field to the bot. Use this method to reply to shipping queries. On success, True is returned.
+// AnswerShippingQueryCall represents a call to the [answerShippingQuery] method.
+// If you sent an invoice requesting a shipping address and the parameter is_flexible was specified, the Bot API will send an [Update] with a shipping_query field to the bot. Use this method to reply to shipping queries. On success, True is returned.
+//
+// [answerShippingQuery]: https://core.telegram.org/bots/api#answershippingquery
 type AnswerShippingQueryCall struct {
 	CallNoResult
 }
 
-// NewAnswerShippingQueryCall constructs a new AnswerShippingQueryCall.
+// NewAnswerShippingQueryCall constructs a new [AnswerShippingQueryCall].
 //
 // Required params:
 //   - shippingQueryID: Unique identifier for the query to be answered
@@ -9648,7 +10024,7 @@ func NewAnswerShippingQueryCall(shippingQueryID string, ok bool) *AnswerShipping
 	}
 }
 
-// AnswerShippingQuery constructs a new AnswerShippingQueryCall.
+// AnswerShippingQuery constructs a new [AnswerShippingQueryCall].
 //
 // Required params:
 //   - shippingQueryID: Unique identifier for the query to be answered
@@ -9684,13 +10060,15 @@ func (call *AnswerShippingQueryCall) ErrorMessage(errorMessage string) *AnswerSh
 	return call
 }
 
-// AnswerPreCheckoutQueryCall represents a call to the answerPreCheckoutQuery method.
-// Once the user has confirmed their payment and shipping details, the Bot API sends the final confirmation in the form of an [Update](https://core.telegram.org/bots/api#update) with the field pre_checkout_query. Use this method to respond to such pre-checkout queries. On success, True is returned. Note: The Bot API must receive an answer within 10 seconds after the pre-checkout query was sent.
+// AnswerPreCheckoutQueryCall represents a call to the [answerPreCheckoutQuery] method.
+// Once the user has confirmed their payment and shipping details, the Bot API sends the final confirmation in the form of an [Update] with the field pre_checkout_query. Use this method to respond to such pre-checkout queries. On success, True is returned. Note: The Bot API must receive an answer within 10 seconds after the pre-checkout query was sent.
+//
+// [answerPreCheckoutQuery]: https://core.telegram.org/bots/api#answerprecheckoutquery
 type AnswerPreCheckoutQueryCall struct {
 	CallNoResult
 }
 
-// NewAnswerPreCheckoutQueryCall constructs a new AnswerPreCheckoutQueryCall.
+// NewAnswerPreCheckoutQueryCall constructs a new [AnswerPreCheckoutQueryCall].
 //
 // Required params:
 //   - preCheckoutQueryID: Unique identifier for the query to be answered
@@ -9705,7 +10083,7 @@ func NewAnswerPreCheckoutQueryCall(preCheckoutQueryID string, ok bool) *AnswerPr
 	}
 }
 
-// AnswerPreCheckoutQuery constructs a new AnswerPreCheckoutQueryCall.
+// AnswerPreCheckoutQuery constructs a new [AnswerPreCheckoutQueryCall].
 //
 // Required params:
 //   - preCheckoutQueryID: Unique identifier for the query to be answered
@@ -9735,13 +10113,15 @@ func (call *AnswerPreCheckoutQueryCall) ErrorMessage(errorMessage string) *Answe
 	return call
 }
 
-// GetMyStarBalanceCall represents a call to the getMyStarBalance method.
-// A method to get the current Telegram Stars balance of the bot. Requires no parameters. On success, returns a [StarAmount](https://core.telegram.org/bots/api#staramount) object.
+// GetMyStarBalanceCall represents a call to the [getMyStarBalance] method.
+// A method to get the current Telegram Stars balance of the bot. Requires no parameters. On success, returns a [StarAmount] object.
+//
+// [getMyStarBalance]: https://core.telegram.org/bots/api#getmystarbalance
 type GetMyStarBalanceCall struct {
 	Call[StarAmount]
 }
 
-// NewGetMyStarBalanceCall constructs a new GetMyStarBalanceCall.
+// NewGetMyStarBalanceCall constructs a new [GetMyStarBalanceCall].
 func NewGetMyStarBalanceCall() *GetMyStarBalanceCall {
 	return &GetMyStarBalanceCall{
 		Call[StarAmount]{
@@ -9750,7 +10130,7 @@ func NewGetMyStarBalanceCall() *GetMyStarBalanceCall {
 	}
 }
 
-// GetMyStarBalance constructs a new GetMyStarBalanceCall.
+// GetMyStarBalance constructs a new [GetMyStarBalanceCall].
 func (client *Client) GetMyStarBalance() *GetMyStarBalanceCall {
 	return BindClient(
 		NewGetMyStarBalanceCall(),
@@ -9758,13 +10138,15 @@ func (client *Client) GetMyStarBalance() *GetMyStarBalanceCall {
 	)
 }
 
-// GetStarTransactionsCall represents a call to the getStarTransactions method.
-// Returns the bot's Telegram Star transactions in chronological order. On success, returns a [StarTransactions](https://core.telegram.org/bots/api#startransactions) object.
+// GetStarTransactionsCall represents a call to the [getStarTransactions] method.
+// Returns the bot's Telegram Star transactions in chronological order. On success, returns a [StarTransactions] object.
+//
+// [getStarTransactions]: https://core.telegram.org/bots/api#getstartransactions
 type GetStarTransactionsCall struct {
 	Call[StarTransactions]
 }
 
-// NewGetStarTransactionsCall constructs a new GetStarTransactionsCall.
+// NewGetStarTransactionsCall constructs a new [GetStarTransactionsCall].
 func NewGetStarTransactionsCall() *GetStarTransactionsCall {
 	return &GetStarTransactionsCall{
 		Call[StarTransactions]{
@@ -9773,7 +10155,7 @@ func NewGetStarTransactionsCall() *GetStarTransactionsCall {
 	}
 }
 
-// GetStarTransactions constructs a new GetStarTransactionsCall.
+// GetStarTransactions constructs a new [GetStarTransactionsCall].
 func (client *Client) GetStarTransactions() *GetStarTransactionsCall {
 	return BindClient(
 		NewGetStarTransactionsCall(),
@@ -9793,13 +10175,16 @@ func (call *GetStarTransactionsCall) Limit(limit int) *GetStarTransactionsCall {
 	return call
 }
 
-// RefundStarPaymentCall represents a call to the refundStarPayment method.
-// Refunds a successful payment in [Telegram Stars](https://t.me/BotNews/90). Returns True on success.
+// RefundStarPaymentCall represents a call to the [refundStarPayment] method.
+// Refunds a successful payment in [Telegram Stars]. Returns True on success.
+//
+// [Telegram Stars]: https://t.me/BotNews/90
+// [refundStarPayment]: https://core.telegram.org/bots/api#refundstarpayment
 type RefundStarPaymentCall struct {
 	CallNoResult
 }
 
-// NewRefundStarPaymentCall constructs a new RefundStarPaymentCall.
+// NewRefundStarPaymentCall constructs a new [RefundStarPaymentCall].
 //
 // Required params:
 //   - userID: Identifier of the user whose payment will be refunded
@@ -9814,7 +10199,7 @@ func NewRefundStarPaymentCall(userID UserID, telegramPaymentChargeID string) *Re
 	}
 }
 
-// RefundStarPayment constructs a new RefundStarPaymentCall.
+// RefundStarPayment constructs a new [RefundStarPaymentCall].
 //
 // Required params:
 //   - userID: Identifier of the user whose payment will be refunded
@@ -9838,13 +10223,15 @@ func (call *RefundStarPaymentCall) TelegramPaymentChargeID(telegramPaymentCharge
 	return call
 }
 
-// EditUserStarSubscriptionCall represents a call to the editUserStarSubscription method.
+// EditUserStarSubscriptionCall represents a call to the [editUserStarSubscription] method.
 // Allows the bot to cancel or re-enable extension of a subscription paid in Telegram Stars. Returns True on success.
+//
+// [editUserStarSubscription]: https://core.telegram.org/bots/api#edituserstarsubscription
 type EditUserStarSubscriptionCall struct {
 	CallNoResult
 }
 
-// NewEditUserStarSubscriptionCall constructs a new EditUserStarSubscriptionCall.
+// NewEditUserStarSubscriptionCall constructs a new [EditUserStarSubscriptionCall].
 //
 // Required params:
 //   - userID: Identifier of the user whose subscription will be edited
@@ -9861,7 +10248,7 @@ func NewEditUserStarSubscriptionCall(userID UserID, telegramPaymentChargeID stri
 	}
 }
 
-// EditUserStarSubscription constructs a new EditUserStarSubscriptionCall.
+// EditUserStarSubscription constructs a new [EditUserStarSubscriptionCall].
 //
 // Required params:
 //   - userID: Identifier of the user whose subscription will be edited
@@ -9892,14 +10279,16 @@ func (call *EditUserStarSubscriptionCall) IsCanceled(isCanceled bool) *EditUserS
 	return call
 }
 
-// SetPassportDataErrorsCall represents a call to the setPassportDataErrors method.
+// SetPassportDataErrorsCall represents a call to the [setPassportDataErrors] method.
 // Informs a user that some of the Telegram Passport elements they provided contains errors. The user will not be able to re-submit their Passport to you until the errors are fixed (the contents of the field for which you returned the error must change). Returns True on success.
 // Use this if the data submitted by the user doesn't satisfy the standards your service requires for any reason. For example, if a birthday date seems invalid, a submitted document is blurry, a scan shows evidence of tampering, etc. Supply some details in the error message to make sure the user knows how to correct the issues.
+//
+// [setPassportDataErrors]: https://core.telegram.org/bots/api#setpassportdataerrors
 type SetPassportDataErrorsCall struct {
 	CallNoResult
 }
 
-// NewSetPassportDataErrorsCall constructs a new SetPassportDataErrorsCall.
+// NewSetPassportDataErrorsCall constructs a new [SetPassportDataErrorsCall].
 //
 // Required params:
 //   - userID: User identifier
@@ -9914,7 +10303,7 @@ func NewSetPassportDataErrorsCall(userID UserID, errors []PassportElementError) 
 	}
 }
 
-// SetPassportDataErrors constructs a new SetPassportDataErrorsCall.
+// SetPassportDataErrors constructs a new [SetPassportDataErrorsCall].
 //
 // Required params:
 //   - userID: User identifier
@@ -9938,17 +10327,21 @@ func (call *SetPassportDataErrorsCall) Errors(errors []PassportElementError) *Se
 	return call
 }
 
-// SendGameCall represents a call to the sendGame method.
-// Use this method to send a game. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
+// SendGameCall represents a call to the [sendGame] method.
+// Use this method to send a game. On success, the sent [Message] is returned.
+//
+// [sendGame]: https://core.telegram.org/bots/api#sendgame
 type SendGameCall struct {
 	Call[Message]
 }
 
-// NewSendGameCall constructs a new SendGameCall.
+// NewSendGameCall constructs a new [SendGameCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat. Games can't be sent to channel direct messages chats and channel chats.
-//   - gameShortName: Short name of the game, serves as the unique identifier for the game. Set up your games via [@BotFather](https://t.me/botfather).
+//   - gameShortName: Short name of the game, serves as the unique identifier for the game. Set up your games via [@BotFather].
+//
+// [@BotFather]: https://t.me/botfather
 func NewSendGameCall(chatID int, gameShortName string) *SendGameCall {
 	return &SendGameCall{
 		Call[Message]{
@@ -9959,11 +10352,13 @@ func NewSendGameCall(chatID int, gameShortName string) *SendGameCall {
 	}
 }
 
-// SendGame constructs a new SendGameCall.
+// SendGame constructs a new [SendGameCall].
 //
 // Required params:
 //   - chatID: Unique identifier for the target chat. Games can't be sent to channel direct messages chats and channel chats.
-//   - gameShortName: Short name of the game, serves as the unique identifier for the game. Set up your games via [@BotFather](https://t.me/botfather).
+//   - gameShortName: Short name of the game, serves as the unique identifier for the game. Set up your games via [@BotFather].
+//
+// [@BotFather]: https://t.me/botfather
 func (client *Client) SendGame(chatID int, gameShortName string) *SendGameCall {
 	return BindClient(
 		NewSendGameCall(chatID, gameShortName),
@@ -10031,13 +10426,15 @@ func (call *SendGameCall) ReplyMarkup(replyMarkup InlineKeyboardMarkup) *SendGam
 	return call
 }
 
-// SetGameScoreCall represents a call to the setGameScore method.
-// Use this method to set the score of the specified user in a game message. On success, if the message is not an inline message, the [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned. Returns an error, if the new score is not greater than the user's current score in the chat and force is False.
+// SetGameScoreCall represents a call to the [setGameScore] method.
+// Use this method to set the score of the specified user in a game message. On success, if the message is not an inline message, the [Message] is returned, otherwise True is returned. Returns an error, if the new score is not greater than the user's current score in the chat and force is False.
+//
+// [setGameScore]: https://core.telegram.org/bots/api#setgamescore
 type SetGameScoreCall struct {
 	CallNoResult
 }
 
-// NewSetGameScoreCall constructs a new SetGameScoreCall.
+// NewSetGameScoreCall constructs a new [SetGameScoreCall].
 //
 // Required params:
 //   - userID: User identifier
@@ -10052,7 +10449,7 @@ func NewSetGameScoreCall(userID UserID, score int) *SetGameScoreCall {
 	}
 }
 
-// SetGameScore constructs a new SetGameScoreCall.
+// SetGameScore constructs a new [SetGameScoreCall].
 //
 // Required params:
 //   - userID: User identifier
@@ -10106,14 +10503,16 @@ func (call *SetGameScoreCall) InlineMessageID(inlineMessageID string) *SetGameSc
 	return call
 }
 
-// GetGameHighScoresCall represents a call to the getGameHighScores method.
-// Use this method to get data for high score tables. Will return the score of the specified user and several of their neighbors in a game. Returns an Array of [GameHighScore](https://core.telegram.org/bots/api#gamehighscore) objects.
+// GetGameHighScoresCall represents a call to the [getGameHighScores] method.
+// Use this method to get data for high score tables. Will return the score of the specified user and several of their neighbors in a game. Returns an Array of [GameHighScore] objects.
 // This method will currently return scores for the target user, plus two of their closest neighbors on each side. Will also return the top three users if the user and their neighbors are not among them. Please note that this behavior is subject to change.
+//
+// [getGameHighScores]: https://core.telegram.org/bots/api#getgamehighscores
 type GetGameHighScoresCall struct {
 	Call[[]GameHighScore]
 }
 
-// NewGetGameHighScoresCall constructs a new GetGameHighScoresCall.
+// NewGetGameHighScoresCall constructs a new [GetGameHighScoresCall].
 //
 // Required params:
 //   - userID: Target user id
@@ -10126,7 +10525,7 @@ func NewGetGameHighScoresCall(userID UserID) *GetGameHighScoresCall {
 	}
 }
 
-// GetGameHighScores constructs a new GetGameHighScoresCall.
+// GetGameHighScores constructs a new [GetGameHighScoresCall].
 //
 // Required params:
 //   - userID: Target user id
