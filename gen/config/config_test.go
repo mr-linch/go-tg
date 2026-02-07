@@ -221,6 +221,22 @@ func TestApplyEnums_FullDoc(t *testing.T) {
 	assert.Contains(t, updateType.Values, "channel_post")
 	assert.Greater(t, len(updateType.Values), 10)
 
+	// Expr: MessageType (with exclude list)
+	messageType := enumByName("MessageType")
+	require.NotNil(t, messageType, "MessageType enum not found")
+	assert.Contains(t, messageType.Values, "text")
+	assert.Contains(t, messageType.Values, "photo")
+	assert.Contains(t, messageType.Values, "audio")
+	assert.Contains(t, messageType.Values, "new_chat_members")
+	// Metadata fields should be excluded
+	assert.NotContains(t, messageType.Values, "from")
+	assert.NotContains(t, messageType.Values, "sender_chat")
+	assert.NotContains(t, messageType.Values, "edit_date")
+	assert.NotContains(t, messageType.Values, "reply_markup")
+	assert.NotContains(t, messageType.Values, "entities")
+	assert.NotContains(t, messageType.Values, "caption")
+	assert.NotContains(t, messageType.Values, "media_group_id")
+
 	// Expr: MessageOriginType (union discriminator)
 	moType := enumByName("MessageOriginType")
 	require.NotNil(t, moType, "MessageOriginType enum not found")
@@ -239,6 +255,104 @@ func TestApplyEnums_FullDoc(t *testing.T) {
 	require.NotNil(t, rtType, "ReactionTypeType enum not found")
 	assert.Contains(t, rtType.Values, "emoji")
 	assert.Contains(t, rtType.Values, "custom_emoji")
+}
+
+func TestApplyEnums_Exclude(t *testing.T) {
+	api := &ir.API{
+		Types: []ir.Type{
+			{
+				Name: "Message",
+				Fields: []ir.Field{
+					{Name: "from", Optional: true},
+					{Name: "text", Optional: true},
+					{Name: "photo", Optional: true},
+					{Name: "reply_markup", Optional: true},
+				},
+			},
+		},
+	}
+
+	cfg := &Config{
+		Parser: Parser{
+			Enums: []EnumDef{
+				{
+					Name:    "MessageType",
+					Expr:    `filter(Fields("Message"), {.Optional}) | map({.Name})`,
+					Exclude: []string{"from", "reply_markup"},
+				},
+			},
+		},
+	}
+
+	err := cfg.ApplyEnums(api)
+	require.NoError(t, err)
+	require.Len(t, api.Enums, 1)
+
+	assert.Equal(t, "MessageType", api.Enums[0].Name)
+	assert.Equal(t, []string{"text", "photo"}, api.Enums[0].Values)
+	assert.NotContains(t, api.Enums[0].Values, "from")
+	assert.NotContains(t, api.Enums[0].Values, "reply_markup")
+}
+
+func TestApplyEnums_ExcludeAll(t *testing.T) {
+	api := &ir.API{
+		Types: []ir.Type{
+			{
+				Name: "Tiny",
+				Fields: []ir.Field{
+					{Name: "a", Optional: true},
+					{Name: "b", Optional: true},
+				},
+			},
+		},
+	}
+
+	cfg := &Config{
+		Parser: Parser{
+			Enums: []EnumDef{
+				{
+					Name:    "TinyType",
+					Expr:    `filter(Fields("Tiny"), {.Optional}) | map({.Name})`,
+					Exclude: []string{"a", "b"},
+				},
+			},
+		},
+	}
+
+	err := cfg.ApplyEnums(api)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "produced no values")
+}
+
+func TestApplyEnums_ExcludeUnmatched(t *testing.T) {
+	api := &ir.API{
+		Types: []ir.Type{
+			{
+				Name: "Msg",
+				Fields: []ir.Field{
+					{Name: "text", Optional: true},
+					{Name: "photo", Optional: true},
+				},
+			},
+		},
+	}
+
+	cfg := &Config{
+		Parser: Parser{
+			Enums: []EnumDef{
+				{
+					Name:    "MsgType",
+					Expr:    `filter(Fields("Msg"), {.Optional}) | map({.Name})`,
+					Exclude: []string{"text", "nonexistent_field"},
+				},
+			},
+		},
+	}
+
+	err := cfg.ApplyEnums(api)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "exclude entries did not match")
+	assert.Contains(t, err.Error(), "nonexistent_field")
 }
 
 func TestLoadFile(t *testing.T) {
