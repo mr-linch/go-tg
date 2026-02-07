@@ -82,7 +82,9 @@ func run() error {
 	}
 
 	if *tgbOutput != "" {
-		if err := generateTgb(*tgbOutput, api, log); err != nil {
+		// Resolve methods for shortcut helper generation.
+		methods := methodgen.ResolveMethods(api, &cfg.MethodGen, log)
+		if err := generateTgb(*tgbOutput, api, cfg, methods, log); err != nil {
 			return err
 		}
 		log.Info("tgb generated", "output", *tgbOutput)
@@ -160,7 +162,7 @@ func generateMethods(output string, api *ir.API, cfg *config.Config, log *slog.L
 	return nil
 }
 
-func generateTgb(outputDir string, api *ir.API, log *slog.Logger) error {
+func generateTgb(outputDir string, api *ir.API, cfg *config.Config, methods []methodgen.GoMethod, log *slog.Logger) error {
 	routerPath := filepath.Join(outputDir, "router_gen.go")
 	handlerPath := filepath.Join(outputDir, "handler_gen.go")
 	updatePath := filepath.Join(outputDir, "update_gen.go")
@@ -183,7 +185,13 @@ func generateTgb(outputDir string, api *ir.API, log *slog.Logger) error {
 	}
 	defer updateOut.Close()
 
-	if err := routergen.Generate(api, routerOut, handlerOut, updateOut, log, routergen.Options{Package: "tgb"}); err != nil {
+	opts := routergen.Options{
+		Package:   "tgb",
+		Shortcuts: &cfg.Shortcuts,
+		Methods:   methods,
+	}
+
+	if err := routergen.Generate(api, routerOut, handlerOut, updateOut, log, opts); err != nil {
 		return fmt.Errorf("generate tgb: %w", err)
 	}
 	return nil

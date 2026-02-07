@@ -10,8 +10,10 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/mr-linch/go-tg/gen/config"
 	"github.com/mr-linch/go-tg/gen/docutil"
 	"github.com/mr-linch/go-tg/gen/ir"
+	"github.com/mr-linch/go-tg/gen/methodgen"
 	"github.com/mr-linch/go-tg/gen/naming"
 	"mvdan.cc/gofumpt/format"
 )
@@ -34,13 +36,14 @@ type GoRouterMethod struct {
 
 // GoHandlerType represents a unique handler type (grouped by underlying type).
 type GoHandlerType struct {
-	TypeName    string   // "Message" - underlying tg type
-	HandlerName string   // "MessageHandler"
-	WrapperName string   // "MessageUpdate"
-	EmbedType   string   // "tg.Message"
-	FieldName   string   // Field name in wrapper struct (e.g., "Message")
-	Fields      []string // Update field names using this handler ["Message", "EditedMessage", ...]
-	MultiField  bool     // true if len(Fields) > 1 (uses firstNotNil)
+	TypeName    string           // "Message" - underlying tg type
+	HandlerName string           // "MessageHandler"
+	WrapperName string           // "MessageUpdate"
+	EmbedType   string           // "tg.Message"
+	FieldName   string           // Field name in wrapper struct (e.g., "Message")
+	Fields      []string         // Update field names using this handler ["Message", "EditedMessage", ...]
+	MultiField  bool             // true if len(Fields) > 1 (uses firstNotNil)
+	Helpers     []GoUpdateHelper // Generated helper methods for this update type
 }
 
 // TemplateData passed to templates.
@@ -53,7 +56,9 @@ type TemplateData struct {
 
 // Options controls generation behavior.
 type Options struct {
-	Package string
+	Package   string
+	Shortcuts *config.ShortcutsConfig
+	Methods   []methodgen.GoMethod
 }
 
 // Generate writes the generated router, handler, and update files.
@@ -67,9 +72,29 @@ func Generate(api *ir.API, routerW, handlerW, updateW io.Writer, log *slog.Logge
 		return err
 	}
 
+	// Resolve shortcut helpers if config is provided.
+	var helperCount int
+	if opts.Shortcuts != nil && len(opts.Methods) > 0 {
+		helpers, err := resolveShortcuts(opts.Methods, opts.Shortcuts, data.HandlerTypes)
+		if err != nil {
+			return fmt.Errorf("resolve shortcuts: %w", err)
+		}
+		helperCount = len(helpers)
+
+		// Distribute helpers to their handler types.
+		helpersByType := make(map[string][]GoUpdateHelper)
+		for _, h := range helpers {
+			helpersByType[h.UpdateType] = append(helpersByType[h.UpdateType], h)
+		}
+		for i := range data.HandlerTypes {
+			data.HandlerTypes[i].Helpers = helpersByType[data.HandlerTypes[i].WrapperName]
+		}
+	}
+
 	log.Info("generating tgb infrastructure",
 		"router_methods", len(data.RouterMethods),
-		"handler_types", len(data.HandlerTypes))
+		"handler_types", len(data.HandlerTypes),
+		"update_helpers", helperCount)
 
 	// Generate router file.
 	if err := executeTemplate("router", routerTmpl, routerW, data); err != nil {

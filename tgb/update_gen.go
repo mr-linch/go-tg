@@ -26,6 +26,71 @@ type CallbackQueryUpdate struct {
 	BaseUpdate
 }
 
+// EditText calls [tg.Client.EditMessageText].
+func (cbq *CallbackQueryUpdate) EditText(text string) *tg.EditMessageTextCall {
+	return cbq.Client.EditMessageText(cbq.Message.Chat(), cbq.Message.MessageID(), text)
+}
+
+// EditCaption calls [tg.Client.EditMessageCaption].
+func (cbq *CallbackQueryUpdate) EditCaption(caption string) *tg.EditMessageCaptionCall {
+	return cbq.Client.EditMessageCaption(cbq.Message.Chat(), cbq.Message.MessageID(), caption)
+}
+
+// EditMedia calls [tg.Client.EditMessageMedia].
+func (cbq *CallbackQueryUpdate) EditMedia(media tg.InputMediaClass) *tg.EditMessageMediaCall {
+	return cbq.Client.EditMessageMedia(cbq.Message.Chat(), cbq.Message.MessageID(), media)
+}
+
+// EditLiveLocation calls [tg.Client.EditMessageLiveLocation].
+func (cbq *CallbackQueryUpdate) EditLiveLocation(latitude, longitude float64) *tg.EditMessageLiveLocationCall {
+	return cbq.Client.EditMessageLiveLocation(cbq.Message.Chat(), cbq.Message.MessageID(), latitude, longitude)
+}
+
+// Delete calls [tg.Client.DeleteMessage].
+func (cbq *CallbackQueryUpdate) Delete() *tg.DeleteMessageCall {
+	return cbq.Client.DeleteMessage(cbq.Message.Chat(), cbq.Message.MessageID())
+}
+
+// StopLiveLocation calls [tg.Client.StopMessageLiveLocation].
+func (cbq *CallbackQueryUpdate) StopLiveLocation() *tg.StopMessageLiveLocationCall {
+	return cbq.Client.StopMessageLiveLocation(cbq.Message.Chat(), cbq.Message.MessageID())
+}
+
+// EditReplyMarkup calls [tg.Client.EditMessageReplyMarkup].
+func (cbq *CallbackQueryUpdate) EditReplyMarkup(markup tg.InlineKeyboardMarkup) *tg.EditMessageReplyMarkupCall {
+	return cbq.Client.EditMessageReplyMarkup(cbq.Message.Chat(), cbq.Message.MessageID()).
+		ReplyMarkup(markup)
+}
+
+// React calls [tg.Client.SetMessageReaction].
+func (cbq *CallbackQueryUpdate) React(reactions ...tg.ReactionTypeClass) *tg.SetMessageReactionCall {
+	return cbq.Client.SetMessageReaction(cbq.Message.Chat(), cbq.Message.MessageID()).
+		Reaction(reactions...)
+}
+
+// Answer calls [tg.Client.AnswerCallbackQuery].
+func (cbq *CallbackQueryUpdate) Answer() *tg.AnswerCallbackQueryCall {
+	return cbq.Client.AnswerCallbackQuery(cbq.ID)
+}
+
+// AnswerText calls [tg.Client.AnswerCallbackQuery].
+func (cbq *CallbackQueryUpdate) AnswerText(text string, alert bool) *tg.AnswerCallbackQueryCall {
+	return cbq.Client.AnswerCallbackQuery(cbq.ID).
+		Text(text).
+		ShowAlert(alert)
+}
+
+// AnswerURL calls [tg.Client.AnswerCallbackQuery].
+func (cbq *CallbackQueryUpdate) AnswerURL(url string) *tg.AnswerCallbackQueryCall {
+	return cbq.Client.AnswerCallbackQuery(cbq.ID).
+		URL(url)
+}
+
+// StopPoll calls [tg.Client.StopPoll].
+func (cbq *CallbackQueryUpdate) StopPoll() *tg.StopPollCall {
+	return cbq.Client.StopPoll(cbq.Message.Chat(), cbq.Message.MessageID())
+}
+
 // ChatBoostUpdate it's extend wrapper around [tg.ChatBoostUpdated].
 type ChatBoostUpdate struct {
 	*tg.ChatBoostUpdated
@@ -38,10 +103,40 @@ type ChatJoinRequestUpdate struct {
 	BaseUpdate
 }
 
+// Approve calls [tg.Client.ApproveChatJoinRequest].
+func (joinRequest *ChatJoinRequestUpdate) Approve() *tg.ApproveChatJoinRequestCall {
+	return joinRequest.Client.ApproveChatJoinRequest(joinRequest.Chat, joinRequest.From.ID)
+}
+
+// Decline calls [tg.Client.DeclineChatJoinRequest].
+func (joinRequest *ChatJoinRequestUpdate) Decline() *tg.DeclineChatJoinRequestCall {
+	return joinRequest.Client.DeclineChatJoinRequest(joinRequest.Chat, joinRequest.From.ID)
+}
+
 // ChatMemberUpdatedUpdate it's extend wrapper around [tg.ChatMemberUpdated].
 type ChatMemberUpdatedUpdate struct {
 	*tg.ChatMemberUpdated
 	BaseUpdate
+}
+
+// Ban calls [tg.Client.BanChatMember].
+func (cmu *ChatMemberUpdatedUpdate) Ban() *tg.BanChatMemberCall {
+	return cmu.Client.BanChatMember(cmu.Chat, cmu.From.ID)
+}
+
+// Unban calls [tg.Client.UnbanChatMember].
+func (cmu *ChatMemberUpdatedUpdate) Unban() *tg.UnbanChatMemberCall {
+	return cmu.Client.UnbanChatMember(cmu.Chat, cmu.From.ID)
+}
+
+// Restrict calls [tg.Client.RestrictChatMember].
+func (cmu *ChatMemberUpdatedUpdate) Restrict(permissions tg.ChatPermissions) *tg.RestrictChatMemberCall {
+	return cmu.Client.RestrictChatMember(cmu.Chat, cmu.From.ID, permissions)
+}
+
+// Promote calls [tg.Client.PromoteChatMember].
+func (cmu *ChatMemberUpdatedUpdate) Promote() *tg.PromoteChatMemberCall {
+	return cmu.Client.PromoteChatMember(cmu.Chat, cmu.From.ID)
 }
 
 // ChosenInlineResultUpdate it's extend wrapper around [tg.ChosenInlineResult].
@@ -62,10 +157,193 @@ type InlineQueryUpdate struct {
 	BaseUpdate
 }
 
+// Answer calls [tg.Client.AnswerInlineQuery].
+func (iq *InlineQueryUpdate) Answer(results ...tg.InlineQueryResultClass) *tg.AnswerInlineQueryCall {
+	return iq.Client.AnswerInlineQuery(iq.ID, results...)
+}
+
 // MessageUpdate it's extend wrapper around [tg.Message].
 type MessageUpdate struct {
 	*tg.Message
 	BaseUpdate
+}
+
+// Answer calls [tg.Client.SendMessage].
+func (msg *MessageUpdate) Answer(text string) *tg.SendMessageCall {
+	return msg.Client.SendMessage(msg.Chat, text)
+}
+
+// AnswerPhoto calls [tg.Client.SendPhoto].
+func (msg *MessageUpdate) AnswerPhoto(photo tg.FileArg) *tg.SendPhotoCall {
+	return msg.Client.SendPhoto(msg.Chat, photo)
+}
+
+// AnswerAudio calls [tg.Client.SendAudio].
+func (msg *MessageUpdate) AnswerAudio(audio tg.FileArg) *tg.SendAudioCall {
+	return msg.Client.SendAudio(msg.Chat, audio)
+}
+
+// AnswerDocument calls [tg.Client.SendDocument].
+func (msg *MessageUpdate) AnswerDocument(document tg.FileArg) *tg.SendDocumentCall {
+	return msg.Client.SendDocument(msg.Chat, document)
+}
+
+// AnswerVideo calls [tg.Client.SendVideo].
+func (msg *MessageUpdate) AnswerVideo(video tg.FileArg) *tg.SendVideoCall {
+	return msg.Client.SendVideo(msg.Chat, video)
+}
+
+// AnswerAnimation calls [tg.Client.SendAnimation].
+func (msg *MessageUpdate) AnswerAnimation(animation tg.FileArg) *tg.SendAnimationCall {
+	return msg.Client.SendAnimation(msg.Chat, animation)
+}
+
+// AnswerVoice calls [tg.Client.SendVoice].
+func (msg *MessageUpdate) AnswerVoice(voice tg.FileArg) *tg.SendVoiceCall {
+	return msg.Client.SendVoice(msg.Chat, voice)
+}
+
+// AnswerVideoNote calls [tg.Client.SendVideoNote].
+func (msg *MessageUpdate) AnswerVideoNote(videoNote tg.FileArg) *tg.SendVideoNoteCall {
+	return msg.Client.SendVideoNote(msg.Chat, videoNote)
+}
+
+// AnswerPaidMedia calls [tg.Client.SendPaidMedia].
+func (msg *MessageUpdate) AnswerPaidMedia(starCount int, media ...tg.InputPaidMediaClass) *tg.SendPaidMediaCall {
+	return msg.Client.SendPaidMedia(msg.Chat, starCount, media...)
+}
+
+// AnswerMediaGroup calls [tg.Client.SendMediaGroup].
+func (msg *MessageUpdate) AnswerMediaGroup(media ...tg.InputMediaClass) *tg.SendMediaGroupCall {
+	return msg.Client.SendMediaGroup(msg.Chat, media...)
+}
+
+// AnswerLocation calls [tg.Client.SendLocation].
+func (msg *MessageUpdate) AnswerLocation(latitude, longitude float64) *tg.SendLocationCall {
+	return msg.Client.SendLocation(msg.Chat, latitude, longitude)
+}
+
+// AnswerVenue calls [tg.Client.SendVenue].
+func (msg *MessageUpdate) AnswerVenue(latitude, longitude float64, title, address string) *tg.SendVenueCall {
+	return msg.Client.SendVenue(msg.Chat, latitude, longitude, title, address)
+}
+
+// AnswerContact calls [tg.Client.SendContact].
+func (msg *MessageUpdate) AnswerContact(phoneNumber, firstName string) *tg.SendContactCall {
+	return msg.Client.SendContact(msg.Chat, phoneNumber, firstName)
+}
+
+// AnswerPoll calls [tg.Client.SendPoll].
+func (msg *MessageUpdate) AnswerPoll(question string, options []tg.InputPollOption) *tg.SendPollCall {
+	return msg.Client.SendPoll(msg.Chat, question, options)
+}
+
+// AnswerChatAction calls [tg.Client.SendChatAction].
+func (msg *MessageUpdate) AnswerChatAction(action tg.ChatAction) *tg.SendChatActionCall {
+	return msg.Client.SendChatAction(msg.Chat, action)
+}
+
+// AnswerSticker calls [tg.Client.SendSticker].
+func (msg *MessageUpdate) AnswerSticker(sticker tg.FileArg) *tg.SendStickerCall {
+	return msg.Client.SendSticker(msg.Chat, sticker)
+}
+
+// AnswerInvoice calls [tg.Client.SendInvoice].
+func (msg *MessageUpdate) AnswerInvoice(title, description, payload, currency string, prices []tg.LabeledPrice) *tg.SendInvoiceCall {
+	return msg.Client.SendInvoice(msg.Chat, title, description, payload, currency, prices)
+}
+
+// EditText calls [tg.Client.EditMessageText].
+func (msg *MessageUpdate) EditText(text string) *tg.EditMessageTextCall {
+	return msg.Client.EditMessageText(msg.Chat, msg.ID, text)
+}
+
+// EditCaption calls [tg.Client.EditMessageCaption].
+func (msg *MessageUpdate) EditCaption(caption string) *tg.EditMessageCaptionCall {
+	return msg.Client.EditMessageCaption(msg.Chat, msg.ID, caption)
+}
+
+// EditMedia calls [tg.Client.EditMessageMedia].
+func (msg *MessageUpdate) EditMedia(media tg.InputMediaClass) *tg.EditMessageMediaCall {
+	return msg.Client.EditMessageMedia(msg.Chat, msg.ID, media)
+}
+
+// EditLiveLocation calls [tg.Client.EditMessageLiveLocation].
+func (msg *MessageUpdate) EditLiveLocation(latitude, longitude float64) *tg.EditMessageLiveLocationCall {
+	return msg.Client.EditMessageLiveLocation(msg.Chat, msg.ID, latitude, longitude)
+}
+
+// Delete calls [tg.Client.DeleteMessage].
+func (msg *MessageUpdate) Delete() *tg.DeleteMessageCall {
+	return msg.Client.DeleteMessage(msg.Chat, msg.ID)
+}
+
+// Pin calls [tg.Client.PinChatMessage].
+func (msg *MessageUpdate) Pin() *tg.PinChatMessageCall {
+	return msg.Client.PinChatMessage(msg.Chat, msg.ID)
+}
+
+// Unpin calls [tg.Client.UnpinChatMessage].
+func (msg *MessageUpdate) Unpin() *tg.UnpinChatMessageCall {
+	return msg.Client.UnpinChatMessage(msg.Chat)
+}
+
+// StopLiveLocation calls [tg.Client.StopMessageLiveLocation].
+func (msg *MessageUpdate) StopLiveLocation() *tg.StopMessageLiveLocationCall {
+	return msg.Client.StopMessageLiveLocation(msg.Chat, msg.ID)
+}
+
+// AnswerDice calls [tg.Client.SendDice].
+func (msg *MessageUpdate) AnswerDice(emoji tg.DiceEmoji) *tg.SendDiceCall {
+	return msg.Client.SendDice(msg.Chat).
+		Emoji(emoji)
+}
+
+// EditReplyMarkup calls [tg.Client.EditMessageReplyMarkup].
+func (msg *MessageUpdate) EditReplyMarkup(markup tg.InlineKeyboardMarkup) *tg.EditMessageReplyMarkupCall {
+	return msg.Client.EditMessageReplyMarkup(msg.Chat, msg.ID).
+		ReplyMarkup(markup)
+}
+
+// React calls [tg.Client.SetMessageReaction].
+func (msg *MessageUpdate) React(reactions ...tg.ReactionTypeClass) *tg.SetMessageReactionCall {
+	return msg.Client.SetMessageReaction(msg.Chat, msg.ID).
+		Reaction(reactions...)
+}
+
+// Forward calls [tg.Client.ForwardMessage].
+func (msg *MessageUpdate) Forward(to tg.PeerID) *tg.ForwardMessageCall {
+	return msg.Client.ForwardMessage(to, msg.Chat, msg.ID)
+}
+
+// Copy calls [tg.Client.CopyMessage].
+func (msg *MessageUpdate) Copy(to tg.PeerID) *tg.CopyMessageCall {
+	return msg.Client.CopyMessage(to, msg.Chat, msg.ID)
+}
+
+// StopPoll calls [tg.Client.StopPoll].
+func (msg *MessageUpdate) StopPoll() *tg.StopPollCall {
+	return msg.Client.StopPoll(msg.Chat, msg.ID)
+}
+
+// DeleteMessages calls [tg.Client.DeleteMessages].
+func (msg *MessageUpdate) DeleteMessages(messageIDs []int) *tg.DeleteMessagesCall {
+	return msg.Client.DeleteMessages(msg.Chat, messageIDs)
+}
+
+// BanMember calls [tg.Client.BanChatMember].
+func (msg *MessageUpdate) BanMember(userID tg.UserID) *tg.BanChatMemberCall {
+	return msg.Client.BanChatMember(msg.Chat, userID)
+}
+
+// UnbanMember calls [tg.Client.UnbanChatMember].
+func (msg *MessageUpdate) UnbanMember(userID tg.UserID) *tg.UnbanChatMemberCall {
+	return msg.Client.UnbanChatMember(msg.Chat, userID)
+}
+
+// RestrictMember calls [tg.Client.RestrictChatMember].
+func (msg *MessageUpdate) RestrictMember(userID tg.UserID, permissions tg.ChatPermissions) *tg.RestrictChatMemberCall {
+	return msg.Client.RestrictChatMember(msg.Chat, userID, permissions)
 }
 
 // MessageReactionCountUpdate it's extend wrapper around [tg.MessageReactionCountUpdated].
@@ -98,6 +376,11 @@ type PreCheckoutQueryUpdate struct {
 	BaseUpdate
 }
 
+// Answer calls [tg.Client.AnswerPreCheckoutQuery].
+func (pcq *PreCheckoutQueryUpdate) Answer(ok bool) *tg.AnswerPreCheckoutQueryCall {
+	return pcq.Client.AnswerPreCheckoutQuery(pcq.ID, ok)
+}
+
 // PurchasedPaidMediaUpdate it's extend wrapper around [tg.PaidMediaPurchased].
 type PurchasedPaidMediaUpdate struct {
 	*tg.PaidMediaPurchased
@@ -114,4 +397,9 @@ type RemovedChatBoostUpdate struct {
 type ShippingQueryUpdate struct {
 	*tg.ShippingQuery
 	BaseUpdate
+}
+
+// Answer calls [tg.Client.AnswerShippingQuery].
+func (sq *ShippingQueryUpdate) Answer(ok bool) *tg.AnswerShippingQueryCall {
+	return sq.Client.AnswerShippingQuery(sq.ID, ok)
 }

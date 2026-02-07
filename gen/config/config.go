@@ -104,11 +104,44 @@ type MethodGen struct {
 	ConstructorVariants map[string][]ConstructorVariant `yaml:"constructor_variants"`  // method -> variants
 }
 
+// ShortcutBinding defines context bindings for an update type.
+type ShortcutBinding struct {
+	Receiver string            `yaml:"receiver"`
+	Params   map[string]string `yaml:"params"`
+}
+
+// ShortcutChain defines a fluent chain call appended to the helper.
+type ShortcutChain struct {
+	Setter string `yaml:"setter"`
+	Param  string `yaml:"param"`
+	Type   string `yaml:"type"` // Go type; prefix "..." for variadic
+}
+
+// ShortcutMethod defines one shortcut generation entry.
+type ShortcutMethod struct {
+	Targets      []string          `yaml:"targets"`
+	Match        string            `yaml:"match,omitempty"`
+	Method       string            `yaml:"method,omitempty"`
+	HelperName   string            `yaml:"helper_name,omitempty"`
+	HelperPrefix string            `yaml:"helper_prefix,omitempty"`
+	HelperStrip  string            `yaml:"helper_strip,omitempty"`
+	Bind         map[string]string `yaml:"bind,omitempty"`
+	Chain        []ShortcutChain   `yaml:"chain,omitempty"`
+	Exclude      []string          `yaml:"exclude,omitempty"`
+}
+
+// ShortcutsConfig holds the shortcuts generation configuration.
+type ShortcutsConfig struct {
+	Bindings map[string]ShortcutBinding `yaml:"bindings"`
+	Methods  []ShortcutMethod           `yaml:"methods"`
+}
+
 // Config holds the unified go-tg-gen configuration.
 type Config struct {
-	Parser    Parser    `yaml:"parser"`
-	TypeGen   TypeGen   `yaml:"typegen"`
-	MethodGen MethodGen `yaml:"methodgen"`
+	Parser    Parser          `yaml:"parser"`
+	TypeGen   TypeGen         `yaml:"typegen"`
+	MethodGen MethodGen       `yaml:"methodgen"`
+	Shortcuts ShortcutsConfig `yaml:"shortcuts"`
 }
 
 // LoadFile loads configuration from the given YAML file path.

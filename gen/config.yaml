@@ -328,3 +328,178 @@ methodgen:
       - suffix: "Inline"
         required_params: [inline_message_id]
         return_type: True
+
+shortcuts:
+  bindings:
+    MessageUpdate:
+      receiver: msg
+      params:
+        chat_id: msg.Chat
+        message_id: msg.ID
+    CallbackQueryUpdate:
+      receiver: cbq
+      params:
+        callback_query_id: cbq.ID
+        chat_id: cbq.Message.Chat()
+        message_id: cbq.Message.MessageID()
+    InlineQueryUpdate:
+      receiver: iq
+      params:
+        inline_query_id: iq.ID
+    ShippingQueryUpdate:
+      receiver: sq
+      params:
+        shipping_query_id: sq.ID
+    PreCheckoutQueryUpdate:
+      receiver: pcq
+      params:
+        pre_checkout_query_id: pcq.ID
+    ChatJoinRequestUpdate:
+      receiver: joinRequest
+      params:
+        chat_id: joinRequest.Chat
+        user_id: joinRequest.From.ID
+    ChatMemberUpdatedUpdate:
+      receiver: cmu
+      params:
+        chat_id: cmu.Chat
+        user_id: cmu.From.ID
+
+  methods:
+    # === MessageUpdate: Answer* (all send methods → same chat) ===
+    - targets: [MessageUpdate]
+      method: sendMessage
+      helper_name: Answer
+
+    - targets: [MessageUpdate]
+      match: "send*"
+      helper_prefix: Answer
+      exclude: [sendChecklist, sendMessageDraft, sendGame, sendGift, sendDice, sendMessage]
+
+    # === Edit methods on MessageUpdate + CallbackQueryUpdate ===
+    - targets: [MessageUpdate, CallbackQueryUpdate]
+      match: "editMessage*"
+      helper_strip: "Message"
+      exclude: [editMessageChecklist, editMessageReplyMarkup]
+
+    # === Message actions ===
+    - targets: [MessageUpdate, CallbackQueryUpdate]
+      method: deleteMessage
+      helper_name: Delete
+
+    - targets: [MessageUpdate]
+      method: pinChatMessage
+      helper_name: Pin
+
+    - targets: [MessageUpdate]
+      method: unpinChatMessage
+      helper_name: Unpin
+
+    - targets: [MessageUpdate, CallbackQueryUpdate]
+      method: stopMessageLiveLocation
+      helper_name: StopLiveLocation
+
+    # === Overrides for special parameter handling ===
+    - targets: [MessageUpdate]
+      method: sendDice
+      helper_name: AnswerDice
+      chain: [{ setter: Emoji, param: emoji, type: DiceEmoji }]
+
+    - targets: [MessageUpdate, CallbackQueryUpdate]
+      method: editMessageReplyMarkup
+      helper_name: EditReplyMarkup
+      chain: [{ setter: ReplyMarkup, param: markup, type: InlineKeyboardMarkup }]
+
+    - targets: [MessageUpdate, CallbackQueryUpdate]
+      method: setMessageReaction
+      helper_name: React
+      chain: [{ setter: Reaction, param: reactions, type: "...ReactionTypeClass" }]
+
+    # === Forward/Copy (swapped param bindings) ===
+    - targets: [MessageUpdate]
+      method: forwardMessage
+      helper_name: Forward
+      bind: { chat_id: "{to}", from_chat_id: msg.Chat, message_id: msg.ID }
+
+    - targets: [MessageUpdate]
+      method: copyMessage
+      helper_name: Copy
+      bind: { chat_id: "{to}", from_chat_id: msg.Chat, message_id: msg.ID }
+
+    # === Query answers ===
+    - targets: [CallbackQueryUpdate]
+      method: answerCallbackQuery
+      helper_name: Answer
+
+    - targets: [CallbackQueryUpdate]
+      method: answerCallbackQuery
+      helper_name: AnswerText
+      chain:
+        - { setter: Text, param: text, type: string }
+        - { setter: ShowAlert, param: alert, type: bool }
+
+    - targets: [CallbackQueryUpdate]
+      method: answerCallbackQuery
+      helper_name: AnswerURL
+      chain: [{ setter: URL, param: url, type: string }]
+
+    - targets: [InlineQueryUpdate]
+      method: answerInlineQuery
+      helper_name: Answer
+
+    - targets: [ShippingQueryUpdate]
+      method: answerShippingQuery
+      helper_name: Answer
+
+    - targets: [PreCheckoutQueryUpdate]
+      method: answerPreCheckoutQuery
+      helper_name: Answer
+
+    - targets: [ChatJoinRequestUpdate]
+      method: approveChatJoinRequest
+      helper_name: Approve
+
+    - targets: [ChatJoinRequestUpdate]
+      method: declineChatJoinRequest
+      helper_name: Decline
+
+    # === StopPoll ===
+    - targets: [MessageUpdate, CallbackQueryUpdate]
+      method: stopPoll
+      helper_name: StopPoll
+
+    # === Batch delete ===
+    - targets: [MessageUpdate]
+      method: deleteMessages
+      helper_name: DeleteMessages
+
+    # === Moderation (MessageUpdate: binds chat_id) ===
+    - targets: [MessageUpdate]
+      method: banChatMember
+      helper_name: BanMember
+
+    - targets: [MessageUpdate]
+      method: unbanChatMember
+      helper_name: UnbanMember
+
+    - targets: [MessageUpdate]
+      method: restrictChatMember
+      helper_name: RestrictMember
+
+    # === Member management (ChatMemberUpdatedUpdate: binds chat_id + user_id) ===
+    - targets: [ChatMemberUpdatedUpdate]
+      method: banChatMember
+      helper_name: Ban
+
+    - targets: [ChatMemberUpdatedUpdate]
+      method: unbanChatMember
+      helper_name: Unban
+
+    - targets: [ChatMemberUpdatedUpdate]
+      method: restrictChatMember
+      helper_name: Restrict
+
+    - targets: [ChatMemberUpdatedUpdate]
+      method: promoteChatMember
+      helper_name: Promote
+

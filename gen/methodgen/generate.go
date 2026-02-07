@@ -156,6 +156,24 @@ func Generate(api *ir.API, w io.Writer, cfg *config.MethodGen, log *slog.Logger,
 	return err
 }
 
+// ResolveMethods resolves all API methods into GoMethod structs
+// without generating template output. Used by routergen for shortcut generation.
+func ResolveMethods(api *ir.API, cfg *config.MethodGen, log *slog.Logger) []GoMethod {
+	rules, err := CompileParamTypeRules(cfg.ParamTypeRules)
+	if err != nil {
+		log.Error("compile param type rules", "error", err)
+		return nil
+	}
+
+	stringerTypes := make(map[string]bool)
+	for _, t := range cfg.StringerTypes {
+		stringerTypes[t] = true
+	}
+
+	data := buildTemplateData(api, cfg, rules, stringerTypes, log)
+	return data.Methods
+}
+
 func buildTemplateData(api *ir.API, cfg *config.MethodGen, rules *CompiledParamTypeRules, stringerTypes map[string]bool, log *slog.Logger) *TemplateData {
 	data := &TemplateData{}
 

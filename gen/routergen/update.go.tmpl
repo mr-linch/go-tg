@@ -15,4 +15,10 @@ type {{.WrapperName}} struct {
 	*{{.EmbedType}}
 	BaseUpdate
 }
-{{end}}
+{{range .Helpers}}
+// {{.Comment}}.
+func ({{.Receiver}} *{{.UpdateType}}) {{.Name}}({{.ArgsSignature}}) *tg.{{.ReturnType}} {
+	return {{.Receiver}}.Client.{{.ClientMethod}}({{.ConstructArgs}}){{range .ChainCalls}}.
+		{{.Setter}}({{.Arg}}{{if .Spread}}...{{end}}){{end}}
+}
+{{end}}{{end}}
