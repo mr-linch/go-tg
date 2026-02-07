@@ -146,16 +146,10 @@ func run(ctx context.Context) error {
 func newRouter(baseURL string) *tgb.Router {
 	return tgb.NewRouter().
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
-			err := msg.Answer("hey, this is buttons demo").ReplyMarkup(tg.NewInlineKeyboardMarkup(
-				tg.NewButtonColumn(
-					tg.NewInlineKeyboardButtonLoginURL("Login URL", tg.LoginURL{
-						URL: baseURL + "/login-url",
-					}),
-					tg.NewInlineKeyboardButtonWebApp("Web App", tg.WebAppInfo{
-						URL: baseURL + "/webapp",
-					}),
-				)...,
-			)).DoVoid(ctx)
+			err := msg.Answer("hey, this is buttons demo").ReplyMarkup(tg.NewInlineKeyboard().
+				LoginURL("Login URL", tg.LoginURL{URL: baseURL + "/login-url"}).Row().
+				WebApp("Web App", baseURL+"/webapp"),
+			).DoVoid(ctx)
 
 			var tgErr *tg.Error
 			if errors.As(err, &tgErr) && tgErr.Contains("bot_domain_invalid") {

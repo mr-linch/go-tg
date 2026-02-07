@@ -65,13 +65,12 @@ func newGalleryMessage(index int) *tgb.MediaMessageCallBuilder {
 	return tgb.NewMediaMessageCallBuilder(caption).
 		ParseMode(pm).
 		ShowCaptionAboveMedia(true).
-		ReplyMarkup(tg.NewInlineKeyboardMarkup(
-			tg.NewButtonRow(
+		ReplyMarkup(tg.NewInlineKeyboard().
+			Button(
 				galleryNavFilter.MustButton("< Prev", galleryNav{Index: prev}),
 				galleryNavFilter.MustButton(strconv.Itoa(index+1)+"/"+strconv.Itoa(len(gallery)), galleryNav{Index: index}),
 				galleryNavFilter.MustButton("Next >", galleryNav{Index: next}),
-			),
-		))
+			).Markup())
 }
 
 func main() {

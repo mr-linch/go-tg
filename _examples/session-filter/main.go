@@ -88,16 +88,12 @@ func main() {
 			sess.Age = age
 			sess.Step = SessionStepGender
 
-			buttonLayout := tg.NewButtonLayout[tg.KeyboardButton](1)
+			kb := tg.NewReplyKeyboard().Resize()
 			for _, gender := range genders {
-				buttonLayout.Insert(tg.NewKeyboardButton(gender))
+				kb.Text(gender)
 			}
 
-			return msg.Update.Reply(ctx, msg.Answer("What is your gender?").ReplyMarkup(
-				tg.NewReplyKeyboardMarkup(
-					buttonLayout.Keyboard()...,
-				).WithResizeKeyboard(),
-			))
+			return msg.Update.Reply(ctx, msg.Answer("What is your gender?").ReplyMarkup(kb.Adjust(1)))
 		}, isSessionStep(SessionStepAge), isDigit).
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 			// handle gender input and display results

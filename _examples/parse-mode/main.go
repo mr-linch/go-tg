@@ -36,15 +36,15 @@ func resolveMode(key string) tg.ParseMode {
 }
 
 func newKeyboard(active string) tg.InlineKeyboardMarkup {
-	buttons := make([]tg.InlineKeyboardButton, 0, len(modes))
+	kb := tg.NewInlineKeyboard()
 	for _, m := range modes {
 		label := m.mode.String()
 		if m.key == active {
 			label = "✓ " + label
 		}
-		buttons = append(buttons, parseModeFilter.MustButton(label, parseModeCallback{Mode: m.key}))
+		kb.Button(parseModeFilter.MustButton(label, parseModeCallback{Mode: m.key}))
 	}
-	return tg.NewInlineKeyboardMarkup(buttons)
+	return kb.Markup()
 }
 
 func newMessageBuilder(modeKey string, user tg.User) *tgb.TextMessageCallBuilder {

@@ -61,24 +61,12 @@ func main() {
 }
 
 func newCalculatorMessageKeyboard() tg.InlineKeyboardMarkup {
-	layout := tg.NewButtonLayout[tg.InlineKeyboardButton](3).Row(
-		tg.NewInlineKeyboardButtonCallbackData("+", "+"),
-		tg.NewInlineKeyboardButtonCallbackData("-", "-"),
-		tg.NewInlineKeyboardButtonCallbackData("*", "*"),
-		tg.NewInlineKeyboardButtonCallbackData("/", "/"),
-	)
+	kb := tg.NewInlineKeyboard().
+		Callback("+", "+").Callback("-", "-").Callback("*", "*").Callback("/", "/").Row()
 
 	for i := 9; i >= 0; i-- {
-		text := strconv.Itoa(i)
-		layout.Insert(
-			tg.NewInlineKeyboardButtonCallbackData(text, text),
-		)
+		kb.Callback(strconv.Itoa(i), strconv.Itoa(i))
 	}
 
-	layout.Insert(
-		tg.NewInlineKeyboardButtonCallbackData(".", "."),
-		tg.NewInlineKeyboardButtonCallbackData("=", "="),
-	)
-
-	return tg.NewInlineKeyboardMarkup(layout.Keyboard()...)
+	return kb.Callback(".", ".").Callback("=", "=").Adjust(3).Markup()
 }

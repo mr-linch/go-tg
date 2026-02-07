@@ -40,16 +40,16 @@ func main() {
 					tg.HTML.Line("Type", tg.HTML.Code("@botname tolkien"), "in any chat."),
 					tg.HTML.Line("Filter by author:", tg.HTML.Code("author:Tolkien")),
 				),
-			).ReplyMarkup(tg.NewInlineKeyboardMarkup(tg.NewButtonRow(
-				tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat("Try it", " "),
-			))).DoVoid(ctx)
+			).ReplyMarkup(tg.NewInlineKeyboard().
+				SwitchInlineQueryCurrentChat("Try it", " "),
+			).DoVoid(ctx)
 		}, tgb.Command("start", tgb.WithCommandAlias("help")), tgb.ChatType(tg.ChatTypePrivate)).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handles any other text in private chat
 			return msg.Answer("Use me in inline mode! Click the button below.").
-				ReplyMarkup(tg.NewInlineKeyboardMarkup(tg.NewButtonRow(
-					tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat("Search books", " "),
-				))).DoVoid(ctx)
+				ReplyMarkup(tg.NewInlineKeyboard().
+					SwitchInlineQueryCurrentChat("Search books", " "),
+				).DoVoid(ctx)
 		}, tgb.ChatType(tg.ChatTypePrivate), notViaBot).
 		InlineQuery(func(ctx context.Context, iq *tgb.InlineQueryUpdate) error {
 			// search books and return results
@@ -175,15 +175,12 @@ func newBookCaption(book Book) string {
 }
 
 func newBookKeyboard(book Book) tg.InlineKeyboardMarkup {
-	return tg.NewInlineKeyboardMarkup(
-		tg.NewButtonRow(
-			tg.NewInlineKeyboardButtonURL("Open Library", book.OpenLibraryURL()),
-			tg.NewInlineKeyboardButtonSwitchInlineQueryCurrentChat(
-				fmt.Sprintf("More by %s", book.AuthorName),
-				fmt.Sprintf("author:%s ", book.AuthorName),
-			),
-		),
-	)
+	return tg.NewInlineKeyboard().
+		URL("Open Library", book.OpenLibraryURL()).
+		SwitchInlineQueryCurrentChat(
+			fmt.Sprintf("More by %s", book.AuthorName),
+			fmt.Sprintf("author:%s ", book.AuthorName),
+		).Markup()
 }
 
 func parseInlineQuery(v string) (query string, params map[string]string) {

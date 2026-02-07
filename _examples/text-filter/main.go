@@ -21,13 +21,12 @@ var menu = struct {
 func main() {
 	runner.Run(tgb.NewRouter().
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
-			kb := tg.NewReplyKeyboardMarkup(
-				tg.NewButtonColumn(
-					tg.NewKeyboardButton(menu.Profile),
-					tg.NewKeyboardButton(menu.Settings),
-					tg.NewKeyboardButton(menu.About),
-				)...,
-			).WithResizeKeyboard()
+			kb := tg.NewReplyKeyboard().
+				Text(menu.Profile).
+				Text(menu.Settings).
+				Text(menu.About).
+				Adjust(1).
+				Resize()
 
 			return mu.Answer("Hey, please click a button above to see how text filter works").
 				ReplyMarkup(kb).

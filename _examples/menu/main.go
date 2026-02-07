@@ -56,9 +56,9 @@ var (
 )
 
 func newUserListMessage(pm tg.ParseMode, users []User) *tgb.TextMessageCallBuilder {
-	buttons := make([]tg.InlineKeyboardButton, 0, len(users))
+	kb := tg.NewInlineKeyboard()
 	for _, user := range users {
-		buttons = append(buttons, userDetailsCallbackDataFilter.MustButton(
+		kb.Button(userDetailsCallbackDataFilter.MustButton(
 			user.Name,
 			userDetailsCallbackData{UserID: user.ID},
 		))
@@ -74,34 +74,26 @@ func newUserListMessage(pm tg.ParseMode, users []User) *tgb.TextMessageCallBuild
 		),
 	).
 		ParseMode(pm).
-		ReplyMarkup(
-			tg.NewInlineKeyboardMarkup(
-				tg.NewButtonLayout(2, buttons...).Keyboard()...,
-			),
-		)
+		ReplyMarkup(kb.Adjust(2).Markup())
 }
 
 func newUserDetailsMessage(pm tg.ParseMode, user User, posts []Post) *tgb.TextMessageCallBuilder {
-	buttons := make([]tg.InlineKeyboardButton, 0, len(posts)+1)
+	kb := tg.NewInlineKeyboard().
+		Button(userLocationCallbackDataFilter.MustButton("📍 Location", userLocationCallbackData{
+			UserID: user.ID,
+			Lat:    user.Address.Geo.Lat,
+			Lng:    user.Address.Geo.Lng,
+		})).Row()
 
 	for _, post := range posts {
-		buttons = append(buttons, postDetailsCallbackDataFilter.MustButton(
+		kb.Button(postDetailsCallbackDataFilter.MustButton(
 			post.Title,
 			postDetailsCallbackData{PostID: post.ID, UserID: user.ID},
 		))
 	}
+	kb.Adjust(2)
 
-	layout := tg.NewButtonLayout[tg.InlineKeyboardButton](2)
-
-	layout.Row(userLocationCallbackDataFilter.MustButton("📍 Location", userLocationCallbackData{
-		UserID: user.ID,
-		Lat:    user.Address.Geo.Lat,
-		Lng:    user.Address.Geo.Lng,
-	}))
-
-	layout.Add(buttons...)
-
-	layout.Row(userListCallbackDataFilter.MustButton("🔙 Back", struct{}{}))
+	kb.Button(userListCallbackDataFilter.MustButton("🔙 Back", struct{}{}))
 
 	return tgb.NewTextMessageCallBuilder(
 		pm.Text(
@@ -127,24 +119,20 @@ func newUserDetailsMessage(pm tg.ParseMode, user User, posts []Post) *tgb.TextMe
 			pm.Line("Bs: ", user.Company.Bs),
 		),
 	).
-		ReplyMarkup(tg.NewInlineKeyboardMarkup(
-			layout.Keyboard()...,
-		)).
+		ReplyMarkup(kb.Markup()).
 		ParseMode(pm)
 }
 
 func newPostDetails(pm tg.ParseMode, userID int, post Post, comments []Comment) *tgb.TextMessageCallBuilder {
-	buttons := make([]tg.InlineKeyboardButton, 0, len(comments)+1)
-
+	kb := tg.NewInlineKeyboard()
 	for _, comment := range comments {
-		buttons = append(buttons, commentDetailsCallbackDataFilter.MustButton("💬 "+comment.Name, commentDetailsCallbackData{
+		kb.Button(commentDetailsCallbackDataFilter.MustButton("💬 "+comment.Name, commentDetailsCallbackData{
 			UserID:    userID,
 			PostID:    post.ID,
 			CommentID: comment.ID,
 		}))
 	}
-
-	buttons = append(buttons, userDetailsCallbackDataFilter.MustButton("🔙 Back", userDetailsCallbackData{
+	kb.Button(userDetailsCallbackDataFilter.MustButton("🔙 Back", userDetailsCallbackData{
 		UserID: userID,
 	}))
 
@@ -159,22 +147,19 @@ func newPostDetails(pm tg.ParseMode, userID int, post Post, comments []Comment) 
 		),
 	).
 		ParseMode(pm).
-		ReplyMarkup(tg.NewInlineKeyboardMarkup(
-			tg.NewButtonLayout(1, buttons...).Keyboard()...,
-		))
+		ReplyMarkup(kb.Adjust(1).Markup())
 }
 
 func newCommentDetails(pm tg.ParseMode, userID, postID int, comment Comment) *tgb.TextMessageCallBuilder {
-	buttons := []tg.InlineKeyboardButton{
-		postDetailsCallbackDataFilter.MustButton("🔙 Back to Post", postDetailsCallbackData{
+	kb := tg.NewInlineKeyboard().
+		Button(postDetailsCallbackDataFilter.MustButton("🔙 Back to Post", postDetailsCallbackData{
 			UserID: userID,
 			PostID: postID,
-		}),
-
-		userDetailsCallbackDataFilter.MustButton("🔙 Back to User", userDetailsCallbackData{
+		})).
+		Button(userDetailsCallbackDataFilter.MustButton("🔙 Back to User", userDetailsCallbackData{
 			UserID: userID,
-		}),
-	}
+		})).
+		Adjust(1)
 
 	return tgb.NewTextMessageCallBuilder(
 		pm.Text(
@@ -188,9 +173,7 @@ func newCommentDetails(pm tg.ParseMode, userID, postID int, comment Comment) *tg
 		),
 	).
 		ParseMode(pm).
-		ReplyMarkup(tg.NewInlineKeyboardMarkup(
-			tg.NewButtonLayout(1, buttons...).Keyboard()...,
-		))
+		ReplyMarkup(kb.Markup())
 }
 
 func main() {

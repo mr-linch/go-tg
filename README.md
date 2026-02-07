@@ -25,7 +25,7 @@
   - [Downloading files](#downloading-files)
   - [Interceptors](#interceptors)
 - [Parse Mode Formatters](#parse-mode-formatters)
-- [Button Layout](#button-layout)
+- [Keyboard Builders](#keyboard-builders)
 - [Updates](#updates)
   - [Handlers](#handlers)
   - [Typed Handlers](#typed-handlers)
@@ -445,30 +445,68 @@ pm.Escapef("Total: %s for %s", pm.Bold("$9.99"), pm.Code("SKU-42"))
 
 See full example: [examples/parse-mode](https://github.com/mr-linch/go-tg/tree/main/_examples/parse-mode).
 
-## Button Layout
+## Keyboard Builders
 
-[`tg.NewButtonLayout`](https://pkg.go.dev/github.com/mr-linch/go-tg#NewButtonLayout) arranges buttons into rows with a fixed width. Useful when the number of buttons is dynamic.
+`tg.NewInlineKeyboard` and `tg.NewReplyKeyboard` provide a fluent API for building keyboards.
+
+**Inline keyboard with explicit rows:**
 
 ```go
-buttons := make([]tg.InlineKeyboardButton, 0, len(items))
+kb := tg.NewInlineKeyboard().
+    Callback("📋 Orders", "orders").Callback("⚙ Settings", "settings").Row().
+    URL("📖 Docs", "https://example.com/docs")
+
+msg.Answer("Menu").ReplyMarkup(kb).DoVoid(ctx)
+```
+
+**Dynamic buttons with `Adjust`:**
+
+`Adjust(sizes...)` redistributes buttons into rows with a repeating size pattern.
+
+```go
+kb := tg.NewInlineKeyboard()
 for _, item := range items {
-  buttons = append(buttons, tg.NewInlineKeyboardButtonCallback(item.Name, item.ID))
+    kb.Button(itemFilter.MustButton(item.Name, itemData{ID: item.ID}))
 }
 
-// 3 buttons per row
-keyboard := tg.NewInlineKeyboardMarkup(
-  tg.NewButtonLayout(3, buttons...).Keyboard()...,
-)
+msg.Answer("Items:").ReplyMarkup(kb.Adjust(2)).DoVoid(ctx)
+// 2 buttons per row
+```
+
+**Mixing static and dynamic rows:**
+
+```go
+kb := tg.NewInlineKeyboard().
+    Callback("A", "a").Callback("B", "b").Callback("C", "c").Row()
+for _, item := range items {
+    kb.Callback(item.Name, "item:"+item.ID)
+}
+kb.Adjust(4)
+kb.Callback("Back", "back")
+// [A] [B] [C]         ← static
+// [I1] [I2] [I3] [I4] ← dynamic
+// [I5] [I6]            ← remainder
+// [Back]               ← static
+```
+
+**Reply keyboard with options:**
+
+```go
+kb := tg.NewReplyKeyboard().
+    Text("Male").Text("Female").Text("Other").
+    Resize().OneTime()
+
+msg.Answer("Gender?").ReplyMarkup(kb).DoVoid(ctx)
 ```
 
 **Methods:**
 
-- `Add(buttons...)` — appends buttons, wrapping to a new row when the current row reaches the specified width
-- `Row(buttons...)` — adds buttons as an explicit new row regardless of width
-- `Insert(buttons...)` — adds buttons to the last row first, then wraps
-- `Keyboard()` — returns `[][]T` ready for `NewInlineKeyboardMarkup` or `NewReplyKeyboardMarkup`
+- `Button(buttons...)` — add pre-built buttons (e.g. from `CallbackFilter.MustButton`)
+- `Row()` — end the current row and start a new one
+- `Adjust(sizes...)` — redistribute uncommitted buttons into rows with repeating pattern
+- `Markup()` — return the underlying `InlineKeyboardMarkup` / `ReplyKeyboardMarkup`
 
-For a single-column layout, use `tg.NewButtonColumn(buttons...)`.
+Both builders implement `ReplyMarkup` and can be passed directly to `.ReplyMarkup()`.
 
 ## Updates
 
@@ -790,8 +828,8 @@ builder := tgb.NewTextMessageCallBuilder(
   ParseMode(tg.HTML).
   ReplyMarkup(tg.NewInlineKeyboardMarkup(
     tg.NewButtonRow(
-      tg.NewInlineKeyboardButtonCallback("Option 1", "opt:1"),
-      tg.NewInlineKeyboardButtonCallback("Option 2", "opt:2"),
+      tg.NewInlineKeyboardButtonCallbackData("Option 1", "opt:1"),
+      tg.NewInlineKeyboardButtonCallbackData("Option 2", "opt:2"),
     ),
   ))
 ```
@@ -809,18 +847,16 @@ Fluent setters: `Text`, `ParseMode`, `ReplyMarkup`, `LinkPreviewOptions`, `Entit
 ```go
 func newMenuMessage(items []Item) *tgb.TextMessageCallBuilder {
   pm := tg.HTML
-  buttons := make([]tg.InlineKeyboardButton, 0, len(items))
+  kb := tg.NewInlineKeyboard()
   for _, item := range items {
-    buttons = append(buttons, itemFilter.MustButton(item.Name, itemData{ID: item.ID}))
+    kb.Button(itemFilter.MustButton(item.Name, itemData{ID: item.ID}))
   }
 
   return tgb.NewTextMessageCallBuilder(
     pm.Text(pm.Bold("Menu"), "", pm.Italic("Select an item:")),
   ).
     ParseMode(pm).
-    ReplyMarkup(tg.NewInlineKeyboardMarkup(
-      tg.NewButtonLayout(2, buttons...).Keyboard()...,
-    ))
+    ReplyMarkup(kb.Adjust(2).Markup())
 }
 
 router.
@@ -876,12 +912,11 @@ func newGalleryMessage(index int) *tgb.MediaMessageCallBuilder {
   ).
     ParseMode(pm).
     ShowCaptionAboveMedia(true).
-    ReplyMarkup(tg.NewInlineKeyboardMarkup(
-      tg.NewButtonRow(
+    ReplyMarkup(tg.NewInlineKeyboard().
+      Button(
         navFilter.MustButton("< Prev", nav{Index: prev}),
         navFilter.MustButton("Next >", nav{Index: next}),
-      ),
-    ))
+      ).Markup())
 }
 
 router.
@@ -919,10 +954,11 @@ The filter encodes structs as `"page:1"` (integers use base-36 by default for co
 **2. Create buttons with encoded data:**
 
 ```go
-tg.NewButtonRow(
-  pageFilter.MustButton("< Prev", PageNav{Page: page - 1}),
-  pageFilter.MustButton("Next >", PageNav{Page: page + 1}),
-)
+tg.NewInlineKeyboard().
+  Button(
+    pageFilter.MustButton("< Prev", PageNav{Page: page - 1}),
+    pageFilter.MustButton("Next >", PageNav{Page: page + 1}),
+  )
 ```
 
 `MustButton(text, value)` encodes the struct into `callback_data` and returns an `InlineKeyboardButton`. Use `Button(text, value)` if you need error handling.
