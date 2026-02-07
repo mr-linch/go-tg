@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"slices"
 	"strings"
@@ -14,9 +15,10 @@ import (
 
 // EnumDef defines an enum via field references or an expr expression.
 type EnumDef struct {
-	Name   string   `yaml:"name"`
-	Fields []string `yaml:"fields,omitempty"` // "TypeName.field_name" references
-	Expr   string   `yaml:"expr,omitempty"`   // expr expression
+	Name    string   `yaml:"name"`
+	Fields  []string `yaml:"fields,omitempty"`  // "TypeName.field_name" references
+	Expr    string   `yaml:"expr,omitempty"`    // expr expression
+	Exclude []string `yaml:"exclude,omitempty"` // values to exclude from expr/fields results
 }
 
 // Parser holds parser-related configuration.
@@ -150,6 +152,35 @@ func (c *Config) ApplyEnums(api *ir.API) error {
 
 		default:
 			return fmt.Errorf("enum %q: must have either expr or fields", def.Name)
+		}
+
+		if len(def.Exclude) > 0 {
+			excludeSet := make(map[string]struct{}, len(def.Exclude))
+			for _, ex := range def.Exclude {
+				excludeSet[ex] = struct{}{}
+			}
+
+			matched := make(map[string]struct{})
+			e.Values = slices.DeleteFunc(e.Values, func(v string) bool {
+				if _, ok := excludeSet[v]; ok {
+					matched[v] = struct{}{}
+					return true
+				}
+				return false
+			})
+
+			if len(matched) != len(excludeSet) {
+				var unmatched []string
+				for _, ex := range def.Exclude {
+					if _, ok := matched[ex]; !ok {
+						unmatched = append(unmatched, ex)
+					}
+				}
+				slog.Warn("enum exclude entries did not match any values",
+					"enum", def.Name,
+					"unmatched", unmatched,
+				)
+			}
 		}
 
 		if len(e.Values) == 0 {

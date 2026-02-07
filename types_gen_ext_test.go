@@ -775,6 +775,21 @@ func TestMessage_Type(t *testing.T) {
 			Message: &Message{},
 			Want:    MessageTypeUnknown,
 		},
+		// Regression: metadata-only messages should return Unknown
+		{
+			Message: &Message{From: &User{}},
+			Want:    MessageTypeUnknown,
+		},
+		// Regression: From + Text should return Text, not From
+		{
+			Message: &Message{From: &User{}, Text: "hello"},
+			Want:    MessageTypeText,
+		},
+		// Regression: metadata fields should not affect type detection
+		{
+			Message: &Message{From: &User{}, SenderChat: &Chat{}, Photo: []PhotoSize{{}}},
+			Want:    MessageTypePhoto,
+		},
 		{
 			Message: &Message{Text: "hello"},
 			Want:    MessageTypeText,

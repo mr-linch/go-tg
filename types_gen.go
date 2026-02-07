@@ -8861,34 +8861,7 @@ type MessageType int8
 
 const (
 	MessageTypeUnknown MessageType = iota
-	MessageTypeMessageThreadID
-	MessageTypeDirectMessagesTopic
-	MessageTypeFrom
-	MessageTypeSenderChat
-	MessageTypeSenderBoostCount
-	MessageTypeSenderBusinessBot
-	MessageTypeBusinessConnectionID
-	MessageTypeForwardOrigin
-	MessageTypeIsTopicMessage
-	MessageTypeIsAutomaticForward
-	MessageTypeReplyToMessage
-	MessageTypeExternalReply
-	MessageTypeQuote
-	MessageTypeReplyToStory
-	MessageTypeReplyToChecklistTaskID
-	MessageTypeViaBot
-	MessageTypeEditDate
-	MessageTypeHasProtectedContent
-	MessageTypeIsFromOffline
-	MessageTypeIsPaidPost
-	MessageTypeMediaGroupID
-	MessageTypeAuthorSignature
-	MessageTypePaidStarCount
 	MessageTypeText
-	MessageTypeEntities
-	MessageTypeLinkPreviewOptions
-	MessageTypeSuggestedPostInfo
-	MessageTypeEffectID
 	MessageTypeAnimation
 	MessageTypeAudio
 	MessageTypeDocument
@@ -8899,10 +8872,6 @@ const (
 	MessageTypeVideo
 	MessageTypeVideoNote
 	MessageTypeVoice
-	MessageTypeCaption
-	MessageTypeCaptionEntities
-	MessageTypeShowCaptionAboveMedia
-	MessageTypeHasMediaSpoiler
 	MessageTypeChecklist
 	MessageTypeContact
 	MessageTypeDice
@@ -8960,40 +8929,12 @@ const (
 	MessageTypeVideoChatEnded
 	MessageTypeVideoChatParticipantsInvited
 	MessageTypeWebAppData
-	MessageTypeReplyMarkup
 )
 
 func (v MessageType) String() string {
-	if v > MessageTypeUnknown && v <= MessageTypeReplyMarkup {
+	if v > MessageTypeUnknown && v <= MessageTypeWebAppData {
 		return [...]string{
-			"message_thread_id",
-			"direct_messages_topic",
-			"from",
-			"sender_chat",
-			"sender_boost_count",
-			"sender_business_bot",
-			"business_connection_id",
-			"forward_origin",
-			"is_topic_message",
-			"is_automatic_forward",
-			"reply_to_message",
-			"external_reply",
-			"quote",
-			"reply_to_story",
-			"reply_to_checklist_task_id",
-			"via_bot",
-			"edit_date",
-			"has_protected_content",
-			"is_from_offline",
-			"is_paid_post",
-			"media_group_id",
-			"author_signature",
-			"paid_star_count",
 			"text",
-			"entities",
-			"link_preview_options",
-			"suggested_post_info",
-			"effect_id",
 			"animation",
 			"audio",
 			"document",
@@ -9004,10 +8945,6 @@ func (v MessageType) String() string {
 			"video",
 			"video_note",
 			"voice",
-			"caption",
-			"caption_entities",
-			"show_caption_above_media",
-			"has_media_spoiler",
 			"checklist",
 			"contact",
 			"dice",
@@ -9065,7 +9002,6 @@ func (v MessageType) String() string {
 			"video_chat_ended",
 			"video_chat_participants_invited",
 			"web_app_data",
-			"reply_markup",
 		}[v-1]
 	}
 	return "unknown"
@@ -9078,34 +9014,7 @@ func (v MessageType) IsUnknown() bool {
 
 // MessageTypeAll is a list of all known MessageType values.
 var MessageTypeAll = []MessageType{
-	MessageTypeMessageThreadID,
-	MessageTypeDirectMessagesTopic,
-	MessageTypeFrom,
-	MessageTypeSenderChat,
-	MessageTypeSenderBoostCount,
-	MessageTypeSenderBusinessBot,
-	MessageTypeBusinessConnectionID,
-	MessageTypeForwardOrigin,
-	MessageTypeIsTopicMessage,
-	MessageTypeIsAutomaticForward,
-	MessageTypeReplyToMessage,
-	MessageTypeExternalReply,
-	MessageTypeQuote,
-	MessageTypeReplyToStory,
-	MessageTypeReplyToChecklistTaskID,
-	MessageTypeViaBot,
-	MessageTypeEditDate,
-	MessageTypeHasProtectedContent,
-	MessageTypeIsFromOffline,
-	MessageTypeIsPaidPost,
-	MessageTypeMediaGroupID,
-	MessageTypeAuthorSignature,
-	MessageTypePaidStarCount,
 	MessageTypeText,
-	MessageTypeEntities,
-	MessageTypeLinkPreviewOptions,
-	MessageTypeSuggestedPostInfo,
-	MessageTypeEffectID,
 	MessageTypeAnimation,
 	MessageTypeAudio,
 	MessageTypeDocument,
@@ -9116,10 +9025,6 @@ var MessageTypeAll = []MessageType{
 	MessageTypeVideo,
 	MessageTypeVideoNote,
 	MessageTypeVoice,
-	MessageTypeCaption,
-	MessageTypeCaptionEntities,
-	MessageTypeShowCaptionAboveMedia,
-	MessageTypeHasMediaSpoiler,
 	MessageTypeChecklist,
 	MessageTypeContact,
 	MessageTypeDice,
@@ -9177,7 +9082,6 @@ var MessageTypeAll = []MessageType{
 	MessageTypeVideoChatEnded,
 	MessageTypeVideoChatParticipantsInvited,
 	MessageTypeWebAppData,
-	MessageTypeReplyMarkup,
 }
 
 // PollType represents an enum type.
@@ -10089,62 +9993,8 @@ func (v *Update) Type() UpdateType {
 // Type returns the MessageType of this Message.
 func (v *Message) Type() MessageType {
 	switch {
-	case v.MessageThreadID != 0:
-		return MessageTypeMessageThreadID
-	case v.DirectMessagesTopic != nil:
-		return MessageTypeDirectMessagesTopic
-	case v.From != nil:
-		return MessageTypeFrom
-	case v.SenderChat != nil:
-		return MessageTypeSenderChat
-	case v.SenderBoostCount != 0:
-		return MessageTypeSenderBoostCount
-	case v.SenderBusinessBot != nil:
-		return MessageTypeSenderBusinessBot
-	case v.BusinessConnectionID != "":
-		return MessageTypeBusinessConnectionID
-	case v.ForwardOrigin != nil:
-		return MessageTypeForwardOrigin
-	case v.IsTopicMessage:
-		return MessageTypeIsTopicMessage
-	case v.IsAutomaticForward:
-		return MessageTypeIsAutomaticForward
-	case v.ReplyToMessage != nil:
-		return MessageTypeReplyToMessage
-	case v.ExternalReply != nil:
-		return MessageTypeExternalReply
-	case v.Quote != nil:
-		return MessageTypeQuote
-	case v.ReplyToStory != nil:
-		return MessageTypeReplyToStory
-	case v.ReplyToChecklistTaskID != 0:
-		return MessageTypeReplyToChecklistTaskID
-	case v.ViaBot != nil:
-		return MessageTypeViaBot
-	case v.EditDate != 0:
-		return MessageTypeEditDate
-	case v.HasProtectedContent:
-		return MessageTypeHasProtectedContent
-	case v.IsFromOffline:
-		return MessageTypeIsFromOffline
-	case v.IsPaidPost:
-		return MessageTypeIsPaidPost
-	case v.MediaGroupID != "":
-		return MessageTypeMediaGroupID
-	case v.AuthorSignature != "":
-		return MessageTypeAuthorSignature
-	case v.PaidStarCount != 0:
-		return MessageTypePaidStarCount
 	case v.Text != "":
 		return MessageTypeText
-	case len(v.Entities) > 0:
-		return MessageTypeEntities
-	case v.LinkPreviewOptions != nil:
-		return MessageTypeLinkPreviewOptions
-	case v.SuggestedPostInfo != nil:
-		return MessageTypeSuggestedPostInfo
-	case v.EffectID != "":
-		return MessageTypeEffectID
 	case v.Animation != nil:
 		return MessageTypeAnimation
 	case v.Audio != nil:
@@ -10165,14 +10015,6 @@ func (v *Message) Type() MessageType {
 		return MessageTypeVideoNote
 	case v.Voice != nil:
 		return MessageTypeVoice
-	case v.Caption != "":
-		return MessageTypeCaption
-	case len(v.CaptionEntities) > 0:
-		return MessageTypeCaptionEntities
-	case v.ShowCaptionAboveMedia:
-		return MessageTypeShowCaptionAboveMedia
-	case v.HasMediaSpoiler:
-		return MessageTypeHasMediaSpoiler
 	case v.Checklist != nil:
 		return MessageTypeChecklist
 	case v.Contact != nil:
@@ -10287,8 +10129,6 @@ func (v *Message) Type() MessageType {
 		return MessageTypeVideoChatParticipantsInvited
 	case v.WebAppData != nil:
 		return MessageTypeWebAppData
-	case v.ReplyMarkup != nil:
-		return MessageTypeReplyMarkup
 	default:
 		return MessageTypeUnknown
 	}
