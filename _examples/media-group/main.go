@@ -13,10 +13,8 @@ import (
 	"github.com/mr-linch/go-tg/tgb"
 )
 
-var (
-	//go:embed resources/gopher.png
-	gopherPNG []byte
-)
+//go:embed resources/gopher.png
+var gopherPNG []byte
 
 func main() {
 	runner.Run(tgb.NewRouter().

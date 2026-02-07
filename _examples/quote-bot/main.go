@@ -107,7 +107,7 @@ func (c *QuotesClient) getURL(lang string) string {
 	return fmt.Sprintf("https://api.fisenko.net/v1/quotes/%s", lang)
 }
 
-func (c *QuotesClient) getAuthorURL(lang string, authorID string) string {
+func (c *QuotesClient) getAuthorURL(lang, authorID string) string {
 	return fmt.Sprintf("https://api.fisenko.net/v1/authors/%s/%s/quotes", lang, authorID)
 }
 
@@ -122,12 +122,12 @@ type QuoteAuthor struct {
 	Name string `json:"name"`
 }
 
-var inlineQueryParamRegexp = regexp.MustCompile(`(\w+):[\s]?(\w+)`)
+var inlineQueryParamRegexp = regexp.MustCompile(`(\w+):\s?(\w+)`)
 
-func parseInlineQuery(v string) (string, map[string]string) {
+func parseInlineQuery(v string) (query string, params map[string]string) {
 	args := inlineQueryParamRegexp.FindAllStringSubmatch(v, -1)
 
-	params := make(map[string]string, len(args))
+	params = make(map[string]string, len(args))
 
 	for _, match := range args {
 		if len(match) == 3 {
@@ -164,7 +164,7 @@ func (c *QuotesClient) ListByAuthor(ctx context.Context, language, query, author
 
 	log.Printf("GET %s", u.String())
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
@@ -208,7 +208,7 @@ func (c *QuotesClient) List(ctx context.Context, language, query string, offset,
 
 	log.Printf("GET %s", u.String())
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}

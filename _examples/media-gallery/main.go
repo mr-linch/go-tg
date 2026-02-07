@@ -81,7 +81,7 @@ func main() {
 			return msg.Update.Reply(ctx, b.AsSendPhoto(msg.Chat, tg.NewFileArgURL(gallery[0].PhotoURL)))
 		}, tgb.Command("start", tgb.WithCommandAlias("gallery"))).
 		CallbackQuery(galleryNavFilter.Handler(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate, nav galleryNav) error {
-			go cbq.Answer().DoVoid(ctx)
+			_ = cbq.Answer().DoVoid(ctx)
 			b := newGalleryMessage(nav.Index)
 			photo := b.NewInputMediaPhoto(tg.NewFileArgURL(gallery[nav.Index].PhotoURL))
 			return cbq.Update.Reply(ctx, b.AsEditMediaFromCBQ(cbq.CallbackQuery, photo))

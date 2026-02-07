@@ -71,9 +71,10 @@ func run(
 
 	log.Printf("authorized as %s", me.Username.Link())
 
-	if do != nil {
+	switch {
+	case do != nil:
 		return do(ctx, client)
-	} else if flagWebhookURL != "" {
+	case flagWebhookURL != "":
 		err = tgb.NewWebhook(
 			handler,
 			client,
@@ -84,7 +85,7 @@ func run(
 			ctx,
 			flagWebhookListen,
 		)
-	} else {
+	default:
 		err = tgb.NewPoller(
 			handler,
 			client,
@@ -111,6 +112,5 @@ func run(
 			),
 		).Run(ctx)
 	}
-
 	return err
 }

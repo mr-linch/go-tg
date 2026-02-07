@@ -15,10 +15,8 @@ import (
 	"github.com/mr-linch/go-tg/tgb"
 )
 
-var (
-	//go:embed resources/gopher.png
-	gopherPNG []byte
-)
+//go:embed resources/gopher.png
+var gopherPNG []byte
 
 func main() {
 	runner.Run(tgb.NewRouter().
@@ -34,7 +32,6 @@ func main() {
 				URL:              "https://github.com/mr-linch/go-tg",
 				PreferLargeMedia: true,
 			}).DoVoid(ctx)
-
 		}, tgb.Command("start", tgb.WithCommandAlias("help"))).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handles gopher image
@@ -51,7 +48,6 @@ func main() {
 			return msg.AnswerPhoto(tg.NewFileArgUpload(
 				tg.NewInputFileBytes("gopher.png", gopherPNG),
 			)).DoVoid(ctx)
-
 		}, tgb.Regexp(regexp.MustCompile(`(?mi)(go|golang|gopher)[$\s+]?`))).
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 			// react to replied message with random reaction

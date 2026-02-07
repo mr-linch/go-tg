@@ -40,8 +40,6 @@ linters:
 
   exclusions:
     generated: lax
-    paths:
-      - _examples
     rules:
       # Test files often have similar patterns
       - linters: [dupl]

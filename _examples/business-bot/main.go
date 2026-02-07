@@ -57,10 +57,8 @@ func main() {
 				lines = append(lines, "❌ Business connection closed")
 			}
 
-			lines = append(lines, "")
-
-			lines = append(lines, pm.Line(
-				pm.Bold("ID: "), pm.Code(bcu.BusinessConnection.ID),
+			lines = append(lines, "", pm.Line(
+				pm.Bold("ID: "), pm.Code(bcu.ID),
 			))
 
 			canReply := bcu.Rights != nil && bcu.Rights.CanReply

@@ -82,11 +82,18 @@ tasks:
       - go tool cover -html={{.COVERAGE_FILE}} -o coverage.html
       - open coverage.html || xdg-open coverage.html || echo "Open coverage.html manually"
 
+  # Examples
+  lint:examples:
+    desc: Lint examples
+    cmds:
+      - golangci-lint run --fix ./_examples/*/
+
   # CI
   ci:
     desc: Run all CI checks locally
     cmds:
       - task: lint
+      - task: lint:examples
       - task: tidy:check
       - task: test
 

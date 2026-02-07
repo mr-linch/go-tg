@@ -103,8 +103,6 @@ func newUserDetailsMessage(pm tg.ParseMode, user User, posts []Post) *tgb.TextMe
 
 	layout.Row(userListCallbackDataFilter.MustButton("🔙 Back", struct{}{}))
 
-	buttons = append(buttons, userListCallbackDataFilter.MustButton("🔙 Back", struct{}{}))
-
 	return tgb.NewTextMessageCallBuilder(
 		pm.Text(
 			pm.Bold("👤 User Details"),
@@ -166,7 +164,7 @@ func newPostDetails(pm tg.ParseMode, userID int, post Post, comments []Comment) 
 		))
 }
 
-func newCommentDetails(pm tg.ParseMode, userID int, postID int, comment Comment) *tgb.TextMessageCallBuilder {
+func newCommentDetails(pm tg.ParseMode, userID, postID int, comment Comment) *tgb.TextMessageCallBuilder {
 	buttons := []tg.InlineKeyboardButton{
 		postDetailsCallbackDataFilter.MustButton("🔙 Back to Post", postDetailsCallbackData{
 			UserID: userID,

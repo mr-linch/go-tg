@@ -4,7 +4,6 @@ package main
 import (
 	"context"
 	"embed"
-	_ "embed"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -48,9 +47,9 @@ func main() {
 	flagBaseURL = strings.TrimSuffix(flagBaseURL, "/")
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGTERM)
-	defer cancel()
-
-	if err := run(ctx); err != nil {
+	err := run(ctx)
+	cancel()
+	if err != nil {
 		log.Fatal(err)
 	}
 }
@@ -107,11 +106,11 @@ func run(ctx context.Context) error {
 
 		if authWidget.Valid(flagToken) {
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "✅ You are authorized as Telegram User #%d\n", authWidget.ID)
-			fmt.Fprintf(w, "🧪 You can change some URL parameters to see how signature checking works.")
+			_, _ = fmt.Fprintf(w, "✅ You are authorized as Telegram User #%d\n", authWidget.ID)
+			_, _ = fmt.Fprintf(w, "🧪 You can change some URL parameters to see how signature checking works.")
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintf(w, "🛑 You are not authorized, because of invalid signature")
+			_, _ = fmt.Fprintf(w, "🛑 You are not authorized, because of invalid signature")
 		}
 	}))
 
@@ -132,9 +131,8 @@ func run(ctx context.Context) error {
 			w.Header().Set("Content-Type", "application/json")
 			encoder := json.NewEncoder(w)
 			encoder.SetIndent("", " ")
-			encoder.Encode(data)
+			_ = encoder.Encode(data)
 		}
-
 	}))
 
 	mux.Handle("/webapp/", http.StripPrefix(
@@ -172,14 +170,14 @@ func newRouter(baseURL string) *tgb.Router {
 			}
 
 			return err
-
 		}, tgb.Command("start"))
 }
 
 func runServer(ctx context.Context, handler http.Handler, listen string) error {
 	server := &http.Server{
-		Addr:    flagListen,
-		Handler: handler,
+		Addr:              listen,
+		Handler:           handler,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
 	go func() {
@@ -188,12 +186,12 @@ func runServer(ctx context.Context, handler http.Handler, listen string) error {
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer shutdownCancel()
 
-		if err := server.Shutdown(shutdownCtx); err != nil {
+		if err := server.Shutdown(shutdownCtx); err != nil { //nolint:contextcheck // fresh context for graceful shutdown
 			log.Printf("shutdown: %v", err)
 		}
 	}()
 
-	log.Printf("listening on %s", flagListen)
+	log.Printf("listening on %s", listen)
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		return fmt.Errorf("listen and serve: %w", err)
 	}

@@ -22,14 +22,12 @@ const (
 	SessionStepGender
 )
 
-var (
-	genders = []string{
-		"Male",
-		"Female",
-		"Attack Helicopter",
-		"Other",
-	}
-)
+var genders = []string{
+	"Male",
+	"Female",
+	"Attack Helicopter",
+	"Other",
+}
 
 type Session struct {
 	Step SessionStep
@@ -68,10 +66,10 @@ func main() {
 		}, isSessionStep(SessionStepInit)).
 		Message(func(ctx context.Context, msg *tgb.MessageUpdate) error {
 			// handle name input
-			session := sessionManager.Get(ctx)
+			sess := sessionManager.Get(ctx)
 
-			session.Name = msg.Text
-			session.Step = SessionStepAge
+			sess.Name = msg.Text
+			sess.Step = SessionStepAge
 
 			return msg.Update.Reply(ctx, msg.Answer("What is your age?"))
 		}, isSessionStep(SessionStepName)).
@@ -86,9 +84,9 @@ func main() {
 				return fmt.Errorf("parse age: %w", err)
 			}
 
-			session := sessionManager.Get(ctx)
-			session.Age = int(age)
-			session.Step = SessionStepGender
+			sess := sessionManager.Get(ctx)
+			sess.Age = age
+			sess.Step = SessionStepGender
 
 			buttonLayout := tg.NewButtonLayout[tg.KeyboardButton](1)
 			for _, gender := range genders {
@@ -103,20 +101,20 @@ func main() {
 		}, isSessionStep(SessionStepAge), isDigit).
 		Message(func(ctx context.Context, mu *tgb.MessageUpdate) error {
 			// handle gender input and display results
-			session := sessionManager.Get(ctx)
+			sess := sessionManager.Get(ctx)
 
-			session.Gender = mu.Text
+			sess.Gender = mu.Text
 
 			answer := mu.Answer(tg.HTML.Text(
 				tg.HTML.Line(tg.HTML.Underline(tg.HTML.Text("Your profile:"))),
-				tg.HTML.Line(tg.HTML.Bold("├ Your name:"), tg.HTML.Code(session.Name)),
-				tg.HTML.Line(tg.HTML.Bold("├ Your age:"), tg.HTML.Code(strconv.Itoa(session.Age))),
-				tg.HTML.Line(tg.HTML.Bold("└ Your gender:"), tg.HTML.Code(session.Gender)),
+				tg.HTML.Line(tg.HTML.Bold("├ Your name:"), tg.HTML.Code(sess.Name)),
+				tg.HTML.Line(tg.HTML.Bold("├ Your age:"), tg.HTML.Code(strconv.Itoa(sess.Age))),
+				tg.HTML.Line(tg.HTML.Bold("└ Your gender:"), tg.HTML.Code(sess.Gender)),
 				"",
 				tg.HTML.Line(tg.HTML.Italic("press /start to fill again")),
 			)).ReplyMarkup(tg.NewReplyKeyboardRemove()).ParseMode(tg.HTML)
 
-			sessionManager.Reset(session)
+			sessionManager.Reset(sess)
 
 			return mu.Update.Reply(ctx, answer)
 		}, isSessionStep(SessionStepGender), tgb.TextIn(genders)).

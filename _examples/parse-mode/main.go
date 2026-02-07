@@ -36,7 +36,7 @@ func resolveMode(key string) tg.ParseMode {
 }
 
 func newKeyboard(active string) tg.InlineKeyboardMarkup {
-	var buttons []tg.InlineKeyboardButton
+	buttons := make([]tg.InlineKeyboardButton, 0, len(modes))
 	for _, m := range modes {
 		label := m.mode.String()
 		if m.key == active {
@@ -71,7 +71,7 @@ func newMessageBuilder(modeKey string, user tg.User) *tgb.TextMessageCallBuilder
 
 		pm.Bold("Links & Mentions:"),
 		pm.Link("Telegram Bot API", "https://core.telegram.org/bots/api"),
-		pm.Mention(pm.Escape(user.FirstName), tg.UserID(user.ID)),
+		pm.Mention(pm.Escape(user.FirstName), user.ID),
 		"",
 
 		pm.Bold("Quotes:"),
@@ -103,7 +103,7 @@ func main() {
 			return msg.Update.Reply(ctx, newMessageBuilder("html", *msg.From).AsSend(msg.Chat))
 		}, tgb.Command("start", tgb.WithCommandAlias("help"))).
 		CallbackQuery(parseModeFilter.Handler(func(ctx context.Context, cbq *tgb.CallbackQueryUpdate, cbd parseModeCallback) error {
-			go cbq.Answer().DoVoid(ctx)
+			_ = cbq.Answer().DoVoid(ctx)
 
 			if cbq.Message.IsInaccessible() {
 				return nil
