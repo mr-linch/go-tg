@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"slices"
 	"strings"
@@ -175,7 +176,10 @@ func (c *Config) ApplyEnums(api *ir.API) error {
 						unmatched = append(unmatched, ex)
 					}
 				}
-				return fmt.Errorf("enum %q: exclude entries did not match any values: %v", def.Name, unmatched)
+				slog.Warn("enum exclude entries did not match any values",
+					"enum", def.Name,
+					"unmatched", unmatched,
+				)
 			}
 		}
 

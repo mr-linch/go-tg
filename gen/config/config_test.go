@@ -349,10 +349,11 @@ func TestApplyEnums_ExcludeUnmatched(t *testing.T) {
 		},
 	}
 
+	// Unmatched exclude entries produce a warning, not an error
 	err := cfg.ApplyEnums(api)
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "exclude entries did not match")
-	assert.Contains(t, err.Error(), "nonexistent_field")
+	require.NoError(t, err)
+	require.Len(t, api.Enums, 1)
+	assert.Equal(t, []string{"photo"}, api.Enums[0].Values)
 }
 
 func TestLoadFile(t *testing.T) {
