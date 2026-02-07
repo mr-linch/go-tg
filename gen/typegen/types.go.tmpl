@@ -34,9 +34,9 @@ type {{$u.DiscriminatorTypeName}} int
 const (
 {{- range $i, $v := $u.Variants}}
 {{- if eq $i 0}}
-	{{$v.EnumConst}} {{$u.DiscriminatorTypeName}} = iota + 1
+	{{$v.EnumConst}} {{$u.DiscriminatorTypeName}} = iota + 1 // "{{$v.ConstVal}}"
 {{- else}}
-	{{$v.EnumConst}}
+	{{$v.EnumConst}} // "{{$v.ConstVal}}"
 {{- end}}
 {{- end}}
 )
@@ -219,7 +219,7 @@ type {{$e.Name}} {{$e.Underlying}}
 const (
 	{{$e.Name}}Unknown {{$e.Name}} = iota
 {{- range $e.Values}}
-	{{.ConstName}}
+	{{.ConstName}} // "{{.StringVal}}"
 {{- end}}
 )
 

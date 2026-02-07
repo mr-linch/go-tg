@@ -5226,10 +5226,10 @@ type UnknownVariant struct {
 type MessageOriginType int
 
 const (
-	MessageOriginTypeUser MessageOriginType = iota + 1
-	MessageOriginTypeHiddenUser
-	MessageOriginTypeChat
-	MessageOriginTypeChannel
+	MessageOriginTypeUser       MessageOriginType = iota + 1 // "user"
+	MessageOriginTypeHiddenUser                              // "hidden_user"
+	MessageOriginTypeChat                                    // "chat"
+	MessageOriginTypeChannel                                 // "channel"
 )
 
 func (v MessageOriginType) String() string {
@@ -5357,9 +5357,9 @@ func (u *MessageOrigin) IsUnknown() bool {
 type PaidMediaType int
 
 const (
-	PaidMediaTypePreview PaidMediaType = iota + 1
-	PaidMediaTypePhoto
-	PaidMediaTypeVideo
+	PaidMediaTypePreview PaidMediaType = iota + 1 // "preview"
+	PaidMediaTypePhoto                            // "photo"
+	PaidMediaTypeVideo                            // "video"
 )
 
 func (v PaidMediaType) String() string {
@@ -5473,9 +5473,9 @@ func (u *PaidMedia) IsUnknown() bool {
 type BackgroundFillType int
 
 const (
-	BackgroundFillTypeSolid BackgroundFillType = iota + 1
-	BackgroundFillTypeGradient
-	BackgroundFillTypeFreeformGradient
+	BackgroundFillTypeSolid            BackgroundFillType = iota + 1 // "solid"
+	BackgroundFillTypeGradient                                       // "gradient"
+	BackgroundFillTypeFreeformGradient                               // "freeform_gradient"
 )
 
 func (v BackgroundFillType) String() string {
@@ -5589,10 +5589,10 @@ func (u *BackgroundFill) IsUnknown() bool {
 type BackgroundTypeType int
 
 const (
-	BackgroundTypeTypeFill BackgroundTypeType = iota + 1
-	BackgroundTypeTypeWallpaper
-	BackgroundTypeTypePattern
-	BackgroundTypeTypeChatTheme
+	BackgroundTypeTypeFill      BackgroundTypeType = iota + 1 // "fill"
+	BackgroundTypeTypeWallpaper                               // "wallpaper"
+	BackgroundTypeTypePattern                                 // "pattern"
+	BackgroundTypeTypeChatTheme                               // "chat_theme"
 )
 
 func (v BackgroundTypeType) String() string {
@@ -5720,12 +5720,12 @@ func (u *BackgroundType) IsUnknown() bool {
 type ChatMemberStatus int
 
 const (
-	ChatMemberStatusOwner ChatMemberStatus = iota + 1
-	ChatMemberStatusAdministrator
-	ChatMemberStatusMember
-	ChatMemberStatusRestricted
-	ChatMemberStatusLeft
-	ChatMemberStatusBanned
+	ChatMemberStatusOwner         ChatMemberStatus = iota + 1 // "creator"
+	ChatMemberStatusAdministrator                             // "administrator"
+	ChatMemberStatusMember                                    // "member"
+	ChatMemberStatusRestricted                                // "restricted"
+	ChatMemberStatusLeft                                      // "left"
+	ChatMemberStatusBanned                                    // "kicked"
 )
 
 func (v ChatMemberStatus) String() string {
@@ -5881,11 +5881,11 @@ func (u *ChatMember) IsUnknown() bool {
 type StoryAreaTypeType int
 
 const (
-	StoryAreaTypeTypeLocation StoryAreaTypeType = iota + 1
-	StoryAreaTypeTypeSuggestedReaction
-	StoryAreaTypeTypeLink
-	StoryAreaTypeTypeWeather
-	StoryAreaTypeTypeUniqueGift
+	StoryAreaTypeTypeLocation          StoryAreaTypeType = iota + 1 // "location"
+	StoryAreaTypeTypeSuggestedReaction                              // "suggested_reaction"
+	StoryAreaTypeTypeLink                                           // "link"
+	StoryAreaTypeTypeWeather                                        // "weather"
+	StoryAreaTypeTypeUniqueGift                                     // "unique_gift"
 )
 
 func (v StoryAreaTypeType) String() string {
@@ -6117,9 +6117,9 @@ func StoryAreaTypeOf(values ...StoryAreaTypeClass) []StoryAreaType {
 type ReactionTypeType int
 
 const (
-	ReactionTypeTypeEmoji ReactionTypeType = iota + 1
-	ReactionTypeTypeCustomEmoji
-	ReactionTypeTypePaid
+	ReactionTypeTypeEmoji       ReactionTypeType = iota + 1 // "emoji"
+	ReactionTypeTypeCustomEmoji                             // "custom_emoji"
+	ReactionTypeTypePaid                                    // "paid"
 )
 
 func (v ReactionTypeType) String() string {
@@ -6292,8 +6292,8 @@ func ReactionTypeOf(values ...ReactionTypeClass) []ReactionType {
 type OwnedGiftType int
 
 const (
-	OwnedGiftTypeRegular OwnedGiftType = iota + 1
-	OwnedGiftTypeUnique
+	OwnedGiftTypeRegular OwnedGiftType = iota + 1 // "regular"
+	OwnedGiftTypeUnique                           // "unique"
 )
 
 func (v OwnedGiftType) String() string {
@@ -6393,13 +6393,13 @@ func (u *OwnedGift) IsUnknown() bool {
 type BotCommandScopeType int
 
 const (
-	BotCommandScopeTypeDefault BotCommandScopeType = iota + 1
-	BotCommandScopeTypeAllPrivateChats
-	BotCommandScopeTypeAllGroupChats
-	BotCommandScopeTypeAllChatAdministrators
-	BotCommandScopeTypeChat
-	BotCommandScopeTypeChatAdministrators
-	BotCommandScopeTypeChatMember
+	BotCommandScopeTypeDefault               BotCommandScopeType = iota + 1 // "default"
+	BotCommandScopeTypeAllPrivateChats                                      // "all_private_chats"
+	BotCommandScopeTypeAllGroupChats                                        // "all_group_chats"
+	BotCommandScopeTypeAllChatAdministrators                                // "all_chat_administrators"
+	BotCommandScopeTypeChat                                                 // "chat"
+	BotCommandScopeTypeChatAdministrators                                   // "chat_administrators"
+	BotCommandScopeTypeChatMember                                           // "chat_member"
 )
 
 func (v BotCommandScopeType) String() string {
@@ -6675,9 +6675,9 @@ func BotCommandScopeOf(values ...BotCommandScopeClass) []BotCommandScope {
 type MenuButtonType int
 
 const (
-	MenuButtonTypeCommands MenuButtonType = iota + 1
-	MenuButtonTypeWebApp
-	MenuButtonTypeDefault
+	MenuButtonTypeCommands MenuButtonType = iota + 1 // "commands"
+	MenuButtonTypeWebApp                             // "web_app"
+	MenuButtonTypeDefault                            // "default"
 )
 
 func (v MenuButtonType) String() string {
@@ -6850,9 +6850,9 @@ func MenuButtonOf(values ...MenuButtonClass) []MenuButton {
 type ChatBoostSourceSource int
 
 const (
-	ChatBoostSourceSourcePremium ChatBoostSourceSource = iota + 1
-	ChatBoostSourceSourceGiftCode
-	ChatBoostSourceSourceGiveaway
+	ChatBoostSourceSourcePremium  ChatBoostSourceSource = iota + 1 // "premium"
+	ChatBoostSourceSourceGiftCode                                  // "gift_code"
+	ChatBoostSourceSourceGiveaway                                  // "giveaway"
 )
 
 func (v ChatBoostSourceSource) String() string {
@@ -6966,11 +6966,11 @@ func (u *ChatBoostSource) IsUnknown() bool {
 type InputMediaType int
 
 const (
-	InputMediaTypeAnimation InputMediaType = iota + 1
-	InputMediaTypeDocument
-	InputMediaTypeAudio
-	InputMediaTypePhoto
-	InputMediaTypeVideo
+	InputMediaTypeAnimation InputMediaType = iota + 1 // "animation"
+	InputMediaTypeDocument                            // "document"
+	InputMediaTypeAudio                               // "audio"
+	InputMediaTypePhoto                               // "photo"
+	InputMediaTypeVideo                               // "video"
 )
 
 func (v InputMediaType) String() string {
@@ -7199,8 +7199,8 @@ func InputMediaOf(values ...InputMediaClass) []InputMedia {
 type InputPaidMediaType int
 
 const (
-	InputPaidMediaTypePhoto InputPaidMediaType = iota + 1
-	InputPaidMediaTypeVideo
+	InputPaidMediaTypePhoto InputPaidMediaType = iota + 1 // "photo"
+	InputPaidMediaTypeVideo                               // "video"
 )
 
 func (v InputPaidMediaType) String() string {
@@ -7348,8 +7348,8 @@ func InputPaidMediaOf(values ...InputPaidMediaClass) []InputPaidMedia {
 type InputProfilePhotoType int
 
 const (
-	InputProfilePhotoTypeStatic InputProfilePhotoType = iota + 1
-	InputProfilePhotoTypeAnimated
+	InputProfilePhotoTypeStatic   InputProfilePhotoType = iota + 1 // "static"
+	InputProfilePhotoTypeAnimated                                  // "animated"
 )
 
 func (v InputProfilePhotoType) String() string {
@@ -7497,8 +7497,8 @@ func InputProfilePhotoOf(values ...InputProfilePhotoClass) []InputProfilePhoto {
 type InputStoryContentType int
 
 const (
-	InputStoryContentTypePhoto InputStoryContentType = iota + 1
-	InputStoryContentTypeVideo
+	InputStoryContentTypePhoto InputStoryContentType = iota + 1 // "photo"
+	InputStoryContentTypeVideo                                  // "video"
 )
 
 func (v InputStoryContentType) String() string {
@@ -7646,26 +7646,26 @@ func InputStoryContentOf(values ...InputStoryContentClass) []InputStoryContent {
 type InlineQueryResultType int
 
 const (
-	InlineQueryResultTypeCachedAudio InlineQueryResultType = iota + 1
-	InlineQueryResultTypeCachedDocument
-	InlineQueryResultTypeCachedGIF
-	InlineQueryResultTypeCachedMPEG4GIF
-	InlineQueryResultTypeCachedPhoto
-	InlineQueryResultTypeCachedSticker
-	InlineQueryResultTypeCachedVideo
-	InlineQueryResultTypeCachedVoice
-	InlineQueryResultTypeArticle
-	InlineQueryResultTypeAudio
-	InlineQueryResultTypeContact
-	InlineQueryResultTypeGame
-	InlineQueryResultTypeDocument
-	InlineQueryResultTypeGIF
-	InlineQueryResultTypeLocation
-	InlineQueryResultTypeMPEG4GIF
-	InlineQueryResultTypePhoto
-	InlineQueryResultTypeVenue
-	InlineQueryResultTypeVideo
-	InlineQueryResultTypeVoice
+	InlineQueryResultTypeCachedAudio    InlineQueryResultType = iota + 1 // "audio"
+	InlineQueryResultTypeCachedDocument                                  // "document"
+	InlineQueryResultTypeCachedGIF                                       // "gif"
+	InlineQueryResultTypeCachedMPEG4GIF                                  // "mpeg4_gif"
+	InlineQueryResultTypeCachedPhoto                                     // "photo"
+	InlineQueryResultTypeCachedSticker                                   // "sticker"
+	InlineQueryResultTypeCachedVideo                                     // "video"
+	InlineQueryResultTypeCachedVoice                                     // "voice"
+	InlineQueryResultTypeArticle                                         // "article"
+	InlineQueryResultTypeAudio                                           // "audio"
+	InlineQueryResultTypeContact                                         // "contact"
+	InlineQueryResultTypeGame                                            // "game"
+	InlineQueryResultTypeDocument                                        // "document"
+	InlineQueryResultTypeGIF                                             // "gif"
+	InlineQueryResultTypeLocation                                        // "location"
+	InlineQueryResultTypeMPEG4GIF                                        // "mpeg4_gif"
+	InlineQueryResultTypePhoto                                           // "photo"
+	InlineQueryResultTypeVenue                                           // "venue"
+	InlineQueryResultTypeVideo                                           // "video"
+	InlineQueryResultTypeVoice                                           // "voice"
 )
 
 func (v InlineQueryResultType) String() string {
@@ -8215,9 +8215,9 @@ func InlineQueryResultOf(values ...InlineQueryResultClass) []InlineQueryResult {
 type RevenueWithdrawalStateType int
 
 const (
-	RevenueWithdrawalStateTypePending RevenueWithdrawalStateType = iota + 1
-	RevenueWithdrawalStateTypeSucceeded
-	RevenueWithdrawalStateTypeFailed
+	RevenueWithdrawalStateTypePending   RevenueWithdrawalStateType = iota + 1 // "pending"
+	RevenueWithdrawalStateTypeSucceeded                                       // "succeeded"
+	RevenueWithdrawalStateTypeFailed                                          // "failed"
 )
 
 func (v RevenueWithdrawalStateType) String() string {
@@ -8331,13 +8331,13 @@ func (u *RevenueWithdrawalState) IsUnknown() bool {
 type TransactionPartnerType int
 
 const (
-	TransactionPartnerTypeUser TransactionPartnerType = iota + 1
-	TransactionPartnerTypeChat
-	TransactionPartnerTypeAffiliateProgram
-	TransactionPartnerTypeFragment
-	TransactionPartnerTypeTelegramAds
-	TransactionPartnerTypeTelegramAPI
-	TransactionPartnerTypeOther
+	TransactionPartnerTypeUser             TransactionPartnerType = iota + 1 // "user"
+	TransactionPartnerTypeChat                                               // "chat"
+	TransactionPartnerTypeAffiliateProgram                                   // "affiliate_program"
+	TransactionPartnerTypeFragment                                           // "fragment"
+	TransactionPartnerTypeTelegramAds                                        // "telegram_ads"
+	TransactionPartnerTypeTelegramAPI                                        // "telegram_api"
+	TransactionPartnerTypeOther                                              // "other"
 )
 
 func (v TransactionPartnerType) String() string {
@@ -8507,15 +8507,15 @@ func (u *TransactionPartner) IsUnknown() bool {
 type PassportElementErrorSource int
 
 const (
-	PassportElementErrorSourceDataField PassportElementErrorSource = iota + 1
-	PassportElementErrorSourceFrontSide
-	PassportElementErrorSourceReverseSide
-	PassportElementErrorSourceSelfie
-	PassportElementErrorSourceFile
-	PassportElementErrorSourceFiles
-	PassportElementErrorSourceTranslationFile
-	PassportElementErrorSourceTranslationFiles
-	PassportElementErrorSourceUnspecified
+	PassportElementErrorSourceDataField        PassportElementErrorSource = iota + 1 // "data"
+	PassportElementErrorSourceFrontSide                                              // "front_side"
+	PassportElementErrorSourceReverseSide                                            // "reverse_side"
+	PassportElementErrorSourceSelfie                                                 // "selfie"
+	PassportElementErrorSourceFile                                                   // "file"
+	PassportElementErrorSourceFiles                                                  // "files"
+	PassportElementErrorSourceTranslationFile                                        // "translation_file"
+	PassportElementErrorSourceTranslationFiles                                       // "translation_files"
+	PassportElementErrorSourceUnspecified                                            // "unspecified"
 )
 
 func (v PassportElementErrorSource) String() string {
@@ -8977,12 +8977,12 @@ func NewForceReply() *ForceReply {
 type ChatType int8
 
 const (
-	ChatTypeUnknown ChatType = iota
-	ChatTypePrivate
-	ChatTypeGroup
-	ChatTypeSupergroup
-	ChatTypeChannel
-	ChatTypeSender
+	ChatTypeUnknown    ChatType = iota
+	ChatTypePrivate             // "private"
+	ChatTypeGroup               // "group"
+	ChatTypeSupergroup          // "supergroup"
+	ChatTypeChannel             // "channel"
+	ChatTypeSender              // "sender"
 )
 
 func (v ChatType) String() string {
@@ -9042,10 +9042,10 @@ var ChatTypeAll = []ChatType{
 type StickerType int8
 
 const (
-	StickerTypeUnknown StickerType = iota
-	StickerTypeRegular
-	StickerTypeMask
-	StickerTypeCustomEmoji
+	StickerTypeUnknown     StickerType = iota
+	StickerTypeRegular                 // "regular"
+	StickerTypeMask                    // "mask"
+	StickerTypeCustomEmoji             // "custom_emoji"
 )
 
 func (v StickerType) String() string {
@@ -9096,26 +9096,26 @@ var StickerTypeAll = []StickerType{
 type MessageEntityType int8
 
 const (
-	MessageEntityTypeUnknown MessageEntityType = iota
-	MessageEntityTypeMention
-	MessageEntityTypeHashtag
-	MessageEntityTypeCashtag
-	MessageEntityTypeBotCommand
-	MessageEntityTypeURL
-	MessageEntityTypeEmail
-	MessageEntityTypePhoneNumber
-	MessageEntityTypeBold
-	MessageEntityTypeItalic
-	MessageEntityTypeUnderline
-	MessageEntityTypeStrikethrough
-	MessageEntityTypeSpoiler
-	MessageEntityTypeBlockquote
-	MessageEntityTypeExpandableBlockquote
-	MessageEntityTypeCode
-	MessageEntityTypePre
-	MessageEntityTypeTextLink
-	MessageEntityTypeTextMention
-	MessageEntityTypeCustomEmoji
+	MessageEntityTypeUnknown              MessageEntityType = iota
+	MessageEntityTypeMention                                // "mention"
+	MessageEntityTypeHashtag                                // "hashtag"
+	MessageEntityTypeCashtag                                // "cashtag"
+	MessageEntityTypeBotCommand                             // "bot_command"
+	MessageEntityTypeURL                                    // "url"
+	MessageEntityTypeEmail                                  // "email"
+	MessageEntityTypePhoneNumber                            // "phone_number"
+	MessageEntityTypeBold                                   // "bold"
+	MessageEntityTypeItalic                                 // "italic"
+	MessageEntityTypeUnderline                              // "underline"
+	MessageEntityTypeStrikethrough                          // "strikethrough"
+	MessageEntityTypeSpoiler                                // "spoiler"
+	MessageEntityTypeBlockquote                             // "blockquote"
+	MessageEntityTypeExpandableBlockquote                   // "expandable_blockquote"
+	MessageEntityTypeCode                                   // "code"
+	MessageEntityTypePre                                    // "pre"
+	MessageEntityTypeTextLink                               // "text_link"
+	MessageEntityTypeTextMention                            // "text_mention"
+	MessageEntityTypeCustomEmoji                            // "custom_emoji"
 )
 
 func (v MessageEntityType) String() string {
@@ -9230,30 +9230,30 @@ var MessageEntityTypeAll = []MessageEntityType{
 type UpdateType int8
 
 const (
-	UpdateTypeUnknown UpdateType = iota
-	UpdateTypeMessage
-	UpdateTypeEditedMessage
-	UpdateTypeChannelPost
-	UpdateTypeEditedChannelPost
-	UpdateTypeBusinessConnection
-	UpdateTypeBusinessMessage
-	UpdateTypeEditedBusinessMessage
-	UpdateTypeDeletedBusinessMessages
-	UpdateTypeMessageReaction
-	UpdateTypeMessageReactionCount
-	UpdateTypeInlineQuery
-	UpdateTypeChosenInlineResult
-	UpdateTypeCallbackQuery
-	UpdateTypeShippingQuery
-	UpdateTypePreCheckoutQuery
-	UpdateTypePurchasedPaidMedia
-	UpdateTypePoll
-	UpdateTypePollAnswer
-	UpdateTypeMyChatMember
-	UpdateTypeChatMember
-	UpdateTypeChatJoinRequest
-	UpdateTypeChatBoost
-	UpdateTypeRemovedChatBoost
+	UpdateTypeUnknown                 UpdateType = iota
+	UpdateTypeMessage                            // "message"
+	UpdateTypeEditedMessage                      // "edited_message"
+	UpdateTypeChannelPost                        // "channel_post"
+	UpdateTypeEditedChannelPost                  // "edited_channel_post"
+	UpdateTypeBusinessConnection                 // "business_connection"
+	UpdateTypeBusinessMessage                    // "business_message"
+	UpdateTypeEditedBusinessMessage              // "edited_business_message"
+	UpdateTypeDeletedBusinessMessages            // "deleted_business_messages"
+	UpdateTypeMessageReaction                    // "message_reaction"
+	UpdateTypeMessageReactionCount               // "message_reaction_count"
+	UpdateTypeInlineQuery                        // "inline_query"
+	UpdateTypeChosenInlineResult                 // "chosen_inline_result"
+	UpdateTypeCallbackQuery                      // "callback_query"
+	UpdateTypeShippingQuery                      // "shipping_query"
+	UpdateTypePreCheckoutQuery                   // "pre_checkout_query"
+	UpdateTypePurchasedPaidMedia                 // "purchased_paid_media"
+	UpdateTypePoll                               // "poll"
+	UpdateTypePollAnswer                         // "poll_answer"
+	UpdateTypeMyChatMember                       // "my_chat_member"
+	UpdateTypeChatMember                         // "chat_member"
+	UpdateTypeChatJoinRequest                    // "chat_join_request"
+	UpdateTypeChatBoost                          // "chat_boost"
+	UpdateTypeRemovedChatBoost                   // "removed_chat_boost"
 )
 
 func (v UpdateType) String() string {
@@ -9384,18 +9384,18 @@ var UpdateTypeAll = []UpdateType{
 type ChatAction int8
 
 const (
-	ChatActionUnknown ChatAction = iota
-	ChatActionTyping
-	ChatActionUploadPhoto
-	ChatActionRecordVideo
-	ChatActionUploadVideo
-	ChatActionRecordVoice
-	ChatActionUploadVoice
-	ChatActionUploadDocument
-	ChatActionChooseSticker
-	ChatActionFindLocation
-	ChatActionRecordVideoNote
-	ChatActionUploadVideoNote
+	ChatActionUnknown         ChatAction = iota
+	ChatActionTyping                     // "typing"
+	ChatActionUploadPhoto                // "upload_photo"
+	ChatActionRecordVideo                // "record_video"
+	ChatActionUploadVideo                // "upload_video"
+	ChatActionRecordVoice                // "record_voice"
+	ChatActionUploadVoice                // "upload_voice"
+	ChatActionUploadDocument             // "upload_document"
+	ChatActionChooseSticker              // "choose_sticker"
+	ChatActionFindLocation               // "find_location"
+	ChatActionRecordVideoNote            // "record_video_note"
+	ChatActionUploadVideoNote            // "upload_video_note"
 )
 
 func (v ChatAction) String() string {
@@ -9441,75 +9441,75 @@ var ChatActionAll = []ChatAction{
 type MessageType int8
 
 const (
-	MessageTypeUnknown MessageType = iota
-	MessageTypeText
-	MessageTypeAnimation
-	MessageTypeAudio
-	MessageTypeDocument
-	MessageTypePaidMedia
-	MessageTypePhoto
-	MessageTypeSticker
-	MessageTypeStory
-	MessageTypeVideo
-	MessageTypeVideoNote
-	MessageTypeVoice
-	MessageTypeChecklist
-	MessageTypeContact
-	MessageTypeDice
-	MessageTypeGame
-	MessageTypePoll
-	MessageTypeVenue
-	MessageTypeLocation
-	MessageTypeNewChatMembers
-	MessageTypeLeftChatMember
-	MessageTypeNewChatTitle
-	MessageTypeNewChatPhoto
-	MessageTypeDeleteChatPhoto
-	MessageTypeGroupChatCreated
-	MessageTypeSupergroupChatCreated
-	MessageTypeChannelChatCreated
-	MessageTypeMessageAutoDeleteTimerChanged
-	MessageTypeMigrateToChatID
-	MessageTypeMigrateFromChatID
-	MessageTypePinnedMessage
-	MessageTypeInvoice
-	MessageTypeSuccessfulPayment
-	MessageTypeRefundedPayment
-	MessageTypeUsersShared
-	MessageTypeChatShared
-	MessageTypeGift
-	MessageTypeUniqueGift
-	MessageTypeGiftUpgradeSent
-	MessageTypeConnectedWebsite
-	MessageTypeWriteAccessAllowed
-	MessageTypePassportData
-	MessageTypeProximityAlertTriggered
-	MessageTypeBoostAdded
-	MessageTypeChatBackgroundSet
-	MessageTypeChecklistTasksDone
-	MessageTypeChecklistTasksAdded
-	MessageTypeDirectMessagePriceChanged
-	MessageTypeForumTopicCreated
-	MessageTypeForumTopicEdited
-	MessageTypeForumTopicClosed
-	MessageTypeForumTopicReopened
-	MessageTypeGeneralForumTopicHidden
-	MessageTypeGeneralForumTopicUnhidden
-	MessageTypeGiveawayCreated
-	MessageTypeGiveaway
-	MessageTypeGiveawayWinners
-	MessageTypeGiveawayCompleted
-	MessageTypePaidMessagePriceChanged
-	MessageTypeSuggestedPostApproved
-	MessageTypeSuggestedPostApprovalFailed
-	MessageTypeSuggestedPostDeclined
-	MessageTypeSuggestedPostPaid
-	MessageTypeSuggestedPostRefunded
-	MessageTypeVideoChatScheduled
-	MessageTypeVideoChatStarted
-	MessageTypeVideoChatEnded
-	MessageTypeVideoChatParticipantsInvited
-	MessageTypeWebAppData
+	MessageTypeUnknown                       MessageType = iota
+	MessageTypeText                                      // "text"
+	MessageTypeAnimation                                 // "animation"
+	MessageTypeAudio                                     // "audio"
+	MessageTypeDocument                                  // "document"
+	MessageTypePaidMedia                                 // "paid_media"
+	MessageTypePhoto                                     // "photo"
+	MessageTypeSticker                                   // "sticker"
+	MessageTypeStory                                     // "story"
+	MessageTypeVideo                                     // "video"
+	MessageTypeVideoNote                                 // "video_note"
+	MessageTypeVoice                                     // "voice"
+	MessageTypeChecklist                                 // "checklist"
+	MessageTypeContact                                   // "contact"
+	MessageTypeDice                                      // "dice"
+	MessageTypeGame                                      // "game"
+	MessageTypePoll                                      // "poll"
+	MessageTypeVenue                                     // "venue"
+	MessageTypeLocation                                  // "location"
+	MessageTypeNewChatMembers                            // "new_chat_members"
+	MessageTypeLeftChatMember                            // "left_chat_member"
+	MessageTypeNewChatTitle                              // "new_chat_title"
+	MessageTypeNewChatPhoto                              // "new_chat_photo"
+	MessageTypeDeleteChatPhoto                           // "delete_chat_photo"
+	MessageTypeGroupChatCreated                          // "group_chat_created"
+	MessageTypeSupergroupChatCreated                     // "supergroup_chat_created"
+	MessageTypeChannelChatCreated                        // "channel_chat_created"
+	MessageTypeMessageAutoDeleteTimerChanged             // "message_auto_delete_timer_changed"
+	MessageTypeMigrateToChatID                           // "migrate_to_chat_id"
+	MessageTypeMigrateFromChatID                         // "migrate_from_chat_id"
+	MessageTypePinnedMessage                             // "pinned_message"
+	MessageTypeInvoice                                   // "invoice"
+	MessageTypeSuccessfulPayment                         // "successful_payment"
+	MessageTypeRefundedPayment                           // "refunded_payment"
+	MessageTypeUsersShared                               // "users_shared"
+	MessageTypeChatShared                                // "chat_shared"
+	MessageTypeGift                                      // "gift"
+	MessageTypeUniqueGift                                // "unique_gift"
+	MessageTypeGiftUpgradeSent                           // "gift_upgrade_sent"
+	MessageTypeConnectedWebsite                          // "connected_website"
+	MessageTypeWriteAccessAllowed                        // "write_access_allowed"
+	MessageTypePassportData                              // "passport_data"
+	MessageTypeProximityAlertTriggered                   // "proximity_alert_triggered"
+	MessageTypeBoostAdded                                // "boost_added"
+	MessageTypeChatBackgroundSet                         // "chat_background_set"
+	MessageTypeChecklistTasksDone                        // "checklist_tasks_done"
+	MessageTypeChecklistTasksAdded                       // "checklist_tasks_added"
+	MessageTypeDirectMessagePriceChanged                 // "direct_message_price_changed"
+	MessageTypeForumTopicCreated                         // "forum_topic_created"
+	MessageTypeForumTopicEdited                          // "forum_topic_edited"
+	MessageTypeForumTopicClosed                          // "forum_topic_closed"
+	MessageTypeForumTopicReopened                        // "forum_topic_reopened"
+	MessageTypeGeneralForumTopicHidden                   // "general_forum_topic_hidden"
+	MessageTypeGeneralForumTopicUnhidden                 // "general_forum_topic_unhidden"
+	MessageTypeGiveawayCreated                           // "giveaway_created"
+	MessageTypeGiveaway                                  // "giveaway"
+	MessageTypeGiveawayWinners                           // "giveaway_winners"
+	MessageTypeGiveawayCompleted                         // "giveaway_completed"
+	MessageTypePaidMessagePriceChanged                   // "paid_message_price_changed"
+	MessageTypeSuggestedPostApproved                     // "suggested_post_approved"
+	MessageTypeSuggestedPostApprovalFailed               // "suggested_post_approval_failed"
+	MessageTypeSuggestedPostDeclined                     // "suggested_post_declined"
+	MessageTypeSuggestedPostPaid                         // "suggested_post_paid"
+	MessageTypeSuggestedPostRefunded                     // "suggested_post_refunded"
+	MessageTypeVideoChatScheduled                        // "video_chat_scheduled"
+	MessageTypeVideoChatStarted                          // "video_chat_started"
+	MessageTypeVideoChatEnded                            // "video_chat_ended"
+	MessageTypeVideoChatParticipantsInvited              // "video_chat_participants_invited"
+	MessageTypeWebAppData                                // "web_app_data"
 )
 
 func (v MessageType) String() string {
@@ -9670,8 +9670,8 @@ type PollType int8
 
 const (
 	PollTypeUnknown PollType = iota
-	PollTypeRegular
-	PollTypeQuiz
+	PollTypeRegular          // "regular"
+	PollTypeQuiz             // "quiz"
 )
 
 func (v PollType) String() string {
@@ -9718,11 +9718,11 @@ var PollTypeAll = []PollType{
 type MaskPositionPoint int8
 
 const (
-	MaskPositionPointUnknown MaskPositionPoint = iota
-	MaskPositionPointForehead
-	MaskPositionPointEyes
-	MaskPositionPointMouth
-	MaskPositionPointChin
+	MaskPositionPointUnknown  MaskPositionPoint = iota
+	MaskPositionPointForehead                   // "forehead"
+	MaskPositionPointEyes                       // "eyes"
+	MaskPositionPointMouth                      // "mouth"
+	MaskPositionPointChin                       // "chin"
 )
 
 func (v MaskPositionPoint) String() string {
@@ -9777,20 +9777,20 @@ var MaskPositionPointAll = []MaskPositionPoint{
 type EncryptedPassportElementType int8
 
 const (
-	EncryptedPassportElementTypeUnknown EncryptedPassportElementType = iota
-	EncryptedPassportElementTypePersonalDetails
-	EncryptedPassportElementTypePassport
-	EncryptedPassportElementTypeDriverLicense
-	EncryptedPassportElementTypeIdentityCard
-	EncryptedPassportElementTypeInternalPassport
-	EncryptedPassportElementTypeAddress
-	EncryptedPassportElementTypeUtilityBill
-	EncryptedPassportElementTypeBankStatement
-	EncryptedPassportElementTypeRentalAgreement
-	EncryptedPassportElementTypePassportRegistration
-	EncryptedPassportElementTypeTemporaryRegistration
-	EncryptedPassportElementTypePhoneNumber
-	EncryptedPassportElementTypeEmail
+	EncryptedPassportElementTypeUnknown               EncryptedPassportElementType = iota
+	EncryptedPassportElementTypePersonalDetails                                    // "personal_details"
+	EncryptedPassportElementTypePassport                                           // "passport"
+	EncryptedPassportElementTypeDriverLicense                                      // "driver_license"
+	EncryptedPassportElementTypeIdentityCard                                       // "identity_card"
+	EncryptedPassportElementTypeInternalPassport                                   // "internal_passport"
+	EncryptedPassportElementTypeAddress                                            // "address"
+	EncryptedPassportElementTypeUtilityBill                                        // "utility_bill"
+	EncryptedPassportElementTypeBankStatement                                      // "bank_statement"
+	EncryptedPassportElementTypeRentalAgreement                                    // "rental_agreement"
+	EncryptedPassportElementTypePassportRegistration                               // "passport_registration"
+	EncryptedPassportElementTypeTemporaryRegistration                              // "temporary_registration"
+	EncryptedPassportElementTypePhoneNumber                                        // "phone_number"
+	EncryptedPassportElementTypeEmail                                              // "email"
 )
 
 func (v EncryptedPassportElementType) String() string {
@@ -9881,10 +9881,10 @@ var EncryptedPassportElementTypeAll = []EncryptedPassportElementType{
 type StickerFormat int8
 
 const (
-	StickerFormatUnknown StickerFormat = iota
-	StickerFormatStatic
-	StickerFormatAnimated
-	StickerFormatVideo
+	StickerFormatUnknown  StickerFormat = iota
+	StickerFormatStatic                 // "static"
+	StickerFormatAnimated               // "animated"
+	StickerFormatVideo                  // "video"
 )
 
 func (v StickerFormat) String() string {
@@ -9936,8 +9936,8 @@ type Currency int8
 
 const (
 	CurrencyUnknown Currency = iota
-	CurrencyXTR
-	CurrencyTON
+	CurrencyXTR              // "XTR"
+	CurrencyTON              // "TON"
 )
 
 func (v Currency) String() string {
@@ -9984,12 +9984,12 @@ var CurrencyAll = []Currency{
 type TransactionPartnerUserTransactionTypeEnum int8
 
 const (
-	TransactionPartnerUserTransactionTypeEnumUnknown TransactionPartnerUserTransactionTypeEnum = iota
-	TransactionPartnerUserTransactionTypeEnumInvoicePayment
-	TransactionPartnerUserTransactionTypeEnumPaidMediaPayment
-	TransactionPartnerUserTransactionTypeEnumGiftPurchase
-	TransactionPartnerUserTransactionTypeEnumPremiumPurchase
-	TransactionPartnerUserTransactionTypeEnumBusinessAccountTransfer
+	TransactionPartnerUserTransactionTypeEnumUnknown                 TransactionPartnerUserTransactionTypeEnum = iota
+	TransactionPartnerUserTransactionTypeEnumInvoicePayment                                                    // "invoice_payment"
+	TransactionPartnerUserTransactionTypeEnumPaidMediaPayment                                                  // "paid_media_payment"
+	TransactionPartnerUserTransactionTypeEnumGiftPurchase                                                      // "gift_purchase"
+	TransactionPartnerUserTransactionTypeEnumPremiumPurchase                                                   // "premium_purchase"
+	TransactionPartnerUserTransactionTypeEnumBusinessAccountTransfer                                           // "business_account_transfer"
 )
 
 func (v TransactionPartnerUserTransactionTypeEnum) String() string {
@@ -10048,13 +10048,13 @@ var TransactionPartnerUserTransactionTypeEnumAll = []TransactionPartnerUserTrans
 type DiceEmoji int8
 
 const (
-	DiceEmojiUnknown DiceEmoji = iota
-	DiceEmojiGameDie
-	DiceEmojiBullseye
-	DiceEmojiBasketball
-	DiceEmojiSoccerBall
-	DiceEmojiBowling
-	DiceEmojiSlotMachine
+	DiceEmojiUnknown     DiceEmoji = iota
+	DiceEmojiGameDie               // "🎲"
+	DiceEmojiBullseye              // "🎯"
+	DiceEmojiBasketball            // "🏀"
+	DiceEmojiSoccerBall            // "⚽"
+	DiceEmojiBowling               // "🎳"
+	DiceEmojiSlotMachine           // "🎰"
 )
 
 func (v DiceEmoji) String() string {
@@ -10117,80 +10117,80 @@ var DiceEmojiAll = []DiceEmoji{
 type ReactionEmoji int8
 
 const (
-	ReactionEmojiUnknown ReactionEmoji = iota
-	ReactionEmojiRedHeart
-	ReactionEmojiThumbsUp
-	ReactionEmojiThumbsDown
-	ReactionEmojiFire
-	ReactionEmojiSmilingFaceWithHearts
-	ReactionEmojiClappingHands
-	ReactionEmojiBeamingFaceWithSmilingEyes
-	ReactionEmojiThinkingFace
-	ReactionEmojiExplodingHead
-	ReactionEmojiFaceScreamingInFear
-	ReactionEmojiFaceWithSymbolsOnMouth
-	ReactionEmojiCryingFace
-	ReactionEmojiPartyPopper
-	ReactionEmojiStarStruck
-	ReactionEmojiFaceVomiting
-	ReactionEmojiPileOfPoo
-	ReactionEmojiFoldedHands
-	ReactionEmojiOKHand
-	ReactionEmojiDove
-	ReactionEmojiClownFace
-	ReactionEmojiYawningFace
-	ReactionEmojiWoozyFace
-	ReactionEmojiSmilingFaceWithHeartEyes
-	ReactionEmojiSpoutingWhale
-	ReactionEmojiHeartOnFire
-	ReactionEmojiNewMoonFace
-	ReactionEmojiHotDog
-	ReactionEmojiHundredPoints
-	ReactionEmojiRollingOnTheFloorLaughing
-	ReactionEmojiHighVoltage
-	ReactionEmojiBanana
-	ReactionEmojiTrophy
-	ReactionEmojiBrokenHeart
-	ReactionEmojiFaceWithRaisedEyebrow
-	ReactionEmojiNeutralFace
-	ReactionEmojiStrawberry
-	ReactionEmojiBottleWithPoppingCork
-	ReactionEmojiKissMark
-	ReactionEmojiMiddleFinger
-	ReactionEmojiSmilingFaceWithHorns
-	ReactionEmojiSleepingFace
-	ReactionEmojiLoudlyCryingFace
-	ReactionEmojiNerdFace
-	ReactionEmojiGhost
-	ReactionEmojiManTechnologist
-	ReactionEmojiEyes
-	ReactionEmojiJackOLantern
-	ReactionEmojiSeeNoEvilMonkey
-	ReactionEmojiSmilingFaceWithHalo
-	ReactionEmojiFearfulFace
-	ReactionEmojiHandshake
-	ReactionEmojiWritingHand
-	ReactionEmojiSmilingFaceWithOpenHands
-	ReactionEmojiSalutingFace
-	ReactionEmojiSantaClaus
-	ReactionEmojiChristmasTree
-	ReactionEmojiSnowman
-	ReactionEmojiNailPolish
-	ReactionEmojiZanyFace
-	ReactionEmojiMoai
-	ReactionEmojiCoolButton
-	ReactionEmojiHeartWithArrow
-	ReactionEmojiHearNoEvilMonkey
-	ReactionEmojiUnicorn
-	ReactionEmojiFaceBlowingAKiss
-	ReactionEmojiPill
-	ReactionEmojiSpeakNoEvilMonkey
-	ReactionEmojiSmilingFaceWithSunglasses
-	ReactionEmojiAlienMonster
-	ReactionEmojiManShrugging
-	ReactionEmojiPersonShrugging
-	ReactionEmojiWomanShrugging
-	ReactionEmojiEnragedFace
+	ReactionEmojiUnknown                    ReactionEmoji = iota
+	ReactionEmojiRedHeart                                 // "❤"
+	ReactionEmojiThumbsUp                                 // "👍"
+	ReactionEmojiThumbsDown                               // "👎"
+	ReactionEmojiFire                                     // "🔥"
+	ReactionEmojiSmilingFaceWithHearts                    // "🥰"
+	ReactionEmojiClappingHands                            // "👏"
+	ReactionEmojiBeamingFaceWithSmilingEyes               // "😁"
+	ReactionEmojiThinkingFace                             // "🤔"
+	ReactionEmojiExplodingHead                            // "🤯"
+	ReactionEmojiFaceScreamingInFear                      // "😱"
+	ReactionEmojiFaceWithSymbolsOnMouth                   // "🤬"
+	ReactionEmojiCryingFace                               // "😢"
+	ReactionEmojiPartyPopper                              // "🎉"
+	ReactionEmojiStarStruck                               // "🤩"
+	ReactionEmojiFaceVomiting                             // "🤮"
+	ReactionEmojiPileOfPoo                                // "💩"
+	ReactionEmojiFoldedHands                              // "🙏"
+	ReactionEmojiOKHand                                   // "👌"
+	ReactionEmojiDove                                     // "🕊"
+	ReactionEmojiClownFace                                // "🤡"
+	ReactionEmojiYawningFace                              // "🥱"
+	ReactionEmojiWoozyFace                                // "🥴"
+	ReactionEmojiSmilingFaceWithHeartEyes                 // "😍"
+	ReactionEmojiSpoutingWhale                            // "🐳"
+	ReactionEmojiHeartOnFire                              // "❤‍🔥"
+	ReactionEmojiNewMoonFace                              // "🌚"
+	ReactionEmojiHotDog                                   // "🌭"
+	ReactionEmojiHundredPoints                            // "💯"
+	ReactionEmojiRollingOnTheFloorLaughing                // "🤣"
+	ReactionEmojiHighVoltage                              // "⚡"
+	ReactionEmojiBanana                                   // "🍌"
+	ReactionEmojiTrophy                                   // "🏆"
+	ReactionEmojiBrokenHeart                              // "💔"
+	ReactionEmojiFaceWithRaisedEyebrow                    // "🤨"
+	ReactionEmojiNeutralFace                              // "😐"
+	ReactionEmojiStrawberry                               // "🍓"
+	ReactionEmojiBottleWithPoppingCork                    // "🍾"
+	ReactionEmojiKissMark                                 // "💋"
+	ReactionEmojiMiddleFinger                             // "🖕"
+	ReactionEmojiSmilingFaceWithHorns                     // "😈"
+	ReactionEmojiSleepingFace                             // "😴"
+	ReactionEmojiLoudlyCryingFace                         // "😭"
+	ReactionEmojiNerdFace                                 // "🤓"
+	ReactionEmojiGhost                                    // "👻"
+	ReactionEmojiManTechnologist                          // "👨‍💻"
+	ReactionEmojiEyes                                     // "👀"
+	ReactionEmojiJackOLantern                             // "🎃"
+	ReactionEmojiSeeNoEvilMonkey                          // "🙈"
+	ReactionEmojiSmilingFaceWithHalo                      // "😇"
+	ReactionEmojiFearfulFace                              // "😨"
+	ReactionEmojiHandshake                                // "🤝"
+	ReactionEmojiWritingHand                              // "✍"
+	ReactionEmojiSmilingFaceWithOpenHands                 // "🤗"
+	ReactionEmojiSalutingFace                             // "🫡"
+	ReactionEmojiSantaClaus                               // "🎅"
+	ReactionEmojiChristmasTree                            // "🎄"
+	ReactionEmojiSnowman                                  // "☃"
+	ReactionEmojiNailPolish                               // "💅"
+	ReactionEmojiZanyFace                                 // "🤪"
+	ReactionEmojiMoai                                     // "🗿"
+	ReactionEmojiCoolButton                               // "🆒"
+	ReactionEmojiHeartWithArrow                           // "💘"
+	ReactionEmojiHearNoEvilMonkey                         // "🙉"
+	ReactionEmojiUnicorn                                  // "🦄"
+	ReactionEmojiFaceBlowingAKiss                         // "😘"
+	ReactionEmojiPill                                     // "💊"
+	ReactionEmojiSpeakNoEvilMonkey                        // "🙊"
+	ReactionEmojiSmilingFaceWithSunglasses                // "😎"
+	ReactionEmojiAlienMonster                             // "👾"
+	ReactionEmojiManShrugging                             // "🤷‍♂"
+	ReactionEmojiPersonShrugging                          // "🤷"
+	ReactionEmojiWomanShrugging                           // "🤷‍♀"
+	ReactionEmojiEnragedFace                              // "😡"
 )
 
 func (v ReactionEmoji) String() string {

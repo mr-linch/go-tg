@@ -234,8 +234,8 @@ type UnknownVariant struct {
 type BackgroundFillType int
 
 const (
-	BackgroundFillTypeSolid BackgroundFillType = iota + 1
-	BackgroundFillTypeGradient
+	BackgroundFillTypeSolid    BackgroundFillType = iota + 1 // "solid"
+	BackgroundFillTypeGradient                               // "gradient"
 )
 
 func (v BackgroundFillType) String() string {
