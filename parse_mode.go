@@ -21,6 +21,11 @@ type ParseMode interface {
 	// Line joins the given strings with space seprator
 	Line(v ...string) string
 
+	// Escapef escapes the format string and then applies fmt.Sprintf with the given args.
+	// Useful for MarkdownV2 where literal characters like . | ! need escaping,
+	// while %s args (e.g. from Bold, Italic) pass through unchanged.
+	Escapef(format string, args ...any) string
+
 	// Bold
 	Bold(v ...string) string
 
@@ -39,14 +44,26 @@ type ParseMode interface {
 	// Link
 	Link(title, url string) string
 
+	// Mention creates an inline mention of a user by ID
+	Mention(name string, userID UserID) string
+
+	// CustomEmoji inserts a custom emoji by ID with fallback emoji text
+	CustomEmoji(emoji, emojiID string) string
+
 	// Code
 	Code(v ...string) string
 
 	// Preformated text
 	Pre(v ...string) string
 
+	// PreLanguage creates a pre-formatted code block with language specification
+	PreLanguage(language string, v ...string) string
+
 	// Blockquote
 	Blockquote(v ...string) string
+
+	// ExpandableBlockquote creates a collapsible blockquote
+	ExpandableBlockquote(v ...string) string
 
 	// Escape
 	Escape(v string) string
@@ -64,16 +81,19 @@ var (
 		name:      "HTML",
 		separator: " ",
 
-		bold:       parseModeTag{"<b>", "</b>"},
-		italic:     parseModeTag{"<i>", "</i>"},
-		underline:  parseModeTag{"<u>", "</u>"},
-		strike:     parseModeTag{"<s>", "</s>"},
-		spoiler:    parseModeTag{"<tg-spoiler>", "</tg-spoiler>"},
-		code:       parseModeTag{"<code>", "</code>"},
-		pre:        parseModeTag{"<pre>", "</pre>"},
-		blockquote: parseModeTag{"<blockquote>", "</blockquote>"},
+		bold:                 parseModeTag{"<b>", "</b>"},
+		italic:               parseModeTag{"<i>", "</i>"},
+		underline:            parseModeTag{"<u>", "</u>"},
+		strike:               parseModeTag{"<s>", "</s>"},
+		spoiler:              parseModeTag{"<tg-spoiler>", "</tg-spoiler>"},
+		code:                 parseModeTag{"<code>", "</code>"},
+		pre:                  parseModeTag{"<pre>", "</pre>"},
+		blockquote:           parseModeTag{"<blockquote>", "</blockquote>"},
+		expandableBlockquote: parseModeTag{"<blockquote expandable>", "</blockquote>"},
 
-		linkTemplate: `<a href="{url}">{title}</a>`,
+		linkTemplate:        `<a href="{url}">{title}</a>`,
+		customEmojiTemplate: `<tg-emoji emoji-id="{id}">{emoji}</tg-emoji>`,
+		preLanguageTemplate: `<pre><code class="language-{lang}">{code}</code></pre>`,
 
 		escape: html.EscapeString,
 	}
@@ -89,7 +109,9 @@ var (
 		code:   parseModeTag{"`", "`"},
 		pre:    parseModeTag{"```", "```"},
 
-		linkTemplate: `[{title}]({url})`,
+		linkTemplate:        `[{title}]({url})`,
+		customEmojiTemplate: `{emoji}`,
+		preLanguageTemplate: "```{lang}\n{code}```",
 
 		escape: regexpReplacer(regexp.MustCompile(`([_*\x60\[])`), `\$1`),
 	}
@@ -99,16 +121,20 @@ var (
 		name:      "MarkdownV2",
 		separator: " ",
 
-		bold:       parseModeTag{"*", "*"},
-		italic:     parseModeTag{"_", "_"},
-		underline:  parseModeTag{"__", "__"},
-		strike:     parseModeTag{"~", "~"},
-		spoiler:    parseModeTag{"||", "||"},
-		code:       parseModeTag{"`", "`"},
-		pre:        parseModeTag{"```", "```"},
-		blockquote: parseModeTag{">", ""},
+		bold:                 parseModeTag{"*", "*"},
+		italic:               parseModeTag{"_", "_"},
+		underline:            parseModeTag{"__", "__"},
+		strike:               parseModeTag{"~", "~"},
+		spoiler:              parseModeTag{"||", "||"},
+		code:                 parseModeTag{"`", "`"},
+		pre:                  parseModeTag{"```", "```"},
+		blockquote:           parseModeTag{">", ""},
+		expandableBlockquote: parseModeTag{">", "||"},
+		lineBlockquote:       true,
 
-		linkTemplate: `[{title}]({url})`,
+		linkTemplate:        `[{title}]({url})`,
+		customEmojiTemplate: `![{emoji}](tg://emoji?id={id})`,
+		preLanguageTemplate: "```{lang}\n{code}```",
 
 		escape: regexpReplacer(regexp.MustCompile(`([_*\[\]()~\x60>#\+\-=|{}.!])`), `\$1`),
 	}
@@ -119,15 +145,19 @@ type parseMode struct {
 
 	name string
 
-	bold         parseModeTag
-	italic       parseModeTag
-	underline    parseModeTag
-	strike       parseModeTag
-	spoiler      parseModeTag
-	code         parseModeTag
-	pre          parseModeTag
-	blockquote   parseModeTag
-	linkTemplate string
+	bold                 parseModeTag
+	italic               parseModeTag
+	underline            parseModeTag
+	strike               parseModeTag
+	spoiler              parseModeTag
+	code                 parseModeTag
+	pre                  parseModeTag
+	blockquote           parseModeTag
+	expandableBlockquote parseModeTag
+	linkTemplate         string
+	customEmojiTemplate  string
+	preLanguageTemplate  string
+	lineBlockquote       bool
 
 	escape func(string) string
 }
@@ -147,6 +177,10 @@ func (pm parseMode) Text(v ...string) string {
 
 func (pm parseMode) Line(v ...string) string {
 	return strings.Join(v, " ")
+}
+
+func (pm parseMode) Escapef(format string, args ...any) string {
+	return fmt.Sprintf(pm.escape(format), args...)
 }
 
 func (pm parseMode) MarshalText() ([]byte, error) {
@@ -195,6 +229,19 @@ func (pm parseMode) Link(title, url string) string {
 	).Replace(pm.linkTemplate)
 }
 
+// Mention creates an inline mention of a user by ID
+func (pm parseMode) Mention(name string, userID UserID) string {
+	return pm.Link(name, fmt.Sprintf("tg://user?id=%d", userID))
+}
+
+// CustomEmoji inserts a custom emoji by ID with fallback emoji text
+func (pm parseMode) CustomEmoji(emoji, emojiID string) string {
+	return strings.NewReplacer(
+		"{emoji}", emoji,
+		"{id}", emojiID,
+	).Replace(pm.customEmojiTemplate)
+}
+
 // Code
 func (pm parseMode) Code(v ...string) string {
 	return pm.code.wrap(strings.Join(v, pm.separator))
@@ -205,11 +252,41 @@ func (pm parseMode) Pre(v ...string) string {
 	return pm.pre.wrap(strings.Join(v, pm.separator))
 }
 
+// PreLanguage creates a pre-formatted code block with language specification
+func (pm parseMode) PreLanguage(language string, v ...string) string {
+	code := strings.Join(v, pm.separator)
+	return strings.NewReplacer(
+		"{lang}", language,
+		"{code}", code,
+	).Replace(pm.preLanguageTemplate)
+}
+
 // Blockquote
 func (pm parseMode) Blockquote(v ...string) string {
-	return pm.blockquote.wrap(strings.Join(v, pm.separator))
+	content := strings.Join(v, pm.separator)
+	if pm.lineBlockquote {
+		return prefixLines(content, pm.blockquote.start)
+	}
+	return pm.blockquote.wrap(content)
+}
+
+// ExpandableBlockquote creates a collapsible blockquote
+func (pm parseMode) ExpandableBlockquote(v ...string) string {
+	content := strings.Join(v, pm.separator)
+	if pm.lineBlockquote {
+		return prefixLines(content, pm.expandableBlockquote.start) + pm.expandableBlockquote.end
+	}
+	return pm.expandableBlockquote.wrap(content)
 }
 
 func (pm parseMode) Escape(v string) string {
 	return pm.escape(v)
+}
+
+func prefixLines(content, prefix string) string {
+	lines := strings.Split(content, "\n")
+	for i := range lines {
+		lines[i] = prefix + lines[i]
+	}
+	return strings.Join(lines, "\n")
 }

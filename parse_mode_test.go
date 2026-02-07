@@ -26,6 +26,13 @@ func TestParseModeHTML(t *testing.T) {
 	assert.Equal(t, "<b>Hello, World</b>", HTML.Sep(", ").Bold("Hello", "World"))
 	assert.Equal(t, "<blockquote>Hello, World</blockquote>", HTML.Sep(", ").Blockquote("Hello", "World"))
 	assert.Equal(t, "Me &amp; You", HTML.Escape("Me & You"))
+	assert.Equal(t, "Hello, <b>World</b>!", HTML.Escapef("Hello, %s!", HTML.Bold("World")))
+
+	assert.Equal(t, `<a href="tg://user?id=123456789">John</a>`, HTML.Mention("John", 123456789))
+	assert.Equal(t, `<tg-emoji emoji-id="5368324170671202286">👍</tg-emoji>`, HTML.CustomEmoji("👍", "5368324170671202286"))
+	assert.Equal(t, `<pre><code class="language-python">print("hi")</code></pre>`, HTML.PreLanguage("python", `print("hi")`))
+	assert.Equal(t, `<blockquote expandable>Hello World</blockquote>`, HTML.ExpandableBlockquote("Hello World"))
+	assert.Equal(t, `<blockquote expandable>Hello, World</blockquote>`, HTML.Sep(", ").ExpandableBlockquote("Hello", "World"))
 }
 
 func TestParseModeMarkdown(t *testing.T) {
@@ -42,6 +49,12 @@ func TestParseModeMarkdown(t *testing.T) {
 	assert.Equal(t, "```Hello World```", MD.Pre("Hello World"))
 	assert.Equal(t, "*Hello, World*", MD.Sep(", ").Bold("Hello", "World"))
 	assert.Equal(t, "\\*go\\_tg\\*", MD.Escape("*go_tg*"))
+	assert.Equal(t, "Hello, *World*!", MD.Escapef("Hello, %s!", MD.Bold("World")))
+
+	assert.Equal(t, `[John](tg://user?id=123456789)`, MD.Mention("John", 123456789))
+	assert.Equal(t, "👍", MD.CustomEmoji("👍", "5368324170671202286"))
+	assert.Equal(t, "```python\nprint(\"hi\")```", MD.PreLanguage("python", `print("hi")`))
+	assert.Equal(t, "Hello World", MD.ExpandableBlockquote("Hello World"))
 }
 
 func TestParseModeMarkdownV2(t *testing.T) {
@@ -58,8 +71,18 @@ func TestParseModeMarkdownV2(t *testing.T) {
 	assert.Equal(t, "`Hello World`", MD2.Code("Hello World"))
 	assert.Equal(t, "```Hello World```", MD2.Pre("Hello World"))
 	assert.Equal(t, ">Hello World", MD2.Blockquote("Hello World"))
+	assert.Equal(t, ">line1\n>line2", MD2.Blockquote("line1\nline2"))
+	assert.Equal(t, ">line1\n>line2", MD2.Sep("\n").Blockquote("line1", "line2"))
 	assert.Equal(t, "*Hello, World*", MD2.Sep(", ").Bold("Hello", "World"))
 
 	assert.Equal(t, "\\[\\*go\\_tg\\*\\]", MD2.Escape("[*go_tg*]"))
 	assert.Equal(t, "go\\.tg", MD2.Escape("go.tg"))
+	assert.Equal(t, "*bold* \\| _italic_", MD2.Escapef("%s | %s", MD2.Bold("bold"), MD2.Italic("italic")))
+	assert.Equal(t, "Hello\\.", MD2.Escapef("Hello."))
+
+	assert.Equal(t, `[John](tg://user?id=123456789)`, MD2.Mention("John", 123456789))
+	assert.Equal(t, `![👍](tg://emoji?id=5368324170671202286)`, MD2.CustomEmoji("👍", "5368324170671202286"))
+	assert.Equal(t, "```python\nprint(\"hi\")```", MD2.PreLanguage("python", `print("hi")`))
+	assert.Equal(t, ">Hello World||", MD2.ExpandableBlockquote("Hello World"))
+	assert.Equal(t, ">line1\n>line2||", MD2.ExpandableBlockquote("line1\nline2"))
 }
