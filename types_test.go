@@ -1435,6 +1435,26 @@ func TestUpdate_User(t *testing.T) {
 	} {
 		assert.Equal(t, test.User, test.Update.User())
 	}
+
+	t.Run("WithAllowedTypes", func(t *testing.T) {
+		msgUpdate := &Update{Message: &Message{From: &user}}
+		cbqUpdate := &Update{CallbackQuery: &CallbackQuery{From: user}}
+
+		// matching type returns user
+		assert.Equal(t, &user, msgUpdate.User(UpdateTypeMessage))
+		assert.Equal(t, &user, cbqUpdate.User(UpdateTypeCallbackQuery))
+
+		// non-matching type returns nil
+		assert.Nil(t, msgUpdate.User(UpdateTypeCallbackQuery))
+		assert.Nil(t, cbqUpdate.User(UpdateTypeMessage))
+
+		// multiple allowed types
+		assert.Equal(t, &user, msgUpdate.User(UpdateTypeMessage, UpdateTypeCallbackQuery))
+		assert.Equal(t, &user, cbqUpdate.User(UpdateTypeMessage, UpdateTypeCallbackQuery))
+
+		// nil update
+		assert.Nil(t, (*Update)(nil).User(UpdateTypeMessage))
+	})
 }
 
 func TestUpdate_SenderChat(t *testing.T) {

@@ -427,7 +427,7 @@ type loggerMock struct {
 	mock.Mock
 }
 
-func (m *loggerMock) Printf(format string, v ...interface{}) {
+func (m *loggerMock) Printf(format string, v ...any) {
 	m.Called(format, v)
 }
 

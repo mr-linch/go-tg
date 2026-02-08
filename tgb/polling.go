@@ -90,7 +90,7 @@ func NewPoller(handler Handler, client *tg.Client, opts ...PollerOption) *Poller
 	return poller
 }
 
-func (poller *Poller) log(format string, args ...interface{}) {
+func (poller *Poller) log(format string, args ...any) {
 	if poller.logger != nil {
 		poller.logger.Printf("tgb.Poller: "+format, args...)
 	}

@@ -3,6 +3,7 @@ package tg
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strconv"
 	"time"
 )
@@ -321,11 +322,18 @@ func (update *Update) Chat() *Chat {
 }
 
 // User returns the user from wherever possible.
+// If allowed types are specified, only returns the user when the update matches one of those types.
+// With no arguments, all update types are considered.
 // It returns nil if no user can be determined from this update.
-func (update *Update) User() *User {
+func (update *Update) User(allowed ...UpdateType) *User {
 	if update == nil {
 		return nil
 	}
+
+	if len(allowed) > 0 && !slices.Contains(allowed, update.Type()) {
+		return nil
+	}
+
 	if msg := update.Msg(); msg != nil {
 		return msg.From
 	}

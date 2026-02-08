@@ -37,6 +37,7 @@ linters:
     - gosec
     - prealloc
     - usestdlibvars
+    - modernize
 
   exclusions:
     generated: lax

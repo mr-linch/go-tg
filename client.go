@@ -292,7 +292,7 @@ func (client *Client) invoke(ctx context.Context, req *Request, dst any) error {
 	return nil
 }
 
-func (client *Client) Do(ctx context.Context, req *Request, dst interface{}) error {
+func (client *Client) Do(ctx context.Context, req *Request, dst any) error {
 	return client.invoker(ctx, req, dst)
 }
 
