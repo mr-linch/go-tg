@@ -18,14 +18,24 @@ tasks:
 
   test:main:
     desc: Run root module tests
+    sources:
+      - "**/*.go"
+      - go.mod
+      - go.sum
+      - exclude: gen/**
+      - exclude: _examples/**
     cmds:
-      - go test -v -race ./...
+      - go test -race ./...
 
   test:gen:
     desc: Run gen module tests
     dir: gen
+    sources:
+      - "**/*.go"
+      - go.mod
+      - go.sum
     cmds:
-      - go test -v -race ./...
+      - go test -race ./...
 
   # Linting (always with --fix)
   lint:
@@ -37,12 +47,24 @@ tasks:
 
   lint:main:
     desc: Lint root module
+    sources:
+      - "**/*.go"
+      - go.mod
+      - go.sum
+      - .golangci.yml
+      - exclude: gen/**
+      - exclude: _examples/**
     cmds:
       - golangci-lint run --fix ./...
 
   lint:gen:
     desc: Lint gen module
     dir: gen
+    sources:
+      - "**/*.go"
+      - go.mod
+      - go.sum
+      - .golangci.yml
     cmds:
       - golangci-lint run --fix ./...
 
@@ -86,6 +108,9 @@ tasks:
   # Examples
   lint:examples:
     desc: Lint examples
+    sources:
+      - "**/*.go"
+      - exclude: gen/**
     cmds:
       - golangci-lint run --fix ./_examples/*/
 
