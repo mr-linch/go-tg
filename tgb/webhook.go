@@ -35,6 +35,8 @@ type Webhook struct {
 
 	ipFromRequestFunc func(r *http.Request) string
 
+	webhookReplyEnabled bool
+
 	isSetup bool
 }
 
@@ -116,6 +118,15 @@ func WithWebhookAllowedUpdates(updates ...tg.UpdateType) WebhookOption {
 	}
 }
 
+// WithWebhookReply controls whether the first Update.Reply call returns its response
+// directly in the webhook HTTP response body (bypassing the Client and interceptor chain).
+// Enabled by default. When disabled, all Reply calls go through Client.Do as usual.
+func WithWebhookReply(enabled bool) WebhookOption {
+	return func(webhook *Webhook) {
+		webhook.webhookReplyEnabled = enabled
+	}
+}
+
 func NewWebhook(handler Handler, client *tg.Client, url string, options ...WebhookOption) *Webhook {
 	securityToken := sha256.Sum256([]byte(client.Token()))
 	token := hex.EncodeToString(securityToken[:])
@@ -133,6 +144,8 @@ func NewWebhook(handler Handler, client *tg.Client, url string, options ...Webho
 		securityToken:   token,
 
 		ipFromRequestFunc: DefaultWebhookRequestIP,
+
+		webhookReplyEnabled: true,
 	}
 
 	for _, option := range options {
@@ -298,6 +311,21 @@ func (webhook *Webhook) ServeRequest(ctx context.Context, r *WebhookRequest) *We
 			Status:      http.StatusBadRequest,
 			ContentType: "text/plain",
 			Body:        []byte("failed to parse body"),
+		}
+	}
+
+	if !webhook.webhookReplyEnabled {
+		update := &Update{
+			Update: baseUpdate,
+			Client: webhook.client,
+		}
+
+		if err := webhook.handler.Handle(ctx, update); err != nil {
+			webhook.log("handler error: %v", err)
+		}
+
+		return &WebhookResponse{
+			Status: http.StatusOK,
 		}
 	}
 

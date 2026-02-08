@@ -258,6 +258,50 @@ func TestWebhook_ServeHTTP(t *testing.T) {
 		assert.JSONEq(t, `{"chat_id":"1234","method":"sendMessage","text":"test"}`, string(body))
 	})
 
+	t.Run("HandleOKWebhookReplyDisabled", func(t *testing.T) {
+		w := httptest.NewRecorder()
+
+		req, err := http.NewRequest(http.MethodPost, "/", strings.NewReader(`{"update_id": 123456, "message": {"chat": {"id": 1234}}}`))
+		require.NoError(t, err)
+
+		req.RemoteAddr = "1.1.1.1"
+		req.Header.Set("Content-Type", "application/json")
+
+		isHandlerCalled := false
+
+		webhook := NewWebhook(
+			HandlerFunc(func(ctx context.Context, update *Update) error {
+				isHandlerCalled = true
+
+				ur := &MockUpdateReply{}
+				ur.On("Bind", mock.Anything).Return()
+				ur.On("DoVoid", mock.Anything).Return(nil)
+
+				err := update.Reply(ctx, ur)
+				require.NoError(t, err)
+
+				ur.AssertExpectations(t)
+
+				return nil
+			}),
+			&tg.Client{},
+			"http://test.io/",
+			WithWebhookSecuritySubnets(),
+			WithWebhookSecurityToken(""),
+			WithWebhookReply(false),
+		)
+
+		webhook.ServeHTTP(w, req)
+
+		assert.True(t, isHandlerCalled, "handler should be called")
+		assert.Equal(t, http.StatusOK, w.Code)
+
+		// body should be empty since webhook reply is disabled
+		body, err := io.ReadAll(w.Body)
+		require.NoError(t, err)
+		assert.Empty(t, body)
+	})
+
 	t.Run("HandleOKTwoReplyCall", func(t *testing.T) {
 		isHandlerCalled := false
 

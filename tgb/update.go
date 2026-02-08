@@ -64,3 +64,9 @@ func (update *Update) disableWebhookReply() {
 
 	update.webhookReplySent = true
 }
+
+// Reply is a shortcut for base.Update.Reply(ctx, v).
+// It is available on all typed update wrappers via BaseUpdate embedding.
+func (base BaseUpdate) Reply(ctx context.Context, v UpdateReply) error {
+	return base.Update.Reply(ctx, v)
+}
