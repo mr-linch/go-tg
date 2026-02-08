@@ -321,11 +321,18 @@ func (update *Update) Chat() *Chat {
 	return nil
 }
 
-// User returns the user from wherever possible.
-// If allowed types are specified, only returns the user when the update matches one of those types.
-// With no arguments, all update types are considered.
-// It returns nil if no user can be determined from this update.
-func (update *Update) User(allowed ...UpdateType) *User {
+// User returns the user who performed the action in this update.
+//
+// For message-based updates, this is the message sender (From field).
+// For callback queries, this is the user who clicked the button (CallbackQuery.From),
+// not the author of the message containing the button.
+// For reactions and poll answers, this may be nil if the action was performed anonymously.
+//
+// If allowed types are specified, only returns the user when the update
+// matches one of those types. With no arguments, all update types are considered.
+//
+// Returns nil if no user can be determined from this update.
+func (update *Update) User(allowed ...UpdateType) *User { //nolint:cyclop // exhaustive switch over update types
 	if update == nil {
 		return nil
 	}
@@ -334,11 +341,19 @@ func (update *Update) User(allowed ...UpdateType) *User {
 		return nil
 	}
 
-	if msg := update.Msg(); msg != nil {
-		return msg.From
-	}
-
 	switch {
+	case update.Message != nil:
+		return update.Message.From
+	case update.EditedMessage != nil:
+		return update.EditedMessage.From
+	case update.ChannelPost != nil:
+		return update.ChannelPost.From
+	case update.EditedChannelPost != nil:
+		return update.EditedChannelPost.From
+	case update.BusinessMessage != nil:
+		return update.BusinessMessage.From
+	case update.EditedBusinessMessage != nil:
+		return update.EditedBusinessMessage.From
 	case update.CallbackQuery != nil:
 		return &update.CallbackQuery.From
 	case update.InlineQuery != nil:
@@ -368,19 +383,35 @@ func (update *Update) User(allowed ...UpdateType) *User {
 	return nil
 }
 
-// SenderChat returns the sender chat from wherever possible.
-// This is set when a message is sent on behalf of a chat (e.g. anonymous admin),
-// or when a reaction is performed by an anonymous chat.
-// It returns nil if no sender chat can be determined.
+// SenderChat returns the chat on whose behalf the action was performed.
+//
+// For messages, this is set when a message is sent on behalf of a chat
+// (e.g. anonymous group admin, channel post forwarded to discussion group).
+// For reactions, this is the anonymous chat that reacted (ActorChat).
+// For poll answers, this is the anonymous chat that voted (VoterChat).
+//
+// Not applicable to callback queries, inline queries, or other
+// user-initiated actions — returns nil for those update types.
+//
+// Returns nil if no sender chat can be determined.
 func (update *Update) SenderChat() *Chat {
 	if update == nil {
 		return nil
 	}
-	if msg := update.Msg(); msg != nil {
-		return msg.SenderChat
-	}
 
 	switch {
+	case update.Message != nil:
+		return update.Message.SenderChat
+	case update.EditedMessage != nil:
+		return update.EditedMessage.SenderChat
+	case update.ChannelPost != nil:
+		return update.ChannelPost.SenderChat
+	case update.EditedChannelPost != nil:
+		return update.EditedChannelPost.SenderChat
+	case update.BusinessMessage != nil:
+		return update.BusinessMessage.SenderChat
+	case update.EditedBusinessMessage != nil:
+		return update.EditedBusinessMessage.SenderChat
 	case update.MessageReaction != nil:
 		return update.MessageReaction.ActorChat
 	case update.PollAnswer != nil:

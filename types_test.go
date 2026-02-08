@@ -1455,6 +1455,20 @@ func TestUpdate_User(t *testing.T) {
 		// nil update
 		assert.Nil(t, (*Update)(nil).User(UpdateTypeMessage))
 	})
+
+	t.Run("CallbackQueryWithMessage", func(t *testing.T) {
+		// Regression: User() must return the clicker (CallbackQuery.From),
+		// not the author of the message containing the button.
+		clicker := User{ID: 100}
+		botUser := User{ID: 200, IsBot: true}
+		update := &Update{CallbackQuery: &CallbackQuery{
+			From: clicker,
+			Message: &MaybeInaccessibleMessage{
+				Message: &Message{From: &botUser},
+			},
+		}}
+		assert.Equal(t, &clicker, update.User())
+	})
 }
 
 func TestUpdate_SenderChat(t *testing.T) {
@@ -1471,6 +1485,12 @@ func TestUpdate_SenderChat(t *testing.T) {
 		{&Update{MessageReaction: &MessageReactionUpdated{}}, nil},
 		{&Update{PollAnswer: &PollAnswer{VoterChat: &chat}}, &chat},
 		{&Update{PollAnswer: &PollAnswer{}}, nil},
+		// Regression: SenderChat() must not leak through CallbackQuery.Message
+		{&Update{CallbackQuery: &CallbackQuery{
+			Message: &MaybeInaccessibleMessage{
+				Message: &Message{SenderChat: &chat},
+			},
+		}}, nil},
 	} {
 		assert.Equal(t, test.SenderChat, test.Update.SenderChat())
 	}
