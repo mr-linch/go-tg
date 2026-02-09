@@ -102,8 +102,9 @@ type GoInterfaceConstructorSentinel struct {
 
 // GoBuilderType holds With* methods for a single type.
 type GoBuilderType struct {
-	TypeName string
-	Methods  []GoBuilderMethod
+	TypeName      string
+	ValueReceiver bool // true = value receiver (returns T), false = pointer receiver (returns *T)
+	Methods       []GoBuilderMethod
 }
 
 // GoBuilderMethod represents a single With* method on a type.
@@ -328,6 +329,12 @@ func buildTemplateData(api *ir.API, cfg *config.TypeGen, rules *CompiledFieldTyp
 		if vc != nil {
 			data.VariantConstructors = append(data.VariantConstructors, *vc)
 			log.Debug("generating variant constructors", "type", vcCfg.Type, "variants", len(vc.Variants))
+		}
+
+		// Generate value-receiver With* methods for excluded fields (modifiers).
+		if bt := buildExcludedFieldBuilders(irType, &vcCfg, cfg, rules, usedNameOverrides, usedTypeOverrides, interfaceTypes); bt != nil {
+			data.BuilderTypes = append(data.BuilderTypes, *bt)
+			log.Debug("generating value builders for excluded fields", "type", vcCfg.Type, "methods", len(bt.Methods))
 		}
 	}
 
@@ -922,6 +929,58 @@ func buildVariantConstructors(t *ir.Type, vcCfg *config.VariantConstructorDef, c
 	}
 
 	return vc
+}
+
+// buildExcludedFieldBuilders creates a value-receiver GoBuilderType with With* methods for excluded variant constructor fields.
+// These are modifier fields (like style, icon_custom_emoji_id) that can be applied to any button variant.
+func buildExcludedFieldBuilders(t *ir.Type, vcCfg *config.VariantConstructorDef, cfg *config.TypeGen, rules *CompiledFieldTypeRules, usedNames, usedTypes, interfaceTypes map[string]bool) *GoBuilderType {
+	if len(vcCfg.Exclude) == 0 {
+		return nil
+	}
+
+	excludeSet := make(map[string]bool, len(vcCfg.Exclude))
+	for _, name := range vcCfg.Exclude {
+		excludeSet[name] = true
+	}
+
+	typeName := naming.NormalizeTypeName(t.Name)
+	var methods []GoBuilderMethod
+
+	for _, f := range t.Fields {
+		if !f.Optional || !excludeSet[f.Name] {
+			continue
+		}
+
+		goFieldName := resolveFieldName(t.Name, f.Name, cfg, usedNames)
+		goType := resolveGoType(t.Name, f, cfg, rules, usedTypes, interfaceTypes)
+
+		m := GoBuilderMethod{
+			FieldName: goFieldName,
+		}
+		if goType == "bool" {
+			m.IsBool = true
+		} else {
+			paramName := naming.EscapeReserved(naming.SnakeToCamel(f.Name))
+			if strings.HasPrefix(goType, "*") {
+				m.GoType = goType[1:]
+				m.IsPtr = true
+			} else {
+				m.GoType = goType
+			}
+			m.ParamName = paramName
+		}
+		methods = append(methods, m)
+	}
+
+	if len(methods) == 0 {
+		return nil
+	}
+
+	return &GoBuilderType{
+		TypeName:      typeName,
+		ValueReceiver: true,
+		Methods:       methods,
+	}
 }
 
 // resolveBuilderType creates a GoBuilderType with With* methods for all optional fields of a type.

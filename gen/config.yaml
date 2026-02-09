@@ -84,6 +84,12 @@ parser:
     - name: TransactionPartnerUserTransactionTypeEnum
       fields: [TransactionPartnerUser.transaction_type]
 
+    # Field-mapped: button modifiers
+    - name: ButtonStyle
+      fields: [KeyboardButton.style, InlineKeyboardButton.style]
+    - name: UniqueGiftModelRarity
+      fields: [UniqueGiftModel.rarity]
+
     # Emoji-based enums (resolved via gomoji)
     - name: DiceEmoji
       expr: 'ParamEnumValues("sendDice", "emoji")'
@@ -138,6 +144,14 @@ typegen:
       marshal: text
       unknown: true
     - name: DiceEmoji
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: ButtonStyle
+      underlying: int8
+      marshal: text
+      unknown: true
+    - name: UniqueGiftModelRarity
       underlying: int8
       marshal: text
       unknown: true
@@ -225,11 +239,15 @@ typegen:
     ForumTopicCreated.icon_color: TopicIconColor
     Dice.emoji: DiceEmoji
     ReactionTypeEmoji.emoji: ReactionEmoji
+    KeyboardButton.style: ButtonStyle
+    InlineKeyboardButton.style: ButtonStyle
+    UniqueGiftModel.rarity: UniqueGiftModelRarity
 
   # Variant constructors for types with mutually exclusive optional fields
   variant_constructors:
     - type: InlineKeyboardButton
       base_field: text
+      exclude: [icon_custom_emoji_id, style]
       defaults:
         pay: "true"
         callback_game: "&CallbackGame{}"
@@ -237,6 +255,7 @@ typegen:
     - type: KeyboardButton
       base_field: text
       include_base: true
+      exclude: [icon_custom_emoji_id, style]
       defaults:
         request_contact: "true"
         request_location: "true"

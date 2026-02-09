@@ -483,8 +483,8 @@ func parseTypeRefs(text string, links []ir.TypeRef) []ir.TypeRef {
 
 func parsePrimitiveUnion(text string) []ir.TypeRef {
 	var types []ir.TypeRef
-	parts := strings.Split(text, " or ")
-	for _, p := range parts {
+	parts := strings.SplitSeq(text, " or ")
+	for p := range parts {
 		p = strings.TrimSpace(p)
 		if p != "" {
 			types = append(types, ir.TypeRef{Type: normalizeTypeName(p)})
@@ -498,9 +498,9 @@ func parseSingleLink(text string, link ir.TypeRef) []ir.TypeRef {
 	if idx := strings.Index(remaining, link.Type); idx >= 0 {
 		remaining = remaining[idx+len(link.Type):]
 	}
-	if strings.HasPrefix(remaining, " or ") {
+	if after, ok := strings.CutPrefix(remaining, " or "); ok {
 		// e.g. "InputFile or String"
-		rest := strings.TrimSpace(strings.TrimPrefix(remaining, " or "))
+		rest := strings.TrimSpace(after)
 		return []ir.TypeRef{link, {Type: normalizeTypeName(rest)}}
 	}
 	return []ir.TypeRef{{Type: normalizeTypeName(link.Type), Ref: link.Ref}}

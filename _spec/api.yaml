@@ -1,6 +1,6 @@
-version: "9.3"
-release_date: December 31, 2025
-hash: f010e435c22c
+version: "9.4"
+release_date: February 9, 2026
+hash: 17154abd0187
 types:
   - name: Update
     description: This [object](https://core.telegram.org/bots/api#available-types) represents an incoming update. At most one of the optional parameters can be present in any given update.
@@ -240,6 +240,11 @@ types:
           types: [{type: Boolean}]
         optional: true
         description: Optional. True, if the bot has forum topic mode enabled in private chats. Returned only in [getMe](https://core.telegram.org/bots/api#getme).
+      - name: allows_users_to_create_topics
+        type:
+          types: [{type: Boolean}]
+        optional: true
+        description: Optional. True, if the bot allows users to create and delete topics in private chats. Returned only in [getMe](https://core.telegram.org/bots/api#getme).
   - name: Chat
     description: This object represents a chat.
     fields:
@@ -531,6 +536,11 @@ types:
           types: [{type: UserRating, ref: userrating}]
         optional: true
         description: Optional. For private chats, the rating of the user if any
+      - name: first_profile_audio
+        type:
+          types: [{type: Audio, ref: audio}]
+        optional: true
+        description: Optional. For private chats, the first audio added to the profile of the user
       - name: unique_gift_colors
         type:
           types: [{type: UniqueGiftColors, ref: uniquegiftcolors}]
@@ -815,6 +825,16 @@ types:
           types: [{type: User, ref: user}]
         optional: true
         description: Optional. A member was removed from the group, information about them (this member may be the bot itself)
+      - name: chat_owner_left
+        type:
+          types: [{type: ChatOwnerLeft, ref: chatownerleft}]
+        optional: true
+        description: 'Optional. Service message: chat owner has left'
+      - name: chat_owner_changed
+        type:
+          types: [{type: ChatOwnerChanged, ref: chatownerchanged}]
+        optional: true
+        description: 'Optional. Service message: chat owner has changed'
       - name: new_chat_title
         type:
           types: [{type: String}]
@@ -1575,6 +1595,34 @@ types:
         type:
           types: [{type: Integer}]
         description: Unique identifier for the story in the chat
+  - name: VideoQuality
+    description: This object represents a video file of a specific quality.
+    fields:
+      - name: file_id
+        type:
+          types: [{type: String}]
+        description: Identifier for this file, which can be used to download or reuse the file
+      - name: file_unique_id
+        type:
+          types: [{type: String}]
+        description: Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
+      - name: width
+        type:
+          types: [{type: Integer}]
+        description: Video width
+      - name: height
+        type:
+          types: [{type: Integer}]
+        description: Video height
+      - name: codec
+        type:
+          types: [{type: String}]
+        description: Codec that was used to encode the video, for example, “h264”, “h265”, or “av01”
+      - name: file_size
+        type:
+          types: [{type: Integer64}]
+        optional: true
+        description: Optional. File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
   - name: Video
     description: This object represents a video file.
     fields:
@@ -1614,6 +1662,12 @@ types:
           types: [{type: Integer}]
         optional: true
         description: Optional. Timestamp in seconds from which the video will play in the message
+      - name: qualities
+        type:
+          types: [{type: VideoQuality, ref: videoquality}]
+          array: 1
+        optional: true
+        description: Optional. List of available qualities of the video
       - name: file_name
         type:
           types: [{type: String}]
@@ -2805,6 +2859,18 @@ types:
           types: [{type: PhotoSize, ref: photosize}]
           array: 2
         description: Requested profile pictures (in up to 4 sizes each)
+  - name: UserProfileAudios
+    description: This object represents the audios displayed on a user's profile.
+    fields:
+      - name: total_count
+        type:
+          types: [{type: Integer}]
+        description: Total number of profile audios for the target user
+      - name: audios
+        type:
+          types: [{type: Audio, ref: audio}]
+          array: 1
+        description: Requested profile audios
   - name: File
     description: This object represents a file ready to be downloaded. The file can be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling [getFile](https://core.telegram.org/bots/api#getfile).
     fields:
@@ -2867,14 +2933,26 @@ types:
         optional: true
         description: 'Optional. Use this parameter if you want to show the keyboard to specific users only. Targets: 1) users that are @mentioned in the text of the [Message](https://core.telegram.org/bots/api#message) object; 2) if the bot''s message is a reply to a message in the same chat and forum topic, sender of the original message.  Example: A user requests to change the bot''s language, bot replies to the request with a keyboard to select the new language. Other users in the group don''t see the keyboard.'
   - name: KeyboardButton
-    description: |-
-      This object represents one button of the reply keyboard. At most one of the optional fields must be used to specify type of the button. For simple text buttons, String can be used instead of this object to specify the button text.
-      Note: request_users and request_chat options will only work in Telegram versions released after 3 February, 2023. Older clients will display unsupported message.
+    description: This object represents one button of the reply keyboard. At most one of the fields other than text, icon_custom_emoji_id, and style must be used to specify the type of the button. For simple text buttons, String can be used instead of this object to specify the button text.
     fields:
       - name: text
         type:
           types: [{type: String}]
-        description: Text of the button. If none of the optional fields are used, it will be sent as a message when the button is pressed
+        description: Text of the button. If none of the fields other than text, icon_custom_emoji_id, and style are used, it will be sent as a message when the button is pressed
+      - name: icon_custom_emoji_id
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. Unique identifier of the custom emoji shown before the text of the button. Can only be used by bots that purchased additional usernames on [Fragment](https://fragment.com) or in the messages directly sent by the bot to private, group and supergroup chats if the owner of the bot has a Telegram Premium subscription.
+      - name: style
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. Style of the button. Must be one of “danger” (red), “success” (green) or “primary” (blue). If omitted, then an app-specific style is used.
+        enum:
+          - danger
+          - success
+          - primary
       - name: request_users
         type:
           types: [{type: KeyboardButtonRequestUsers, ref: keyboardbuttonrequestusers}]
@@ -3027,12 +3105,26 @@ types:
           array: 2
         description: Array of button rows, each represented by an Array of [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton) objects
   - name: InlineKeyboardButton
-    description: This object represents one button of an inline keyboard. Exactly one of the optional fields must be used to specify type of the button.
+    description: This object represents one button of an inline keyboard. Exactly one of the fields other than text, icon_custom_emoji_id, and style must be used to specify the type of the button.
     fields:
       - name: text
         type:
           types: [{type: String}]
         description: Label text on the button
+      - name: icon_custom_emoji_id
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. Unique identifier of the custom emoji shown before the text of the button. Can only be used by bots that purchased additional usernames on [Fragment](https://fragment.com) or in the messages directly sent by the bot to private, group and supergroup chats if the owner of the bot has a Telegram Premium subscription.
+      - name: style
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. Style of the button. Must be one of “danger” (red), “success” (green) or “primary” (blue). If omitted, then an app-specific style is used.
+        enum:
+          - danger
+          - success
+          - primary
       - name: url
         type:
           types: [{type: String}]
@@ -4279,7 +4371,17 @@ types:
       - name: rarity_per_mille
         type:
           types: [{type: Integer}]
-        description: The number of unique gifts that receive this model for every 1000 gifts upgraded
+        description: The number of unique gifts that receive this model for every 1000 gift upgrades. Always 0 for crafted gifts.
+      - name: rarity
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. Rarity of the model if it is a crafted model. Currently, can be “uncommon”, “rare”, “epic”, or “legendary”.
+        enum:
+          - uncommon
+          - rare
+          - epic
+          - legendary
   - name: UniqueGiftSymbol
     description: This object describes the symbol shown on the pattern of a unique gift.
     fields:
@@ -4394,6 +4496,11 @@ types:
           types: [{type: "True"}]
         optional: true
         description: Optional. True, if the original regular gift was exclusively purchaseable by Telegram Premium subscribers
+      - name: is_burned
+        type:
+          types: [{type: "True"}]
+        optional: true
+        description: Optional. True, if the gift was used to craft another gift and isn't available anymore
       - name: is_from_blockchain
         type:
           types: [{type: "True"}]
@@ -4941,6 +5048,21 @@ types:
         type:
           types: [{type: ChatBoostSource, ref: chatboostsource}]
         description: Source of the removed boost
+  - name: ChatOwnerLeft
+    description: Describes a service message about the chat owner leaving the chat.
+    fields:
+      - name: new_owner
+        type:
+          types: [{type: User, ref: user}]
+        optional: true
+        description: Optional. The user which will be the new owner of the chat if the previous owner does not return to the chat
+  - name: ChatOwnerChanged
+    description: Describes a service message about an ownership change in the chat.
+    fields:
+      - name: new_owner
+        type:
+          types: [{type: User, ref: user}]
+        description: The new owner of the chat
   - name: UserChatBoosts
     description: This object represents a list of boosts added to a chat by a user.
     fields:
@@ -8047,7 +8169,7 @@ types:
   - name: GameHighScore
     description: |-
       This object represents one row of the high scores table for a game.
-      And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »](https://core.telegram.org/bots/faq)
+      And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »](https://core.telegram.org/bots/faq) -
     fields:
       - name: position
         type:
@@ -9767,6 +9889,26 @@ methods:
         default: "100"
     returns:
       types: [{type: UserProfilePhotos, ref: userprofilephotos}]
+  - name: getUserProfileAudios
+    description:
+      - Use this method to get a list of profile audios for a user. Returns a [UserProfileAudios](https://core.telegram.org/bots/api#userprofileaudios) object.
+    params:
+      - name: user_id
+        type:
+          types: [{type: Integer}]
+        required: true
+        description: Unique identifier of the target user
+      - name: offset
+        type:
+          types: [{type: Integer}]
+        description: Sequential number of the first audio to be returned. By default, all audios are returned.
+      - name: limit
+        type:
+          types: [{type: Integer}]
+        description: Limits the number of audios to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+        default: "100"
+    returns:
+      types: [{type: UserProfileAudios, ref: userprofileaudios}]
   - name: setUserEmojiStatus
     description:
       - Changes the emoji status for a given user that previously allowed the bot to manage their emoji status via the Mini App method [requestEmojiStatusAccess](https://core.telegram.org/bots/webapps#initializing-mini-apps). Returns True on success.
@@ -10427,7 +10569,7 @@ methods:
       array: 1
   - name: createForumTopic
     description:
-      - Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns information about the created topic as a [ForumTopic](https://core.telegram.org/bots/api#forumtopic) object.
+      - Use this method to create a topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator right. Returns information about the created topic as a [ForumTopic](https://core.telegram.org/bots/api#forumtopic) object.
     params:
       - name: chat_id
         type:
@@ -10790,6 +10932,22 @@ methods:
         description: A two-letter ISO 639-1 language code or an empty string
     returns:
       types: [{type: BotShortDescription, ref: botshortdescription}]
+  - name: setMyProfilePhoto
+    description:
+      - Changes the profile photo of the bot. Returns True on success.
+    params:
+      - name: photo
+        type:
+          types: [{type: InputProfilePhoto, ref: inputprofilephoto}]
+        required: true
+        description: The new profile photo to set
+    returns:
+      types: [{type: "True"}]
+  - name: removeMyProfilePhoto
+    description:
+      - Removes the profile photo of the bot. Requires no parameters. Returns True on success.
+    returns:
+      types: [{type: "True"}]
   - name: setChatMenuButton
     description:
       - Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on success.
@@ -12929,6 +13087,8 @@ enums:
       - location
       - new_chat_members
       - left_chat_member
+      - chat_owner_left
+      - chat_owner_changed
       - new_chat_title
       - new_chat_photo
       - delete_chat_photo
@@ -13111,6 +13271,22 @@ enums:
       - business_account_transfer
     fields:
       - TransactionPartnerUser.transaction_type
+  - name: ButtonStyle
+    values:
+      - danger
+      - success
+      - primary
+    fields:
+      - KeyboardButton.style
+      - InlineKeyboardButton.style
+  - name: UniqueGiftModelRarity
+    values:
+      - uncommon
+      - rare
+      - epic
+      - legendary
+    fields:
+      - UniqueGiftModel.rarity
   - name: DiceEmoji
     values:
       - "\U0001F3B2"
