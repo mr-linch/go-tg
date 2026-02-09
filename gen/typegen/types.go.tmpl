@@ -314,6 +314,23 @@ func New{{$vc.TypeName}}{{$v.Name}}({{$vc.BaseParam}}{{if and $v.Param (not $v.H
 {{- end}}
 {{- range $bt := .BuilderTypes}}
 {{- range $b := $bt.Methods}}
+{{- if $bt.ValueReceiver}}
+{{- if $b.IsBool}}
+
+// With{{$b.FieldName}} sets the {{$b.FieldName}} field.
+func (v {{$bt.TypeName}}) With{{$b.FieldName}}() {{$bt.TypeName}} {
+	v.{{$b.FieldName}} = true
+	return v
+}
+{{- else}}
+
+// With{{$b.FieldName}} sets the {{$b.FieldName}} field.
+func (v {{$bt.TypeName}}) With{{$b.FieldName}}({{$b.ParamName}} {{$b.GoType}}) {{$bt.TypeName}} {
+	v.{{$b.FieldName}} = {{if $b.IsPtr}}&{{end}}{{$b.ParamName}}
+	return v
+}
+{{- end}}
+{{- else}}
 {{- if $b.IsBool}}
 
 // With{{$b.FieldName}} sets the {{$b.FieldName}} field.
@@ -328,6 +345,7 @@ func (v *{{$bt.TypeName}}) With{{$b.FieldName}}({{$b.ParamName}} {{$b.GoType}}) 
 	v.{{$b.FieldName}} = {{if $b.IsPtr}}&{{end}}{{$b.ParamName}}
 	return v
 }
+{{- end}}
 {{- end}}
 {{- end}}
 {{- end}}

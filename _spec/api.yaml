@@ -13271,6 +13271,22 @@ enums:
       - business_account_transfer
     fields:
       - TransactionPartnerUser.transaction_type
+  - name: ButtonStyle
+    values:
+      - danger
+      - success
+      - primary
+    fields:
+      - KeyboardButton.style
+      - InlineKeyboardButton.style
+  - name: UniqueGiftModelRarity
+    values:
+      - uncommon
+      - rare
+      - epic
+      - legendary
+    fields:
+      - UniqueGiftModel.rarity
   - name: DiceEmoji
     values:
       - "\U0001F3B2"

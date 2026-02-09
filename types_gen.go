@@ -1955,7 +1955,7 @@ type KeyboardButton struct {
 	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
 
 	// Optional. Style of the button. Must be one of “danger” (red), “success” (green) or “primary” (blue). If omitted, then an app-specific style is used.
-	Style string `json:"style,omitempty"`
+	Style ButtonStyle `json:"style,omitempty"`
 
 	// Optional. If specified, pressing the button will open a list of suitable users. Identifiers of selected users will be sent to the bot in a “users_shared” service message. Available in private chats only.
 	RequestUsers *KeyboardButtonRequestUsers `json:"request_users,omitempty"`
@@ -2076,7 +2076,7 @@ type InlineKeyboardButton struct {
 	IconCustomEmojiID string `json:"icon_custom_emoji_id,omitempty"`
 
 	// Optional. Style of the button. Must be one of “danger” (red), “success” (green) or “primary” (blue). If omitted, then an app-specific style is used.
-	Style string `json:"style,omitempty"`
+	Style ButtonStyle `json:"style,omitempty"`
 
 	// Optional. HTTP or tg:// URL to be opened when the button is pressed. Links tg://user?id=<user_id> can be used to mention a user by their identifier without using a username, if this is allowed by their privacy settings.
 	URL string `json:"url,omitempty"`
@@ -2873,7 +2873,7 @@ type UniqueGiftModel struct {
 	RarityPerMille int `json:"rarity_per_mille"`
 
 	// Optional. Rarity of the model if it is a crafted model. Currently, can be “uncommon”, “rare”, “epic”, or “legendary”.
-	Rarity string `json:"rarity,omitempty"`
+	Rarity UniqueGiftModelRarity `json:"rarity,omitempty"`
 }
 
 // UniqueGiftSymbol this object describes the symbol shown on the pattern of a unique gift.
@@ -10197,6 +10197,119 @@ var DiceEmojiAll = []DiceEmoji{
 	DiceEmojiSlotMachine,
 }
 
+// ButtonStyle represents an enum type.
+type ButtonStyle int8
+
+const (
+	ButtonStyleUnknown ButtonStyle = iota
+	ButtonStyleDanger              // "danger"
+	ButtonStyleSuccess             // "success"
+	ButtonStylePrimary             // "primary"
+)
+
+func (v ButtonStyle) String() string {
+	if v > ButtonStyleUnknown && v <= ButtonStylePrimary {
+		return [...]string{
+			"danger",
+			"success",
+			"primary",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v ButtonStyle) IsUnknown() bool {
+	return v == ButtonStyleUnknown
+}
+
+func (v ButtonStyle) MarshalText() ([]byte, error) {
+	if v != ButtonStyleUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown ButtonStyle")
+}
+
+func (v *ButtonStyle) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "danger":
+		*v = ButtonStyleDanger
+	case "success":
+		*v = ButtonStyleSuccess
+	case "primary":
+		*v = ButtonStylePrimary
+	default:
+		*v = ButtonStyleUnknown
+	}
+	return nil
+}
+
+// ButtonStyleAll is a list of all known ButtonStyle values.
+var ButtonStyleAll = []ButtonStyle{
+	ButtonStyleDanger,
+	ButtonStyleSuccess,
+	ButtonStylePrimary,
+}
+
+// UniqueGiftModelRarity represents an enum type.
+type UniqueGiftModelRarity int8
+
+const (
+	UniqueGiftModelRarityUnknown   UniqueGiftModelRarity = iota
+	UniqueGiftModelRarityUncommon                        // "uncommon"
+	UniqueGiftModelRarityRare                            // "rare"
+	UniqueGiftModelRarityEpic                            // "epic"
+	UniqueGiftModelRarityLegendary                       // "legendary"
+)
+
+func (v UniqueGiftModelRarity) String() string {
+	if v > UniqueGiftModelRarityUnknown && v <= UniqueGiftModelRarityLegendary {
+		return [...]string{
+			"uncommon",
+			"rare",
+			"epic",
+			"legendary",
+		}[v-1]
+	}
+	return "unknown"
+}
+
+// IsUnknown reports whether this value is unknown.
+func (v UniqueGiftModelRarity) IsUnknown() bool {
+	return v == UniqueGiftModelRarityUnknown
+}
+
+func (v UniqueGiftModelRarity) MarshalText() ([]byte, error) {
+	if v != UniqueGiftModelRarityUnknown {
+		return []byte(v.String()), nil
+	}
+	return nil, fmt.Errorf("unknown UniqueGiftModelRarity")
+}
+
+func (v *UniqueGiftModelRarity) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "uncommon":
+		*v = UniqueGiftModelRarityUncommon
+	case "rare":
+		*v = UniqueGiftModelRarityRare
+	case "epic":
+		*v = UniqueGiftModelRarityEpic
+	case "legendary":
+		*v = UniqueGiftModelRarityLegendary
+	default:
+		*v = UniqueGiftModelRarityUnknown
+	}
+	return nil
+}
+
+// UniqueGiftModelRarityAll is a list of all known UniqueGiftModelRarity values.
+var UniqueGiftModelRarityAll = []UniqueGiftModelRarity{
+	UniqueGiftModelRarityUncommon,
+	UniqueGiftModelRarityRare,
+	UniqueGiftModelRarityEpic,
+	UniqueGiftModelRarityLegendary,
+}
+
 // ReactionEmoji represents an enum type.
 type ReactionEmoji int8
 
@@ -10803,22 +10916,6 @@ func (v *Message) Type() MessageType {
 	}
 }
 
-// NewInlineKeyboardButtonIconCustomEmojiID creates InlineKeyboardButton with IconCustomEmojiID.
-func NewInlineKeyboardButtonIconCustomEmojiID(text string, iconCustomEmojiID string) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text:              text,
-		IconCustomEmojiID: iconCustomEmojiID,
-	}
-}
-
-// NewInlineKeyboardButtonStyle creates InlineKeyboardButton with Style.
-func NewInlineKeyboardButtonStyle(text string, style string) InlineKeyboardButton {
-	return InlineKeyboardButton{
-		Text:  text,
-		Style: style,
-	}
-}
-
 // NewInlineKeyboardButtonURL creates InlineKeyboardButton with URL.
 func NewInlineKeyboardButtonURL(text string, url string) InlineKeyboardButton {
 	return InlineKeyboardButton{
@@ -10903,22 +11000,6 @@ func NewInlineKeyboardButtonPay(text string) InlineKeyboardButton {
 func NewKeyboardButton(text string) KeyboardButton {
 	return KeyboardButton{
 		Text: text,
-	}
-}
-
-// NewKeyboardButtonIconCustomEmojiID creates KeyboardButton with IconCustomEmojiID.
-func NewKeyboardButtonIconCustomEmojiID(text string, iconCustomEmojiID string) KeyboardButton {
-	return KeyboardButton{
-		Text:              text,
-		IconCustomEmojiID: iconCustomEmojiID,
-	}
-}
-
-// NewKeyboardButtonStyle creates KeyboardButton with Style.
-func NewKeyboardButtonStyle(text string, style string) KeyboardButton {
-	return KeyboardButton{
-		Text:  text,
-		Style: style,
 	}
 }
 
@@ -12321,6 +12402,30 @@ func (v *InputInvoiceMessageContent) WithSendEmailToProvider() *InputInvoiceMess
 // WithIsFlexible sets the IsFlexible field.
 func (v *InputInvoiceMessageContent) WithIsFlexible() *InputInvoiceMessageContent {
 	v.IsFlexible = true
+	return v
+}
+
+// WithIconCustomEmojiID sets the IconCustomEmojiID field.
+func (v InlineKeyboardButton) WithIconCustomEmojiID(iconCustomEmojiID string) InlineKeyboardButton {
+	v.IconCustomEmojiID = iconCustomEmojiID
+	return v
+}
+
+// WithStyle sets the Style field.
+func (v InlineKeyboardButton) WithStyle(style ButtonStyle) InlineKeyboardButton {
+	v.Style = style
+	return v
+}
+
+// WithIconCustomEmojiID sets the IconCustomEmojiID field.
+func (v KeyboardButton) WithIconCustomEmojiID(iconCustomEmojiID string) KeyboardButton {
+	v.IconCustomEmojiID = iconCustomEmojiID
+	return v
+}
+
+// WithStyle sets the Style field.
+func (v KeyboardButton) WithStyle(style ButtonStyle) KeyboardButton {
+	v.Style = style
 	return v
 }
 
