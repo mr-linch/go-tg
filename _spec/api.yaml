@@ -1,6 +1,6 @@
 version: "9.4"
 release_date: February 9, 2026
-hash: 17154abd0187
+hash: 71c87c28d105
 types:
   - name: Update
     description: This [object](https://core.telegram.org/bots/api#available-types) represents an incoming update. At most one of the optional parameters can be present in any given update.
@@ -1080,7 +1080,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message. login_url buttons are represented as ordinary url buttons.
   - name: MessageId
     description: This object represents a unique message identifier.
     fields:
@@ -6360,7 +6360,7 @@ types:
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
         optional: true
-        description: Optional. Inline keyboard attached to the message
+        description: Optional. [Inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) attached to the message
       - name: input_message_content
         type:
           types: [{type: InputMessageContent, ref: inputmessagecontent}]
@@ -8169,7 +8169,7 @@ types:
   - name: GameHighScore
     description: |-
       This object represents one row of the high scores table for a game.
-      And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »](https://core.telegram.org/bots/faq) -
+      And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »](https://core.telegram.org/bots/faq)
     fields:
       - name: position
         type:
@@ -9705,7 +9705,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for an inline keyboard
+        description: A JSON-serialized object for an [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards)
     returns:
       types: [{type: Message, ref: message}]
   - name: sendDice
@@ -11928,7 +11928,7 @@ methods:
       - name: reply_markup
         type:
           types: [{type: InlineKeyboardMarkup, ref: inlinekeyboardmarkup}]
-        description: A JSON-serialized object for the new inline keyboard for the message
+        description: A JSON-serialized object for the new [inline keyboard](https://core.telegram.org/bots/features#inline-keyboards) for the message
     returns:
       types: [{type: Message, ref: message}]
   - name: editMessageReplyMarkup

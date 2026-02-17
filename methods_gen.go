@@ -4,7 +4,7 @@ package tg
 //
 // Telegram Bot API version: 9.4
 // Release date: February 9, 2026
-// Spec hash: 17154abd0187
+// Spec hash: 71c87c28d105
 
 // GetUpdatesCall represents a call to the [getUpdates] method.
 // Use this method to receive incoming updates using long polling ([wiki]). Returns an Array of [Update] objects.
