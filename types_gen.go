@@ -4,7 +4,7 @@ package tg
 //
 // Telegram Bot API version: 9.4
 // Release date: February 9, 2026
-// Spec hash: 17154abd0187
+// Spec hash: 71c87c28d105
 
 import (
 	"encoding/json"
@@ -697,7 +697,9 @@ type Message struct {
 	// Optional. Service message: data sent by a Web App
 	WebAppData *WebAppData `json:"web_app_data,omitempty"`
 
-	// Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
+	// Optional. [Inline keyboard] attached to the message. login_url buttons are represented as ordinary url buttons.
+	//
+	// [Inline keyboard]: https://core.telegram.org/bots/features#inline-keyboards
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 }
 
@@ -4122,7 +4124,9 @@ type InlineQueryResultDocument struct {
 	// Optional. Short description of the result
 	Description string `json:"description,omitempty"`
 
-	// Optional. Inline keyboard attached to the message
+	// Optional. [Inline keyboard] attached to the message
+	//
+	// [Inline keyboard]: https://core.telegram.org/bots/features#inline-keyboards
 	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 
 	// Optional. Content of the message to be sent instead of the file
@@ -5279,7 +5283,7 @@ type Game struct {
 type CallbackGame struct{}
 
 // GameHighScore this object represents one row of the high scores table for a game.
-// And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »] -
+// And that's about all we've got for now. If you've got any questions, please check out our [Bot FAQ »]
 //
 // [Bot FAQ »]: https://core.telegram.org/bots/faq
 type GameHighScore struct {
