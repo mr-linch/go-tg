@@ -1,6 +1,6 @@
-version: "9.4"
-release_date: February 9, 2026
-hash: 71c87c28d105
+version: "9.5"
+release_date: March 1, 2026
+hash: 798fa610d92f
 types:
   - name: Update
     description: This [object](https://core.telegram.org/bots/api#available-types) represents an incoming update. At most one of the optional parameters can be present in any given update.
@@ -588,6 +588,11 @@ types:
           types: [{type: User, ref: user}]
         optional: true
         description: Optional. The bot that actually sent the message on behalf of the business account. Available only for outgoing messages sent on behalf of the connected business account.
+      - name: sender_tag
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. Tag or custom title of the sender of the message; for supergroups only
       - name: date
         type:
           types: [{type: Integer}]
@@ -670,7 +675,7 @@ types:
         type:
           types: [{type: String}]
         optional: true
-        description: Optional. The unique identifier of a media message group this message belongs to
+        description: Optional. The unique identifier inside this chat of a media message group this message belongs to
       - name: author_signature
         type:
           types: [{type: String}]
@@ -1114,7 +1119,7 @@ types:
       - name: type
         type:
           types: [{type: String}]
-        description: 'Type of the entity. Currently, can be “mention” (@username), “hashtag” (#hashtag or #hashtag@chatusername), “cashtag” ($USD or $USD@chatusername), “bot_command” (/start@jobs_bot), “url” (https://telegram.org), “email” (do-not-reply@telegram.org), “phone_number” (+1-212-555-0123), “bold” (bold text), “italic” (italic text), “underline” (underlined text), “strikethrough” (strikethrough text), “spoiler” (spoiler message), “blockquote” (block quotation), “expandable_blockquote” (collapsed-by-default block quotation), “code” (monowidth string), “pre” (monowidth block), “text_link” (for clickable text URLs), “text_mention” (for users [without usernames](https://telegram.org/blog/edit#new-mentions)), “custom_emoji” (for inline custom emoji stickers)'
+        description: 'Type of the entity. Currently, can be “mention” (@username), “hashtag” (#hashtag or #hashtag@chatusername), “cashtag” ($USD or $USD@chatusername), “bot_command” (/start@jobs_bot), “url” (https://telegram.org), “email” (do-not-reply@telegram.org), “phone_number” (+1-212-555-0123), “bold” (bold text), “italic” (italic text), “underline” (underlined text), “strikethrough” (strikethrough text), “spoiler” (spoiler message), “blockquote” (block quotation), “expandable_blockquote” (collapsed-by-default block quotation), “code” (monowidth string), “pre” (monowidth block), “text_link” (for clickable text URLs), “text_mention” (for users [without usernames](https://telegram.org/blog/edit#new-mentions)), “custom_emoji” (for inline custom emoji stickers), or “date_time” (for formatted date and time)'
         enum:
           - mention
           - hashtag
@@ -1135,6 +1140,7 @@ types:
           - text_link
           - text_mention
           - custom_emoji
+          - date_time
       - name: offset
         type:
           types: [{type: Integer}]
@@ -1163,6 +1169,16 @@ types:
           types: [{type: String}]
         optional: true
         description: Optional. For “custom_emoji” only, unique identifier of the custom emoji. Use [getCustomEmojiStickers](https://core.telegram.org/bots/api#getcustomemojistickers) to get full information about the sticker
+      - name: unix_time
+        type:
+          types: [{type: Integer}]
+        optional: true
+        description: Optional. For “date_time” only, the Unix time associated with the entity
+      - name: date_time_format
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. For “date_time” only, the string that defines the formatting of the date and time. See [date-time entity formatting](https://core.telegram.org/bots/api#date-time-entity-formatting) for more details.
   - name: TextQuote
     description: This object contains information about the quoted part of a message that is replied to by the given message.
     fields:
@@ -3430,6 +3446,11 @@ types:
           types: [{type: Boolean}]
         optional: true
         description: Optional. True, if the administrator can manage direct messages of the channel and decline suggested posts; for channels only
+      - name: can_manage_tags
+        type:
+          types: [{type: Boolean}]
+        optional: true
+        description: Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only. If omitted defaults to the value of can_pin_messages.
   - name: ChatMemberUpdated
     description: This object represents changes in the status of a chat member.
     fields:
@@ -3583,6 +3604,11 @@ types:
           types: [{type: Boolean}]
         optional: true
         description: Optional. True, if the administrator can manage direct messages of the channel and decline suggested posts; for channels only
+      - name: can_manage_tags
+        type:
+          types: [{type: Boolean}]
+        optional: true
+        description: Optional. True, if the administrator can edit the tags of regular members; for groups and supergroups only. If omitted defaults to the value of can_pin_messages.
       - name: custom_title
         type:
           types: [{type: String}]
@@ -3596,6 +3622,11 @@ types:
           types: [{type: String}]
         description: The member's status in the chat, always “member”
         const: member
+      - name: tag
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. Tag of the member
       - name: user
         type:
           types: [{type: User, ref: user}]
@@ -3613,6 +3644,11 @@ types:
           types: [{type: String}]
         description: The member's status in the chat, always “restricted”
         const: restricted
+      - name: tag
+        type:
+          types: [{type: String}]
+        optional: true
+        description: Optional. Tag of the member
       - name: user
         type:
           types: [{type: User, ref: user}]
@@ -3661,6 +3697,10 @@ types:
         type:
           types: [{type: Boolean}]
         description: True, if the user is allowed to add web page previews to their messages
+      - name: can_edit_tag
+        type:
+          types: [{type: Boolean}]
+        description: True, if the user is allowed to edit their own tag
       - name: can_change_info
         type:
           types: [{type: Boolean}]
@@ -3791,6 +3831,11 @@ types:
           types: [{type: Boolean}]
         optional: true
         description: Optional. True, if the user is allowed to add web page previews to their messages
+      - name: can_edit_tag
+        type:
+          types: [{type: Boolean}]
+        optional: true
+        description: Optional. True, if the user is allowed to edit their own tag
       - name: can_change_info
         type:
           types: [{type: Boolean}]
@@ -9772,7 +9817,7 @@ methods:
       types: [{type: Message, ref: message}]
   - name: sendMessageDraft
     description:
-      - Use this method to stream a partial message to a user while the message is being generated; supported only for bots with forum topic mode enabled. Returns True on success.
+      - Use this method to stream a partial message to a user while the message is being generated. Returns True on success.
     params:
       - name: chat_id
         type:
@@ -10104,6 +10149,10 @@ methods:
         type:
           types: [{type: Boolean}]
         description: Pass True if the administrator can manage direct messages within the channel and decline suggested posts; for channels only
+      - name: can_manage_tags
+        type:
+          types: [{type: Boolean}]
+        description: Pass True if the administrator can edit the tags of regular members; for groups and supergroups only
     returns:
       types: [{type: "True"}]
   - name: setChatAdministratorCustomTitle
@@ -10125,6 +10174,26 @@ methods:
           types: [{type: String}]
         required: true
         description: New custom title for the administrator; 0-16 characters, emoji are not allowed
+    returns:
+      types: [{type: "True"}]
+  - name: setChatMemberTag
+    description:
+      - Use this method to set a tag for a regular member in a group or a supergroup. The bot must be an administrator in the chat for this to work and must have the can_manage_tags administrator right. Returns True on success.
+    params:
+      - name: chat_id
+        type:
+          types: [{type: Integer}, {type: String}]
+        required: true
+        description: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+      - name: user_id
+        type:
+          types: [{type: Integer}]
+        required: true
+        description: Unique identifier of the target user
+      - name: tag
+        type:
+          types: [{type: String}]
+        description: New tag for the member; 0-16 characters, emoji are not allowed
     returns:
       types: [{type: "True"}]
   - name: banChatSenderChat
@@ -13038,6 +13107,7 @@ enums:
       - text_link
       - text_mention
       - custom_emoji
+      - date_time
     fields:
       - MessageEntity.type
   - name: UpdateType
@@ -13067,6 +13137,7 @@ enums:
       - removed_chat_boost
   - name: MessageType
     values:
+      - sender_tag
       - text
       - animation
       - audio
