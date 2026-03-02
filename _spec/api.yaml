@@ -10193,6 +10193,7 @@ methods:
       - name: tag
         type:
           types: [{type: String}]
+        optional: true
         description: New tag for the member; 0-16 characters, emoji are not allowed
     returns:
       types: [{type: "True"}]

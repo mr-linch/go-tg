@@ -9558,7 +9558,6 @@ type MessageType int8
 
 const (
 	MessageTypeUnknown                       MessageType = iota
-	MessageTypeSenderTag                                 // "sender_tag"
 	MessageTypeText                                      // "text"
 	MessageTypeAnimation                                 // "animation"
 	MessageTypeAudio                                     // "audio"
@@ -9634,7 +9633,6 @@ const (
 func (v MessageType) String() string {
 	if v > MessageTypeUnknown && v <= MessageTypeWebAppData {
 		return [...]string{
-			"sender_tag",
 			"text",
 			"animation",
 			"audio",
@@ -9717,7 +9715,6 @@ func (v MessageType) IsUnknown() bool {
 
 // MessageTypeAll is a list of all known MessageType values.
 var MessageTypeAll = []MessageType{
-	MessageTypeSenderTag,
 	MessageTypeText,
 	MessageTypeAnimation,
 	MessageTypeAudio,
@@ -10812,8 +10809,6 @@ func (v *Update) Type() UpdateType {
 // Type returns the MessageType of this Message.
 func (v *Message) Type() MessageType {
 	switch {
-	case v.SenderTag != "":
-		return MessageTypeSenderTag
 	case v.Text != "":
 		return MessageTypeText
 	case v.Animation != nil:
