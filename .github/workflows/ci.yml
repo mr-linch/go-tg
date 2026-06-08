@@ -90,7 +90,7 @@ jobs:
 
       - name: Upload coverage
         if: matrix.go-version == 'stable'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           files: coverage.txt
           token: ${{ secrets.CODECOV_TOKEN }}
